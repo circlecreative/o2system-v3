@@ -1,0 +1,22 @@
+##
+# @package   o2System
+# @copyright Copyright (C) 2005 - 2014 PT Lingkar Kreasi (Circle Creative). All rights reserved.
+# @license   http://circle-creative.com/products/o2system/license.html
+##
+
+# Block Folder Indexing
+Options -Indexes
+IndexOptions -FancyIndexing
+
+Options +FollowSymLinks -MultiViews
+RewriteEngine On
+# RewriteBase /
+
+########## Begin - Rewrite rules to block out some common exploits
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+RewriteRule ^(.*)$ index.php/$1 [L]
+
+########## End - Rewrite rules to block out some common exploits
