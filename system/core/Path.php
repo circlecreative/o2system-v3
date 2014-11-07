@@ -141,7 +141,7 @@ class Core_Path
 				$new_map->{$folder}->filename = pathinfo($files, PATHINFO_FILENAME);
 				$new_map->{$folder}->filepath = $new_map->{$folder}->path . $files;
 			}
-			else
+			elseif($files != 'index.html')
 			{
 				$new_map->files[ pathinfo($files, PATHINFO_FILENAME) ] = $new_map->path . $files;
 			}

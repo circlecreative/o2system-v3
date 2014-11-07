@@ -46,11 +46,11 @@ class Core_Controller
 			$this->$var =& load_class($class);
 		}
 
-		//$this->load =& load_class('Loader', 'core');
+		$this->load =& load_class('Loader', 'core');
 
-		//$this->load->initialize();
+		$this->load->initialize();
 		
-		//log_message('debug', "Controller Class Initialized");
+		log_message('debug', "Controller Class Initialized");
 	}
 
 	public static function &get_instance()

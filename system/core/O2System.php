@@ -176,47 +176,54 @@ if (defined('ENVIRONMENT'))
  * ------------------------------------------------------
  */
 	$LANG =& load_class('Lang', 'core');	
-	print_code($LANG);
+	//print_code($LANG);
 
 	// Mark a benchmark end point
 	$BM->mark('core_system:execute_time_end');
-
-	$SES->set_userdata('testing','et');
-
-	print_code($SES);
-
 /*
  * ------------------------------------------------------
  *  Load the app controller and local controller
  * ------------------------------------------------------
  *
  */
-	// Load the base controller class
-	require BASEPATH.'core/Controller.php';
-
 	function &get_instance()
 	{
-		return CI_Controller::get_instance();
+		return Core_Controller::get_instance();
 	}
 
+	$active_controller = $URI->active->controller->class;
+	$active_method = $URI->active->method;
 
-	if (file_exists(APPPATH.'core/'.$CFG->config['subclass_prefix'].'Controller.php'))
+/*
+ * ------------------------------------------------------
+ *  Instantiate the requested controller
+ * ------------------------------------------------------
+ */
+	// Mark a start point so we can benchmark the controller
+	$BM->mark('controller_execution_time_( '.$active_controller.' / '.$active_method.' )_start');
+
+	$O2 = new $active_controller();
+
+/*
+ * ------------------------------------------------------
+ *  Call the requested method
+ * ------------------------------------------------------
+ */	
+	call_user_func_array(array(&$O2, $active_method), $URI->active->params);
+
+	// Mark a benchmark end point
+	$BM->mark('controller_execution_time_( '.$active_controller.' / '.$active_method.' )_end');
+
+/*
+ * ------------------------------------------------------
+ *  Close the DB connection if one exists
+ * ------------------------------------------------------
+ */
+	if (class_exists('O2_DB') AND isset($O2->db))
 	{
-		require APPPATH.'core/'.$CFG->config['subclass_prefix'].'Controller.php';
+		$O2->db->close();
 	}
 
-	// Load the local application controller
-	// Note: The Router class automatically validates the controller path using the router->_validate_request().
-	// If this include fails it means that the default controller in the Routes.php file is not resolving to something valid.
-	if ( ! file_exists(APPPATH.'controllers/'.$RTR->fetch_directory().$RTR->fetch_class().'.php'))
-	{
-		show_error('Unable to load your default controller. Please make sure the controller specified in your Routes.php file is valid.');
-	}
-
-	include(APPPATH.'controllers/'.$RTR->fetch_directory().$RTR->fetch_class().'.php');
-
-	// Set a mark point for benchmarking
-	$BM->mark('loading_time:_base_classes_end');
 
 /* End of file O2System.php */
 /* Location: ./system/core/O2System.php */
