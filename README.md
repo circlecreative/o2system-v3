@@ -1,9 +1,9 @@
 o2system
 ========
 
-O2System is a new kick ass PHP Framework by <a href="www.circle-creative.com">Circle Creative</a>, based on <a href="www.codeigniter.com">CodeIgniter Framework</a> by <a href="www.ellislab.com"><EllisLab, Inc</a>
+O2System is a new kick ass PHP Framework by <a href="www.circle-creative.com">Circle Creative</a>, based on <a href="www.codeigniter.com">CodeIgniter Framework</a> by <a href="www.ellislab.com">EllisLab, Inc</a>
 
-This framework still on prototype version. Which is still has many bugs, but you are free to download it. Many class still using <a href="www.codeigniter.com">CodeIgniter Framework</a> by <a href="www.ellislab.com"><EllisLab, Inc</a>. class, We didn't erase their copyright note for respecting their code ownership.
+This framework still on prototype version. Which is still has many bugs, but you are free to download it. Many class still using <a href="www.codeigniter.com">CodeIgniter Framework</a> by <a href="www.ellislab.com">EllisLab, Inc</a>. class, We didn't erase their copyright note for respecting their code ownership.
 
 <h3>Released Scheduled</h3>
 O2System Framework will be published on version 2.0 Beta on December 2014 under MIT License. You can freely use it on your next web based application project.
