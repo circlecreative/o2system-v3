@@ -5,12 +5,12 @@ O2System is a new kick ass PHP Framework by <a href="www.circle-creative.com">Ci
 
 This framework still on prototype version. Which is still has many bugs, but you are free to download it. Many class still using <a href="www.codeigniter.com">CodeIgniter Framework</a> by <a href="www.ellislab.com"><EllisLab, Inc</a>. class, We didn't erase their copyright note for respecting their code ownership.
 
-<h3>Released Scheduled</a>
+<h3>Released Scheduled</h3>
 O2System Framework will be published on version 2.0 Beta on December 2014 under MIT License. You can freely use it on your next web based application project.
 
 Be a part of our O2System Framework development. Mail us at <a href="mailto:developer@circle-creative.com">developer@circle-creative.com</a> or <a href="mailto:steeven@circle-creative.com"> steeven@circle-creative.com</a>.
 
-<h3>Behind The Scene</a>
+<h3>Behind The Scene</h3>
 Why based on Codeigniter Framework?<br>
 Basically CodeIgniter is the most popular framework and has very good documentation, forum and etc. CodeIgniter has concept for Super Global Object and Get Instance this is really need by us on the O2System Framework. We know also that shifting into another framework is really need new adaptation, reading many documentation, get to learn from tutorial and the big problem is if you had a bunch of codes that you need to use and is all on CodeIgniter version.
 
