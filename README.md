@@ -16,7 +16,7 @@ Basically CodeIgniter is the most popular framework and has very good documentat
 
 The bottom lines is we create this new framework to fullfill our and your needs for building best web based application with HMVC (Hierarchical model–view–controller) concept. With O2System you can done it in the wright way, because you can build very modular modules, parenting classess, integrated applications in one framework system, and many other features.
 
-<h4>Credits<h4>
+<h4>Credits</h4>
 Lead Programmer: Steeven Andrian Salim (steevenz.com)<br>
 Contributors: Wahyu Primadi
 
