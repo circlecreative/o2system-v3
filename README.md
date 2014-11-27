@@ -18,7 +18,30 @@ The bottom lines is we create this new framework to fullfill our and your needs 
 
 <h4>Credits</h4>
 Lead Programmer: Steeven Andrian Salim (steevenz.com)<br>
-Contributors: Wahyu Primadi
+
+<h3>Special Thanks</h3>
+My Lovely Wife zHa<br>
+My Little Princess Angie<br>
+My Little Prince Neal<br>
+<small>Thanks for all your supports, i love you all</small><br><br>
+
+James Parry (CodeIgniter Project Lead)<br>
+<small>Thanks for all your supports, assistance and advice</small><br><br>
+Viktor Iwan Kristanda (PT. Doxadigital Indonesia)<br>
+Alfi Rizka (Dedicated IT)<br>
+Wahyu Primadi (LittleOrange - Indonesia)<br>
+Sachin Pandey (Ecurser Technologies - India)<br>
+Ariza Novisa (eClouds Center - Indonesia)<br>
 
 <h3>Change Logs</h3>
-07 November 2014: Fixed working controllers
+07 November 2014: <br>
+- Fixed working controllers<br><br>
+27 November 2014:<br>
+- Licensing all source code<br>
+- Combined libraries, helpers with CodeIgniter<br>
+- Fixed Core Classes and Bootstrap
+- Simulation for loading apps, models, controllers<br>
+
+<h3>Things to Do</h3>
+- Testing loading drivers, helpers<br>
+- Testing database connection
