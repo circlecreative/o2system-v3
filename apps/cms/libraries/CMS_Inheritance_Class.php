@@ -1,6 +1,6 @@
 <?php
 
-class CMS_Inheritance_Class extends App_Inheritance_Class
+class Cms_Inheritance_Class extends App_Inheritance_Class
 {
 	public function __construct()
 	{

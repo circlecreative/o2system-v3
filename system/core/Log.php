@@ -130,7 +130,7 @@ class CI_Log
 	{
 		$this->_config = config_item('log');
 
-		$this->_log_path = ($this->_config['path'] !== '') ? $this->_config['path'] : APPSPATH.'logs/';
+		$this->_log_path = ($this->_config['path'] !== '') ? APPSPATH.$this->_config['path'].'/' : APPSPATH.'logs/';
 		$this->_file_ext = (isset($this->_config['file_extension']) && $this->_config['file_extension'] !== '')
 			? ltrim($this->_config['file_extension'], '.') : 'php';
 
