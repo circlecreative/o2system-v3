@@ -24,7 +24,7 @@
  * @author		ExpressionEngine Dev Team
  * @link		http://codeigniter.com/user_guide/general/errors.html
  */
-class Core_Log {
+class O2_Log {
 
 	protected $_log_path;
 	protected $_threshold	= 1;

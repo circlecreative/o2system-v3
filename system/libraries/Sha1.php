@@ -42,7 +42,7 @@
  * @author		ExpressionEngine Dev Team
  * @link		http://codeigniter.com/user_guide/general/encryption.html
  */
-class Core_SHA1 {
+class O2_SHA1 {
 
 	public function __construct()
 	{
@@ -245,7 +245,7 @@ class Core_SHA1 {
 		return bindec($bin);
 	}
 }
-// END Core_SHA
+// END O2_SHA
 
 /* End of file Sha1.php */
 /* Location: ./system/libraries/Sha1.php */

@@ -1,0 +1,89 @@
+.tree {
+    overflow: visible;
+}
+.branch-tree ul {
+    position: relative;
+    top: -13px;
+    left:0px;
+}
+.branch-tree li a {
+    position: relative;
+    top: 10px;
+    left: 10px;
+}
+.branch-tree li {
+    list-style-type:none;
+    margin:0;
+    padding:0px 5px 0 5px;
+    position:relative;
+    left:5px;
+    top:-5px;
+}
+.branch-tree li ul {
+    position: relative;
+    top: 5px;
+    left: -1px;
+    overflow: visible;
+    margin: 0px;
+}
+.branch-tree li::before, .branch-tree li::after {
+    content:'';
+    left:-20px;
+    position:absolute;
+    right:auto
+}
+.branch-tree li::before {
+    border-left:1px solid #ebebeb;
+    bottom:50px;
+    height:125%;
+    top:0px;
+    width:1px;
+    left:0px;
+    z-index: 0;
+}
+.branch-tree li::after {
+    border-top:1px solid #ebebeb;
+    height:20px;
+    top:30px;
+    width:20px;
+    left:0px;
+
+}
+.branch-tree>ul>li>.branch-tree-action {
+    left:-10px;
+    background-color: #fff;
+}
+
+.branch-tree li .branch-tree-action {
+    border:1px solid #ebebeb;
+    display:inline-block;
+    padding:3px 8px;
+    text-decoration:none;
+    position: relative;
+    top: 18px;
+    left: 15px;
+    z-index: 1;
+    max-width: 272px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.branch-tree li.parent_li>.branch-tree-action {
+    cursor:pointer
+}
+.branch-tree>ul>li::before, .branch-tree>ul>li::after {
+    border:0px;
+}
+.branch-tree li:last-child::before {
+    height:30px;
+}
+.branch-tree li.parent_li>.branch-tree-action:hover, .branch-tree li.parent_li>.branch-tree-action:hover+ul li .branch-tree-action {
+    background:#eee;
+    border:1px solid #94a0b4;
+    color:#000
+}
+.branch-tree .branch-tree-name {
+    padding-left: 3px;
+    position: relative;
+    top:-1px;
+}

@@ -1,0 +1,73 @@
+div.orgChart {
+    margin                : 10px;
+    padding               : 20px;
+}
+
+.orgChart .title {
+	font-size: 18px;
+}
+
+div.orgChart ul {
+    list-style            : none;
+    margin                : 4px;
+    padding               : 0px;
+    font-size             : 0.8em;
+    text-align            : left;
+}
+
+div.orgChart ul.stack,
+div.orgChart ul.stack ul {
+    text-align            : center;
+}
+
+div.orgChart table {
+    width                 : 100%;
+}
+
+div.orgChart tr.lines td.line {
+    width                 : 1px;
+    height                : 20px;
+}
+
+div.orgChart tr.lines td.top {
+    border-top            : 1px solid #ccc;
+}
+
+div.orgChart tr.lines td.left {
+    border-right          : 1px solid #ccc;
+}
+
+div.orgChart tr.lines td.right {
+    border-left           : 1px solid #ccc;
+}
+
+div.orgChart td {
+    text-align            : center;
+    vertical-align        : top;
+    padding               : 0px;
+}
+
+div.orgChart div.node {
+    cursor                : default;
+    border                : 1px solid #ccc;
+    background-color      : #f6f6f6; 
+    display               : inline-block;
+    padding               : 10px 15px 15px 15px;
+    line-height           : 1.3em;
+    border-radius         : 4px;
+    moz-border-radius	  : 4px;
+    margin-right: 0.333333%;
+    margin-left:5px;
+}
+
+div.orgChart div.hasChildren {
+
+}
+
+div.orgChart.interactive div.hasChildren {
+    cursor: pointer;
+}
+
+div.orgChart div.node.hover {
+    background-color: white;
+}

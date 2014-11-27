@@ -1,19 +1,44 @@
-<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php
 /**
  * O2System
  *
- * An open source application development framework for PHP 5.1.6 or newer
+ * An open source application development framework for PHP 5.2.4 or newer
+ *
+ * This content is released under the MIT License (MIT)
+ *
+ * Copyright (c) 2014, PT. Lingkar Kreasi (Circle Creative).
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  *
  * @package		O2System
  * @author		Steeven Andrian Salim
  * @copyright	Copyright (c) 2005 - 2014, PT. Lingkar Kreasi (Circle Creative).
  * @license		http://circle-creative.com/products/o2system/license.html
+ * @license	    http://opensource.org/licenses/MIT	MIT License
  * @link		http://circle-creative.com
  * @since		Version 2.0
  * @filesource
  */
 
 // ------------------------------------------------------------------------
+
+defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
  * System Router
@@ -27,7 +52,7 @@
  * @link		http://circle-creative.com/products/o2system/user-guide/core/router.html
  */
 
-class Core_Router
+class O2_Router
 {
 	private $_config;
 	public $default_controller;
@@ -44,6 +69,8 @@ class Core_Router
 		// Parse any custom routing that may exist
 		$this->_parse_routes();
 	}	
+
+	// ------------------------------------------------------------------------
 
 	/**
 	 * Set the route mapping
@@ -69,25 +96,25 @@ class Core_Router
 		global $URI;
 
 		if( $URI->string == '' OR 
-			$URI->string == $URI->active->lang OR 
-			$URI->string == $URI->active->app->name OR
-			$URI->string == $URI->active->app->name.'/'.$URI->active->lang
+			$URI->string == $URI->request->lang OR 
+			$URI->string == $URI->request->app->parameter OR
+			$URI->string == $URI->request->app->parameter.'/'.$URI->request->lang
 		  )
 		{
-			$URI->set_uri($URI->active->app->name.'/'.$this->default_controller, TRUE);	
+			$URI->_set($URI->request->app->parameter.'/'.$this->default_controller, TRUE);	
 		}
 
-		if(empty($URI->active->method))
+		if(empty($URI->request->method))
 		{
 			if($URI->is_method_request($URI->segment(3)) === FALSE AND $URI->is_method_request('_remap') === FALSE AND $URI->is_method_request('index') === TRUE)
 			{
-				$route_uri_string = str_replace($URI->active->controller->name, $URI->active->controller->name.'/index', $URI->string);
-				$URI->set_uri($URI->active->app->name.'/'.$route_uri_string, TRUE);
+				$route_uri_string = str_replace($URI->request->controller->name, $URI->request->controller->name.'/index', $URI->string);
+				$URI->_set($URI->request->app->parameter.'/'.$route_uri_string, TRUE);
 			}
 			elseif($URI->is_method_request('_remap') === TRUE)
 			{
-				$route_uri_string = str_replace($URI->active->controller->name, $URI->active->controller->name.'/_remap', $URI->string);
-				$URI->set_uri($URI->active->app->name.'/'.$route_uri_string, TRUE);
+				$route_uri_string = str_replace($URI->request->controller->name, $URI->request->controller->name.'/_remap', $URI->string);
+				$URI->_set($URI->request->app->parameter.'/'.$route_uri_string, TRUE);
 			}
 			elseif($URI->is_method_request('_remap') === FALSE)
 			{
@@ -95,12 +122,20 @@ class Core_Router
 			}
 		}
 
-		if(empty($URI->active->module) AND empty($URI->active->controller))
+		if(empty($URI->request->module) AND empty($URI->request->controller))
 		{
 			$this->_error_routes();
 		}
 	}
 
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Set the error route mapping
+	 *
+	 * @access	private
+	 * @return	void
+	 */
 	private function _error_routes()
 	{
 		global $URI;
@@ -112,8 +147,10 @@ class Core_Router
 
 		$error_segments = array_merge($error_segments, array('index', $error_code));
 
-		$URI->set_uri($URI->active->app->name.'/'.implode('/',$error_segments), TRUE);
+		$URI->_set($URI->request->app->parameter.'/'.implode('/',$error_segments), TRUE);
 	}
+
+	// ------------------------------------------------------------------------
 
 	/**
 	 *  Parse Routes
@@ -152,10 +189,11 @@ class Core_Router
 					$val = preg_replace('#'.$key.'$#', $val, $URI->string);
 				}
 
-				$URI->set_uri($URI->active->app->name.'/'.$val);
+				$URI->_set($URI->request->app->parameter.'/'.$val);
 			}
 		}
 	}
-
-	// --------------------------------------------------------------------
 }
+
+/* End of file Router.php */
+/* Location: ./system/core/Router.php */

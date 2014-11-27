@@ -1,0 +1,64 @@
+/* Progress Bar */
+#progress-bar {
+    position: fixed;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    background-color:#fff; /* change if the mask should have another color then white */
+    z-index:999000; /* makes sure it stays on top */
+}
+
+#progress-status {
+    width:200px;
+    height:200px;
+    position:absolute;
+    left:50%; /* centers the loading animation horizontally one the screen */
+    top:50%; /* centers the loading animation vertically one the screen */
+    background-image:url(../images/loading.gif); /* path to your loading animation */
+    background-repeat:no-repeat;
+    background-position:center;
+    margin:-100px 0 0 -100px; /* is width and height divided by two */
+}
+#progress-bar {
+  position: fixed;
+  z-index: 999000;
+  top: 0;
+  left: -6px;
+  width: 1%;
+  height: 5px;
+  background: #c9312c;
+  -moz-border-radius: 1px;
+  -webkit-border-radius: 1px;
+  border-radius: 1px;
+  -moz-transition: width 500ms ease-out,opacity 400ms linear;
+  -ms-transition: width 500ms ease-out,opacity 400ms linear;
+  -o-transition: width 500ms ease-out,opacity 400ms linear;
+  -webkit-transition: width 500ms ease-out,opacity 400ms linear;
+  transition: width 500ms ease-out,opacity 400ms linear;
+}
+
+#progress-bar dd, #progress-bar dt {
+  position: absolute;
+  top: 0;
+  height: 2px;
+  -moz-box-shadow: #C9312C 1px 0 6px 1px;
+  -ms-box-shadow: #C9312C 1px 0 6px 1px;
+  -webkit-box-shadow: #C9312C 1px 0 6px 1px;
+  box-shadow: #C9312C 1px 0 6px 1px;
+  -moz-border-radius: 100%;
+  -webkit-border-radius: 100%;
+  border-radius: 100%;
+}
+#progress-bar dt {
+  opacity: .6;
+  width: 180px;
+  right: -80px;
+  clip: rect(-6px,90px,14px,-6px);
+}
+#progress-bar dd {
+  opacity: .6;
+  width: 20px;
+  right: 0;
+  clip: rect(-6px,22px,14px,10px);
+} 

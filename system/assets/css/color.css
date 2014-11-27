@@ -1,0 +1,33 @@
+/* TEXT */
+.white-text { color:#fff !important;}
+
+/* BACKGROUND */
+.black-bg { background-color: #000 !important; }
+.white-bg { background-color: #fff !important; }
+.light-grey-bg { background-color: #f6f6f6 !important; }
+
+/* BORDER */
+.white-border, .white-border th, .white-border td { border-color: #fff !important; }
+
+/* STATE */
+td.active { background-color: #ebebeb !important; border-color: #ebebeb !important; }
+
+.hover-green:hover {
+	border-color: #abcd05 !important;
+	background-color: #ebf8c3 !important;
+	color: #719700 !important;
+}
+
+.hover-green:hover a {
+	color: #719700 !important;
+}
+
+.hover-teal:hover {
+	border-color: #1a5588 !important;
+	background-color: #c6d1db !important;
+	color: #1a5588 !important;
+}
+
+.hover-teal:hover a {
+	color: #1a5588 !important;
+}
