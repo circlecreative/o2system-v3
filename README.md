@@ -48,7 +48,7 @@ Ariza Novisa (eClouds Center - Indonesia)<br>
 
 <h3>Change Logs</h3>
 07 November 2014: <br>
-- Fixed working controllers<br><br>
+- Fixed working controllers<br>
 27 November 2014:<br>
 - Licensing all source code<br>
 - Combined libraries, helpers with CodeIgniter<br>
