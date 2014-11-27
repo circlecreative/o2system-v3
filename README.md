@@ -12,12 +12,25 @@ Be a part of our O2System Framework development. Mail us at <a href="mailto:deve
 
 <h3>Behind The Scene</h3>
 Why based on Codeigniter Framework?<br>
-Basically CodeIgniter is the most popular framework and has very good documentation, forum and etc. CodeIgniter has concept for Super Global Object and Get Instance this is really need by us on the O2System Framework. We know also that shifting into another framework is really need new adaptation, reading many documentation, get to learn from tutorial and the big problem is if you had a bunch of codes that you need to use and is all on CodeIgniter version.
+Basically CodeIgniter is the most popular framework and has very good documentation, forum and etc. CodeIgniter has concept for Super Global Object and Get Instance this is really need by us on the O2System Framework. We know also that shifting into another framework is really need new adaptation, reading many documentation, get to learn from tutorial and the big problem is if you had a bunch of codes that you need to use and is all on CodeIgniter version or others, with O2System is very easy to import the classes especially for CodeIgniter.
 
-The bottom lines is we create this new framework to fullfill our and your needs for building best web based application with HMVC (Hierarchical model–view–controller) concept. With O2System you can done it in the wright way, because you can build very modular modules, parenting classess, integrated applications in one framework system, and many other features.
+The bottom lines is we create this new framework to fullfill our and your needs for building best web based application with HMVC (Hierarchical model–view–controller) concept. With O2System you can done it in the right way, because you can build very modular modules, parenting classes, integrated applications in one framework system, and many other features.
+
+<h3>Special Features</h3>
+- O2System now can working with all CodeIgniter classes, just easy as copy and paste the files.<br>
+- O2System can load models, libraries and soon will be also controllers, drivers, helpers (not just tested yet) accross apps and modules.
+- O2System now has Developer features, for make you more easier at development. Try to print_out($variables) or print_out($array).
+
+<h3>Download it right now!</h3>
+Now O2System can be tested by public. By default on this prototype the main app is site app and the default controller is frontpage module. Try to access the welcome page, and tested for the developer helpers. Is awesome!<br>
+At this prototype i making example for making website with separated content management system access.
+
+<h3>Strict Rules</h3>
+- O2System URL Design Patterns is not supporting for accessing by GET like on CodeIgniter. Is only as SEF URL only, but with get array ON!
 
 <h4>Credits</h4>
-Lead Programmer: Steeven Andrian Salim (steevenz.com)<br>
+Founder and Lead Projects: Steeven Andrian Salim (steevenz.com)<br>
+<small>Please kindly visit my <a href="http://cv.steevenz.com">Online CV</a></small>
 
 <h3>Special Thanks</h3>
 My Lovely Wife zHa<br>
@@ -43,5 +56,5 @@ Ariza Novisa (eClouds Center - Indonesia)<br>
 - Simulation for loading apps, models, controllers<br>
 
 <h3>Things to Do</h3>
-- Testing loading drivers, helpers<br>
+- Testing loading controllers, drivers, helpers<br>
 - Testing database connection
