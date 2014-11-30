@@ -175,7 +175,7 @@ $config['allow_get'] = TRUE;
 | your log files will fill up very fast.
 |
 */
-$config['log']['threshold'] = 0;
+$config['log']['threshold'] = 4;
 
 /*
 |--------------------------------------------------------------------------
@@ -234,7 +234,9 @@ $config['log']['file_permissions'] = 0644;
 | system/cache/ folder.  Use a full server path with trailing slash.
 |
 */
+$config['cache']['driver'] = 'file';
 $config['cache']['path'] = 'cache';
+$config['cache']['expired'] = 7200;
 
 /*
 |--------------------------------------------------------------------------

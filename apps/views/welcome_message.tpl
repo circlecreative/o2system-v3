@@ -64,7 +64,7 @@
                         <p>Memory Usage is <strong>{memory_get_usage()}</strong> bytes</p>
                     </div>
                     <div class="panel-footer">
-                        Powered by O2SYSTEM Framework by <a href="www.circle-creative.com">Circle Creative</a>
+                        POWERED BY O2SYSTEM 2.0 BY PT. LINGKAR KREASI (CIRCLE CREATIVE)
                     </div>
                 </div>
             </div>

@@ -1,4 +1,5 @@
 <?php
+<?php
 /**
  * O2CMS
  *
@@ -54,7 +55,6 @@
 // ------------------------------------------------------------------------
 
 defined('BASEPATH') OR exit('No direct script access allowed');
-
 class Cms_Controller extends App_Controller
 {
 	public function __construct()

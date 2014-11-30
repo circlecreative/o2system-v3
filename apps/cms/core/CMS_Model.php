@@ -55,7 +55,7 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Cms_Model extends App_Model
+class CMS_Model extends App_Model
 {
 	public function __construct()
 	{

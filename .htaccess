@@ -30,28 +30,21 @@
 # @license		http://circle-creative.com/products/o2system/license.html
 # @license	    http://opensource.org/licenses/MIT	MIT License
 # @link		    http://circle-creative.com
-# @since		Version 2.0
-# @filesource
 
-# // ------------------------------------------------------------------------
-
-# Block Folder Indexing
-Options -Indexes
-IndexOptions -FancyIndexing
-
-Options +FollowSymLinks -MultiViews
+########## Mod Rewrite ON
 RewriteEngine On
-# RewriteBase /
+#RewriteBase /webapps/o2app/
 
-# // ------------------------------------------------------------------------
-
-# Begin - Rewrite rules to block out some common exploits
-
+########## Mod Rewrite rules to block out some common exploits
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_URI} !^/index.php
-RewriteCond %{REQUEST_URI} (/|\.php|\.html|\.htm|\.feed|\.pdf|\.raw|\.jpg|\.jpeg|\.png|\.gif|/[^.]#)$  [NC]
+RewriteCond %{REQUEST_URI} (/|\.php|\.html|\.htm|\.feed|\.pdf|\.raw|\.jpg|\.jpeg|\.png|\.gif|/[^.]*)$  [NC]
 
-RewriteRule ^(.#)$ index.php/$1 [L]
+RewriteRule ^(.*)$ index.php/$1 [L]
 
-# End - Rewrite rules to block out some common exploits
+########## Block Folder Indexing
+Options -Indexes +FollowSymLinks -MultiViews
+IndexOptions -FancyIndexing
+
+########## End of .htaccess settings

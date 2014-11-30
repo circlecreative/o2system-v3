@@ -79,6 +79,11 @@ class Site_Error extends App_Error
 	public function index($code = '404')
 	{
 		$this->_set_title('404 - Page Not Found');
-		$this->load->template('AUTO', '404')->view('error_page');
+        $this->load->vars(array(
+           'error_code' => '404',
+            'error_title' => 'Page Not Found',
+            'error_message' => 'Oooppss, page not found!'
+        ));
+		$this->load->theme()->layout('error')->view();
 	}
 }

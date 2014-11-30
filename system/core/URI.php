@@ -157,6 +157,8 @@ class O2_URI
 
 		// Set App URL
 		$this->get_app_url();
+
+		log_message('debug', "URI Class Initialized");
 	}
 
 	/**
@@ -561,29 +563,13 @@ class O2_URI
 
 		// Convert programatic characters to entities and return
 		return str_replace(
-			array('$',     '(',     ')',     '%28',   '%29'),	// Bad
-			array('&#36;', '&#40;', '&#41;', '&#40;', '&#41;'),	// Good
+			array('$',     '(',     ')',     '%28',   '%29','-', $this->_config['suffix']),	// Bad
+			array('&#36;', '&#40;', '&#41;', '&#40;', '&#41;','_',''),	// Good
 			$string
 		);
 	}
 
 	// --------------------------------------------------------------------	
-
-	/**
-	 * Remove the suffix from the URL if needed
-	 *
-	 * @access	private
-	 * @return	void
-	 */
-	private function _remove_url_suffix()
-	{
-		if  ($this->_config['suffix'] != '')
-		{
-			$this->string = preg_replace('|'.preg_quote($this->_config['suffix']).'$|', '', $this->string);
-		}
-	}
-
-	// --------------------------------------------------------------------
 
 	/**
 	 * Set URI Request Registry

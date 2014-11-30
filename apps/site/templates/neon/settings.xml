@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<settings layout="index.tpl" type="multipages">
-	<positions>header, sub-header, inset, inset-left1, inset-left2, inset-bottom, inset-bottom1, inset-bottom2, inset-bottom3, inset-bottom4, footer, middle-footer, showcase</positions>
-	<navigations>header, footer, sidebar</navigations>
-	<watermark>image</watermark>			
-</settings>

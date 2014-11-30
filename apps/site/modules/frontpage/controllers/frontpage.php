@@ -60,78 +60,14 @@ class Site_Frontpage extends Site_Controller
 	public function __construct()
 	{
 		parent::__construct();
-
-		print_line_marker('Loader Testing');
-
-		print_line_marker('Load Model Testing', 'START', 10);
-
-		print_line_marker('Load System Model Testing: system/models/', 'START', 15);
-		$this->load->model('system');
-		print_line_marker('END');
-
-		print_line_marker('Load Root App Model Testing: apps/models/', 'START', 15);
-		$this->load->model('testing');
-		print_line_marker('END');
-
-		print_line_marker('Load Active App Model Testing: apps/site/models/', 'START', 15);
-		$this->load->model('settings');
-		print_line_marker('END');
-
-		print_line_marker('Test Load Active App Current Module Model: apps/site/modules/frontpage/models/', 'START', 15);
-		$this->load->model('frontpage');
-		print_line_marker('END');
-
-		print_line_marker('Test Load Active App Other Module Model: apps/site/modules/pages/models/', 'START', 15);
-		$this->load->model('pages');
-		print_line_marker('END');
-
-		print_line_marker('Test Load Other App Model: apps/cms/models/', 'START', 15);
-		$this->load->model('cms/settings');
-		print_line_marker('END');
-
-		print_line_marker('Test Load Other App Module Model: apps/cms/modules/dashboard/models/', 'START', 15);
-		$this->load->model('cms/dashboard');
-		print_line_marker('END');
-
-		print_line_marker('Load Model Testing', 'END', 10);
-
-		print_line_marker('Load Library Testing', 'START', 10);
-
-		print_line_marker('Test Load Standalone App Libraries', 'START', 15);
-		$this->load->library('app_standalone');
-		print_line_marker('END');
-
-		print_line_marker('Test Load Standalone Active Module Class', 'START', 15);
-		$this->load->library('frontpage_standalone');
-		print_line_marker('END');
-
-		print_line_marker('Test Load Inheritance Class', 'START', 15);
-		$this->load->library('inheritance_class');
-		print_line_marker('END');
-
-		print_line_marker('Test Load Other App Standalone Class: apps/cms/libraries/', 'START', 15);
-		$this->load->library('cms/standalone_class');
-		print_line_marker('END');
-
-		print_line_marker('Test Load Other App Module Standalone Class: apps/cms/modules/dashboard/libraries/', 'START', 15);
-		$this->load->library('cms/dashboard/dashboard_standalone');
-		print_line_marker('END');
-
-		print_line_marker('Test Load Other App Module Inheritance Class: apps/cms/modules/dashboard/libraries/', 'START', 15);
-		$this->load->library('cms/dashboard/inheritance_class',array(),'cms_inheritance');
-		print_line_marker('END');
-
-		print_line_marker('Load Library Testing', 'START', 10);
-
-		print_line_marker('Loader Testing', 'END');
-		print_lines('', TRUE);
 	}
 
 	public function index()
 	{
 		$this->load->library('user_agent');
 		
-		$this->_set_title('Welcome to Site Frontpage');
-		$this->load->template()->view('frontpage');
+		$this->_set_title('Hello World');
+		$this->load->theme()->view('frontpage');
+        //$this->load->view('frontpage');
 	}
 }

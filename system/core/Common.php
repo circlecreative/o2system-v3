@@ -945,6 +945,24 @@ if ( ! function_exists('prepare_class_name'))
 // ------------------------------------------------------------------------
 
 /**
+ * Returns Fixed Name from Parameter
+ *
+ * @param	$parameter  string  Parameter
+ * @return	mixed
+ */
+if ( ! function_exists('prepare_parameter_name'))
+{
+    function prepare_parameter_name($parameter)
+    {
+        $parameter = prepare_class_name($parameter);
+        $name = str_replace('_',' ', $parameter);
+
+        return $name;
+    }
+}
+// ------------------------------------------------------------------------
+
+/**
  * Function usable
  *
  * Executes a function_exists() check, and if the Suhosin PHP

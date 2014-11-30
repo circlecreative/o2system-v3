@@ -1,0 +1,7 @@
+{
+    "require": {
+        "twig/twig": "~1.0",
+        "smarty/smarty": "~3.1",
+        "erusev/parsedown": "dev-master"
+    }
+}

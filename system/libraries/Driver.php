@@ -89,7 +89,7 @@ class CI_Driver_Library
 	 * @param	string	Driver name (w/o parent prefix)
 	 * @return	object	Child class
 	 */
-	public function load_driver($child)
+	public function load_driver($library)
 	{
 		// Get CodeIgniter instance and subclass prefix
 		global $URI;
@@ -102,55 +102,37 @@ class CI_Driver_Library
 			$this->lib_name = str_replace(array('O2_', 'CI_', $prefix), '', get_class($this));
 		}
 
-		// The child will be prefixed with the parent lib
-		$child_name = strtolower( $this->lib_name.'_'.$child );
-		$child_class = prepare_class_name( get_class($this).'_'.$child );
-
-		// See if requested child is a valid driver
-		if ( ! in_array($child_name, $this->valid_drivers))
-		{
-			// The requested driver isn't valid!
-			$msg = 'Invalid driver requested: '.$child_name;
-			log_message('error', $msg);
-			show_error($msg);
-		}
+		// The library will be prefixed with the parent lib
+		$driver_name = strtolower( $this->lib_name.'_'.$library );
+		$driver_class = prepare_class_name( get_class($this).'_'.$library );
 
 		// Get package paths and filename case variations to search
 		$O2 = get_instance();
-		$drivers_paths = $O2->load->get_drivers_paths();
+		$drivers_registry = $O2->load->get_drivers_registry($this->lib_name);
+        $this->valid_drivers = array_keys($drivers_registry->drivers->files);
 
-		// Prepare child class filename
-		$filename = prepare_class_name($child_name);
-
-		if (in_array($child_name, array_map('strtolower', $this->valid_drivers)))
+		if(in_array($driver_name, $this->valid_drivers))
 		{
-			if(isset($drivers_paths->{ $this->lib_name }->drivers))
-			{
-				if(isset($drivers_paths->{ $this->lib_name }->drivers->files[$child_name]))
-				{
-					$filepath = $drivers_paths->{ $this->lib_name }->drivers->files[$child_name];
-					include_once $filepath;
-				}
-			}
+			include_once $drivers_registry->drivers->files[ $driver_name ];
 
 			// it's a valid driver, but the file simply can't be found
-			if ( ! class_exists($child_class))
+			if ( ! class_exists($driver_class))
 			{
-				$msg = 'Unable to load the requested driver: '.$child_name;
+				$msg = 'Unable to load the requested driver: '.$driver_name;
 				log_message('error', $msg);
 				show_error($msg);
 			}
 
-			// Instantiate, decorate and add child
-			$obj = new $child_class();
+			// Instantiate, decorate and add library
+			$obj = new $driver_class();
 			$obj->decorate($this);
-			$this->$child = $obj;
-			return $this->$child;
+			$this->$library = $obj;
+			return $this->$library;
 		}
 
 		// The requested driver isn't valid!
-		log_message('error', "Invalid driver requested: ".$child_class);
-		show_error("Invalid driver requested: ".$child_class);
+		log_message('error', "Invalid driver requested: ".$driver_name);
+		show_error("Invalid driver requested: ".$driver_name);
 	}
 
 }

@@ -44,6 +44,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @subpackage	Libraries
  * @category	Core
  * @author		EllisLab Dev Team
+ * @contributor Steeven Andrian Salim
  * @link
  */
 class CI_Cache extends CI_Driver_Library {
@@ -141,6 +142,20 @@ class CI_Cache extends CI_Driver_Library {
 	}
 
 	// ------------------------------------------------------------------------
+
+	/**
+	 * Set Path
+	 *
+	 * Set Cache Path
+	 *
+	 * @param	string	$id
+	 * @return	mixed	value matching $id or FALSE on failure
+	 */
+	public function set_path($path)
+	{
+		return $this->{$this->_adapter}->_cache_path = $path;
+	}
+	// ------------------------------------------------------------------------	
 
 	/**
 	 * Get

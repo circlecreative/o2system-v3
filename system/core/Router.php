@@ -68,6 +68,8 @@ class O2_Router
 
 		// Parse any custom routing that may exist
 		$this->_parse_routes();
+
+		log_message('debug', "Router Class Initialized");
 	}	
 
 	// ------------------------------------------------------------------------

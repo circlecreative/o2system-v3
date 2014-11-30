@@ -122,6 +122,8 @@ class O2_System
 
 		// Fetch Apps Map Folders
 		$this->_fetch_apps();
+
+		log_message('debug', "System Class Initialized");
 	}
 
 	// ------------------------------------------------------------------------
@@ -228,7 +230,7 @@ class O2_System
 	 */
 	private function _fetch_packages($map, $path)
 	{
-		$new_map = new stdClass;
+		$new_map = new O2_System_Registry;
 
 		foreach($map as $folder => $files)
 		{
@@ -238,7 +240,9 @@ class O2_System
 			}
 			else
 			{
-				@$new_map->{$folder}->path = $path.$folder.'/';
+                $new_map->{ strtolower($folder) } = new O2_System_Registry;
+
+				@$new_map->{ strtolower($folder) }->path = $path.$folder.'/';
 			}
 
 			if(is_array($files))
@@ -247,22 +251,22 @@ class O2_System
 				{
 					if(!is_array($filename) AND !is_numeric($filename))
 					{
-						$new_map->{$folder}->files[ strtolower( pathinfo($filename, PATHINFO_FILENAME) ) ] = $new_map->{$folder}->path . $filename;
+						$new_map->{ strtolower($folder) }->files[ strtolower( pathinfo($filename, PATHINFO_FILENAME) ) ] = $new_map->{ strtolower($folder) }->path . $filename;
 					}
 					elseif(is_array($filename))
 					{
-						$new_map->{$folder}->{$filepath} = $this->_fetch_packages($filename, $new_map->{$folder}->path.$filepath.'/');
+						$new_map->{ strtolower($folder) }->{ strtolower($filepath) } = $this->_fetch_packages($filename, $new_map->{ strtolower($folder) }->path.$filepath.'/');
 					}
 				}
 			}
 			elseif(!is_numeric($folder) AND is_string($files) )
 			{
-				$new_map->{$folder}->filename = pathinfo($files, PATHINFO_FILENAME);
-				$new_map->{$folder}->filepath = $new_map->{$folder}->path . $files;
+				$new_map->{ strtolower($folder) }->filename = pathinfo($files, PATHINFO_FILENAME);
+				$new_map->{ strtolower($folder) }->filepath = $new_map->{$folder}->path . $files;
 			}
 			else
 			{
-				$new_map->files[ pathinfo($files, PATHINFO_FILENAME) ] = $new_map->path . $files;
+				$new_map->files[ strtolower( pathinfo($files, PATHINFO_FILENAME) ) ] = $new_map->path . $files;
 			}
 		}
 
@@ -424,6 +428,13 @@ class O2_System_Class_Registry
 	public $path;
 
 	/**
+	 * Class Filename 
+	 *
+	 * @var	string
+	 */
+	public $filename;
+
+	/**
 	 * Class Filepath 
 	 *
 	 * @var	string
@@ -500,7 +511,21 @@ class O2_System_Registry
 			}
 		}
 	}
-} 
+}
+
+class O2_System_Theme_Registry
+{
+    public $parameter;
+    public $path;
+    public $URL;
+    public $screenshot;
+    public $layout;
+    public $blocks;
+    public $pages;
+    public $modules;
+    public $details;
+    public $settings;
+}
 
 /* End of file System.php */
 /* Location: ./system/core/System.php */

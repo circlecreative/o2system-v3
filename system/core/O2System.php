@@ -187,19 +187,21 @@ if ( ! is_php('5.4'))
  * ------------------------------------------------------
  */
 	$O2SYSTEM =& load_class('System', 'core');
-
+	//print_out($O2SYSTEM);
 /*
  * ------------------------------------------------------
  *  Load the URI Class
  * ------------------------------------------------------
  */
 	$URI =& load_class('URI', 'core');
+	//print_out($URI);
 /*
  * ------------------------------------------------------
  *  Instantiate the config class
  * ------------------------------------------------------
  */
 	$CFG =& load_class('Config', 'core');		
+	//print_out($CFG);
 
 /*
  * ------------------------------------------------------
@@ -284,34 +286,35 @@ if ( ! is_php('5.4'))
  *
  */
 	$UNI =& load_class('UTF8', 'core', 'CI');	
-
+	//print_out($UNI);
 /*
  * ------------------------------------------------------
  *  Instantiate the routing class and set the routing
  * ------------------------------------------------------
  */
 	$RTR =& load_class('Router', 'core');
-
+	//print_out($RTR);
 /*
  * ------------------------------------------------------
  * Load the security class for xss and csrf support 
  * ------------------------------------------------------
  */
 	$SEC =& load_class('Security', 'core', 'CI');
-
+	//print_out($SEC);
 /*
  * ------------------------------------------------------
  * Load the security class for xss and csrf support
  * ------------------------------------------------------
  */
 	$IN =& load_class('Input', 'core', 'CI');	
-
+	//print_out($IN);
 /*
  * ------------------------------------------------------
  *  Instantiate the output class
  * ------------------------------------------------------
  */
 	$OUT =& load_class('Output', 'core', 'CI');
+	//print_out($OUT);
 
 /*
  * ------------------------------------------------------
@@ -329,6 +332,7 @@ if ( ! is_php('5.4'))
  * ------------------------------------------------------
  */
 	$LANG =& load_class('Lang', 'core');	
+	//print_out($LANG);
 
 	// Mark a o2system benchmark end point
 	$BM->end('o2system');
@@ -350,23 +354,6 @@ if ( ! is_php('5.4'))
 
 /*
  * ------------------------------------------------------
- *  Should we use a Composer autoloader?
- * ------------------------------------------------------
- */
-	if ($composer_autoload = config_item('composer_autoload'))
-	{
-		if ($composer_autoload === TRUE && file_exists(APPSPATH.'vendor/autoload.php'))
-		{
-			require_once(APPSPATH.'vendor/autoload.php');
-		}
-		elseif (file_exists($composer_autoload))
-		{
-			require_once($composer_autoload);
-		}
-	}	
-
-/*
- * ------------------------------------------------------
  *  Is there a "pre_controller" hook?
  * ------------------------------------------------------
  */
@@ -381,6 +368,7 @@ if ( ! is_php('5.4'))
 	$BM->start('controller');
 
 	$O2 = new $request_controller();
+	//print_out($BM);
 
 /*
  * ------------------------------------------------------
