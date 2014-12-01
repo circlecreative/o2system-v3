@@ -1,5 +1,5 @@
 {
-    "name": "o2system",
+    "name": "o2system/o2system",
     "type": "php-framework",
     "description": "O2System Framework - Open Source PHP Framework based on CodeIgniter Framework",
     "keywords": ["php framework","codeigniter","HMVC","Modular HMVC","MVC"],
