@@ -25,7 +25,10 @@
         "forum": "https://www.facebook.com/groups/498147006994512"
     },
     "require": {
-        "php": ">=5.2"
+        "php": ">=5.2",
+        "twig/twig": "~1.0",
+        "smarty/smarty": "~3.1",
+        "codeigniter/codeigniter": "3.0-dev"
     },
     "extra": {
         "branch-alias": {
