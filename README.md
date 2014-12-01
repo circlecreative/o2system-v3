@@ -3,12 +3,20 @@ O2System
 
 O2System is a new Dynamic Open Source PHP Framework by <a href="www.circle-creative.com">Circle Creative</a>, based on <a href="www.codeigniter.com">CodeIgniter Framework</a>. CodeIgniter was created by <a href="www.ellislab.com">EllisLab, Inc</a>, and is now a project of the <a href="http://www.bcit.ca/cas/computing/">British Columbia Institute of Technology</a>.
 
-O2System is now release in Beta Version. If you find any bugs, please kindly report it to us. We'll fixed it as soon as possible.
+<h3>History</h3>
+O2System first created by PT. Lingkar Kreasi (Circle Creative) in 2009 as closed source for O2CMS v1.0 development purposed. 
+The project was stopped in 2011 and turned into Third Party HMVC for CodeIgniter Framework in 2012, but in November 2014 we decided to turn it back into a framework with HMVC concept and we published it as Open Source PHP Framework under MIT License.
 
 <h3>Released Scheduled</h3>
+24 November 2014 (Prototype Version)<br>
+Has many bugs, and still using many class from CodeIgniter Framework<br><br>
+1 December 2014 (Beta Version)<br>
+O2System is now release in Beta Version. If you find any bugs, please kindly report it to us as an issued on Github so we can track it and we'll fixed it as soon as possible.<br>
+January 2014 (Alpha Version)<br>
 O2System Framework  version 2.0 Alpha will be published on January 2015 under MIT License. You can freely use it on your next web-based application project.
 
-Have any idea or suggestion? Mail us: <a href="mailto:developer@circle-creative.com">developer@circle-creative.com</a> or <a href="mailto:steeven@circle-creative.com"> steeven@circle-creative.com</a>.<br>
+Have any idea or suggestion? Mail us: <br>
+<a href="mailto:developer@circle-creative.com">developer@circle-creative.com</a> or <a href="mailto:steeven@circle-creative.com"> steeven@circle-creative.com</a>.<br>
 Be a part of O2System Framework Development.
 
 <h3>Behind The Scenes</h3>
