@@ -1,34 +1,43 @@
 o2system
 ========
 
-O2System is a new kick ass PHP Framework by <a href="www.circle-creative.com">Circle Creative</a>, based on <a href="www.codeigniter.com">CodeIgniter Framework</a>. CodeIgniter was created by <a href="www.ellislab.com">EllisLab, Inc</a>, and is now a project of the <a href="http://www.bcit.ca/cas/computing/">British Columbia Institute of Technology</a>.
+O2System is a new kicking ass Open Source PHP Framework by <a href="www.circle-creative.com">Circle Creative</a>, based on <a href="www.codeigniter.com">CodeIgniter Framework</a>. CodeIgniter was created by <a href="www.ellislab.com">EllisLab, Inc</a>, and is now a project of the <a href="http://www.bcit.ca/cas/computing/">British Columbia Institute of Technology</a>.
 
-O2System now release in Beta Version. If you find any bugs, please report it to us. We will fixed as soon as possible.
+O2System is now release in Beta Version. If you find any bugs, please kindly report it to us. We'll fixed it as soon as possible.
 
 <h3>Released Scheduled</h3>
-O2System Framework will be published on version 2.0 Beta on December 2014 under MIT License. You can freely use it on your next web based application project.
+O2System Framework  version 2.0 Alpha will be published on January 2015 under MIT License. You can freely use it on your next web-based application project.
 
-Be a part of our O2System Framework development. Mail us at <a href="mailto:developer@circle-creative.com">developer@circle-creative.com</a> or <a href="mailto:steeven@circle-creative.com"> steeven@circle-creative.com</a>.
+Have any idea or suggestion? Mail us: <a href="mailto:developer@circle-creative.com">developer@circle-creative.com</a> or <a href="mailto:steeven@circle-creative.com"> steeven@circle-creative.com</a>.<br>
+Be a part of O2System Framework Development.
 
-<h3>Behind The Scene</h3>
+<h3>Behind The Scenes</h3>
 Why based on Codeigniter Framework?<br>
-Basically CodeIgniter is the most popular framework and has very good documentation, forum and etc. CodeIgniter has concept for Super Global Object and Get Instance this is really need by us on the O2System Framework. We know also that shifting into another framework is really need new adaptation, reading many documentation, get to learn from tutorial and the big problem is if you had a bunch of codes that you need to use and is all on CodeIgniter version or others, with O2System is very easy to import the classes especially for CodeIgniter.
+CodeIgniter Framework is the most popular Open Source PHP Framework and has very good documentations, forum, community, and contributors. CodeIgniter Framework has unique concept with Super Global Object and Get Instance that really need by O2System Framework.<br>
+We know that shifting into another framework is really painful, need new adaptation, reading many documentations, got to learn from many tutorials and the big problems is if you had a bunch of codes that you still need to use it and it's all writen for CodeIgniter Framework, but with O2System Framework is very easy for integration.
 
-The bottom lines is we create this new framework to fullfill our and your needs for building best web based application with HMVC (Hierarchical model–view–controller) concept. With O2System you can done it in the right way, because you can build very modular modules, parenting classes, integrated applications in one framework system, and many other features.
+We create this new framework to fullfill our and your needs for building best web-based application with HMVC (Hierarchical model–view–controller) and Modular concept. With O2System Framework you can build it in the right way.
 
 <h3>Special Features</h3>
 - Easy CodeIgniter Integration.<br>
 - Smart Loader, Load across app or modules.
-- Composer Support, Autoload Composer System.
-- Template Theming Support, Powered with Smarty and Twig (Optional).
+- Compatible with Composer Autoload.
+- Template with Theming Support, Powered with Smarty and Twig (Optional) Templating Engine.
+- Overriding Module View with Template Theme Module View.
 - Developer Console, Helpful Developer Function for Debuging Purpose.
+- Inheritance Libraries, Controllers and Drivers.
 
-<h3>Download it right now!</h3>
-O2System Framework 2.0 Beta is Pack with Site and CMS app example, for creating Website with separated Content Management System.
+<h3>Download It Right Now!</h3>
+O2System Framework 2.0 Beta is Packed with Site and CMS App as example, for creating Website with separated Content Management System.
 
 <h3>Coming Soon</h3>
+- Smart Loader for Loading Controllers and Modules.
 - Shortcode Parser based on Wordpress Shortcode Concept.
 - Developer Console integrated with Firebug.
+- Access Control Library.
+
+<h3>Bugs</h3>
+- Template Assets not Compatible with Twig but can be solved by called as raw: example {{ metadata|raw }}
 
 <h4>Credits</h4>
 Founder and Lead Projects: Steeven Andrian Salim (steevenz.com)<br>
@@ -41,7 +50,7 @@ My Little Prince Neal<br>
 <small>Thanks for all your supports, i love you all</small><br>
 
 James Parry (CodeIgniter Project Lead)<br>
-<small>Thanks for all your supports, assistance and advice</small><br>
+<small>Thanks for all your supports, assistance and advices</small><br><br>
 Viktor Iwan Kristanda (PT. Doxadigital Indonesia)<br>
 Arthur Purnama (CGI Deutschland - Germany)<br>
 Alfi Rizka (Dedicated IT - Indonesia)<br>
