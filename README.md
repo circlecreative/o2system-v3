@@ -18,14 +18,14 @@ We create this new framework to fullfill our and your needs for building best we
 
 Released Scheduled
 ------------------
-24 November 2014 (Prototype Version)
-Has many bugs, and still using many class from [CodeIgniter Framework][3]
+* 24 November 2014 (Prototype Version):
+  Has many bugs, and still using many class from [CodeIgniter Framework][3]
 
-1 December 2014 (Beta Version)
-O2System is now release in Beta Version. If you find any bugs, please kindly report it to us as an issued on Github so we can track it and we'll fixed it as soon as possible.
+* 1 December 2014 (Beta Version):
+  O2System is now release in Beta Version. If you find any bugs, please kindly report it to us as an issued on Github so we can track it and we'll fixed it as soon as possible.
 
-January 2015 (Alpha Version)
-[O2System Framework][2]  version 2.0 Alpha will be published on January 2015 under MIT License. You can freely use it on your next web-based application project.
+* January 2015 (Alpha Version):
+  [O2System Framework][2]  version 2.0 Alpha will be published on January 2015 under MIT License. You can freely use it on your next web-based application project.
 
 Ideas and Suggestions
 ---------------------
@@ -68,30 +68,22 @@ Bugs
 
 Credits
 -------
-Founder and Lead Projects: [Steeven Andrian Salim (steevenz.com)][8]
-
-Beta Released Testing Team:
-Tim Brownlaw (CodeIgniter Forum Admin on Facebook)
-Hobrt Lhbib (hobrt-programming.com)
+* Founder and Lead Projects: [Steeven Andrian Salim (steevenz.com)][8]
+* Beta Released Testing Team:
+ - Tim Brownlaw (CodeIgniter Forum Admin on Facebook)
+ - Hobrt Lhbib (hobrt-programming.com)
 
 Special Thanks
 --------------
-My Lovely Wife zHa
-My Little Princess Angie
-My Little Prince Neal
-Thanks for all your supports, i love you all
-
-James Parry (CodeIgniter Project Lead)
-Thanks for all your supports, assistance and advices
-Viktor Iwan Kristanda (PT. Doxadigital Indonesia)
-Arthur Purnama (CGI Deutschland - Germany)
-Alfi Rizka (Dedicated IT - Indonesia)
-Wahyu Primadi (LittleOrange - Indonesia)
-Sachin Pandey (Ecurser Technologies - India)
-Ariza Novisa (eClouds Center - Indonesia)
-
-Don Lafferty (CodeIgniter Forum)
-Thanks for suggesting the right tagline for [O2System Framework][2]
+* My Lovely Wife zHa,My Little Princess Angie, My Little Prince Neal - Thanks for all your supports, i love you all
+* James Parry (CodeIgniter Project Lead) - Thanks for all your supports, assistance and advices
+* Viktor Iwan Kristanda (PT. Doxadigital Indonesia)
+* Arthur Purnama (CGI Deutschland - Germany)
+* Alfi Rizka (Dedicated IT - Indonesia)
+* Wahyu Primadi (LittleOrange - Indonesia)
+* Sachin Pandey (Ecurser Technologies - India)
+* Ariza Novisa (eClouds Center - Indonesia)
+* Don Lafferty (CodeIgniter Forum) - Thanks for suggesting the right tagline for [O2System Framework][2]
 
 Change Logs
 -----------
