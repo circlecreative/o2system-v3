@@ -12,7 +12,7 @@ The project was stopped in 2011 and turned into Third Party HMVC for CodeIgniter
 Has many bugs, and still using many class from CodeIgniter Framework<br><br>
 1 December 2014 (Beta Version)<br>
 O2System is now release in Beta Version. If you find any bugs, please kindly report it to us as an issued on Github so we can track it and we'll fixed it as soon as possible.<br><br>
-January 2014 (Alpha Version)<br>
+January 2015 (Alpha Version)<br>
 O2System Framework  version 2.0 Alpha will be published on January 2015 under MIT License. You can freely use it on your next web-based application project.
 
 Have any idea or suggestion? Mail us: <br>
