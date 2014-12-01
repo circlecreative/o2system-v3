@@ -1,0 +1,36 @@
+{
+    "name": "o2system",
+    "type": "php-framework",
+    "description": "O2System - Open Source PHP Framework based on CodeIgniter Framework",
+    "keywords": ["php framework","codeigniter","HMVC","Modular HMVC","MVC"],
+    "homepage": "http://www.circle-creative.com/products/o2system.html",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "PT. Lingkar Kreasi (Circle Creative)",
+            "email": "developer@circle-creative.com",
+            "homepage": "http://www.circle-creative.com",
+            "role": "Founder"
+        },
+        {
+            "name": "Steeven Andrian Salim",
+            "email": "steevenz@steevenz.com",
+            "homepage": "http://www.steevenz.com",
+            "role": "Founder and Lead Project"
+        }
+    ],
+    "support": {
+        "email": "developer@circle-creative.com",
+        "issues": "https://github.com/circlecreative/o2system/issues",
+        "forum": "https://www.facebook.com/groups/498147006994512"
+    },
+    "require": {
+        "php": ">=5.2"
+    },
+    "extra": {
+        "branch-alias": {
+            "master": "2.0-dev"
+        }
+    }
+
+}
