@@ -41,7 +41,10 @@ O2System Framework 2.0 Beta is Packed with Site and CMS App as example, for crea
 
 <h4>Credits</h4>
 Founder and Lead Projects: Steeven Andrian Salim (steevenz.com)<br>
-<small>Please kindly visit my <a href="http://cv.steevenz.com">Online CV</a></small>
+<small>Please kindly visit my <a href="http://cv.steevenz.com">Online CV</a></small><br>
+Beta Released Testing Team:<br>
+Tim Brownlaw (CodeIgniter Forum Admin on Facebook)<br>
+Hobrt Lhbib (hobrt-programming.com)<br>
 
 <h3>Special Thanks</h3>
 My Lovely Wife zHa<br>
