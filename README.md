@@ -1,7 +1,7 @@
-o2system
+O2System
 ========
 
-O2System is a new kicking ass Open Source PHP Framework by <a href="www.circle-creative.com">Circle Creative</a>, based on <a href="www.codeigniter.com">CodeIgniter Framework</a>. CodeIgniter was created by <a href="www.ellislab.com">EllisLab, Inc</a>, and is now a project of the <a href="http://www.bcit.ca/cas/computing/">British Columbia Institute of Technology</a>.
+O2System is a new Dynamic Open Source PHP Framework by <a href="www.circle-creative.com">Circle Creative</a>, based on <a href="www.codeigniter.com">CodeIgniter Framework</a>. CodeIgniter was created by <a href="www.ellislab.com">EllisLab, Inc</a>, and is now a project of the <a href="http://www.bcit.ca/cas/computing/">British Columbia Institute of Technology</a>.
 
 O2System is now release in Beta Version. If you find any bugs, please kindly report it to us. We'll fixed it as soon as possible.
 
@@ -59,7 +59,10 @@ Arthur Purnama (CGI Deutschland - Germany)<br>
 Alfi Rizka (Dedicated IT - Indonesia)<br>
 Wahyu Primadi (LittleOrange - Indonesia)<br>
 Sachin Pandey (Ecurser Technologies - India)<br>
-Ariza Novisa (eClouds Center - Indonesia)<br>
+Ariza Novisa (eClouds Center - Indonesia)<br><br>
+
+Don Lafferty (CodeIgniter Forum)<br>
+<small>Thanks for suggesting the right tagline for O2System Framework</small>
 
 <h3>Change Logs</h3>
 <h5>07 November 2014</h5>
