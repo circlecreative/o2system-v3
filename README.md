@@ -92,7 +92,7 @@ Don Lafferty (CodeIgniter Forum)<br>
 
 <h3>Change Logs</h3>
 ========
--07 November 2014
+- 07 November 2014
  - Fixed working controllers<br>
 - 27 November 2014
  - Licensing all source code
