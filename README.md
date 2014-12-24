@@ -69,6 +69,9 @@ Bugs
 Credits
 -------
 * Founder and Lead Projects: [Steeven Andrian Salim (steevenz.com)][8]
+* Developer Team:
+  - Wahyu Primadi
+  - [Dadang Nurjaman (Mello Bruchst)][13]
 * Beta Released Testing Team:
  - Tim Brownlaw (CodeIgniter Forum Admin on Facebook)
  - Hobrt Lhbib (hobrt-programming.com)
@@ -117,3 +120,4 @@ Things to Do
 [10]: http://twig.sensiolabs.org/
 [11]: https://getcomposer.org
 [12]: https://packagist.org/packages/o2system/o2system
+[13]: http://jawaxa.com
