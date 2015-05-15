@@ -1,6 +1,6 @@
 WARNING
 =======
-This repository will be removed and re-created anytime soon. due to a technical error when first created.
+This repository will be removed and re-created anytime soon. due to a technical error when first created. Coming soon o2system v3.0.0
 
 O2System
 ========
