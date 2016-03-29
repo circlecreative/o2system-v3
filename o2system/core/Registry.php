@@ -92,45 +92,52 @@ final class Registry extends ArrayObject
 
 		$config = \O2System::$config->load( 'registry', TRUE );
 
-		if ( $config[ 'driver' ] === 'database' )
+		if( isset( $config['cache'] ) )
 		{
-			static::$_driver = new RegistryDatabaseHandler;
-		}
-		else
-		{
-			static::$_driver = new RegistryCacheHandler;
-		}
-
-		if ( isset( $config[ 'package_types' ] ) AND is_array( $config[ 'package_types' ] ) )
-		{
-			static::$package_types = array_merge( static::$package_types, $config[ 'package_types' ] );
-		}
-
-		if ( $this->__load_registries() === FALSE )
-		{
-			if ( ! defined( 'CONSOLE_PATH' ) )
+			if ( $config[ 'cache' ] === 'DATABASE' )
 			{
-				throw new RegistryException( 'REGISTRY_CURRENTLYEMPTY' );
+				static::$_driver = new RegistryDatabaseHandler;
 			}
-		}
-		else
-		{
-			// Register Modular Namespace
-			foreach ( $this->getArrayCopy() as $key => $packages )
+			elseif ( $config[ 'cache' ] === 'AUTO' )
 			{
-				foreach ( $packages as $package )
-				{
-					if ( isset( $package->namespace ) )
-					{
-						\O2System::Load()->addNamespace( $package->namespace, ROOTPATH . $package->realpath );
-					}
+				static::$_driver = new RegistryCacheHandler;
+			}
 
-					if ( is_dir( ROOTPATH . $package->realpath . 'languages' ) )
+			if ( isset( $config[ 'package_types' ] ) AND is_array( $config[ 'package_types' ] ) )
+			{
+				static::$package_types = array_merge( static::$package_types, $config[ 'package_types' ] );
+			}
+
+			if ( $this->__load_registries() === FALSE )
+			{
+				if ( ! defined( 'CONSOLE_PATH' ) )
+				{
+					throw new RegistryException( 'REGISTRY_CURRENTLYEMPTY' );
+				}
+			}
+			else
+			{
+				// Register Modular Namespace
+				foreach ( $this->getArrayCopy() as $key => $packages )
+				{
+					foreach ( $packages as $package )
 					{
-						\O2System::$language->addPath(  ROOTPATH . $package->realpath );
+						if ( isset( $package->namespace ) )
+						{
+							\O2System::Load()->addNamespace( $package->namespace, ROOTPATH . $package->realpath );
+						}
+
+						if ( is_dir( ROOTPATH . $package->realpath . 'languages' ) )
+						{
+							\O2System::$language->addPath(  ROOTPATH . $package->realpath );
+						}
 					}
 				}
 			}
+		}
+		elseif ( $cache = $this->_fetch_properties() )
+		{
+			parent::__construct( $cache );
 		}
 
 		\O2System::Log( 'info', 'Registry Class Initialized' );

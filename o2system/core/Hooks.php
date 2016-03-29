@@ -108,7 +108,7 @@ final class Hooks
 			$hooks = @require( $filepath );
 		}
 
-		if ( ! empty( $hooks ) || ! is_array( $hooks ) )
+		if ( empty( $hooks ) )
 		{
 			return;
 		}

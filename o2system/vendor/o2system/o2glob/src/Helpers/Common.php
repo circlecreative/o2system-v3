@@ -590,6 +590,7 @@ if ( ! function_exists( 'parse_domain' ) )
 		}
 
 		$x_domain = array_diff( $x_domain, $result[ 'tld' ] );
+		$x_domain = count($x_domain) == 0 ? $result[ 'tld' ] : $x_domain;
 
 		if ( count( $x_domain ) == 1 )
 		{
@@ -605,7 +606,15 @@ if ( ! function_exists( 'parse_domain' ) )
 			$result[ 'host' ] = implode( '.', $x_domain );
 		}
 
-		$result[ 'tld' ] = '.' . implode( '.', $result[ 'tld' ] );
+		if( $result['tld'][0] === $result['domain'] )
+		{
+			$result[ 'tld' ] = NULL;
+		}
+		else
+		{
+			$result[ 'tld' ] = '.' . implode( '.', $result[ 'tld' ] );
+		}
+
 
 		return $result;
 	}

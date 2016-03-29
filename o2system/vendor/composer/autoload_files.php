@@ -6,8 +6,8 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-	'34db133ee63d605f4b01a3475ceb7960' => $vendorDir . '/o2system/o2gears/src/Gears.php',
-	'0a463717c0df1c48194bc0b82a44e7b6' => $vendorDir . '/o2system/o2glob/src/Glob.php',
+    '34db133ee63d605f4b01a3475ceb7960' => $vendorDir . '/o2system/o2gears/src/Gears.php',
+    '0a463717c0df1c48194bc0b82a44e7b6' => $vendorDir . '/o2system/o2glob/src/Glob.php',
     'ca91d90024f6f0ab3e060bca9a9bbba6' => $vendorDir . '/o2system/o2db/src/DB.php',
     'a059a9d2c4336dd2d207293b35ae9414' => $vendorDir . '/o2system/o2bootstrap/src/Bootstrap.php',
     'c8993c20578bf0bd1fbf932e998e0cc9' => $vendorDir . '/o2system/o2cache/src/Cache.php',
