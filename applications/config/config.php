@@ -149,7 +149,7 @@ $config[ 'proxy_ips' ] = '';
 | Allowed debug ip
 |
 */
-$config[ 'debug_ips' ] = '';
+$config[ 'debug_ips' ] = '127.0.0.1';
 
 /*
 |-------------------------------------------------------------------------------------------------------
@@ -334,18 +334,11 @@ $config[ 'log' ][ 'date_format' ] = 'Y-m-d H:i:s';
 */
 
 $config[ 'cache' ][ 'storage' ] = array(
-	'driver'   => 'redis',
-	'socket'   => 'tcp', // 'tcp' or 'unix'
-	'host'     => '127.0.0.1',
-	'port'     => 6379,
-	'password' => NULL, // (optional)
-	'timeout'  => 5,
+	'driver'   => 'files',
+	'path'     => APPSPATH . 'cache/'
 );
 
-$config[ 'cache' ][ 'failover' ] = array(
-	'driver' => 'files',
-	'path'   => APPSPATH . 'cache' . DIRECTORY_SEPARATOR,
-);
+$config[ 'cache' ][ 'failover' ] = NULL;
 
 $config[ 'cache' ][ 'lifetime' ] = 7200;
 
@@ -367,9 +360,9 @@ $config[ 'cache' ][ 'lifetime' ] = 7200;
 |	                                        will be later deleted by the garbage collector.
 |-------------------------------------------------------------------------------------------------------
 */
-$config[ 'session' ][ 'driver' ] = 'redis';
+$config[ 'session' ][ 'driver' ] = 'files';
 $config[ 'session' ][ 'name' ] = 'o2_session';
-$config[ 'session' ][ 'save_path' ] = $config[ 'cache' ][ 'storage' ];
+$config[ 'session' ][ 'save_path' ] =  APPSPATH . 'cache/session/';
 $config[ 'session' ][ 'lifetime' ] = 3600;
 $config[ 'session' ][ 'regenerate_time' ] = 300;
 $config[ 'session' ][ 'regenerate_id' ] = FALSE;

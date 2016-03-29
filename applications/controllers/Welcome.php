@@ -17,10 +17,13 @@
 
 // ------------------------------------------------------------------------
 
-namespace Apps\Controllers;
-defined( 'BASEPATH' ) OR exit( 'No direct script access allowed' );
+namespace Applications\Controllers;
+defined( 'ROOTPATH' ) OR exit( 'No direct script access allowed' );
 
 // ------------------------------------------------------------------------
+
+use O2System\Controller;
+use O2System\Glob\ArrayObject;
 
 /**
  * Welcome Controller
@@ -30,9 +33,8 @@ defined( 'BASEPATH' ) OR exit( 'No direct script access allowed' );
  * @category      Global Controller
  *
  * @version       1.0.0
- * @author        Steeven Andrian Salim
  */
-class Welcome extends \O2System\Core\Controller
+class Welcome extends Controller
 {
     protected function __reconstruct()
     {
@@ -41,11 +43,11 @@ class Welcome extends \O2System\Core\Controller
 
     public function index()
     {
-        $this->load->view( 'welcome', array(
-            'controller' => array(
+        $this->view->load( 'welcome', array(
+            'file' => new ArrayObject( array(
                 'view' => 'applications/views/welcome.tpl',
-                'file' => 'applications/controllers/Welcome.php'
-            )
+                'controller' => 'applications/controllers/Welcome.php'
+            ) )
         ) );
     }
 

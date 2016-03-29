@@ -57,7 +57,7 @@
  */
     if( ! defined( 'ENVIRONMENT' ) )
     {
-        define( 'ENVIRONMENT', 'production' );
+        define( 'ENVIRONMENT', 'development' );
     }
 
 /*

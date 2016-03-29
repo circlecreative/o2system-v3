@@ -155,7 +155,7 @@ class ExceptionHandler
 		{
 			if ( \O2System::Exceptions()->getEnvironment() === 'production' )
 			{
-				redirect( domain_url( 'error/500' ), 'refresh' );
+				redirect( base_url( 'error/500' ), 'refresh' );
 			}
 
 			if ( ! isset( $exception->library ) )

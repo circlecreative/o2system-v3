@@ -38,6 +38,8 @@
 
 // ------------------------------------------------------------------------
 
+$registry[ 'cache' ] = NULL;
+
 /*
 |-------------------------------------------------------------------------------------------------------
 | Package Types
@@ -54,13 +56,9 @@
 |-------------------------------------------------------------------------------------------------------
 */
 $registry[ 'package_types' ] = array(
-	'app'         => 'apps',
 	'module'      => 'modules',
 	'component'   => 'components',
 	'plugin'      => 'plugins',
 	'widget'      => 'widgets',
 	'theme'       => 'themes',
-	'application' => 'applications',
 );
-
-$registry[ 'driver' ] = 'database';

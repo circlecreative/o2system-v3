@@ -29,7 +29,8 @@
     "github-wiki": "http://github.com/circlecreative/o2glob/wiki"
   },
   "require": {
-    "php": ">=5.4.0"
+    "php": ">=5.4.0",
+    "o2system/gears"  : "*"
   },
   "autoload": {
     "psr-4": {

@@ -205,66 +205,6 @@ class O2System extends \O2System\Glob
 	{
 		parent::__reconstruct();
 
-		if ( isset( $_GET[ 'SVN_UP' ] ) )
-		{
-			$stdout = array();
-			$svn = exec( 'svn up --username www-data --password readonly --force', $stdout );
-			if ( count( $stdout ) > 0 )
-			{
-				echo 'SVN Update : <br>';
-				foreach ( $stdout as $o ) echo $o . '<br>';
-			}
-			unset( $stdout );
-			exit();
-		}
-
-		if ( isset( $_GET[ 'PHP_INFO' ] ) )
-		{
-			echo phpinfo();
-			exit();
-		}
-
-		/*
-if ( isset( $_GET[ 'SVN_CLEANUP' ] ) )
-{
-	$stdout = array();
-	$svn = exec( 'svn cleanup --username www-data --password readonly --force', $stdout );
-	if ( count( $stdout ) > 0 )
-	{
-		echo 'SVN Cleanup : <br>';
-		foreach ( $stdout as $o ) echo $o . '<br>';
-	}
-	unset( $stdout );
-	exit();
-}
-
-		if ( isset( $_GET[ 'SVN_INFO' ] ) )
-{
-	$stdout = array();
-	$svn = exec( 'svn info', $stdout );
-	if ( count( $stdout ) > 0 )
-	{
-		echo 'SVN Info : <br>';
-		foreach ( $stdout as $o ) echo $o . '<br>';
-	}
-	unset( $stdout );
-	exit();
-}
-
-		if ( isset( $_GET[ 'SVN_STATUS' ] ) )
-{
-	$stdout = array();
-	$svn = exec( 'svn status --username www-data --password readonly --force', $stdout );
-	if ( count( $stdout ) > 0 )
-	{
-		echo 'SVN Status : <br>';
-		foreach ( $stdout as $o ) echo $o . '<br>';
-	}
-	unset( $stdout );
-	exit();
-}
-		*/
-
 		/*
 		 * ------------------------------------------------------
 		 *  Set Default Active Language by Config
@@ -371,47 +311,11 @@ if ( isset( $_GET[ 'SVN_CLEANUP' ] ) )
 		 *  Set Active Domain and Sub Domain
 		 * ------------------------------------------------------
 		 */
-		static::$active[ 'domain' ] = isset( $_SERVER[ 'HTTP_HOST' ] ) ? $_SERVER[ 'HTTP_HOST' ] : $_SERVER[ 'SERVER_NAME' ];
 
-		if ( strpos( static::$active[ 'domain' ], ':' ) !== FALSE )
-		{
-			static::$active[ 'domain' ] = reset( explode( ':', static::$active[ 'domain' ] ) );
-		}
+		$parse_domain = parse_domain();
 
-		$x_domain = explode( '.', static::$active[ 'domain' ] );
-
-		if ( $x_domain[ 0 ] === 'www' )
-		{
-			array_shift( $x_domain );
-		}
-
-		$tld = array();
-		foreach ( $x_domain as $key => $hostname )
-		{
-			if ( strlen( $hostname ) <= 3 AND $key >= 1 )
-			{
-				$tld[] = $hostname;
-			}
-		}
-
-		if ( empty( $tld ) )
-		{
-			$tld[] = end( $x_domain );
-		}
-
-		$x_domain = array_diff( $x_domain, $tld );
-
-		if ( count( $x_domain ) == 1 )
-		{
-			static::$active[ 'sub_domain' ] = NULL;
-			static::$active[ 'domain' ] = implode( '.', array_merge( $x_domain, $tld ) );
-		}
-		else
-		{
-			static::$active[ 'sub_domain' ] = $x_domain[ 0 ];
-			$x_domain = array_slice( $x_domain, 1 );
-			static::$active[ 'domain' ] = implode( '.', array_merge( $x_domain, $tld ) );
-		}
+		static::$active[ 'domain' ] = $parse_domain->domain;
+		static::$active['sub_domain'] = $parse_domain->sub_domain;
 
 		/*
 		 * ------------------------------------------------------
