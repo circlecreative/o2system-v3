@@ -2,7 +2,7 @@ O2DB
 =====
 [O2DB][2] is an Open Source PHP Database Library (PDO Class Wrapper). O2DB a PDO Class wrapper that equipped with SQL Query Builder is quite powerful.
 O2DB also the future will be equipped with SQL Forge, Schema Builder and Utilities to be quite powerful as well.
-Another amazing product from [][1], released under MIT License.
+Another amazing product from [PT. Lingkar Kreasi (Circle Creative)][1], released under MIT License.
 [O2DB][2] is build for working more powerfull with O2System Framework, but also can be used for integrated with others as standalone version with limited features.
 
 Installation

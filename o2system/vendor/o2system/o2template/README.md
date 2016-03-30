@@ -1,5 +1,5 @@
 # O2Template
-O2Template is a Template Theme Management by [][1].
+O2Template is a Template Theme Management by [PT. Lingkar Kreasi (Circle Creative)][1].
 
 Features
 ------------------

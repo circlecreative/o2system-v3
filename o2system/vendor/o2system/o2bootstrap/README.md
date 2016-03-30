@@ -5,7 +5,7 @@ O2Bootstrap
 
 [O2Bootstrap][3] is an Open Source Cache PHP Twitter Bootstrap Components Generator. It's helps you generate bootstrap component using php factory classes.
 
-Another amazing product from [][1], released under MIT License.
+Another amazing product from [PT. Lingkar Kreasi (Circle Creative)][1], released under MIT License.
 
 [O2Bootstrap][3] is build for working more powerfull with O2System Framework, but also can be used for integrated with others as standalone version with limited features.
 

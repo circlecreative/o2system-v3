@@ -6,7 +6,7 @@
   "keywords": ["utilities","php","framework","driver","libraries"],
   "authors": [
     {
-      "name": "",
+      "name": "PT. Lingkar Kreasi (Circle Creative)",
       "email": "developer@circle-creative.com",
       "homepage": "http://www.circle-creative.com",
       "role": "Founder"
@@ -36,8 +36,7 @@
   "require": {
     "php": ">=5.4.0",
     "o2system/o2glob"  : "*",
-    "erusev/parsedown": "*",
-    "jbbcode/jbbcode": "^1.3"
+    "erusev/parsedown": "*"
   },
   "autoload": {
     "psr-4": {

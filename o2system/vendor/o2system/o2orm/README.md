@@ -1,6 +1,6 @@
 O2ORM
 =====
-[O2ORM][2] is an Open Source Database Object Relationship Manager Tool that stores data directly in the database and creates all tables and columns required on the fly. [O2ORM][2] is currently build for MySQL only. Another amazing product from [][1], released under MIT License.
+[O2ORM][2] is an Open Source Database Object Relationship Manager Tool that stores data directly in the database and creates all tables and columns required on the fly. [O2ORM][2] is currently build for MySQL only. Another amazing product from [PT. Lingkar Kreasi (Circle Creative)][1], released under MIT License.
 
 [O2ORM][2] is build for working more powerfull with O2System Framework, but also can be used for integrated with others as standalone version with limited features.
 

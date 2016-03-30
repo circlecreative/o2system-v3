@@ -6,7 +6,7 @@ O2Cache
 [O2Cache][3] is an Open Source Cache Management Driver Library. 
 Wrappers around some of the most popular cache storage engine. 
 All but file-based caching require specific server requirements, and a Fatal Exception will be thrown if server requirements are not met. 
-Another amazing product from [][1], released under MIT License.
+Another amazing product from [PT. Lingkar Kreasi (Circle Creative)][1], released under MIT License.
 
 [O2Cache][3] is build for working more powerfull with O2System Framework, but also can be used for integrated with others as standalone version with limited features.
 

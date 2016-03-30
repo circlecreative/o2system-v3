@@ -5,7 +5,7 @@ O2Session
 [O2Session][3] is an Open Source Session Management Driver Library. 
 Allows different storage engines to be used. 
 All but file-based storage require specific server requirements, and a Fatal Exception will be thrown if server requirements are not met. 
-Another amazing product from [][1], released under [MIT License][4].
+Another amazing product from [PT. Lingkar Kreasi (Circle Creative)][1], released under [MIT License][4].
 
 [O2Session][3] is build for working more powerfull with O2System Framework, but also can be used for integrated with others as standalone version with limited features.
 

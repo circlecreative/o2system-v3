@@ -1,5 +1,5 @@
 # O2Gears
-O2Gears is a Utilities for PHP Developers to facilitate developers for printing, debugging, tracing, benchmarking and profilling by [][1].
+O2Gears is a Utilities for PHP Developers to facilitate developers for printing, debugging, tracing, benchmarking and profilling by [PT. Lingkar Kreasi (Circle Creative)][1].
 
 Released Scheduled
 ------------------

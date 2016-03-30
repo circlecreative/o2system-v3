@@ -6,7 +6,7 @@ O2CURL
 [O2CURL][3] is build for working more powerfull with O2System Framework, but also can be used for integrated with others as standalone version with limited features.
 [O2CURL][3] is insipired by [Unirest][10], so [O2CURL][2] is has also functionality similar with it, but a little bit different at the syntax.
 
-Another amazing product from [][1], released under MIT License.
+Another amazing product from [PT. Lingkar Kreasi (Circle Creative)][1], released under MIT License.
 
 Features
 --------
@@ -22,7 +22,7 @@ Installation
 ------------
 The best way to install O2CURL is to use [Composer][9]
 ```
-composer require o2system/o2curl:"dev-master"
+composer require o2system/o2curl
 ```
 
 Usage
