@@ -1,1 +1,0 @@
-{$powered_by} by <a href="www.circle-creative.com">{$copyright}</a>

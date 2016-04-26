@@ -1,0 +1,16 @@
+{
+  "require": {
+    "symfony/console": "^3.0",
+    "o2system/o2glob": "*",
+    "o2system/o2cache": "*",
+    "o2system/o2curl": "*",
+    "o2system/o2parser": "*",
+    "o2system/o2bootstrap": "*",
+    "o2system/o2template": "*",
+    "o2system/o2file": "*",
+    "o2system/o2db": "*",
+    "o2system/o2orm": "*",
+    "o2system/o2session": "*",
+    "o2system/o2image": "*"
+  }
+}
