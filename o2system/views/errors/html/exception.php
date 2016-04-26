@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <title><?php echo $exception->library[ 'name' ]; ?> Exception</title>

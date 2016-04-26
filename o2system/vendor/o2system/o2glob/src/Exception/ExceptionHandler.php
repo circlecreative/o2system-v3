@@ -109,7 +109,7 @@ class ExceptionHandler
 	 * @param $file
 	 * @param $line
 	 */
-	public function logException( $severity, $message, $file, $line )
+	public function logException( $severity, $message = NULL, $file = NULL, $line = NULL )
 	{
 		$messages[] = '[ ' . ExceptionSeverity::getSeverity( $severity ) . ' ] ';
 		$messages[] = $message;
@@ -310,9 +310,9 @@ class ExceptionHandler
 			$path = $path . 'errors' . DIRECTORY_SEPARATOR;
 			$path = is_cli() ? $path . 'cli' . DIRECTORY_SEPARATOR : $path . 'html' . DIRECTORY_SEPARATOR;
 
-			if ( is_file( $path . 'error.php' ) )
+			if ( is_file( $path . 'error_404.php' ) )
 			{
-				$view = $path . 'error.php';
+				$view = $path . 'error_404.php';
 			}
 		}
 

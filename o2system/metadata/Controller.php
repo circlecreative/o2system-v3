@@ -57,7 +57,7 @@ class Controller extends ArrayObject
 			'public_methods'    => array(),
 			'protected_methods' => array(),
 			'params'            => array(),
-			'method'            => 'index',
+			'method'            => NULL,
 		);
 
 		if ( is_string( $controller ) AND file_exists( $controller ) )

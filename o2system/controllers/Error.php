@@ -43,6 +43,7 @@ defined( 'ROOTPATH' ) OR exit( 'No direct script access allowed' );
 // ------------------------------------------------------------------------
 
 use O2System\Controller;
+use O2System\Glob\HttpStatusCode;
 
 /**
  * Pages Controller
@@ -78,6 +79,21 @@ class Error extends Controller
 	 */
 	public function index( $code )
 	{
-		$this->view->load( 'error' );
+		if($code == 404)
+		{
+			$this->view->load( 'errors/html/error_404', array(
+				'code' => 404,
+				'heading' => HttpStatusCode::getHeader( 404 ),
+				'message' => HttpStatusCode::getDescription( 404 )
+			) );
+		}
+		else
+		{
+			$this->view->load( 'errors/html/error_code', array(
+				'code' => $code,
+				'heading' => HttpStatusCode::getHeader( $code ),
+				'message' => HttpStatusCode::getDescription( $code )
+			) );
+		}
 	}
 }
