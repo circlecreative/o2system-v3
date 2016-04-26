@@ -1,127 +1,22 @@
-WARNING
-=======
-This repository will be removed and re-created anytime soon. due to a technical error when first created. Coming soon o2system v3.0.0
+## Welcome to O2System ##
+O2System is an Applications Development Framework, to build a web sites or web-based applications using PHP as the programming language. Its goal is to enable you to develop projects much faster than you could if you were writing code from scratch, by providing a rich set of libraries for commonly needed tasks, as well as a simple interface and logical structure to access these libraries, if you previously had been using CodeIgniter Framework would be very easy to switch to O2System Framework. O2System lets you creatively focus on your project by minimizing the amount of code needed for a given task.
 
-O2System
-========
+## Who is O2System For? ##
+If you want to build a site that is equipped with multiple web-based applications or you want to build multiple web-based applications and integrated with each other, then O2System Framework is right for you.
 
-[O2System Framework][2] is a new Dynamic Open Source PHP Framework by [PT. Lingkar Kreasi (Circle Creative)][1], based on [CodeIgniter Framework][3]. [CodeIgniter Framework][3] was created by [EllisLab, Inc][4], and is now a project of the [British Columbia Institute of Technology][5].
+## History of O2System ##
+In 2009 O2System is a closed source PHP Framework is intended to build O2CMS (Website Content Management System) but the project was discontinued in 2011, which later in 2012 became the third party HMVC for CodeIgniter Framework, but not distributed and still a closed source. In 2014, the directors of PT. Rim Creative (Creative Circle) finally decided to redevelop O2System to became an Open Source PHP Framework and no longer as a third party of CodeIgniter Framework.
 
-History
--------
-[O2System Framework][2] first created by [PT. Lingkar Kreasi (Circle Creative)][1] in 2009 as closed source for O2CMS v1.0 development purposed. 
-The project was stopped in 2011 and turned into Third Party HMVC for [CodeIgniter Framework][3] in 2012, but in November 2014 we decided to turn it back into a framework with HMVC concept and we published it as Open Source PHP Framework under MIT License.
+## Good News For CodeIgniter Framework Users ##
+We understand that switch to the new PHP Framework is very painful, require new adaptations, read many documentations and tutorials, and the biggest problem is if we have had a lot of source code that still we want to use, especially code that we have made over the CodeIgniter Framework. In O2System Framework your existing source code can be easily integrated, with a few changes off course but very easy. Basically O2System Framework use the same syntax with CodeIgniter Framework, and came with a lot off new features that would be very helpful for your project.
 
-Behind The Scenes
------------------
-Why based on [CodeIgniter Framework][3]?
-[CodeIgniter Framework][3] is the most popular Open Source PHP Framework and has very good documentations, forum, community, and contributors. [CodeIgniter Framework][3] has unique concept with Super Global Object and Get Instance that really need by [O2System Framework][2].
-We know that shifting into another framework is really painful, need new adaptation, reading many documentations, got to learn from many tutorials and the big problems is if you had a bunch of codes that you still need to use it and it's all writen for CodeIgniter Framework, but with [O2System Framework][2] is very easy for integration.
+## The Difference from CodeIgniter Framework ##
+1. CodeIgniter Framework built with the basic concepts as the Framework MVC (Model-View-Controller) while O2System built with the basic concepts as HMVC Framework (Hierarchical Model-View-Controller) and the concept of Modular.
+2. CodeIgniter Framework is designed to be used to build an application only while O2System designed to used to build multi-applications that can be interconnected in a single Core System.
+3. CodeIgniter Framework Namespace not use while O2System already using namespace.
+4. not to use CodeIgniter Framework Autoload Autoload while O2System already use the concept PSR-0, even in O2System you can better define their own namespace for each application, module, component, plugins or widgets.
+5. CodeIgniter does not have a registry structure while O2System registry structure used as the basis of the system Autoloader O2System.
+6. CodeIgniter only the Template Parser while O2System has Template Engine Driver that can be Template Engine easily integrated with other like: Smarty Template Engine, Dwoo Template Engine and Twig Template Engine (coming soon: Blade and Mustache Template Engine Template Engine) which you easily install in O2System Framework using Composer and after you install your can immediately use only by doing template configuration settings, without having to bother to create additional libraries. The O2System Framework default Template Parser is Lex Parser from Pyro CMS and also already equipped with Markdown Parser and Shortcodes Parser (WordPress Shortcodes Like).
 
-We create this new framework to fullfill our and your needs for building best web-based application with HMVC (Hierarchical model–view–controller) and Modular concept. With [O2System Framework][2] you can build it in the right way.
-
-Released Scheduled
-------------------
-* 24 November 2014 (Prototype Version):
-  Has many bugs, and still using many class from [CodeIgniter Framework][3]
-
-* 1 December 2014 (Beta Version):
-  O2System is now release in Beta Version. If you find any bugs, please kindly report it to us as an issued on Github so we can track it and we'll fixed it as soon as possible.
-
-* January 2015 (Alpha Version):
-  [O2System Framework][2]  version 2.0 Alpha will be published on January 2015 under MIT License. You can freely use it on your next web-based application project.
-
-Ideas and Suggestions
----------------------
-Please kindly mail us at [developer@circle-creative.com][6] or [steeven@circle-creative.com][7].
-
-Bugs and Issues
----------------
-Please kindly submit your issues at Github so we can track all the issues along development.
-
-System Requirements
--------------------
-- PHP 5.2+
-- Composer
-
-Special Features
-----------------
-- Easy [CodeIgniter Framework][3] Integration.
-- Smart Loader, Load across app or modules.
-- Compatible with Composer Autoload.
-- Template with Theming Support, Powered with [Smarty][9] and [Twig][10] (Optional) Templating Engine.
-- Overriding Module View with Template Theme Module View.
-- Developer Console, Helpful Developer Function for Debuging Purpose.
-- Inheritance Libraries, Controllers and Drivers.
-
-Download It Right Now!
-----------------------
-[O2System Framework][2] 2.0 Beta is Packed with Site and CMS App as example, for creating Website with separated Content Management System.
-Now Avaliable with [Composer][11] for more information please visit the [Packagist Page][12]
-
-Coming Soon
------------
-- Smart Loader for Loading Controllers and Modules.
-- Shortcode Parser based on Wordpress Shortcode Concept.
-- Developer Console integrated with Firebug.
-- Access Control Library.
-
-Bugs
-----
-- Template Assets not Compatible with Twig but can be solved by called as raw: example {{ metadata|raw }}
-
-Credits
--------
-* Founder and Lead Projects: [Steeven Andrian Salim (steevenz.com)][8]
-* Developer Team:
-  - Wahyu Primadi
-  - [Dadang Nurjaman (Jawaxa)][13]
-* Beta Released Testing Team:
- - Tim Brownlaw (CodeIgniter Forum Admin on Facebook)
- - Hobrt Lhbib (hobrt-programming.com)
-
-Special Thanks
---------------
-* My Lovely Wife zHa,My Little Princess Angie, My Little Prince Neal - Thanks for all your supports, i love you all
-* James Parry (CodeIgniter Project Lead) - Thanks for all your supports, assistance and advices
-* Viktor Iwan Kristanda (PT. Doxadigital Indonesia)
-* Arthur Purnama (CGI Deutschland - Germany)
-* Alfi Rizka (Dedicated IT - Indonesia)
-* Wahyu Primadi (LittleOrange - Indonesia)
-* Sachin Pandey (Ecurser Technologies - India)
-* Ariza Novisa (eClouds Center - Indonesia)
-* Don Lafferty (CodeIgniter Forum) - Thanks for suggesting the right tagline for [O2System Framework][2]
-
-Change Logs
------------
-* 07 November 2014
- - Fixed working controllers
-* 27 November 2014
- - Licensing all source code
- - Combined libraries, helpers with CodeIgniter
- - Fixed Core Classes and Bootstrap
- - Simulation for loading apps, models, controllers
-* 30 November 2014
- - Fixed Loader
- - Fixed Template Driver
- - Add Smarty and Twig Vendor
- - Example Site, CMS, Welcome Page, Error Page, Example Page
-
-Things to Do
-------------
-- Testing loading controllers, drivers, helpers
-- Testing database connection
-
-[1]: http://www.circle-creative.com
-[2]: http://www.circle-creative.com/products/o2system
-[3]: http://www.codeigniter.com
-[4]: http://www.ellislab.com
-[5]: http://www.bcit.ca/cas/computing/
-[6]: mailto:developer@circle-creative.com
-[7]: mailto:steeven@circle-creative.com
-[8]: http://cv.steevenz.com
-[9]: http://www.smarty.net/
-[10]: http://twig.sensiolabs.org/
-[11]: https://getcomposer.org
-[12]: https://packagist.org/packages/o2system/o2system
-[13]: http://jawaxa.com
+## Conclusion ##
+If you want to have the convenience of CodeIgniter Framework and also Laravel Framework advantages, O2System Framework is a framework that is appropriate for you.

@@ -1,1 +1,0 @@
-Testing Template with Theme. Powered by {$smarty.version}

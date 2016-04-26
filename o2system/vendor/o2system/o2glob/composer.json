@@ -1,0 +1,43 @@
+{
+  "name": "o2system/o2glob",
+  "description": "Mini Singleton Core Framework aka Super Global Object",
+  "license": "MIT",
+  "type": "php-libraries",
+  "keywords": ["singleton","php","framework","driver","libraries"],
+  "authors": [
+    {
+      "name": "",
+      "email": "developer@circle-creative.com",
+      "homepage": "http://www.circle-creative.com",
+      "role": "Founder"
+    },
+    {
+      "name": "Steeven Andrian Salim",
+      "email": "steevenz@steevenz.com",
+      "homepage": "http://www.steevenz.com",
+      "role": "Founder and Lead Project"
+    }
+  ],
+  "support": {
+    "email": "developer@circle-creative.com",
+    "issues": "https://github.com/circlecreative/o2system/issues",
+    "forum": "https://www.facebook.com/groups/498147006994512"
+  },
+  "links": {
+    "info": "http://www.circle-creative.com/products/o2glob.html",
+    "wiki": "http://o2system.center/standalone/o2glob/user-guide/getting-started.html",
+    "github-wiki": "http://github.com/circlecreative/o2glob/wiki"
+  },
+  "require": {
+    "php": ">=5.4.0",
+    "o2system/o2gears": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "O2System\\Glob\\": "src"
+    },
+    "files": [
+      "src/Glob.php"
+    ]
+  }
+}
