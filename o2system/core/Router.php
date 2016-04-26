@@ -524,10 +524,10 @@ class Router
 
 		if ( \O2System::$active->offsetExists( 'controller' ) )
 		{
-			$segments = array_diff( $segments, array(
-				@\O2System::$active['module']->parameter,
-				@\O2System::$active['controller']->parameter,
-			) );
+			if ( $segment_key = array_search( \O2System::$active[ 'controller' ]->parameter, $segments ) )
+			{
+				$segments = array_slice( $segments, $segment_key );
+			}
 
 			$segments = array_values( $segments );
 
