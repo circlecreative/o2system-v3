@@ -524,10 +524,12 @@ class Router
 
 		if ( \O2System::$active->offsetExists( 'controller' ) )
 		{
-			if ( $segment_key = array_search( \O2System::$active[ 'controller' ]->parameter, $segments ) )
-			{
-				$segments = array_slice( $segments, $segment_key );
-			}
+			$segments = array_diff( $segments, array(
+				@\O2System::$active['module']->parameter,
+				@\O2System::$active['controller']->parameter,
+			) );
+
+			$segments = array_values( $segments );
 
 			$method_segment = 'index';
 
@@ -596,12 +598,12 @@ class Router
 							}
 							else
 							{
-								$this->error403();
+								$this->showError( 403 );
 							}
 						}
 						elseif ( \O2System::$active[ 'controller' ]->isProtectedMethod( $method_segment ) )
 						{
-							$this->error403();
+							$this->showError( 403 );
 						}
 						elseif ( \O2System::$active[ 'controller' ]->isPublicMethod( $method_segment ) )
 						{
@@ -611,7 +613,7 @@ class Router
 					}
 				}
 			}
-			else
+			elseif( \O2System::$active['controller'] instanceof \O2System\Metadata\Controller )
 			{
 				if ( \O2System::Input()->is_ajax_request() )
 				{
@@ -622,17 +624,21 @@ class Router
 					}
 					else
 					{
-						$this->error403();
+						$this->showError( 403 );
 					}
 				}
 				elseif ( \O2System::$active[ 'controller' ]->isProtectedMethod( $method_segment ) )
 				{
-					$this->error403();
+					$this->showError( 403 );
 				}
 				elseif ( \O2System::$active[ 'controller' ]->isPublicMethod( $method_segment ) )
 				{
 					// Route to public controller method()
 					\O2System::$active[ 'controller' ]->method = $method_segment;
+				}
+				else
+				{
+					$this->showError( 404 );
 				}
 			}
 
@@ -690,37 +696,82 @@ class Router
 	 * @access  public
 	 * @return  bool
 	 */
-	public function error403()
+	public function showError( $code )
 	{
-		if ( ! empty( $this->_config[ '403_override' ] ) )
+		if ( ! empty( $this->_config[ $code . '_override' ] ) )
 		{
-			if ( sscanf( $this->_config[ '403_override' ], '%[^/]/%s', $class, $method ) !== 2 )
+			if ( sscanf( $this->_config[ $code . '_override' ], '%[^/]/%s', $class, $method ) !== 2 )
 			{
 				$method = 'index';
 			}
-
-			$this->_validateRequest( [ $class, $method ] );
 		}
-		else
-		{
-			$segments = [ 'error', 'index' ];
 
-			if ( \O2System::$active->offsetExists( 'module' ) )
+		if( empty( $class ) AND empty( $method ) )
+		{
+			$class = 'Error';
+			$method = 'index';
+		}
+
+		unset( \O2System::$active[ 'controller' ] );
+
+		if ( \O2System::$active->offsetExists( 'module' ) )
+		{
+			$directory = \O2System::$active['module']->realpath . 'controllers' . DIRECTORY_SEPARATOR;
+
+			if ( is_file( $directory . prepare_filename( $class ) . '.php' ) )
 			{
-				array_unshift( $segments, \O2System::$active[ 'module' ]->parameter );
+				\O2System::Load()->addNamespace( \O2System::$active['module']->namespace, \O2System::$active['module']->realpath );
+				$controller = new \O2System\Metadata\Controller( $directory . prepare_filename( $class ) . '.php' );
+
+				if( $controller->isPublicMethod( $method ) )
+				{
+					$controller->params[] = $code;
+
+					\O2System::$active[ 'controllers' ][ $controller->parameter ] = $controller;
+					\O2System::$active[ 'controller'] = $controller;
+
+					return TRUE;
+				}
 			}
-
-			array_push( $segments, 403 );
-
-			$this->_validateRequest( $segments );
 		}
 
-		if ( empty( \O2System::$active[ 'controller' ]->method ) )
+		if( \O2System::$active->offsetExists( 'controller' ) === FALSE )
 		{
-			return FALSE;
+			if ( is_file( APPSPATH . 'controllers' . DIRECTORY_SEPARATOR . prepare_filename( $class ) . '.php' ) )
+			{
+				$controller = new \O2System\Metadata\Controller( APPSPATH . 'controllers' . DIRECTORY_SEPARATOR . prepare_filename( $class ) . '.php' );
+
+				if( $controller->isPublicMethod( $method ) )
+				{
+					$controller->params[] = $code;
+
+					\O2System::$active[ 'controllers' ][ $controller->parameter ] = $controller;
+					\O2System::$active[ 'controller'] = $controller;
+
+					return TRUE;
+				}
+			}
 		}
 
-		return TRUE;
+		if( \O2System::$active->offsetExists( 'controller' ) === FALSE )
+		{
+			if ( is_file( SYSTEMPATH . 'controllers' . DIRECTORY_SEPARATOR . prepare_filename( $class ) . '.php' ) )
+			{
+				$controller = new \O2System\Metadata\Controller( SYSTEMPATH . 'controllers' . DIRECTORY_SEPARATOR . prepare_filename( $class ) . '.php' );
+
+				if( $controller->isPublicMethod( $method ) )
+				{
+					$controller->params[] = $code;
+
+					\O2System::$active[ 'controllers' ][ $controller->parameter ] = $controller;
+					\O2System::$active[ 'controller'] = $controller;
+
+					return TRUE;
+				}
+			}
+		}
+
+		return FALSE;
 	}
 
 	/**

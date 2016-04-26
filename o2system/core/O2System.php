@@ -503,7 +503,7 @@ class O2System extends \O2System\Glob
 
 		if ( empty( static::$active[ 'controller' ]->method ) )
 		{
-			if ( $this->router->error404() === FALSE )
+			if ( $this->router->showError( 404 ) === FALSE )
 			{
 				$this->exceptions->show404();
 			}

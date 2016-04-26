@@ -1,6 +1,6 @@
 <html lang="en">
 <head>
-	<title>404 - Page Not Found</title>
+	<title><?php echo $code; ?> - <?php echo $heading; ?></title>
 
 	<link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet" type="text/css">
 
