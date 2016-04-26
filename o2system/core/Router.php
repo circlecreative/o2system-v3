@@ -610,6 +610,10 @@ class Router
 							// Route to public controller method()
 							\O2System::$active[ 'controller' ]->method = $method_segment;
 						}
+						else
+						{
+							\O2System::$active[ 'controller' ]->params[] = $method_segment;
+						}
 					}
 				}
 			}
@@ -656,7 +660,7 @@ class Router
 			{
 				if ( $this->_validateSegment( $segment ) === FALSE )
 				{
-					\O2System::$active[ 'controller' ]->params[] = $segment;
+					\O2System::$active[ 'controller' ]->params[ 0 ] = $segment;
 				}
 			}
 		}
