@@ -30,14 +30,13 @@ use O2System\Controller;
  * @package       Applications
  * @subpackage    Controllers
  * @category      Global Controller
- *
  * @version       1.0.0
  */
 class Test extends Controller
 {
     public function index()
     {
-        print_out('test');
+        
     }
 
 }

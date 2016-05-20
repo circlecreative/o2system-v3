@@ -55,7 +55,7 @@ use O2System\DB;
  * @author         Circle Creative Dev Team
  * @link           http://circle-creative.com/products/o2system-codeigniter/user-guide/core/loader.html
  */
-class Loader extends Glob\Loader
+final class Loader extends Glob\Loader
 {
 	protected $_vars = array();
 
@@ -74,19 +74,6 @@ class Loader extends Glob\Loader
 	}
 
 	// ------------------------------------------------------------------------
-
-	/**
-	 * Alias for GetPackagePaths
-	 *
-	 * @param null       $sub_path
-	 * @param bool|FALSE $root_only
-	 *
-	 * @return array
-	 */
-	public function get_package_paths( $sub_path = NULL, $root_only = FALSE )
-	{
-		return parent::getPackagePaths( $sub_path, $root_only );
-	}
 
 	/**
 	 * Library
@@ -596,84 +583,4 @@ class Loader extends Glob\Loader
 		}
 	}
 	// ------------------------------------------------------------------------
-
-
-	/**
-	 * Set Variables
-	 *
-	 * Once variables are set they become available within
-	 * the controller class and its "view" files.
-	 *
-	 * @param    array|object|string $vars
-	 *                                      An associative array or object containing values
-	 *                                      to be set, or a value's name if string
-	 * @param    string              $value Value to set, only used if $vars is a string
-	 *
-	 * @return    object
-	 */
-	public function vars( $vars, $value = NULL )
-	{
-		if ( is_string( $vars ) )
-		{
-			$vars = array( $vars => $value );
-		}
-
-		if ( is_array( $vars ) AND count( $vars ) > 0 )
-		{
-			foreach ( $vars as $key => $value )
-			{
-				$this->_vars[ $key ] = $value;
-			}
-		}
-
-		return $this;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Clear Cached Variables
-	 *
-	 * Clears the cached variables.
-	 *
-	 * @return  object
-	 */
-	public function clear_vars()
-	{
-		$this->_vars = array();
-
-		return $this;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Get Variable
-	 *
-	 * Check if a variable is set and retrieve it.
-	 *
-	 * @param    string $var Variable name
-	 *
-	 * @return    mixed    The variable or NULL if not found
-	 */
-	public function get_var( $var )
-	{
-		return isset( $this->_vars[ $var ] ) ? $this->_vars[ $var ] : NULL;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Get Variables
-	 *
-	 * Retrieves all loaded variables.
-	 *
-	 * @return    array
-	 */
-	public function get_vars()
-	{
-		return $this->_vars;
-	}
-
-	// --------------------------------------------------------------------
 }

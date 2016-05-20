@@ -57,8 +57,9 @@ namespace O2System
 		use Glob\Interfaces\SingletonInterface;
 		use Glob\Interfaces\StorageInterface;
 
-		static $config;
-		static $language;
+		public static $version = '2.0.0';
+		public static $config;
+		public static $language;
 
 		// ------------------------------------------------------------------------
 
@@ -130,6 +131,37 @@ namespace O2System\Glob
 		public function __isset( $index )
 		{
 			return $this->offsetExists( $index );
+		}
+
+		public function offsetExists( $index )
+		{
+			if ( parent::offsetExists( $index ) === TRUE )
+			{
+				$offset = parent::offsetGet( $index );
+
+				if ( is_null( $offset ) )
+				{
+					return FALSE;
+				}
+				elseif ( $offset instanceof ArrayObject )
+				{
+					if ( $offset->isEmpty() )
+					{
+						$this->offsetUnset( $index );
+
+						return FALSE;
+					}
+				}
+				elseif ( is_array( $offset ) )
+				{
+					if ( count( $offset ) == 0 )
+					{
+						return FALSE;
+					}
+				}
+			}
+
+			return parent::offsetExists( $index );
 		}
 
 		/**
@@ -384,7 +416,7 @@ namespace O2System\Glob
 		}
 	}
 
-	class ArrayIterator extends \ArrayIterator
+	class ArrayIterator extends \ArrayObject
 	{
 		private $position = 0;
 
@@ -421,7 +453,7 @@ namespace O2System\Glob
 
 		public function next()
 		{
-			++$this->_position;
+			++$this->position;
 
 			return $this->seek( $this->position );
 		}
@@ -541,6 +573,13 @@ namespace O2System\Glob
 			shuffle( $ArrayCopy );
 
 			return $ArrayCopy;
+		}
+
+		public function getArrayReverse()
+		{
+			$ArrayCopy = $this->getArrayCopy();
+
+			return array_reverse( $ArrayCopy );
 		}
 
 		public function __toObject( $depth = 0 )
@@ -729,78 +768,113 @@ namespace O2System\Glob
 					$this->addNamespace( $namespace, $path );
 				}
 			}
-			elseif ( is_dir( $path ) )
+			elseif ( is_dir( $path = realpath( $path ) . DIRECTORY_SEPARATOR ) )
 			{
+				$namespaces = rtrim( $namespaces, '\\' ) . '\\';
 				$path = str_replace( '/', DIRECTORY_SEPARATOR, $path );
 
-				$namespaces = rtrim( $namespaces, '\\' ) . '\\';
+				if ( $path === DIRECTORY_SEPARATOR ) return;
 
-				$path = rtrim( $path, DIRECTORY_SEPARATOR ) . DIRECTORY_SEPARATOR;
-
-				$this->_packages_paths[ $namespaces ] = $path;
-
-				if ( is_dir( $path . 'core' . DIRECTORY_SEPARATOR ) )
+				if ( array_key_exists( $namespaces, $this->_psr_namespace_maps ) )
 				{
-					$this->_psr_namespace_maps[ $namespaces ] = $path . 'core' . DIRECTORY_SEPARATOR;
-					$this->_psr_namespace_maps[ $namespaces . 'Core\\' ] = $path . 'core' . DIRECTORY_SEPARATOR;
+					$this->__addPsrNamespaceMaps( $namespaces, $path );
 				}
 				else
 				{
 					$this->_psr_namespace_maps[ $namespaces ] = $path;
-				}
+					$this->__addPackagesPaths( $namespaces, $path );
 
-				foreach ( $this->_config[ 'class_paths' ] as $class_path )
-				{
-					if ( is_dir( $path . $class_path ) )
+					if ( is_dir( $path . 'core' . DIRECTORY_SEPARATOR ) )
 					{
-						$this->_psr_namespace_maps[ $namespaces . ucfirst( $class_path ) . '\\' ] = $path . rtrim( $class_path, DIRECTORY_SEPARATOR ) . DIRECTORY_SEPARATOR;
+						if ( $namespaces === 'O2System\\' )
+						{
+							$this->_psr_namespace_maps[ $namespaces ] = $path . 'core' . DIRECTORY_SEPARATOR;
+							$this->_psr_namespace_maps[ $namespaces . 'Core\\' ] = $path . 'core' . DIRECTORY_SEPARATOR;
+						}
+						else
+						{
+							$this->_psr_namespace_maps[ $namespaces . 'Core\\' ] = $path . 'core' . DIRECTORY_SEPARATOR;
+						}
 					}
-				}
 
-				// Autoload Composer
-				if ( is_file( $path . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php' ) )
-				{
-					require( $path . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php' );
+					foreach ( $this->_config[ 'class_paths' ] as $class_path )
+					{
+						if ( is_dir( $directory = $path . $class_path . DIRECTORY_SEPARATOR ) )
+						{
+							$this->__addPsrNamespaceMaps( $namespaces . ucfirst( $class_path ) . '\\', $directory );
+						}
+						elseif ( is_dir( $directory = $path . ucfirst( $class_path ) . DIRECTORY_SEPARATOR ) )
+						{
+							$this->__addPsrNamespaceMaps( $namespaces . ucfirst( $class_path ) . '\\', $directory );
+						}
+					}
+
+					// Autoload Composer
+					if ( is_file( $path . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php' ) )
+					{
+						require( $path . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php' );
+					}
 				}
 			}
 		}
 
 		// ------------------------------------------------------------------------
 
-		/**
-		 * Adds a namespace search path.  Any class in the given namespace will be
-		 * looked for in the given path.
-		 *
-		 * @access  public
-		 *
-		 * @param   string  the namespace
-		 * @param   string  the path
-		 *
-		 * @return  void
-		 */
-		public function addPrefix( $prefixes, $path )
+		private function __addPsrNamespaceMaps( $namespace, $path )
 		{
-			if ( is_array( $prefixes ) )
+			if ( array_key_exists( $namespace, $this->_psr_namespace_maps ) )
 			{
-				foreach ( $prefixes as $prefix => $path )
+				if ( is_string( $this->_psr_namespace_maps[ $namespace ] ) )
 				{
-					static::addPrefix( $prefix, $path );
-				}
-			}
-			elseif ( is_dir( $path ) )
-			{
-				$prefixes = trim( $prefixes, '_' ) . '_';
-
-				$this->_packages_paths[ $prefixes ] = $path;
-				$this->_prefixes_maps[ $prefixes ] = $path . 'core' . DIRECTORY_SEPARATOR;
-
-				foreach ( $this->_config[ 'class_paths' ] as $class_path )
-				{
-					if ( is_dir( $path . $class_path ) )
+					if ( $this->_psr_namespace_maps[ $namespace ] !== $path )
 					{
-						$this->_prefixes_maps[ prepare_class_name( $prefixes . '_' . Inflector::singularize( $class_path ) ) . '_' ] = $path . $class_path . DIRECTORY_SEPARATOR;
+						$this->_psr_namespace_maps[ $namespace ] = array(
+							$this->_psr_namespace_maps[ $namespace ],
+							$path,
+						);
 					}
 				}
+				elseif ( is_array( $this->_psr_namespace_maps[ $namespace ] ) )
+				{
+					if ( ! in_array( $path, $this->_psr_namespace_maps[ $namespace ] ) )
+					{
+						array_push( $this->_psr_namespace_maps[ $namespace ], $path );
+					}
+				}
+			}
+			else
+			{
+				$this->_psr_namespace_maps[ $namespace ] = $path;
+			}
+		}
+
+		// ------------------------------------------------------------------------
+
+		private function __addPackagesPaths( $namespace, $path )
+		{
+			if ( array_key_exists( $namespace, $this->_packages_paths ) )
+			{
+				if ( is_string( $this->_packages_paths[ $namespace ] ) )
+				{
+					if ( $this->_packages_paths[ $namespace ] !== $path )
+					{
+						$this->_packages_paths[ $namespace ] = array(
+							$this->_packages_paths[ $namespace ],
+							$path,
+						);
+					}
+				}
+				elseif ( is_array( $this->_packages_paths[ $namespace ] ) )
+				{
+					if ( ! in_array( $path, $this->_packages_paths[ $namespace ] ) )
+					{
+						array_push( $this->_packages_paths[ $namespace ], $path );
+					}
+				}
+			}
+			else
+			{
+				$this->_packages_paths[ $namespace ] = $path;
 			}
 		}
 
@@ -808,6 +882,7 @@ namespace O2System\Glob
 
 		public function getNamespace( $path )
 		{
+			$path = realpath( $path ) . DIRECTORY_SEPARATOR;
 			$path = str_replace( [ '\\', '/' ], DIRECTORY_SEPARATOR, $path );
 			$path = rtrim( $path, DIRECTORY_SEPARATOR ) . DIRECTORY_SEPARATOR;
 
@@ -817,6 +892,17 @@ namespace O2System\Glob
 			}
 			else
 			{
+				foreach ( $this->_psr_namespace_maps as $namespace => $paths )
+				{
+					if ( is_array( $paths ) )
+					{
+						if ( in_array( $path, $paths ) )
+						{
+							return $namespace;
+						}
+					}
+				}
+
 				$map = $this->_fetchNamespacePath( $path );
 
 				if ( is_array( $map ) )
@@ -845,7 +931,17 @@ namespace O2System\Glob
 		{
 			if ( array_key_exists( $namespace, $this->_psr_namespace_maps ) )
 			{
-				return $this->_psr_namespace_maps[ $namespace ];
+				if ( is_array( $this->_psr_namespace_maps[ $namespace ] ) )
+				{
+					if ( in_array( $path, $this->_psr_namespace_maps[ $namespace ] ) )
+					{
+						return $path;
+					}
+				}
+				else
+				{
+					return $this->_psr_namespace_maps[ $namespace ];
+				}
 			}
 			elseif ( isset( $path ) )
 			{
@@ -876,6 +972,8 @@ namespace O2System\Glob
 		{
 			if ( ! class_exists( $class, FALSE ) )
 			{
+
+
 				$namespace = get_namespace( $class );
 				$class = get_class_name( $class );
 
@@ -902,15 +1000,33 @@ namespace O2System\Glob
 
 				if ( isset( $path ) )
 				{
-					$path = str_replace( [ '\\', '/' ], DIRECTORY_SEPARATOR, $path );
-					$filename = prepare_filename( $class );
+					if ( is_string( $path ) )
+					{
+						$path = str_replace( [ '\\', '/' ], DIRECTORY_SEPARATOR, $path );
+						$filename = prepare_filename( $class );
 
-					$filepaths = array(
-						$path . $filename . '.php',
-						$path . ucfirst( strtolower( $filename ) ) . '.php',
-						$path . strtolower( $filename ) . DIRECTORY_SEPARATOR . $filename . '.php',
-						$path . $filename . DIRECTORY_SEPARATOR . $filename . '.php',
-					);
+						$filepaths = array(
+							$path . $filename . '.php',
+							$path . ucfirst( strtolower( $filename ) ) . '.php',
+							$path . strtolower( $filename ) . DIRECTORY_SEPARATOR . $filename . '.php',
+							$path . $filename . DIRECTORY_SEPARATOR . $filename . '.php',
+						);
+					}
+					elseif ( is_array( $path ) )
+					{
+						foreach ( $path as $sub_path )
+						{
+							$sub_path = str_replace( [ '\\', '/' ], DIRECTORY_SEPARATOR, $sub_path );
+							$filename = prepare_filename( $class );
+
+							$filepaths = array(
+								$sub_path . $filename . '.php',
+								$sub_path . ucfirst( strtolower( $filename ) ) . '.php',
+								$sub_path . strtolower( $filename ) . DIRECTORY_SEPARATOR . $filename . '.php',
+								$sub_path . $filename . DIRECTORY_SEPARATOR . $filename . '.php',
+							);
+						}
+					}
 
 					$filepaths = array_unique( $filepaths );
 
@@ -996,23 +1112,23 @@ namespace O2System\Glob
 						{
 							if ( $namespace = array_search( $package_path, $this->_packages_paths ) )
 							{
-								$package_paths[ $namespace ] = $package_path . $sub_path . DIRECTORY_SEPARATOR;
+								$package_paths[ $namespace . prepare_class_name( $sub_path ) . '\\' ] = $package_path . $sub_path . DIRECTORY_SEPARATOR;
 							}
 						}
 
 						if ( isset( \O2System::$active ) AND \O2System::$active->offsetExists( 'module' ) )
 						{
-							$parents = \O2System::$registry->find_parents( \O2System::$active[ 'module' ] );
+							$parents = \O2System::$registry->getParents( \O2System::$active[ 'module' ] );
 
 							if ( ! empty( $parents ) )
 							{
 								foreach ( $parents as $parent )
 								{
-									$package_paths[ $parent->namespace ] = ROOTPATH . $parent->realpath . $sub_path . DIRECTORY_SEPARATOR;
+									$package_paths[ $parent->namespace . prepare_class_name( $sub_path ) . '\\' ] = ROOTPATH . $parent->realpath . $sub_path . DIRECTORY_SEPARATOR;
 								}
 							}
 
-							$package_paths[ \O2System::$active[ 'module' ]->namespace ] = ROOTPATH . \O2System::$active[ 'module' ]->realpath . $sub_path . DIRECTORY_SEPARATOR;
+							$package_paths[ \O2System::$active[ 'module' ]->namespace . prepare_class_name( $sub_path ) . '\\' ] = ROOTPATH . \O2System::$active[ 'module' ]->realpath . $sub_path . DIRECTORY_SEPARATOR;
 						}
 					}
 				}
@@ -1020,7 +1136,7 @@ namespace O2System\Glob
 				{
 					foreach ( $this->_packages_paths as $namespace => $package_path )
 					{
-						$package_paths[ $namespace ] = $package_path . $sub_path . DIRECTORY_SEPARATOR;
+						$package_paths[ $namespace . prepare_class_name( $sub_path ) . '\\' ] = $package_path . $sub_path . DIRECTORY_SEPARATOR;
 					}
 				}
 			}
@@ -1040,7 +1156,7 @@ namespace O2System\Glob
 
 						if ( isset( \O2System::$active ) AND \O2System::$active->offsetExists( 'module' ) )
 						{
-							$parents = \O2System::$registry->find_parents( \O2System::$active[ 'module' ] );
+							$parents = \O2System::$registry->getParents( \O2System::$active[ 'module' ] );
 
 							if ( ! empty( $parents ) )
 							{

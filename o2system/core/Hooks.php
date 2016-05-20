@@ -254,7 +254,7 @@ final class Hooks
 	 *
 	 * @access  public
 	 */
-	public function __call_modules( array $modules )
+	public function __callModules( array $modules )
 	{
 		if ( count( $modules ) > 0 )
 		{
@@ -262,7 +262,7 @@ final class Hooks
 			{
 				if ( empty( \O2System::$active[ 'modules' ][ $module->parameter ] ) )
 				{
-					$this->__call_module( modules );
+					$this->__callModule( modules );
 				}
 			}
 		}
@@ -277,7 +277,7 @@ final class Hooks
 	 *
 	 * @access  public
 	 */
-	public function __call_module( Module $module )
+	public function __callModule( Module $module )
 	{
 		if ( is_file( ROOTPATH . $module->realpath . 'core' . DIRECTORY_SEPARATOR . 'Controller.php' ) )
 		{
@@ -330,7 +330,7 @@ final class Hooks
 	 *
 	 * @access  public
 	 */
-	public function __call_plugins( array $plugins )
+	public function __callPlugins( array $plugins )
 	{
 		if ( count( $plugins ) > 0 )
 		{
@@ -338,7 +338,7 @@ final class Hooks
 			{
 				if ( empty( \O2System::$active[ 'plugins' ][ $plugin->parameter ] ) )
 				{
-					$this->__call_plugin( $plugin );
+					$this->__callPlugin( $plugin );
 				}
 			}
 		}
@@ -353,7 +353,7 @@ final class Hooks
 	 *
 	 * @access  public
 	 */
-	public function __call_plugin( Plugin $plugin )
+	public function __callPlugin( Plugin $plugin )
 	{
 		if ( is_file( ROOTPATH . $plugin->realpath . 'core' . DIRECTORY_SEPARATOR . 'Controller.php' ) )
 		{
@@ -404,7 +404,7 @@ final class Hooks
 	 *
 	 * @access  public
 	 */
-	public function __call_widgets( array $widgets )
+	public function __callWidgets( array $widgets )
 	{
 		if ( count( $widgets ) > 0 )
 		{
@@ -412,7 +412,7 @@ final class Hooks
 			{
 				if ( empty( \O2System::$active[ 'widgets' ][ $widget->segments ] ) )
 				{
-					$this->__call_widget( $widget );
+					$this->__callWidget( $widget );
 				}
 			}
 		}
@@ -427,7 +427,7 @@ final class Hooks
 	 *
 	 * @access  public
 	 */
-	public function __call_widget( Widget $widget )
+	public function __callWidget( Widget $widget )
 	{
 		if ( is_file( $filepath = ROOTPATH . $widget->realpath . prepare_filename( $widget->parameter ) . '.php' ) )
 		{

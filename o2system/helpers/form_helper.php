@@ -103,17 +103,15 @@ if ( ! function_exists( 'form_open' ) )
 	 */
 	function form_open( $action = '', $attributes = array(), $hidden = array() )
 	{
-		$system = \O2System::instance();
-
 		// If no action is provided then set to the current url
 		if ( ! $action )
 		{
-			$action = $system->config->site_url( $system->uri->string );
+			$action = \O2System::$config->baseURL( \O2System::$active[ 'URI' ]->string );
 		}
 		// If an action is not a full URL then turn it into one
 		elseif ( strpos( $action, '://' ) === FALSE )
 		{
-			$action = $system->config->site_url( $action );
+			$action = \O2System::$config->baseURL( $action );
 		}
 
 		$attributes = _attributes_to_string( $attributes );
@@ -131,9 +129,9 @@ if ( ! function_exists( 'form_open' ) )
 		$form = '<form action="' . $action . '"' . $attributes . ">\n";
 
 		// Add CSRF field if enabled, but leave it out for GET requests and requests to external websites
-		if ( $system->config->item( 'csrf_protection' ) === TRUE && strpos( $action, $system->config->base_url() ) !== FALSE && ! stripos( $form, 'method="get"' ) )
+		if ( \O2System::$config[ 'csrf_protection' ] === TRUE && strpos( $action, \O2System::$config->baseURL() ) !== FALSE && ! stripos( $form, 'method="get"' ) )
 		{
-			$hidden[ $system->security->get_csrf_token_name() ] = $system->security->get_csrf_hash();
+			$hidden[ \O2System::Security()->get_csrf_token_name() ] = \O2System::Security()->get_csrf_hash();
 		}
 
 		if ( is_array( $hidden ) )
@@ -1523,7 +1521,7 @@ if ( ! function_exists( 'form_number' ) )
 {
 	function form_number( $name = '', $value = '', array $attr = array() )
 	{
-		$attr['type'] = 'number';
+		$attr[ 'type' ] = 'number';
 
 		return form_input( $name, $value, $attr );
 	}
@@ -1677,7 +1675,8 @@ if ( ! function_exists( 'form_date' ) )
 {
 	function form_date( $name = '', $value = '', array $attr = array() )
 	{
-		$attr['type'] = 'date';		
+		$attr[ 'type' ] = 'date';
+
 		return form_input( $name, $value, $attr );
 	}
 }

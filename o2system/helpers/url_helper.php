@@ -68,7 +68,7 @@ if ( ! function_exists( 'base_url' ) )
 	 */
 	function base_url( $uri = NULL, $suffix = TRUE, $protocol = NULL )
 	{
-		return O2System::$config->base_url( $uri, $suffix, $protocol );
+		return \O2System::$config->baseURL( $uri, $suffix, $protocol );
 	}
 }
 
@@ -90,7 +90,7 @@ if ( ! function_exists( 'route_url' ) )
 	 */
 	function route_url( $uri = NULL, $suffix = TRUE, $protocol = NULL )
 	{
-		return O2System::Router()->base_url( $uri, $suffix, $protocol );
+		return \O2System::Router()->baseURL( $uri, $suffix, $protocol );
 	}
 }
 
@@ -108,7 +108,7 @@ if ( ! function_exists( 'current_url' ) )
 	 */
 	function current_url()
 	{
-		return O2System::$config->base_url( O2System::URI()->string );
+		return \O2System::$config->baseURL( O2System::$active[ 'URI' ]->string );
 	}
 }
 

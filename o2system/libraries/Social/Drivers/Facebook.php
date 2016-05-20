@@ -104,7 +104,7 @@ class Facebook extends DriverInterface
 				static::$_session[ 'access' ] = new \stdClass();
 				static::$_session[ 'access' ]->oauth_token = (string)$access_token;
 
-				$profile = $this->get_profile();
+				$profile = $this->getProfile();
 
 				// Set Session User Data
 				static::$_session[ 'user' ] = new \stdClass();

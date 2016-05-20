@@ -95,6 +95,13 @@ class Badge extends FactoryInterface
 		return $this;
 	}
 
+	public function set_container( $container )
+	{
+		$this->container = $container;
+
+		return $this;
+	}
+
 	public function __clone()
 	{
 		if ( is_object( $this->container ) )

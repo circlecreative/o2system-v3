@@ -57,6 +57,8 @@ class Trail extends DriverInterface
 {
 	public function log( array $log )
 	{
+		if ( \O2System::Useragent()->is_robot() ) return FALSE;
+
 		$id_user_account = NULL;
 
 		if ( $this->_library->user->is_login() )
@@ -67,12 +69,12 @@ class Trail extends DriverInterface
 		// Try to close old session trail
 		if ( isset( $_SESSION[ 'trail' ] ) )
 		{
-			if ( $trail = $this->_library->model->get_trail( $_SESSION[ 'trail' ] ) )
+			if ( $trail = $this->_library->model->getTrail( $_SESSION[ 'trail' ] ) )
 			{
 				$session_end = now();
 				$session_duration = $session_end - $trail[ 'session_start' ];
 
-				$this->_library->model->update_trail( array(
+				$this->_library->model->updateTrail( array(
 					                                      'session_end'      => $session_end,
 					                                      'session_duration' => $session_duration,
 				                                      ), $_SESSION[ 'trail' ] );
@@ -93,13 +95,13 @@ class Trail extends DriverInterface
 
 		$session_data = array(
 			'id_user_account' => $id_user_account,
-			'user_ip'         => \O2System::Input()->ip_address(),
-			'user_agent'      => \O2System::Input()->user_agent(),
+			'user_ip'         => \O2System::Input()->ipAddress(),
+			'user_agent'      => \O2System::Input()->userAgent(),
 			'session_id'      => \O2System::Session()->session_id,
 			'session_url'     => current_url(),
 		);
 
-		$trail = $this->_library->model->get_trail( $session_data );
+		$trail = $this->_library->model->getTrail( $session_data );
 
 		if ( $trail === FALSE )
 		{
@@ -107,8 +109,8 @@ class Trail extends DriverInterface
 
 			return $this->_library->model->insert_trail( array(
 				                                             'id_user_account'  => $id_user_account,
-				                                             'user_ip'          => \O2System::Input()->ip_address(),
-				                                             'user_agent'       => \O2System::Input()->user_agent(),
+				                                             'user_ip'          => \O2System::Input()->ipAddress(),
+				                                             'user_agent'       => \O2System::Input()->userAgent(),
 				                                             'session_id'       => \O2System::Session()->session_id,
 				                                             'session_referer'  => $session_referer,
 				                                             'session_url'      => current_url(),
@@ -124,7 +126,7 @@ class Trail extends DriverInterface
 
 			unset( $_SESSION[ 'trail' ] );
 
-			return $this->_library->model->update_trail( array(
+			return $this->_library->model->updateTrail( array(
 				                                             'session_end'      => $session_end,
 				                                             'session_duration' => $session_duration,
 				                                             'session_metadata' => json_encode( $log ),
@@ -132,7 +134,7 @@ class Trail extends DriverInterface
 		}
 	}
 
-	public function get_log()
+	public function getLog()
 	{
 		if ( $this->_library->user->is_login() )
 		{
@@ -141,10 +143,10 @@ class Trail extends DriverInterface
 
 		$conditions[ 'session_url' ] = current_url();
 
-		return $this->_library->model->get_trail( $conditions );
+		return $this->_library->model->getTrail( $conditions );
 	}
 
-	public function get_logs()
+	public function getLogs()
 	{
 		if ( $this->_library->user->is_login() )
 		{
@@ -153,6 +155,6 @@ class Trail extends DriverInterface
 
 		$conditions[ 'session_url' ] = current_url();
 
-		return $this->_library->model->get_trails( $conditions );
+		return $this->_library->model->getTrails( $conditions );
 	}
 }

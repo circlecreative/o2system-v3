@@ -38,11 +38,13 @@
 // ------------------------------------------------------------------------
 
 namespace O2System;
+
+use O2System\Metadata\Controller;
+use O2System\Metadata\Page;
+
 defined( 'ROOTPATH' ) || exit( 'No direct script access allowed' );
 
 // ------------------------------------------------------------------------
-
-use O2System\Metadata\Controller;
 
 /**
  * System URI
@@ -65,38 +67,6 @@ final class URI
 	 */
 	protected $_config = array();
 
-	/**
-	 * Current URI Segments
-	 *
-	 * @access  public
-	 * @type    array
-	 */
-	public $segments = array();
-
-	/**
-	 * Routed URI Segments
-	 *
-	 * @access  public
-	 * @type    array
-	 */
-	public $rsegments = array();
-
-	/**
-	 * Current URI String
-	 *
-	 * @access  public
-	 * @type    string
-	 */
-	public $string = NULL;
-
-	/**
-	 * Routed URI String
-	 *
-	 * @access  public
-	 * @type    string
-	 */
-	public $rstring = NULL;
-
 	// --------------------------------------------------------------------
 
 	/**
@@ -109,134 +79,109 @@ final class URI
 		// Set URI Configuration
 		$this->_config = \O2System::$config[ 'URI' ];
 
-		// Set all active controllers
-		if ( is_file( SYSTEMPATH . 'core' . DIRECTORY_SEPARATOR . 'Controller.php' ) )
-		{
-			\O2System::$active[ 'controllers' ][ 'o2system' ] = new Controller( SYSTEMPATH . 'core' . DIRECTORY_SEPARATOR . 'Controller.php' );
-		}
+		\O2System::$active[ 'URI' ] = new \O2System\Metadata\URI();
 
-		if ( is_file( APPSPATH . 'core' . DIRECTORY_SEPARATOR . 'Controller.php' ) )
-		{
-			\O2System::$active[ 'controllers' ][ 'applications' ] = new Controller( APPSPATH . 'core' . DIRECTORY_SEPARATOR . 'Controller.php' );
-		}
-
-		// Set Request
-		$this->set_request();
+		// Parse Request
+		$this->_parseRequest();
 
 		\O2System::Log( 'info', 'URI Class Initialized' );
 	}
+
 	// --------------------------------------------------------------------
 
 	/**
-	 * Fetch the URI String
+	 * Set request route
 	 *
-	 * @param   string $request URI String Request
+	 * Takes an array of URI segments as input and sets the class/method
+	 * to be called.
 	 *
-	 * @access  public
+	 * @used-by Router::_parseRoutes()
+	 *
+	 * @param   array $segments URI Segments
+	 *
+	 * @access  protected
 	 */
-	final public function set_request( $uri_string = NULL )
+	public function setRequest( $segments )
 	{
-		if ( isset( $uri_string ) )
-		{
-			if ( is_array( $uri_string ) )
-			{
-				$uri_string = implode( '/', $uri_string );
-			}
+		\O2System::$active[ 'URI' ]->setSegments( $segments, 'rsegments' );
 
-			// Filter out control characters and trim slashes
-			$uri_string = trim( remove_invisible_characters( $uri_string, FALSE ), '/' );
-
-			// If the URI contains only a slash we'll kill it
-			$uri_string === '/' ? NULL : $uri_string;
-
-			// Split segments into array with indexing
-			$segments = explode( '/', 'indexing/ ' . $uri_string );
-			unset( $segments[ 0 ] );
-
-			// Populate the segments array
-			foreach ( $segments as $key => $segment )
-			{
-				// Filter segments for security
-				if ( $segment = trim( $this->_filter_segment( $segment ) ) )
-				{
-					$this->rsegments[ $key ] = $segment;
-				}
-			}
-		}
-		else
-		{
-			// If it's a CLI request, ignore the configuration
-			if ( is_cli() OR
-				( $protocol = strtoupper( $this->_config[ 'protocol' ] ) === 'CLI' )
-			)
-			{
-				$uri_string = $this->_parse_argv();
-			}
-			elseif ( $protocol = strtoupper( $this->_config[ 'protocol' ] ) )
-			{
-				empty( $protocol ) && $protocol = 'REQUEST_URI';
-
-				switch ( $protocol )
-				{
-					case 'AUTO': // For BC purposes only
-					case 'REQUEST_URI':
-						$uri_string = $this->_parse_request_uri();
-						break;
-					case 'QUERY_STRING':
-						$uri_string = $this->_parse_query_string();
-						break;
-					case 'PATH_INFO':
-					default:
-						$uri_string = isset( $_SERVER[ $protocol ] )
-							? $_SERVER[ $protocol ]
-							: $this->_parse_request_uri();
-						break;
-				}
-			}
-
-			// Filter out control characters and trim slashes
-			$uri_string = trim( remove_invisible_characters( $uri_string, FALSE ), '/' );
-
-			// If the URI contains only a slash we'll kill it
-			$uri_string === '/' ? NULL : $uri_string;
-
-			$this->string = $uri_string;
-
-			// Split segments into array with indexing
-			$segments = explode( '/', $this->string );
-
-			// Populate the segments array
-			foreach ( $segments as $key => $segment )
-			{
-				// Filter segments for security
-				if ( $segment = trim( $this->_filter_segment( $segment ) ) )
-				{
-					if ( \O2System::$registry->offsetExists( 'languages' ) )
-					{
-						if ( isset( \O2System::$registry->languages[ $segment ] ) )
-						{
-							\O2System::$active[ 'language' ] = \O2System::$registry->languages[ $segment ];
-
-							continue;
-						}
-					}
-
-					$this->segments[ $key ] = $segment;
-					$this->rsegments[ $key ] = $segment;
-				}
-			}
-		}
-
-		$this->reindex_segments();
-		$this->reindex_rsegments();
-
-		$this->rstring = implode( '/', $this->rsegments );
-
-		// Validate the segments array
-		$this->_validate_segments();
+		$this->_validateSegments( \O2System::$active[ 'URI' ]->rsegments );
 	}
 
-	// --------------------------------------------------------------------
+	// ------------------------------------------------------------------------
+
+	protected function _parseRequest()
+	{
+		// If it's a CLI request, ignore the configuration
+		if ( is_cli() OR
+			( $protocol = strtoupper( $this->_config[ 'protocol' ] ) === 'CLI' )
+		)
+		{
+			$uri_string = $this->_parseArgv();
+		}
+		elseif ( $protocol = strtoupper( $this->_config[ 'protocol' ] ) )
+		{
+			empty( $protocol ) && $protocol = 'REQUEST_URI';
+
+			switch ( $protocol )
+			{
+				case 'AUTO': // For BC purposes only
+				case 'REQUEST_URI':
+					$uri_string = $this->_parseRequestURI();
+					break;
+				case 'QUERY_STRING':
+					$uri_string = $this->_parseQueryString();
+					break;
+				case 'PATH_INFO':
+				default:
+					$uri_string = isset( $_SERVER[ $protocol ] )
+						? $_SERVER[ $protocol ]
+						: $this->_parseRequestURI();
+					break;
+			}
+		}
+
+		// Filter out control characters and trim slashes
+		$uri_string = trim( remove_invisible_characters( $uri_string, FALSE ), '/' );
+
+		// If the URI contains only a slash we'll kill it
+		$uri_string = \O2System::$active[ 'URI' ]->string === '/' ? NULL : $uri_string;
+
+		// Set Active URI String
+		\O2System::$active[ 'URI' ]->setString( $uri_string );
+
+		// Split segments into array with indexing
+		$segments = explode( '/', \O2System::$active[ 'URI' ]->string );
+
+		// Populate the segments array
+		foreach ( $segments as $key => $segment )
+		{
+			// Filter segments for security
+			if ( $segment = trim( $this->_filterSegment( $segment ) ) )
+			{
+				if ( \O2System::$registry->offsetExists( 'languages' ) )
+				{
+					if ( isset( \O2System::$registry->languages[ $segment ] ) )
+					{
+						\O2System::$active[ 'language' ] = \O2System::$registry->languages[ $segment ];
+
+						continue;
+					}
+				}
+
+				\O2System::$active[ 'URI' ]->segments[ $key ] = $segment;
+			}
+		}
+
+		// Re-Index URI Segments
+		\O2System::$active[ 'URI' ]->reindexSegments();
+
+		// Re-Define URI String
+		\O2System::$active[ 'URI' ]->setString( \O2System::$active[ 'URI' ]->segments );
+
+		// Validate Segments
+		$this->_validateSegments();
+	}
 
 	/**
 	 * Parse CLI arguments
@@ -246,7 +191,7 @@ final class URI
 	 * @access  protected
 	 * @return  string
 	 */
-	protected function _parse_argv()
+	protected function _parseArgv()
 	{
 		$args = array_slice( $_SERVER[ 'argv' ], 1 );
 
@@ -264,7 +209,7 @@ final class URI
 	 * @access  protected
 	 * @return  string
 	 */
-	protected function _parse_request_uri()
+	protected function _parseRequestURI()
 	{
 		if ( ! isset( $_SERVER[ 'REQUEST_URI' ], $_SERVER[ 'SCRIPT_NAME' ] ) )
 		{
@@ -308,7 +253,7 @@ final class URI
 		}
 
 		// Do some final cleaning of the URI and return it
-		return $this->_remove_relative_directory( $uri );
+		return $this->_removeRelativeDirectory( $uri );
 	}
 
 	// --------------------------------------------------------------------
@@ -321,7 +266,7 @@ final class URI
 	 * @access  protected
 	 * @return  string
 	 */
-	protected function _parse_query_string()
+	protected function _parseQueryString()
 	{
 		$uri = isset( $_SERVER[ 'QUERY_STRING' ] ) ? $_SERVER[ 'QUERY_STRING' ] : @getenv( 'QUERY_STRING' );
 
@@ -338,7 +283,7 @@ final class URI
 
 		parse_str( $_SERVER[ 'QUERY_STRING' ], $_GET );
 
-		return $this->_remove_relative_directory( $uri );
+		return $this->_removeRelativeDirectory( $uri );
 	}
 
 	// ------------------------------------------------------------------------
@@ -346,14 +291,14 @@ final class URI
 	/**
 	 * Remove relative directory (../) and multi slashes (///)
 	 *
-	 * Do some final cleaning of the URI and return it, currently only used in self::_parse_request_uri()
+	 * Do some final cleaning of the URI and return it, currently only used in self::_parseRequestURI()
 	 *
 	 * @param   string $uri URI String
 	 *
 	 * @access  protected
 	 * @return  string
 	 */
-	protected function _remove_relative_directory( $uri )
+	protected function _removeRelativeDirectory( $uri )
 	{
 		$segments = array();
 		$segment = strtok( $uri, '/' );
@@ -389,7 +334,7 @@ final class URI
 	 * @return  string
 	 * @throws  \HttpRequestException
 	 */
-	protected function _filter_segment( $string )
+	protected function _filterSegment( $string )
 	{
 		if ( ! empty( $string ) AND
 			! empty( $this->_config[ 'permitted_chars' ] ) AND
@@ -414,243 +359,125 @@ final class URI
 	 * @access  protected
 	 * @throws \HttpRequestException
 	 */
-	protected function _validate_segments()
+	protected function _validateSegments( $segments = array() )
 	{
-		if ( empty( $this->rsegments ) ) return;
+		$segments = empty( $segments ) ? \O2System::$active[ 'URI' ]->segments : $segments;
+		\O2System::$active[ 'URI' ]->setSegments( $segments, 'rsegments' );
+		\O2System::$active[ 'URI' ]->setSegments( \O2System::$active[ 'URI' ]->rsegments, 'isegments' );
 
-		// Validate Pages Segments
-		if ( is_dir( $page_dir = APPSPATH . 'pages' . DIRECTORY_SEPARATOR ) )
+		$num_rsegments = \O2System::$active[ 'URI' ]->totalSegments( 'rsegments' );
+
+		if ( $num_rsegments > 0 )
 		{
-			$num_rsegments = count( $this->rsegments );
-
 			for ( $i = 0; $i < $num_rsegments; $i++ )
 			{
-				$slice_rsegments = array_slice( $this->rsegments, 0, ( $num_rsegments - $i ) );
-				$page_filename = implode( DIRECTORY_SEPARATOR, $slice_rsegments );
-				$page_filename = str_replace( '-', '_', $page_filename );
+				$slice_rsegments = array_slice( \O2System::$active[ 'URI' ]->rsegments, 0, ( $num_rsegments - $i ) );
 
-				// Is the pages has language directory?
-				if ( \O2System::$active->offsetExists( 'language' ) )
+				// Find module registry
+				if ( $module = \O2System::$registry->find( implode( '/', $slice_rsegments ), 'modules' ) )
 				{
-					if ( is_dir( $page_dir . DIRECTORY_SEPARATOR . \O2System::$active[ 'language' ]->parameter . DIRECTORY_SEPARATOR ) )
+					$parents = \O2System::$registry->getParents( $module );
+
+					if ( ! empty( $parents ) )
 					{
-						$page_dir = $page_dir . DIRECTORY_SEPARATOR . \O2System::$active[ 'language' ]->parameter . DIRECTORY_SEPARATOR;
+						foreach ( $parents as $parent )
+						{
+							\O2System::$active[ 'modules' ][] = $parent;
+							\O2System::$active[ 'namespaces' ][] = $parent->namespace;
+							\O2System::$active[ 'directories' ][] = ROOTPATH . $parent->realpath;
+						}
 					}
-				}
 
-				if ( is_file( $page_filepath = $page_dir . $page_filename . '.phtml' ) )
-				{
-					\O2System::$active[ 'page' ] = $page_filepath;
+					\O2System::$active[ 'modules' ][] = $module;
+					\O2System::$active[ 'module' ] = \O2System::$active[ 'modules' ]->seek( \O2System::$active[ 'modules' ]->count() - 1 );
 
-					// We didn't have to find the module because is definitely a page
-					// The router will be set the active controller into pages controller
-					return;
+					\O2System::$active[ 'namespaces' ][] = $module->namespace;
+					\O2System::$active[ 'namespace' ] = \O2System::$active[ 'namespaces' ]->seek( \O2System::$active[ 'namespaces' ]->count() - 1 );
 
+					\O2System::$active[ 'directories' ][] = ROOTPATH . $module->realpath;
+					\O2System::$active[ 'directory' ] = \O2System::$active[ 'directories' ]->seek( \O2System::$active[ 'directories' ]->count() - 1 );
+
+					// Reload Module Config
+					\O2System::$config->load( 'config' );
+					\O2System::$active[ 'URI' ]->setSegments( array_diff( \O2System::$active[ 'URI' ]->rsegments, $slice_rsegments ), 'isegments' );
 					break;
 				}
 			}
 		}
 
-		// Validate Module Segments
-		$num_rsegments = count( $this->rsegments );
-
-		for ( $i = 0; $i < $num_rsegments; $i++ )
+		if ( count( \O2System::$active[ 'URI' ]->isegments ) > 0 )
 		{
-			$slice_rsegments = array_slice( $this->rsegments, 0, ( $num_rsegments - $i ) );
-			$offset = implode( '/', $slice_rsegments );
+			$page_directories = array();
 
-			// Find module registry
-			if ( $module = \O2System::$registry->find( $offset, 'modules' ) )
+			foreach ( \O2System::$active[ 'directories' ] as $directory )
 			{
-				\O2System::$active[ 'module' ] = $module;
-
-				$this->rsegments = array_diff( $this->rsegments, $slice_rsegments );
-				$page_filename = implode( DIRECTORY_SEPARATOR, $this->rsegments );
-
-				// Re-load module config
-				\O2System::$config->load( 'config' );
-
-				// Find module core controller
-				if ( is_file( ROOTPATH . $module->realpath . 'core' . DIRECTORY_SEPARATOR . 'Controller.php' ) )
+				if ( is_dir( $page_directory = $directory . 'pages' . DIRECTORY_SEPARATOR ) )
 				{
-					$controller = new Controller( ROOTPATH . $module->realpath . 'core' . DIRECTORY_SEPARATOR . 'Controller.php' );
-					\O2System::$active[ 'controllers' ][ $controller->parameter ] = $controller;
-				}
+					$page_directories[] = $page_directory;
 
-				// Find module default controller
-				if ( is_file( ROOTPATH . $module->realpath . 'controllers' . DIRECTORY_SEPARATOR . prepare_filename( $module->parameter ) . '.php' ) )
-				{
-					$controller = new Controller( ROOTPATH . $module->realpath . 'controllers' . DIRECTORY_SEPARATOR . prepare_filename( $module->parameter ) . '.php' );
-
-					\O2System::$active[ 'controllers' ][ $controller->parameter ] = $controller;
-					\O2System::$active[ 'controller' ] = $controller;
-				}
-
-				// Re-index routed segments
-				$this->reindex_rsegments();
-
-				// Let's try to find a module pages
-				if ( is_dir( $page_dir = ROOTPATH . $module->realpath . 'pages' . DIRECTORY_SEPARATOR ) )
-				{
 					// Is the pages has language directory?
 					if ( \O2System::$active->offsetExists( 'language' ) )
 					{
-						if ( is_dir( $page_dir . DIRECTORY_SEPARATOR . \O2System::$active[ 'language' ]->parameter . DIRECTORY_SEPARATOR ) )
+						if ( is_dir( $page_directory . \O2System::$active[ 'language' ]->parameter . DIRECTORY_SEPARATOR ) )
 						{
-							$page_dir = $page_dir . DIRECTORY_SEPARATOR . \O2System::$active[ 'language' ]->parameter . DIRECTORY_SEPARATOR;
+							$page_directories[] = $page_directory . \O2System::$active[ 'language' ]->parameter . DIRECTORY_SEPARATOR;
 						}
 					}
+				}
+			}
 
-					$page_filename = str_replace( [ 'pages' . DIRECTORY_SEPARATOR, 'page' . DIRECTORY_SEPARATOR ], '', $page_filename );
+			if ( \O2System::$active->offsetExists( 'module' ) )
+			{
+				if ( is_dir( $page_directory = ROOTPATH . \O2System::$active[ 'module' ]->realpath . 'pages' . DIRECTORY_SEPARATOR ) )
+				{
+					$page_directories[] = $page_directory;
 
-					if ( is_file( $page_filepath = $page_dir . $page_filename . '.phtml' ) )
+					// Is the pages has language directory?
+					if ( \O2System::$active->offsetExists( 'language' ) )
 					{
-						\O2System::$active[ 'page' ] = $page_filepath;
+						if ( is_dir( $page_directory . \O2System::$active[ 'language' ]->parameter . DIRECTORY_SEPARATOR ) )
+						{
+							$page_directories[] = $page_directory . \O2System::$active[ 'language' ]->parameter . DIRECTORY_SEPARATOR;
+						}
 					}
 				}
+			}
 
-				break;
+			foreach ( array_reverse( $page_directories ) as $page_directory )
+			{
+				if ( is_file( $page_filepath = $page_directory . implode( DIRECTORY_SEPARATOR, \O2System::$active[ 'URI' ]->isegments ) . '.phtml' ) )
+				{
+					\O2System::$active[ 'page' ] = new Page( $page_filepath );
+
+					// Find Modular Pages Controller
+					if ( is_file( $controller_filepath = ROOTPATH . \O2System::$active[ 'module' ]->realpath . 'controllers' . DIRECTORY_SEPARATOR . 'Pages.php' ) )
+					{
+						\O2System::$active[ 'controller' ] = new Controller( $controller_filepath );
+						\O2System::$active[ 'URI' ]->rsegments = [ \O2System::$active[ 'module' ]->parameter, 'pages', 'index' ];
+					}
+					elseif ( is_file( $controller_filepath = APPSPATH . 'controllers' . DIRECTORY_SEPARATOR . 'Pages.php' ) )
+					{
+						\O2System::$active[ 'controller' ] = new Controller( $controller_filepath );
+						\O2System::$active[ 'URI' ]->rsegments = [ 'pages', 'index' ];
+					}
+					elseif ( is_file( $controller_filepath = SYSTEMPATH . 'controllers' . DIRECTORY_SEPARATOR . 'Pages.php' ) )
+					{
+						\O2System::$active[ 'controller' ] = new Controller( $controller_filepath );
+						\O2System::$active[ 'URI' ]->rsegments = [ 'pages', 'index' ];
+					}
+
+					\O2System::$active[ 'controller' ]->params = array(
+						\O2System::$active[ 'page' ]->realpath,
+						\O2System::$active[ 'page' ]->vars,
+					);
+
+					// We didn't have to find the module because is definitely a page
+					// The router will be set the active controller into pages controller
+					break;
+				}
 			}
 		}
 	}
 
 	// --------------------------------------------------------------------
-
-	/**
-	 * Fetch URI Segment
-	 *
-	 * @param   int   $n         Index
-	 * @param   mixed $no_result What to return if the segment index is not found
-	 *
-	 * @access  public
-	 * @return  mixed
-	 */
-	public function segment( $n, $no_result = NULL )
-	{
-		return isset( $this->segments[ $n ] ) ? $this->segments[ $n ] : $no_result;
-	}
-
-	// ------------------------------------------------------------------------
-
-	public function reindex_segments()
-	{
-		$this->segments = array_merge( [ NULL ], $this->segments );
-		unset( $this->segments[ 0 ] );
-	}
-
-	/**
-	 * Total number of segments
-	 *
-	 * @access  public
-	 * @return  int
-	 */
-	public function total_segments()
-	{
-		return count( $this->segments );
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Fetch URI "routed" Segment
-	 *
-	 * Returns the re-routed URI segment (assuming routing rules are used)
-	 * based on the index provided. If there is no routing, will return
-	 * the same result as URI::segment().
-	 *
-	 * @param   int   $n         Index
-	 * @param   mixed $no_result What to return if the segment index is not found
-	 *
-	 * @access  public
-	 * @return  mixed
-	 */
-	public function rsegment( $n, $no_result = NULL )
-	{
-		return isset( $this->rsegments[ $n ] ) ? $this->rsegments[ $n ] : $no_result;
-	}
-
-	// --------------------------------------------------------------------
-
-	public function reindex_rsegments()
-	{
-		$this->rsegments = array_merge( [ NULL ], $this->rsegments );
-		unset( $this->rsegments[ 0 ] );
-	}
-
-	/**
-	 * Total number of routed segments
-	 *
-	 * @access  public
-	 * @return  int
-	 */
-	public function total_rsegments()
-	{
-		return count( $this->rsegments );
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Slash segment
-	 *
-	 * Fetches an URI segment with a slash.
-	 *
-	 * @param   int    $n     Index
-	 * @param   string $where Where to add the slash ('trailing' or 'leading')
-	 *
-	 * @access  public
-	 * @return  string
-	 */
-	public function slash_segment( $n, $where = 'trailing' )
-	{
-		return $this->_slash_segment( $n, $where, 'segment' );
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Internal Slash segment
-	 *
-	 * Fetches an URI Segment and adds a slash to it.
-	 *
-	 * @param   int    $n     Index
-	 * @param   string $where Where to add the slash ('trailing' or 'leading')
-	 * @param   string $which Array name ('segment' or 'rsegment')
-	 *
-	 * @access  protected
-	 * @return  string
-	 */
-	protected function _slash_segment( $n, $where = 'trailing', $which = 'segment' )
-	{
-		$leading = $trailing = '/';
-
-		if ( $where === 'trailing' )
-		{
-			$leading = '';
-		}
-		elseif ( $where === 'leading' )
-		{
-			$trailing = '';
-		}
-
-		return $leading . $this->$which( $n ) . $trailing;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Slash routed segment
-	 *
-	 * Fetches an URI routed segment with a slash.
-	 *
-	 * @param    int    $n     Index
-	 * @param    string $where Where to add the slash ('trailing' or 'leading')
-	 *
-	 * @access  public
-	 * @return  string
-	 */
-	public function slash_rsegment( $n, $where = 'trailing' )
-	{
-		return $this->_slash_segment( $n, $where, 'rsegment' );
-	}
 }

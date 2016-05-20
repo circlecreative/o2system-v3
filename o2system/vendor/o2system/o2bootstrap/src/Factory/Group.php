@@ -235,19 +235,17 @@ class Group extends FactoryInterface
 
 	// ------------------------------------------------------------------------
 
-	public function add_item( $item )
+	public function add_item( $item, $key = NULL )
 	{
 		if ( $item instanceof Dropdown )
 		{
 			if ( $this->_type === self::BUTTON_GROUP OR
-					$this->_is_justified === TRUE OR
-					$this->_is_vertical === TRUE
+				$this->_is_justified === TRUE OR
+				$this->_is_vertical === TRUE
 			)
 			{
 				$item->remove_class( 'dropdown' )->add_class( 'btn-group' )->add_attribute( 'role', 'group' );
 			}
-
-			$this->_items[] = $item;
 		}
 		elseif ( $item instanceof Progress )
 		{
@@ -257,24 +255,25 @@ class Group extends FactoryInterface
 				array_shift( $progress_bar );
 				array_pop( $progress_bar );
 
-				$this->_items[] = implode( PHP_EOL, $progress_bar );
+				$item = implode( PHP_EOL, $progress_bar );
 			}
 		}
 		elseif ( $item instanceof Button )
 		{
 			if ( $this->_type === self::BUTTON_GROUP AND
-					$this->_is_justified === TRUE
+				$this->_is_justified === TRUE
 			)
 			{
 				$button = clone $item;
 				$button->set_tag( 'a' );
 
-				$this->_items[] = $button;
+				$item = $button;
 			}
-			else
-			{
-				$this->_items[] = $item;
-			}
+		}
+
+		if ( isset( $key ) )
+		{
+			$this->_items[ $key ] = $item;
 		}
 		else
 		{

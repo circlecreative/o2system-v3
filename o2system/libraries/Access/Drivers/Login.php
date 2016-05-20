@@ -43,7 +43,9 @@ defined( 'ROOTPATH' ) OR exit( 'No direct script access allowed' );
 // ------------------------------------------------------------------------
 
 use O2System\Glob\Interfaces\DriverInterface;
+use O2System\Libraries\Access\Metadata\Credentials;
 use O2System\Model;
+use O2System\Glob\ArrayObject;
 
 /**
  * Login Driver Class
@@ -66,20 +68,22 @@ class Login extends DriverInterface
 	 * @access  public
 	 * @return  bool
 	 */
-	public function user( $username, $password )
+	public function set( $username, $password, $remember = FALSE )
 	{
-		if ( \O2System::Session()->has_userdata( 'attempts' ) === FALSE )
+		$remember = empty( $remember ) ? FALSE : TRUE;
+
+		if ( \O2System::Session()->has_userdata( '__loginAttempts' ) === FALSE )
 		{
 			$attempts = array(
 				'count' => 0,
 				'time'  => now(),
 			);
 
-			\O2System::Session()->set_userdata( 'attempts', $attempts );
+			\O2System::Session()->set_userdata( '__loginAttempts', $attempts );
 		}
 		else
 		{
-			$attempts = \O2System::Session()->userdata( 'attempts' );
+			$attempts = \O2System::Session()->userdata( '__loginAttempts' );
 		}
 
 		if ( $attempts[ 'count' ] < $this->_config[ 'attempts' ] )
@@ -87,297 +91,91 @@ class Login extends DriverInterface
 			$username = trim( $username );
 			$password = trim( $password );
 
-			$user = $this->_library->model->get_account( $username );
+			$user = $this->_library->model->getAccount( $username );
 
 			if ( $user instanceof \ArrayObject )
 			{
 				if ( $user->offsetExists( 'salt' ) )
 				{
-					$hash_password = $this->_library->hash_password( $password, $user->salt );
+					$hash_password = $this->_library->hashPassword( $password, $user->salt );
 				}
 				else
 				{
-					$hash_password = $this->_library->hash_password( $password );
+					$hash_password = $this->_library->hashPassword( $password );
 				}
 
 				if ( $user->password === $hash_password )
 				{
-					$this->_set_access( $user, $password );
-
-					\O2System::Session()->unset_userdata( 'attempts' );
+					$this->_library->token->setAccess( $user, $password, $remember );
 
 					return TRUE;
 				}
 			}
 		}
 
-		$attempts = \O2System::Session()->userdata( 'attempts' );
+		$attempts = \O2System::Session()->userdata( '__loginAttempts' );
 		$attempts[ 'count' ]++;
 		$attempts[ 'time' ] = now();
 
-		\O2System::Session()->set_userdata( 'attempts', $attempts );
+		\O2System::Session()->set_userdata( '__loginAttempts', $attempts );
 
 		return FALSE;
 	}
 
 	// ------------------------------------------------------------------------
 
-	protected function _set_remember()
+	public function getAttempts()
 	{
-		$remember = ( \O2System::Input()->post( 'remember' ) == 1 ? TRUE : FALSE );
+		$attempts = array(
+			'count' => 0,
+			'time'  => now(),
+		);
 
-		if ( $remember === TRUE )
+		if ( \O2System::Session()->has_userdata( 'attempts' ) )
 		{
-			$id_user_account = $_SESSION[ 'account' ]->offsetExists( 'id_user_account' ) ? $_SESSION[ 'account' ]->id_user_account : $_SESSION[ 'account' ]->id;
-
-			$token = array(
-				'id_user_account' => $id_user_account,
-				'token'           => $_SESSION[ 'account' ]->token,
-				'ip_address'      => \O2System::Input()->ip_address(),
-				'agent'           => \O2System::Input()->user_agent(),
-			);
-
-			$lifetime = time() + \O2System::$config[ 'cookie' ][ 'lifetime' ];
-			\O2System::Cache()->save( 'remember-' . $_SESSION[ 'account' ]->token, $token, ( $lifetime - 60 ) );
-
-			$token = serialize( $token );
-			$token = $this->_library->encryption->encrypt( $token );
-
-			$name = 'remember';
-
-			if ( $cookie = \O2System::$config[ 'cookie' ] )
-			{
-				$name = $cookie[ 'prefix' ] . $name;
-			}
-
-			$domain = parse_domain()->domain;
-
-			delete_cookie( $name );
-
-			setcookie(
-				$name,
-				$token,
-				$lifetime,
-				'/',
-				$domain,
-				is_https(),
-				TRUE // HttpOnly; Yes, this is intentional and not configurable for security reasons
-			);
-		}
-	}
-
-
-	/**
-	 * Set Access
-	 *
-	 * Set access for login user
-	 *
-	 * @param object $user
-	 * @param string $password
-	 *
-	 * @access  protected
-	 */
-	protected function _set_access( $user, $password )
-	{
-		$id_user_account = $user->offsetExists( 'id_user_account' ) ? $user->id_user_account : $user->id;
-
-		if ( $user->offsetExists( 'salt' ) )
-		{
-			$salt = $this->_library->generate_salt();
-			$hash_password = $this->_library->hash_password( $password, $salt );
-			$this->_library->model->update_account( array(
-				                                        'id'       => $id_user_account,
-				                                        'password' => $hash_password,
-				                                        'salt'     => $salt,
-			                                        ) );
-
-			$user->offsetUnset( 'salt' );
+			$attempts = \O2System::Session()->userdata( 'attempts' );
 		}
 
-		if ( $user->offsetExists( 'password' ) )
-		{
-			$user->offsetUnset( 'password' );
-		}
-
-		$ip_address = \O2System::Input()->ip_address();
-		$useragent = \O2System::Input()->user_agent();
-		$user->token = hash( "haval256,5", \O2System::$config[ 'encryption_key' ] . $id_user_account . $useragent . $ip_address . microtime() );
-
-		\O2System::Session()->set_userdata( 'account', $user );
-
-		if ( $this->_library->getConfig( 'sso', 'access' ) === TRUE AND $this->_library->user->get_sso_token() === FALSE )
-		{
-			if ( \O2System::$active[ 'domain' ] === $this->_library->getConfig( 'sso', 'server' ) )
-			{
-				$this->_set_sso_access( $user, \O2System::$active[ 'domain' ] );
-			}
-			else
-			{
-				$this->_set_sso_access( $user, $this->_library->getConfig( 'sso', 'server' ) );
-			}
-		}
-
-		if ( $this->_library->user->get_remember_token() === FALSE )
-		{
-			$this->_set_remember();
-		}
+		return $attempts;
 	}
 
 	// ------------------------------------------------------------------------
 
-	protected function _set_sso_access( $user, $domain = NULL )
+	public function fromCredentials( Credentials $credentials )
 	{
-		$id_user_account = $user->offsetExists( 'id_user_account' ) ? $user->id_user_account : $user->id;
-
-		$token = array(
-			'id_user_account' => $id_user_account,
-			'token'           => $user->token,
-			'ip_address'      => \O2System::Input()->ip_address(),
-			'agent'           => \O2System::Input()->user_agent(),
-		);
-
-		$lifetime = time() + $this->_library->getConfig( 'sso', 'lifetime' );
-		\O2System::Cache()->save( 'sso-' . $user->token, $token, ( $lifetime - 60 ) );
-
-		$token = serialize( $token );
-		$token = $this->_library->encryption->encrypt( $token );
-
-		$name = 'sso';
-
-		if ( $cookie = \O2System::$config[ 'cookie' ] )
+		if ( $this->_library->getConfig( 'login', 'match_ip' ) === TRUE )
 		{
-			$name = $cookie[ 'prefix' ] . $name;
+			if ( $credentials[ 'ip_address' ] !== \O2System::Input()->ipAddress() )
+			{
+				return FALSE;
+			}
 		}
 
-		$domain = parse_domain( $domain )->domain;
-
-		delete_cookie( $name );
-
-		setcookie(
-			$name,
-			$token,
-			$lifetime, '/',
-			'.' . $domain,
-			is_https(),
-			TRUE // HttpOnly; Yes, this is intentional and not configurable for security reasons
-		);
-	}
-
-	public function sso( $token )
-	{
-		if ( $sso = \O2System::Cache()->get( 'sso-' . $token ) )
+		if ( $this->_library->getConfig( 'login', 'match_agent' ) === TRUE )
 		{
-			if ( $this->_library->getConfig( 'login', 'match_ip' ) === TRUE )
+			if ( $credentials[ 'user_agent' ] !== \O2System::Input()->userAgent() )
 			{
-				if ( $sso[ 'ip_address' ] !== \O2System::Input()->ip_address() )
-				{
-					return FALSE;
-				}
+				return FALSE;
 			}
+		}
 
-			if ( $this->_library->getConfig( 'login', 'match_agent' ) === TRUE )
+		if ( $this->_library->model instanceof Model )
+		{
+			if ( $user = $this->_library->model->getAccount( $credentials[ 'id_user_account' ] ) )
 			{
-				if ( $sso[ 'agent' ] !== \O2System::Input()->user_agent() )
-				{
-					return FALSE;
-				}
-			}
+				if ( $user instanceof \ArrayObject === FALSE ) return FALSE;
 
-			if ( $this->_library->model instanceof Model )
-			{
-				if ( $user = $this->_library->model->get_account( $sso[ 'id_user_account' ] ) )
-				{
-					if ( $user instanceof \ArrayObject === FALSE ) return FALSE;
+				$this->_library->token->setAccess( $user, $user->password, (bool) empty( get_cookie( 'remember' ) ) );
 
-					$id_user_account = $user->offsetExists( 'id_user_account' ) ? $user->id_user_account : $user->id;
-
-					if ( $user->offsetExists( 'salt' ) )
-					{
-						$salt = $this->_library->generate_salt();
-						$hash_password = $this->_library->hash_password( $user->password, $salt );
-						$this->_library->model->update_account( array(
-							                                        'id'       => $id_user_account,
-							                                        'password' => $hash_password,
-							                                        'salt'     => $salt,
-						                                        ) );
-
-						$user->offsetUnset( 'salt' );
-					}
-
-					if ( $user->offsetExists( 'password' ) )
-					{
-						$user->offsetUnset( 'password' );
-					}
-
-					\O2System::Session()->set_userdata( 'account', $user );
-
-					$lifetime = time() + $this->_library->getConfig( 'sso', 'lifetime' );
-
-					$token = serialize( $sso );
-					$token = $this->_library->encryption->encrypt( $token );
-
-					$name = 'sso';
-
-					if ( $cookie = \O2System::$config[ 'cookie' ] )
-					{
-						$name = $cookie[ 'prefix' ] . $name;
-					}
-
-					$domain = isset( $_SERVER[ 'HTTP_HOST' ] ) ? $_SERVER[ 'HTTP_HOST' ] : $_SERVER[ 'SERVER_NAME' ];
-
-					setcookie(
-						$name,
-						$token,
-						$lifetime, '/',
-						'.' . $domain,
-						is_https(),
-						TRUE // HttpOnly; Yes, this is intentional and not configurable for security reasons
-					);
-
-					return TRUE;
-				}
+				return TRUE;
 			}
 		}
 
 		return FALSE;
 	}
 
-	public function remember( $token )
+	public function destroy()
 	{
-		if ( $remember = \O2System::Cache()->get( 'remember-' . $token ) )
-		{
-			if ( $this->_library->getConfig( 'login', 'match_ip' ) === TRUE )
-			{
-				if ( $remember[ 'ip_address' ] !== \O2System::Input()->ip_address() )
-				{
-					return FALSE;
-				}
-			}
 
-			if ( $this->_library->getConfig( 'login', 'match_agent' ) === TRUE )
-			{
-				if ( $remember[ 'agent' ] !== \O2System::Input()->user_agent() )
-				{
-					return FALSE;
-				}
-			}
-
-			if ( $this->_library->model instanceof Model )
-			{
-				if ( $user = $this->_library->model->get_account( $remember[ 'id_user_account' ] ) )
-				{
-					// remove old cookie
-					delete_cookie( 'remember' );
-
-					$_POST[ 'remember' ] = 1;
-
-					$this->_set_access( $user, $user->password );
-
-					return TRUE;
-				}
-			}
-		}
-
-		return FALSE;
 	}
 }

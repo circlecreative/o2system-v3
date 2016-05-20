@@ -147,7 +147,7 @@ class Pagination extends Lists
 		{
 			if ( class_exists( 'O2System', FALSE ) )
 			{
-				$segments = \O2System::URI()->segments;
+				$segments = \O2System::$active[ 'URI' ]->segments;
 				if ( $key = array_search( 'page', $segments ) )
 				{
 					if ( isset( $segments[ $key + 1 ] ) )

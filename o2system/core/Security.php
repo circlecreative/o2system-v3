@@ -51,7 +51,7 @@ defined( 'ROOTPATH' ) || exit( 'No direct script access allowed' );
  * @author         Circle Creative Dev Team
  * @link           http://circle-creative.com/products/o2system-codeigniter/user-guide/core/security.html
  */
-class Security
+final class Security
 {
 
 	protected $_config = array();
@@ -95,7 +95,7 @@ class Security
 			}
 
 			// Set the CSRF hash
-			$this->_csrf_set_hash();
+			$this->_setHashCSRF();
 		}
 
 		$this->charset = strtoupper( \O2System::$config[ 'charset' ] );
@@ -148,18 +148,18 @@ class Security
 	 *
 	 * @return    Security
 	 */
-	public function csrf_verify()
+	public function verifyCSRF()
 	{
 		// If it's not a POST request we will set the CSRF cookie
 		if ( strtoupper( $_SERVER[ 'REQUEST_METHOD' ] ) !== 'POST' )
 		{
-			return $this->csrf_set_cookie();
+			return $this->setCookieCSRF();
 		}
 
 		// Check if URI has been whitelisted from CSRF checks
 		foreach ( $this->_csrf->exclude_uris as $excluded )
 		{
-			if ( preg_match( '#^' . $excluded . '$#i' . ( UTF8_ENABLED ? 'u' : '' ), \O2System::URI()->string ) )
+			if ( preg_match( '#^' . $excluded . '$#i' . ( UTF8_ENABLED ? 'u' : '' ), \O2System::$active[ 'URI' ]->string ) )
 			{
 				return $this;
 			}
@@ -170,7 +170,7 @@ class Security
 			|| $_POST[ $this->_csrf->cookie_name ] !== $_COOKIE[ $this->_csrf_cookie_name ]
 		) // Do the tokens match?
 		{
-			$this->csrf_error();
+			$this->showErrorCSRF();
 		}
 
 		// We kill this since we're done and we don't want to polute the _POST array
@@ -184,10 +184,10 @@ class Security
 			$this->_csrf_hash = NULL;
 		}
 
-		$this->_csrf_set_hash();
-		$this->csrf_set_cookie();
+		$this->_setHashCSRF();
+		$this->setCookieCSRF();
 
-		\O2System::Logger()->info( 'Security: CSRF token verified' );
+		\O2System::Log()->info( 'Security: CSRF token verified' );
 
 		return $this;
 	}
@@ -200,7 +200,7 @@ class Security
 	 * @codeCoverageIgnore
 	 * @return    Security
 	 */
-	public function csrf_set_cookie()
+	public function setCookieCSRF()
 	{
 		$expire = time() + $this->_csrf->lifetime;
 
@@ -221,7 +221,7 @@ class Security
 			$cookie->http_only
 		);
 
-		\O2System::Logger()->info( 'Security: CSRF Cookie Sent' );
+		\O2System::Log()->info( 'Security: CSRF Cookie Sent' );
 
 		return $this;
 	}
@@ -234,7 +234,7 @@ class Security
 	 * @access  public
 	 * @throws  \Exception
 	 */
-	public function csrf_error()
+	public function showErrorCSRF()
 	{
 		throw new \HttpRequestException( 'The action you have requested is not allowed.', 403 );
 	}
@@ -249,7 +249,7 @@ class Security
 	 * @access  public
 	 * @return  string  CSRF hash
 	 */
-	public function get_csrf_hash()
+	public function getHashCSRF()
 	{
 		return $this->_csrf->hash;
 	}
@@ -262,7 +262,7 @@ class Security
 	 * @see        Security::$_csrf_token_name
 	 * @return    string    CSRF token name
 	 */
-	public function get_csrf_token_name()
+	public function getTokenNameCSRF()
 	{
 		return $this->_csrf->token_name;
 	}
@@ -296,14 +296,14 @@ class Security
 	 *
 	 * @return    string
 	 */
-	public function xss_clean( $string, $is_image = FALSE )
+	public function cleanXSS( $string, $is_image = FALSE )
 	{
 		// Is the string an array?
 		if ( is_array( $string ) )
 		{
 			while ( list( $key ) = each( $string ) )
 			{
-				$string[ $key ] = $this->xss_clean( $string[ $key ] );
+				$string[ $key ] = $this->cleanXSS( $string[ $key ] );
 			}
 
 			return $string;
@@ -334,9 +334,9 @@ class Security
 		 * We only convert entities that are within tags since
 		 * these are the ones that will pose security problems.
 		 */
-		$string = preg_replace_callback( "/[^a-z0-9>]+[a-z0-9]+=([\'\"]).*?\\1/si", array( $this, '_convert_attribute' ), $string );
+		$string = preg_replace_callback( "/[^a-z0-9>]+[a-z0-9]+=([\'\"]).*?\\1/si", array( $this, '_convertAttribute' ), $string );
 
-		$string = preg_replace_callback( '/<\w+.*/si', array( $this, '_decode_entity' ), $string );
+		$string = preg_replace_callback( '/<\w+.*/si', array( $this, '_decodeEntity' ), $string );
 
 		// Remove Invisible Characters Again!
 		$string = remove_invisible_characters( $string );
@@ -355,7 +355,7 @@ class Security
 		$converted_string = $string;
 
 		// Remove Strings that are never allowed
-		$string = $this->_do_never_allowed( $string );
+		$string = $this->_doNeverAllowed( $string );
 
 		/*
 		 * Makes PHP tags safe
@@ -396,7 +396,7 @@ class Security
 
 			// We only want to do this when it is followed by a non-word character
 			// That way valid stuff like "dealer to" does not become "dealerto"
-			$string = preg_replace_callback( '#(' . substr( $word, 0, -3 ) . ')(\W)#is', array( $this, '_compact_exploded_words' ), $string );
+			$string = preg_replace_callback( '#(' . substr( $word, 0, -3 ) . ')(\W)#is', array( $this, '_compactExplodedWords' ), $string );
 		}
 
 		/*
@@ -416,11 +416,11 @@ class Security
 			$original = $string;
 			if ( preg_match( '/<a/i', $string ) )
 			{
-				$string = preg_replace_callback( '#<a[^a-z0-9>]+([^>]*?)(?:>|$)#si', array( $this, '_js_link_removal' ), $string );
+				$string = preg_replace_callback( '#<a[^a-z0-9>]+([^>]*?)(?:>|$)#si', array( $this, '_jsLinkRemoval' ), $string );
 			}
 			if ( preg_match( '/<img/i', $string ) )
 			{
-				$string = preg_replace_callback( '#<img[^a-z0-9]+([^>]*?)(?:\s?/?>|$)#si', array( $this, '_js_img_removal' ), $string );
+				$string = preg_replace_callback( '#<img[^a-z0-9]+([^>]*?)(?:\s?/?>|$)#si', array( $this, '_jsImgRemoval' ), $string );
 			}
 			if ( preg_match( '/script|xss/i', $string ) )
 			{
@@ -457,7 +457,7 @@ class Security
 		do
 		{
 			$old_string = $string;
-			$string = preg_replace_callback( $pattern, array( $this, '_sanitize_naughty_html' ), $string );
+			$string = preg_replace_callback( $pattern, array( $this, '_sanitizeNaughtyHTML' ), $string );
 		}
 		while ( $old_string !== $string );
 
@@ -484,7 +484,7 @@ class Security
 		// Final clean up
 		// This adds a bit of extra precaution in case
 		// something got through the above filters
-		$string = $this->_do_never_allowed( $string );
+		$string = $this->_doNeverAllowed( $string );
 
 		/*
 		 * Images are Handled in a Special Way
@@ -513,11 +513,11 @@ class Security
 	 * @see        Security::$_xss_hash
 	 * @return    string    XSS hash
 	 */
-	public function xss_hash()
+	public function hashXSS()
 	{
 		if ( $this->_xss_hash === NULL )
 		{
-			$rand = $this->get_random_bytes( 16 );
+			$rand = $this->getRandomBytes( 16 );
 			$this->_xss_hash = ( $rand === FALSE )
 				? md5( uniqid( mt_rand(), TRUE ) )
 				: bin2hex( $rand );
@@ -535,7 +535,7 @@ class Security
 	 *
 	 * @return    string
 	 */
-	public function get_random_bytes( $length )
+	public function getRandomBytes( $length )
 	{
 		if ( empty( $length ) || ! ctype_digit( (string) $length ) )
 		{
@@ -589,7 +589,7 @@ class Security
 	 *
 	 * @return    string
 	 */
-	public function entity_decode( $string, $charset = NULL )
+	public function entityDecode( $string, $charset = NULL )
 	{
 		if ( strpos( $string, '&' ) === FALSE )
 		{
@@ -650,7 +650,7 @@ class Security
 	 *
 	 * @return    string
 	 */
-	public function sanitize_filename( $str, $relative_path = FALSE )
+	public function sanitizeFilename( $str, $relative_path = FALSE )
 	{
 		$bad = $this->_config[ 'filename_bad_characters' ];
 
@@ -681,7 +681,7 @@ class Security
 	 *
 	 * @return    string
 	 */
-	public function strip_image_tags( $string )
+	public function stripImageTags( $string )
 	{
 		return preg_replace( array(
 			                     '#<img[\s/]+.*?src\s*=\s*["\'](.+?)["\'].*?\>#', '#<img[\s/]+.*?src\s*=\s*(.+?).*?\>#',
@@ -696,13 +696,13 @@ class Security
 	 * Callback method for xss_clean() to remove whitespace from
 	 * things like 'j a v a s c r i p t'.
 	 *
-	 * @used-by    Security::xss_clean()
+	 * @used-by    Security::cleanXSS()
 	 *
 	 * @param    array $matches
 	 *
 	 * @return    string
 	 */
-	protected function _compact_exploded_words( $matches )
+	protected function _compactExplodedWords( $matches )
 	{
 		return preg_replace( '/\s+/s', '', $matches[ 1 ] ) . $matches[ 2 ];
 	}
@@ -714,13 +714,13 @@ class Security
 	 *
 	 * Callback method for xss_clean() to remove naughty HTML elements.
 	 *
-	 * @used-by    Security::xss_clean()
+	 * @used-by    Security::cleanXSS()
 	 *
 	 * @param    array $matches
 	 *
 	 * @return    string
 	 */
-	protected function _sanitize_naughty_html( $matches )
+	protected function _sanitizeNaughtyHTML( $matches )
 	{
 		// First, escape unclosed tags
 		if ( empty( $matches[ 'closeTag' ] ) )
@@ -801,18 +801,18 @@ class Security
 	 * and prevents PREG_BACKTRACK_LIMIT_ERROR from being triggered in
 	 * PHP 5.2+ on link-heavy strings.
 	 *
-	 * @used-by    Security::xss_clean()
+	 * @used-by    Security::cleanXSS()
 	 *
 	 * @param    array $match
 	 *
 	 * @return    string
 	 */
-	protected function _js_link_removal( $match )
+	protected function _jsLinkRemoval( $match )
 	{
 		return str_replace( $match[ 1 ],
 		                    preg_replace( '#href=.*?(?:(?:alert|prompt|confirm)(?:\(|&\#40;)|javascript:|livescript:|mocha:|charset=|window\.|document\.|\.cookie|<script|<xss|data\s*:)#si',
 		                                  '',
-		                                  $this->_filter_attributes( str_replace( array( '<', '>' ), '', $match[ 1 ] ) )
+		                                  $this->_filterAttributes( str_replace( array( '<', '>' ), '', $match[ 1 ] ) )
 		                    ),
 		                    $match[ 0 ] );
 	}
@@ -828,18 +828,18 @@ class Security
 	 * and prevents PREG_BACKTRACK_LIMIT_ERROR from being triggered in
 	 * PHP 5.2+ on image tag heavy strings.
 	 *
-	 * @used-by    Security::xss_clean()
+	 * @used-by    Security::cleanXSS()
 	 *
 	 * @param    array $match
 	 *
 	 * @return    string
 	 */
-	protected function _js_img_removal( $match )
+	protected function _jsImgRemoval( $match )
 	{
 		return str_replace( $match[ 1 ],
 		                    preg_replace( '#src=.*?(?:(?:alert|prompt|confirm)(?:\(|&\#40;)|javascript:|livescript:|mocha:|charset=|window\.|document\.|\.cookie|<script|<xss|base64\s*,)#si',
 		                                  '',
-		                                  $this->_filter_attributes( str_replace( array( '<', '>' ), '', $match[ 1 ] ) )
+		                                  $this->_filterAttributes( str_replace( array( '<', '>' ), '', $match[ 1 ] ) )
 		                    ),
 		                    $match[ 0 ] );
 	}
@@ -849,13 +849,13 @@ class Security
 	/**
 	 * Attribute Conversion
 	 *
-	 * @used-by    Security::xss_clean()
+	 * @used-by    Security::cleanXSS()
 	 *
 	 * @param    array $match
 	 *
 	 * @return    string
 	 */
-	protected function _convert_attribute( $match )
+	protected function _convertAttribute( $match )
 	{
 		return str_replace( array( '>', '<', '\\' ), array( '&gt;', '&lt;', '\\\\' ), $match[ 0 ] );
 	}
@@ -867,14 +867,14 @@ class Security
 	 *
 	 * Filters tag attributes for consistency and safety.
 	 *
-	 * @used-by    Security::_js_img_removal()
-	 * @used-by    Security::_js_link_removal()
+	 * @used-by    Security::_jsImgRemoval()
+	 * @used-by    Security::_jsLinkRemoval()
 	 *
 	 * @param    string $str
 	 *
 	 * @return    string
 	 */
-	protected function _filter_attributes( $str )
+	protected function _filterAttributes( $str )
 	{
 		$out = '';
 		if ( preg_match_all( '#\s*[a-z\-]+\s*=\s*(\042|\047)([^\\1]*?)\\1#is', $str, $matches ) )
@@ -893,23 +893,23 @@ class Security
 	/**
 	 * HTML Entity Decode Callback
 	 *
-	 * @used-by    Security::xss_clean()
+	 * @used-by    Security::cleanXSS()
 	 *
 	 * @param    array $match
 	 *
 	 * @return    string
 	 */
-	protected function _decode_entity( $match )
+	protected function _decodeEntity( $match )
 	{
 		// Protect GET variables in URLs
 		// 901119URL5918AMP18930PROTECT8198
-		$match = preg_replace( '|\&([a-z\_0-9\-]+)\=([a-z\_0-9\-/]+)|i', $this->xss_hash() . '\\1=\\2', $match[ 0 ] );
+		$match = preg_replace( '|\&([a-z\_0-9\-]+)\=([a-z\_0-9\-/]+)|i', $this->hashXSS() . '\\1=\\2', $match[ 0 ] );
 
 		// Decode, then un-protect URL GET vars
 		return str_replace(
-			$this->xss_hash(),
+			$this->hashXSS(),
 			'&',
-			$this->entity_decode( $match, $this->charset )
+			$this->entityDecode( $match, $this->charset )
 		);
 	}
 
@@ -918,13 +918,13 @@ class Security
 	/**
 	 * Do Never Allowed
 	 *
-	 * @used-by    Security::xss_clean()
+	 * @used-by    Security::cleanXSS()
 	 *
 	 * @param    string
 	 *
 	 * @return    string
 	 */
-	protected function _do_never_allowed( $string )
+	protected function _doNeverAllowed( $string )
 	{
 		$string = str_replace( array_keys( $this->_config[ 'never_allowed_strings' ] ), $this->_config[ 'never_allowed_strings' ], $string );
 
@@ -943,7 +943,7 @@ class Security
 	 *
 	 * @return    string
 	 */
-	protected function _csrf_set_hash()
+	protected function _setHashCSRF()
 	{
 		if ( $this->_csrf->hash === NULL )
 		{
@@ -958,7 +958,7 @@ class Security
 				return $this->_csrf->hash = $_COOKIE[ $this->_csrf->cookie_name ];
 			}
 
-			$rand = $this->get_random_bytes( 16 );
+			$rand = $this->getRandomBytes( 16 );
 			$this->_csrf->hash = ( $rand === FALSE )
 				? md5( uniqid( mt_rand(), TRUE ) )
 				: bin2hex( $rand );
@@ -977,11 +977,11 @@ class Security
 	 * @access  public
 	 * @return  boolean
 	 */
-	public function is_sql_injection_attempt()
+	public function isSQLInjectionAttempt()
 	{
 		foreach ( $this->_config[ 'sql_injection_commands' ] as $sql_injection_command )
 		{
-			$request = $this->xss_clean( $_SERVER[ 'QUERY_STRING' ] );
+			$request = $this->cleanXSS( $_SERVER[ 'QUERY_STRING' ] );
 
 			if ( strpos( strtolower( $request ), $sql_injection_command ) !== FALSE )
 			{
@@ -1002,9 +1002,9 @@ class Security
 	 * @access  public
 	 * @return  boolean
 	 */
-	public function is_behind_proxy()
+	public function isBehindProxy()
 	{
-		if ( is_cli() || $this->is_ajax_request() )
+		if ( is_cli() || is_ajax() )
 		{
 			return FALSE;
 		}
@@ -1031,9 +1031,9 @@ class Security
 	 * @access  public
 	 * @return  boolean
 	 */
-	public function is_ddos_attempt( $max_request = 100 )
+	public function isDDosAttempt( $max_request = 100 )
 	{
-		if ( is_cli() OR $this->is_ajax_request() )
+		if ( is_cli() OR is_ajax() )
 		{
 			if ( \O2System::Session()->userdata( 'last_session_request' ) )
 			{
@@ -1065,9 +1065,9 @@ class Security
 	 * @access  public
 	 * @return  boolean
 	 */
-	public function is_spam_ip()
+	public function isSpamIp()
 	{
-		$reverse_ip = implode( ".", array_reverse( explode( ".", \O2System::Input()->ip_address() ) ) );
+		$reverse_ip = implode( ".", array_reverse( explode( ".", \O2System::Input()->ipAddress() ) ) );
 
 		foreach ( $this->_config[ 'dnsbl_spam_lookup' ] as $host )
 		{

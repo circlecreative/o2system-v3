@@ -44,9 +44,6 @@ namespace O2System\ORM;
 
 use O2System\DB;
 use O2System\Gears\Tracer;
-use O2System\Glob\Helpers\Inflector;
-use O2System\ORM\Factory\Row;
-use O2System\ORM\Interfaces\Table;
 
 class Model
 {
@@ -324,3 +321,23 @@ class Model
 		return $this->all();
 	}
 }
+
+// ------------------------------------------------------------------------
+
+use O2System\Glob\Interfaces\ExceptionInterface;
+
+/**
+ * Class Exception
+ *
+ * @package O2System\ORM
+ */
+class Exception extends ExceptionInterface
+{
+	public $library = array(
+			'name'        => 'O2System ORM (O2ORM)',
+			'description' => 'Open Source Object Relationship Management Library',
+			'version'     => '1.0',
+	);
+}
+
+// ------------------------------------------------------------------------

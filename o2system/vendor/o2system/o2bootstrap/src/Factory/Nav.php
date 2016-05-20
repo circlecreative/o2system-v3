@@ -102,7 +102,7 @@ class Nav extends Lists
 		return $this;
 	}
 
-	public function add_item( $item, $describe = NULL, $attr = array() )
+	public function add_item( $item, $describe = NULL, $attr = array(), $key = NULL )
 	{
 		if ( $item instanceof Link )
 		{
@@ -116,7 +116,7 @@ class Nav extends Lists
 				}
 			}
 
-			parent::add_item( $item, $describe, $attr );
+			parent::add_item( $item, $describe, $attr, $key );
 		}
 		elseif ( $item instanceof Dropdown )
 		{
@@ -129,13 +129,14 @@ class Nav extends Lists
 			}
 
 			$dropdown->add_attribute( 'role', 'presentation' );
-			$this->_items[] = $dropdown;
+
+			parent::add_item( $dropdown, $describe, $attr, $key );
 		}
 		elseif ( is_string( $item ) )
 		{
 			$item = new Link( $item, '#' );
 
-			parent::add_item( $item, $describe, $attr );
+			parent::add_item( $item, $describe, $attr, $key );
 		}
 
 		return $this;

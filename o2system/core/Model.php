@@ -117,11 +117,11 @@ class Model extends ModelInterface
 	{
 		$table = isset( $table ) ? $table : $this->table;
 
-		$row = $this->_before_process( $row, $table );
+		$row = $this->_beforeProcess( $row, $table );
 
 		if ( $this->db->insert( $table, $row ) )
 		{
-			$report = $this->_after_process();
+			$report = $this->_afterProcess();
 
 			if ( empty( $report ) )
 			{
@@ -153,11 +153,49 @@ class Model extends ModelInterface
 	{
 		$table = isset( $table ) ? $table : $this->table;
 
-		$row = $this->_before_process( $row, $table );
+		$row = $this->_beforeProcess( $row, $table );
 
-		if ( $this->db->where( 'id', $row['id'] )->update( $table, $row ) )
+		if ( $this->db->where( 'id', $row[ 'id' ] )->update( $table, $row ) )
 		{
-			$report = $this->_after_process();
+			$report = $this->_afterProcess();
+
+			if ( empty( $report ) )
+			{
+				return TRUE;
+			}
+
+			return $report;
+		}
+
+		return FALSE;
+	}
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Update Data
+	 *
+	 * Method to update data as well as equipping the data in accordance with the fields
+	 * in the destination database table.
+	 *
+	 * @access  public
+	 * @final   This method cannot be overwritten
+	 *
+	 * @param   string $table Table Name
+	 * @param   array  $row   Array of Update Data
+	 *
+	 * @return bool
+	 */
+	final public function softDelete( $id, $table = NULL )
+	{
+		$table = isset( $table ) ? $table : $this->table;
+
+		$row[ $this->primary_key ] = $id;
+		$row[ 'record_status' ] = 'DELETE';
+		$row = $this->_beforeProcess( $row, $table );
+
+		if ( $this->db->where( 'id', $row[ 'id' ] )->update( $table, $row ) )
+		{
+			$report = $this->_afterProcess();
 
 			if ( empty( $report ) )
 			{
@@ -194,11 +232,11 @@ class Model extends ModelInterface
 
 		if ( isset( $this->_adjacency_enabled ) )
 		{
-			if ( $this->has_children( $id, $table ) )
+			if ( $this->hasChildren( $id, $table ) )
 			{
 				if ( $force === TRUE )
 				{
-					if ( $childrens = $this->get_children( $id, $table ) )
+					if ( $childrens = $this->getChildren( $id, $table ) )
 					{
 						foreach ( $childrens as $children )
 						{
@@ -216,7 +254,7 @@ class Model extends ModelInterface
 		{
 			if ( $this->db->field_exists( $field, $table ) )
 			{
-				$result = $this->db->select( $field )->get_where( $table, [ 'id' => $id ], 1 );
+				$result = $this->db->select( $field )->get_where( $table, [ $this->primary_key => $id ], 1 );
 
 				if ( $result->num_rows() > 0 )
 				{
@@ -241,9 +279,9 @@ class Model extends ModelInterface
 			}
 		}
 
-		if ( $return = $this->db->where( 'id', $id )->delete( $table ) )
+		if ( $return = $this->db->where( $this->primary_key, $id )->delete( $table ) )
 		{
-			$report = $this->_after_process();
+			$report = $this->_afterProcess();
 
 			if ( empty( $report ) )
 			{
@@ -269,7 +307,7 @@ class Model extends ModelInterface
 	 * @access  protected
 	 * @return  mixed
 	 */
-	protected function _before_process( $row, $table )
+	protected function _beforeProcess( $row, $table )
 	{
 		if ( ! empty( $this->_before_process ) )
 		{
@@ -292,7 +330,7 @@ class Model extends ModelInterface
 	 * @access  protected
 	 * @return  array
 	 */
-	protected function _after_process()
+	protected function _afterProcess()
 	{
 		$report = array();
 

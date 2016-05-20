@@ -115,6 +115,11 @@ abstract class ModelInterface
 			$sub_model_path = dirname( $filepath ) . DIRECTORY_SEPARATOR . strtolower( pathinfo( $filepath, PATHINFO_FILENAME ) ) . DIRECTORY_SEPARATOR;
 		}
 
+		if ( class_exists( 'O2System', FALSE ) )
+		{
+			\O2System::Load()->addNamespace( $reflection->name, $sub_model_path );
+		}
+
 		foreach ( glob( $sub_model_path . '*.php' ) as $filepath )
 		{
 			$this->_valid_sub_models[ strtolower( pathinfo( $filepath, PATHINFO_FILENAME ) ) ] = $filepath;
@@ -130,11 +135,11 @@ abstract class ModelInterface
 
 		foreach ( $reflection->getMethods() as $method )
 		{
-			if ( strpos( $method->name, '_before_process_' ) !== FALSE )
+			if ( $method->name !== '_beforeProcess' AND strpos( $method->name, '_beforeProcess' ) !== FALSE )
 			{
 				$this->_before_process[] = $method->name;
 			}
-			elseif ( strpos( $method->name, '_after_process_' ) !== FALSE )
+			elseif ( $method->name !== '_afterProcess' AND strpos( $method->name, '_afterProcess' ) !== FALSE )
 			{
 				$this->_after_process[] = $method->name;
 			}

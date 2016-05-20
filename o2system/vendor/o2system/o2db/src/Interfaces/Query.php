@@ -283,9 +283,9 @@ class Query
 
 		foreach ( $select as $field )
 		{
-			if(is_array($field))
+			if ( is_array( $field ) )
 			{
-				$field = key($field) . ' AS ' . $field[ key($field) ];
+				$field = key( $field ) . ' AS ' . $field[ key( $field ) ];
 			}
 
 			$field = trim( $field );
@@ -1321,6 +1321,19 @@ class Query
 
 		foreach ( $key as $k => $v )
 		{
+			if ( is_array( $v ) )
+			{
+				$v = json_encode( $v );
+			}
+			elseif ( is_object( $v ) )
+			{
+				$v = serialize( $v );
+			}
+			else
+			{
+				$v = trim( $v );
+			}
+
 			$this->qb_set[ $this->protect_identifiers( $k, FALSE, $escape ) ] = ( $escape )
 				? $this->escape( $v ) : $v;
 		}

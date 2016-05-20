@@ -116,7 +116,7 @@ require_once( SYSTEMPATH . 'core/compatibility/standard.php' );
  * @author         Circle Creative Dev Team
  * @link           http://circle-creative.com/products/o2system-codeigniter/user-guide/core/utf8.html
  */
-class UTF8
+final class UTF8
 {
 	/**
 	 * Class constructor
@@ -156,9 +156,9 @@ class UTF8
 	 *
 	 * @return    string
 	 */
-	public function clean_string( $string )
+	public function cleanString( $string )
 	{
-		if ( $this->is_ascii( $string ) === FALSE )
+		if ( $this->isAscii( $string ) === FALSE )
 		{
 			if ( MB_ENABLED )
 			{
@@ -184,7 +184,7 @@ class UTF8
 	 *
 	 * @return    bool
 	 */
-	public function is_ascii( $string )
+	public function isAscii( $string )
 	{
 		return ( preg_match( '/[^\x00-\x7F]/S', $string ) === 0 );
 	}
@@ -202,7 +202,7 @@ class UTF8
 	 *
 	 * @return    string
 	 */
-	public function safe_ascii_for_xml( $string )
+	public function safeAsciiForXML( $string )
 	{
 		return remove_invisible_characters( $string, FALSE );
 	}
@@ -219,7 +219,7 @@ class UTF8
 	 *
 	 * @return    string    $str encoded in UTF-8 or FALSE on failure
 	 */
-	public function convert_to_utf8( $string, $encoding )
+	public function convertString( $string, $encoding )
 	{
 		if ( MB_ENABLED )
 		{

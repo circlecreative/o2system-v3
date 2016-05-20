@@ -42,7 +42,9 @@ defined( 'ROOTPATH' ) OR exit( 'No direct script access allowed' );
 
 // ------------------------------------------------------------------------
 
+use O2System\Glob\ArrayIterator;
 use O2System\Glob\ArrayObject;
+use O2System\Metadata\URI;
 
 /**
  * Registry Class
@@ -92,7 +94,7 @@ final class Registry extends ArrayObject
 
 		$config = \O2System::$config->load( 'registry', TRUE );
 
-		if( isset( $config['cache'] ) )
+		if ( isset( $config[ 'cache' ] ) )
 		{
 			if ( $config[ 'cache' ] === 'DATABASE' )
 			{
@@ -129,7 +131,7 @@ final class Registry extends ArrayObject
 
 						if ( is_dir( ROOTPATH . $package->realpath . 'languages' ) )
 						{
-							\O2System::$language->addPath(  ROOTPATH . $package->realpath );
+							\O2System::$language->addPath( ROOTPATH . $package->realpath );
 						}
 					}
 				}
@@ -151,7 +153,7 @@ final class Registry extends ArrayObject
 
 					if ( is_dir( ROOTPATH . $package->realpath . 'languages' ) )
 					{
-						\O2System::$language->addPath(  ROOTPATH . $package->realpath );
+						\O2System::$language->addPath( ROOTPATH . $package->realpath );
 					}
 				}
 			}
@@ -387,7 +389,7 @@ final class Registry extends ArrayObject
 
 	// ------------------------------------------------------------------------
 
-	public function get_type( $type )
+	public function getType( $type )
 	{
 		if ( $this->offsetExists( 'modules' ) )
 		{
@@ -406,6 +408,23 @@ final class Registry extends ArrayObject
 		}
 
 		return FALSE;
+	}
+
+	public function getPackageType( $type )
+	{
+		$type = strtolower( $type );
+
+		if ( array_key_exists( $type, static::$package_types ) )
+		{
+			return static::$package_types[ $type ];
+		}
+
+		return NULL;
+	}
+
+	public function getPackageTypes()
+	{
+		return static::$package_types;
 	}
 
 	/**
@@ -443,7 +462,7 @@ final class Registry extends ArrayObject
 	 *
 	 * @return array
 	 */
-	public function find_parents( \ArrayObject $module )
+	public function getParents( \ArrayObject $module )
 	{
 		$parents = array();
 
@@ -525,6 +544,26 @@ class RegistryCacheHandler
 	}
 }
 
+class RegistryActive extends ArrayObject
+{
+	public function __construct( array $active = array() )
+	{
+		parent::__construct( array(
+			                     'URI'         => new URI(),
+			                     'namespaces'  => new ArrayIterator(),
+			                     'directories' => new ArrayIterator(),
+			                     'modules'     => new ArrayIterator(),
+			                     'namespace'   => NULL,
+			                     'directory'   => NULL,
+			                     'module'      => NULL,
+			                     'language'    => NULL,
+			                     'domain'      => NULL,
+			                     'sub_domain'  => NULL,
+			                     'controller'  => NULL,
+		                     ) );
+	}
+}
+
 class RegistryDatabaseHandler
 {
 	public $db;
@@ -533,7 +572,7 @@ class RegistryDatabaseHandler
 	{
 		$this->db = \O2System::DB();
 
-		if( empty( $this->db ) )
+		if ( empty( $this->db ) )
 		{
 			$this->db = \O2system::Load()->database();
 		}

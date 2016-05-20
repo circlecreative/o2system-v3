@@ -1433,12 +1433,12 @@ abstract class Driver extends Query
 	 */
 	protected function _update_statement( $table, $values )
 	{
-		foreach ( $values as $key => $val )
+		foreach ( $values as $key => $value )
 		{
-			$string_value[] = $key . ' = ' . $val;
+			$string_values[] = $key . ' = ' . $value;
 		}
 
-		return 'UPDATE ' . $table . ' SET ' . implode( ', ', $string_value )
+		return 'UPDATE ' . $table . ' SET ' . implode( ', ', $string_values )
 		. $this->_compile_where_having( 'qb_where' )
 		. $this->_compile_order_by()
 		. ( $this->qb_limit ? ' LIMIT ' . $this->qb_limit : '' );

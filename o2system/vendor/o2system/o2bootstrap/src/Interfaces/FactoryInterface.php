@@ -72,6 +72,11 @@ abstract class FactoryInterface
 		return $this;
 	}
 
+	public function get_tag()
+	{
+		return $this->_tag;
+	}
+
 	/**
 	 * Set HTML ID
 	 *
@@ -361,6 +366,10 @@ abstract class FactoryInterface
 			{
 				return $this->_items;
 			}
+		}
+		elseif ( isset( $this->_items[ $property ] ) )
+		{
+			return $this->_items[ $property ];
 		}
 	}
 

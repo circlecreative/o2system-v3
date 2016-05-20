@@ -164,6 +164,23 @@ if ( ! function_exists( 'is_cli' ) )
 
 // ------------------------------------------------------------------------
 
+if ( ! function_exists( 'is_ajax' ) )
+{
+	/**
+	 * Is AJAX?
+	 *
+	 * Test to see if a request an ajax request.
+	 *
+	 * @return    bool
+	 */
+	function is_ajax()
+	{
+		return ( ! empty( $_SERVER[ 'HTTP_X_REQUESTED_WITH' ] ) && strtolower( $_SERVER[ 'HTTP_X_REQUESTED_WITH' ] ) === 'xmlhttprequest' );
+	}
+}
+
+// ------------------------------------------------------------------------
+
 if ( ! function_exists( 'set_status_header' ) )
 {
 	/**

@@ -6,18 +6,16 @@
 
     <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet" type="text/css">
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="<?php echo $assets_url; ?>packages/bootstrap/bootstrap.css">
 
     <!-- SyntaxHighlighter -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/styles/shCore.min.css" rel="stylesheet" type="text/css" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/styles/shThemeRDark.min.css" rel="stylesheet" type="text/css" />
+    <link href="<?php echo $assets_url; ?>packages/highlighter/highlighter.css" rel="stylesheet" type="text/css" />
 
     <!-- Font Icon CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="<?php echo $assets_url; ?>fonts/font-awesome.css">
 
-     <style type="text/css">
+    <style type="text/css">
         body {
             font-family: 'Ubuntu', Segoe, "Segoe UI", "DejaVu Sans", "Trebuchet MS", Verdana, sans-serif;
             font-size: 12px;
@@ -126,11 +124,13 @@
             margin: 0;
         }
 
-         .syntaxhighlighter {
-             padding: 10px;
-         }
+        .syntaxhighlighter {
+            padding: 10px;
+        }
 
-         .index0>.spaces {display: none;}
+        .index0 > .spaces {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -155,7 +155,7 @@
 
             <div class="panel-body">
                 <pre class="brush: plain" id="code">
-                    <?php echo trim($vars); ?>
+                    <?php echo trim( $vars ); ?>
                 </pre>
             </div>
         </div>
@@ -169,23 +169,23 @@
                 </a>
             </div>
 
-                <div class="panel-body">
-                    <ol>
-                        <?php foreach( $trace->chronology() as $chronology ): ?>
-                            <li><i class="fa fa-code"></i> <strong><?php echo $chronology->call; ?></strong>
-                                <br><i class="fa fa-file-code-o"></i> <?php echo $chronology->file; ?><br><i
+            <div class="panel-body">
+                <ol>
+                    <?php foreach ( $trace->chronology() as $chronology ): ?>
+                        <li><i class="fa fa-code"></i> <strong><?php echo $chronology->call; ?></strong>
+                            <br><i class="fa fa-file-code-o"></i> <?php echo $chronology->file; ?><br><i
                                     class="fa fa-list-ol"></i> <?php echo $chronology->line; ?> / <i
                                     class="fa fa-clock-o"></i> <?php echo $chronology->time; ?> seconds /
-                                <i class="fa fa-dashboard"></i> <?php echo $chronology->memory; ?><br>
-                                <hr>
-                            </li>
-                        <?php endforeach; ?>
-                    </ol>
-                </div>
-                <div class="panel-footer">
+                            <i class="fa fa-dashboard"></i> <?php echo $chronology->memory; ?><br>
+                            <hr>
+                        </li>
+                    <?php endforeach; ?>
+                </ol>
+            </div>
+            <div class="panel-footer">
                 <span style="color:#666"><i class="fa fa-clock-o"></i> 1.0014978008954 seconds / <i
-                        class="fa fa-dashboard"></i> 0.6798 MB</span>
-                </div>
+                            class="fa fa-dashboard"></i> 0.6798 MB</span>
+            </div>
 
         </div>
     </div>
@@ -194,28 +194,23 @@
 </body>
 
 <!-- Include jQuery -->
-<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="<?php echo $assets_url; ?>js/jquery.js"></script>
 
 <!-- Include Prettify JS -->
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shCore.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shBrushPlain.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shBrushCss.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shBrushJScript.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shBrushPhp.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shBrushXml.min.js"></script>
+<script type="text/javascript" src="<?php echo $assets_url; ?>packages/highlighter/highlighter.js"></script>
 
 <!-- Include Bootstrap -->
-<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="<?php echo $assets_url; ?>packages/bootstrap/bootstrap.js"></script>
 
 <!-- Include ZeroClipboard JS -->
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/zeroclipboard/2.2.0/ZeroClipboard.min.js"></script>
+<script type="text/javascript" src="<?php echo $assets_url; ?>packages/zeroclipboard/zeroclipboard.js"></script>
 
 <!-- Initialise jQuery Syntax Highlighter -->
 <script type="text/javascript">
     SyntaxHighlighter.all();
     $(document).ready(function () {
         var client = new ZeroClipboard($("#click-to-copy"), {
-            moviePath: "https://cdnjs.cloudflare.com/ajax/libs/zeroclipboard/2.2.0/ZeroClipboard.swf",
+            moviePath: "<?php echo $assets_url; ?>packages/zeroclipboard/zeroclipboard.swf",
             debug: false
         });
         client.on('ready', function (event) {
@@ -231,14 +226,12 @@
             ZeroClipboard.destroy();
         });
 
-        $('.toggle-args').click(function(){
-           var iArgs = $(this).siblings('[rel="code-args"]');
-            if(iArgs.hasClass('hidden'))
-            {
+        $('.toggle-args').click(function () {
+            var iArgs = $(this).siblings('[rel="code-args"]');
+            if (iArgs.hasClass('hidden')) {
                 iArgs.removeClass('.hidden');
             }
-            else
-            {
+            else {
                 iArgs.addClass('.hidden');
             }
         });
