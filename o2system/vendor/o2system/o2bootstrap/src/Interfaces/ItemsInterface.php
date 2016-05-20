@@ -68,9 +68,9 @@ trait ItemsInterface
 
 	public function add_items( array $items )
 	{
-		foreach ( $items as $item )
+		foreach ( $items as $key => $item )
 		{
-			$this->add_item( $item );
+			$this->add_item( $item, $key );
 		}
 
 		return $this;

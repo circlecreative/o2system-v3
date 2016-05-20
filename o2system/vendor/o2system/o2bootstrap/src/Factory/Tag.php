@@ -87,11 +87,6 @@ class Tag extends FactoryInterface
 		return $this;
 	}
 
-	public function set_tag( $tag )
-	{
-		$this->_tag = $tag;
-	}
-
 	public function open()
 	{
 		$attr = $this->_attributes;

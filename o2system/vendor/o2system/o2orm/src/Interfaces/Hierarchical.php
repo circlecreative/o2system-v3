@@ -71,7 +71,7 @@ trait Hierarchical
 
 			if ( (int) $query->first_row()->id_parent > 0 )
 			{
-				$this->get_row_parents( $query->first_row()->id_parent, $parents );
+				$this->getRow_parents( $query->first_row()->id_parent, $parents );
 			}
 		}
 

@@ -55,7 +55,7 @@ use O2System\Glob\ArrayObject;
  * @author         Circle Creative Dev Team
  * @link           http://circle-creative.com/products/o2system-codeigniter/user-guide/core/input.html
  */
-class Input
+final class Input
 {
 	/**
 	 * Class Config
@@ -101,7 +101,7 @@ class Input
 		$this->_config = \O2System::$config[ 'input' ];
 
 		// Sanitize global arrays
-		$this->_sanitize_globals();
+		$this->_sanitizeGlobals();
 
 		\O2System::Log( 'info', 'Input Class Initialized' );
 	}
@@ -120,7 +120,7 @@ class Input
 	 * @access  protected
 	 * @return  void
 	 */
-	protected function _sanitize_globals()
+	protected function _sanitizeGlobals()
 	{
 		// Is $_GET data allowed? If not we'll set the $_GET to an empty array
 		if ( $this->_config[ 'allowed_get' ] === FALSE )
@@ -132,7 +132,7 @@ class Input
 		{
 			foreach ( $_GET as $key => $value )
 			{
-				$_GET[ $this->_clean_input_keys( $key ) ] = $this->_clean_input_data( $value );
+				$_GET[ $this->_cleanInputKeys( $key ) ] = $this->_cleanInputData( $value );
 			}
 		}
 
@@ -141,7 +141,7 @@ class Input
 		{
 			foreach ( $_POST as $key => $value )
 			{
-				$_POST[ $this->_clean_input_keys( $key ) ] = $this->_clean_input_data( $value );
+				$_POST[ $this->_cleanInputKeys( $key ) ] = $this->_cleanInputData( $value );
 			}
 		}
 
@@ -161,9 +161,9 @@ class Input
 
 			foreach ( $_COOKIE as $key => $value )
 			{
-				if ( ( $cookie_key = $this->_clean_input_keys( $key ) ) !== FALSE )
+				if ( ( $cookie_key = $this->_cleanInputKeys( $key ) ) !== FALSE )
 				{
-					$_COOKIE[ $cookie_key ] = $this->_clean_input_data( $value );
+					$_COOKIE[ $cookie_key ] = $this->_cleanInputData( $value );
 				}
 				else
 				{
@@ -178,52 +178,10 @@ class Input
 		// CSRF Protection check
 		if ( \O2System::$config[ 'csrf' ][ 'protection' ] === TRUE AND ! is_cli() )
 		{
-			\O2System::Security()->csrf_verify();
+			\O2System::Security()->verifyCSRF();
 		}
 
 		\O2System::Log( 'debug', 'Input: Global POST, GET and COOKIE data sanitized' );
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Fetch an item from POST data with fallback to GET
-	 *
-	 * @param   string $index     Index for item to be fetched from $_POST or $_GET
-	 * @param   bool   $xss_clean Whether to apply XSS filtering
-	 *
-	 * @access  public
-	 * @return  mixed
-	 */
-	public function post_get( $index, $xss_clean = NULL )
-	{
-		return isset( $_POST[ $index ] )
-			? $this->post( $index, $xss_clean )
-			: $this->get( $index, $xss_clean );
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Fetch an item from the POST array
-	 *
-	 * @param    mixed $index     Index for item to be fetched from $_POST
-	 * @param    bool  $xss_clean Whether to apply XSS filtering
-	 *
-	 * @access  public
-	 * @return  mixed
-	 */
-	public function post( $index = NULL, $xss_clean = NULL )
-	{
-		if ( is_null( $index ) )
-		{
-			if ( ! empty( $_POST ) )
-			{
-				return new ArrayObject( $this->_fetch_from_array( $_POST, $index, $xss_clean ) );
-			}
-		}
-
-		return $this->_fetch_from_array( $_POST, $index, $xss_clean );
 	}
 
 	// --------------------------------------------------------------------
@@ -240,7 +198,7 @@ class Input
 	 * @access  protected
 	 * @return  mixed
 	 */
-	protected function _fetch_from_array( &$array, $index = NULL, $xss_clean = NULL )
+	protected function _fetchFromArray( &$array, $index = NULL, $xss_clean = NULL )
 	{
 		is_bool( $xss_clean ) || $xss_clean = $this->_config[ 'xss_filtering' ];
 
@@ -253,7 +211,7 @@ class Input
 			$output = array();
 			foreach ( $index as $key )
 			{
-				$output[ $key ] = $this->_fetch_from_array( $array, $key, $xss_clean );
+				$output[ $key ] = $this->_fetchFromArray( $array, $key, $xss_clean );
 			}
 
 			return $output;
@@ -290,8 +248,50 @@ class Input
 		}
 
 		return ( $xss_clean === TRUE )
-			? \O2System::Security()->xss_clean( $value )
+			? \O2System::Security()->cleanXSS( $value )
 			: $value;
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Fetch an item from POST data with fallback to GET
+	 *
+	 * @param   string $index     Index for item to be fetched from $_POST or $_GET
+	 * @param   bool   $xss_clean Whether to apply XSS filtering
+	 *
+	 * @access  public
+	 * @return  mixed
+	 */
+	public function postGet( $index, $xss_clean = NULL )
+	{
+		return isset( $_POST[ $index ] )
+			? $this->post( $index, $xss_clean )
+			: $this->get( $index, $xss_clean );
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Fetch an item from the POST array
+	 *
+	 * @param    mixed $index     Index for item to be fetched from $_POST
+	 * @param    bool  $xss_clean Whether to apply XSS filtering
+	 *
+	 * @access  public
+	 * @return  mixed
+	 */
+	public function post( $index = NULL, $xss_clean = NULL )
+	{
+		if ( is_null( $index ) )
+		{
+			if ( ! empty( $_POST ) )
+			{
+				return new ArrayObject( $this->_fetchFromArray( $_POST, $index, $xss_clean ) );
+			}
+		}
+
+		return $this->_fetchFromArray( $_POST, $index, $xss_clean );
 	}
 
 	// --------------------------------------------------------------------
@@ -311,11 +311,29 @@ class Input
 		{
 			if ( ! empty( $_GET ) )
 			{
-				return new ArrayObject( $this->_fetch_from_array( $_GET, $index, $xss_clean ) );
+				return new ArrayObject( $this->_fetchFromArray( $_GET, $index, $xss_clean ) );
 			}
 		}
 
-		return $this->_fetch_from_array( $_GET, $index, $xss_clean );
+		return $this->_fetchFromArray( $_GET, $index, $xss_clean );
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Fetch an item from GET data with fallback to POST
+	 *
+	 * @param   string $index     Index for item to be fetched from $_GET or $_POST
+	 * @param   bool   $xss_clean Whether to apply XSS filtering
+	 *
+	 * @access  public
+	 * @return  mixed
+	 */
+	public function getPost( $index, $xss_clean = NULL )
+	{
+		return isset( $_GET[ $index ] )
+			? $this->get( $index, $xss_clean )
+			: $this->post( $index, $xss_clean );
 	}
 
 	// --------------------------------------------------------------------
@@ -335,29 +353,37 @@ class Input
 		{
 			if ( ! empty( $_FILES ) )
 			{
-				return new ArrayObject( $this->_fetch_from_array( $_FILES, $index ) );
+				return new ArrayObject( $this->_fetchFromArray( $_FILES, $index ) );
 			}
 		}
 
-		return $this->_fetch_from_array( $_FILES, $index );
+		return $this->_fetchFromArray( $_FILES, $index );
 	}
 
 	// --------------------------------------------------------------------
 
 	/**
-	 * Fetch an item from GET data with fallback to POST
+	 * Fetch an item from the php://input stream
 	 *
-	 * @param   string $index     Index for item to be fetched from $_GET or $_POST
-	 * @param   bool   $xss_clean Whether to apply XSS filtering
+	 * Useful when you need to access PUT, DELETE or PATCH request data.
+	 *
+	 * @param    string $index     Index for item to be fetched
+	 * @param    bool   $xss_clean Whether to apply XSS filtering
 	 *
 	 * @access  public
 	 * @return  mixed
 	 */
-	public function get_post( $index, $xss_clean = NULL )
+	public function stream( $index = NULL, $xss_clean = NULL )
 	{
-		return isset( $_GET[ $index ] )
-			? $this->get( $index, $xss_clean )
-			: $this->post( $index, $xss_clean );
+		// Prior to PHP 5.6, the input stream can only be read once,
+		// so we'll need to check if we have already done that first.
+		if ( ! is_array( $this->_input_stream ) )
+		{
+			parse_str( file_get_contents( 'php://input' ), $this->_input_stream );
+			is_array( $this->_input_stream ) || $this->_input_stream = array();
+		}
+
+		return $this->_fetchFromArray( $this->_input_stream, $index, $xss_clean );
 	}
 
 	// --------------------------------------------------------------------
@@ -378,33 +404,7 @@ class Input
 			$index = $cookie[ 'prefix' ] . ltrim( $index, $cookie[ 'prefix' ] );
 		}
 
-		return $this->_fetch_from_array( $_COOKIE, $index, $xss_clean );
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Fetch an item from the php://input stream
-	 *
-	 * Useful when you need to access PUT, DELETE or PATCH request data.
-	 *
-	 * @param    string $index     Index for item to be fetched
-	 * @param    bool   $xss_clean Whether to apply XSS filtering
-	 *
-	 * @access  public
-	 * @return  mixed
-	 */
-	public function input_stream( $index = NULL, $xss_clean = NULL )
-	{
-		// Prior to PHP 5.6, the input stream can only be read once,
-		// so we'll need to check if we have already done that first.
-		if ( ! is_array( $this->_input_stream ) )
-		{
-			parse_str( file_get_contents( 'php://input' ), $this->_input_stream );
-			is_array( $this->_input_stream ) || $this->_input_stream = array();
-		}
-
-		return $this->_fetch_from_array( $this->_input_stream, $index, $xss_clean );
+		return $this->_fetchFromArray( $_COOKIE, $index, $xss_clean );
 	}
 
 	// --------------------------------------------------------------------
@@ -427,60 +427,44 @@ class Input
 	 * @access  public
 	 * @return  void
 	 */
-	public function set_cookie( $name, $value = '', $expire = '', $domain = '', $path = '/', $prefix = '', $secure = FALSE, $httponly = FALSE )
+	public function setCookie( $name, $value = '', $expire = '', $domain = '', $path = '/', $prefix = '', $secure = FALSE, $httponly = FALSE )
 	{
-		if ( is_array( $name ) )
+		$cookie = is_array( $name ) ? $name : func_get_args();
+
+		foreach ( [ 'name', 'value', 'expire', 'domain', 'path', 'prefix', 'secure', 'httponly' ] as $key => $item )
 		{
-			// always leave 'name' in last place, as the loop will break otherwise, due to $$item
-			foreach ( array( 'value', 'expire', 'domain', 'path', 'prefix', 'secure', 'httponly', 'name' ) as $item )
+			if ( isset( $cookie[ $key ] ) )
 			{
-				if ( isset( $name[ $item ] ) )
+				if ( empty( $cookie[ $key ] ) AND isset( \O2System::$config[ 'cookie' ][ $item ] ) )
 				{
-					$$item = $name[ $item ];
+					$cookie[ $item ] = \O2System::$config[ 'cookie' ][ $item ];
+				}
+				else
+				{
+					$cookie[ $item ] = $cookie[ $key ];
 				}
 			}
+			elseif ( isset( $cookie[ $item ] ) )
+			{
+				$cookie[ $item ] = \O2System::$config[ 'cookie' ][ $item ];
+			}
+
+			unset( $cookie[ $key ] );
 		}
 
-		$cookie = (object) \O2System::$config[ 'cookie' ];
-
-		if ( $prefix === '' AND $cookie->prefix !== '' )
-		{
-			$name = ltrim( $name, $cookie->prefix );
-			$prefix = $cookie->prefix;
-		}
-
-		if ( $domain == '' AND $cookie->domain != '' )
-		{
-			$domain = $cookie->domain;
-		}
-
-		if ( $path === '/' AND $cookie->path !== '/' )
-		{
-			$path = $cookie->path;
-		}
-
-		if ( $secure === FALSE AND $cookie->secure === TRUE )
-		{
-			$secure = $cookie->secure;
-		}
-
-		if ( ! is_numeric( $expire ) )
-		{
-			$expire = time() - 86500;
-		}
-		else
-		{
-			$expire = ( $expire > 0 ) ? time() + $expire : 0;
-		}
+		$cookie[ 'name' ] = $cookie[ 'prefix' ] . ltrim( $cookie[ 'name' ], $cookie[ 'prefix' ] );
+		$cookie[ 'value' ] = empty( $cookie[ 'value' ] ) ? $cookie[ 'value' ] : $cookie[ 'value' ];
+		$cookie[ 'expire' ] = empty( $cookie[ 'expire' ] ) ? time() + \O2System::$config[ 'cookie' ][ 'lifetime' ] : (int) $cookie[ 'expire' ];
+		$cookie[ 'domain' ] = '.' . ( empty( $cookie[ 'domain' ] ) ? parse_domain()->domain : ltrim( $cookie[ 'domain' ], '.' ) );
 
 		setcookie(
-			$prefix . $name,
-			$value,
-			$expire,
-			$path,
-			$domain,
-			$secure,
-			TRUE
+			$cookie[ 'name' ],
+			$cookie[ 'value' ],
+			$cookie[ 'expire' ],
+			$cookie[ 'path' ],
+			$cookie[ 'domain' ],
+			$cookie[ 'secure' ],
+			$cookie[ 'httponly' ]
 		);
 	}
 
@@ -494,7 +478,7 @@ class Input
 	 * @access  public
 	 * @return  string  IP Address
 	 */
-	public function ip_address()
+	public function ipAddress()
 	{
 		if ( $this->ip_address !== FALSE )
 		{
@@ -523,7 +507,7 @@ class Input
 					// e.g. client_ip, proxy_ip1, proxy_ip2, etc.
 					sscanf( $spoof, '%[^,]', $spoof );
 
-					if ( ! $this->valid_ip( $spoof ) )
+					if ( ! $this->isValidIp( $spoof ) )
 					{
 						$spoof = NULL;
 					}
@@ -553,7 +537,7 @@ class Input
 					}
 
 					// We have a subnet ... now the heavy lifting begins
-					isset( $separator ) || $separator = $this->valid_ip( $this->ip_address, 'ipv6' ) ? ':' : '.';
+					isset( $separator ) || $separator = $this->isValidIp( $this->ip_address, 'ipv6' ) ? ':' : '.';
 
 					// If the proxy entry doesn't match the IP protocol - skip it
 					if ( strpos( $proxy_ips[ $i ], $separator ) === FALSE )
@@ -617,7 +601,7 @@ class Input
 			}
 		}
 
-		if ( ! $this->valid_ip( $this->ip_address ) )
+		if ( ! $this->isValidIp( $this->ip_address ) )
 		{
 			return $this->ip_address = '0.0.0.0';
 		}
@@ -626,6 +610,22 @@ class Input
 	}
 
 	// ------------------------------------------------------------------------
+
+	/**
+	 * Fetch an item from the GLOBALS array
+	 *
+	 * @param    mixed $index     Index for item to be fetched from $_GLOBALS
+	 * @param    bool  $xss_clean Whether to apply XSS filtering
+	 *
+	 * @access  public
+	 * @return  mixed
+	 */
+	public function globals( $index, $xss_clean = NULL )
+	{
+		return $this->_fetchFromArray( $_GLOBALS, $index, $xss_clean );
+	}
+
+	// --------------------------------------------------------------------
 
 	/**
 	 * Fetch an item from the SERVER array
@@ -638,7 +638,39 @@ class Input
 	 */
 	public function server( $index, $xss_clean = NULL )
 	{
-		return $this->_fetch_from_array( $_SERVER, $index, $xss_clean );
+		return $this->_fetchFromArray( $_SERVER, $index, $xss_clean );
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Fetch an item from the REQUEST array
+	 *
+	 * @param    mixed $index     Index for item to be fetched from $_REQUEST
+	 * @param    bool  $xss_clean Whether to apply XSS filtering
+	 *
+	 * @access  public
+	 * @return  mixed
+	 */
+	public function request( $index, $xss_clean = NULL )
+	{
+		return $this->_fetchFromArray( $_REQUEST, $index, $xss_clean );
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Fetch an item from the ENV array
+	 *
+	 * @param    mixed $index     Index for item to be fetched from $_ENV
+	 * @param    bool  $xss_clean Whether to apply XSS filtering
+	 *
+	 * @access  public
+	 * @return  mixed
+	 */
+	public function env( $index, $xss_clean = NULL )
+	{
+		return $this->_fetchFromArray( $_ENV, $index, $xss_clean );
 	}
 
 	// --------------------------------------------------------------------
@@ -652,7 +684,7 @@ class Input
 	 * @access  public
 	 * @return  bool
 	 */
-	public function valid_ip( $ip, $which = '' )
+	public function isValidIp( $ip, $which = '' )
 	{
 		switch ( strtolower( $which ) )
 		{
@@ -678,9 +710,9 @@ class Input
 	 * @access  public
 	 * @return  string|null    User Agent string or NULL if it doesn't exist
 	 */
-	public function user_agent( $xss_clean = NULL )
+	public function userAgent( $xss_clean = NULL )
 	{
-		return $this->_fetch_from_array( $_SERVER, 'HTTP_USER_AGENT', $xss_clean );
+		return $this->_fetchFromArray( $_SERVER, 'HTTP_USER_AGENT', $xss_clean );
 	}
 
 	// --------------------------------------------------------------------
@@ -696,11 +728,11 @@ class Input
 	 * @access  public
 	 * @return  string|null    The requested header on success or NULL on failure
 	 */
-	public function get_request_header( $index, $xss_clean = FALSE )
+	public function header( $index, $xss_clean = FALSE )
 	{
 		if ( empty( $this->headers ) )
 		{
-			$this->request_headers();
+			$this->headers( $xss_clean );
 		}
 
 		if ( ! isset( $this->headers[ $index ] ) )
@@ -709,7 +741,7 @@ class Input
 		}
 
 		return ( $xss_clean === TRUE )
-			? \O2System::Security()->xss_clean( $this->headers[ $index ] )
+			? \O2System::Security()->xssClean( $this->headers[ $index ] )
 			: $this->headers[ $index ];
 	}
 
@@ -723,7 +755,7 @@ class Input
 	 * @access  public
 	 * @return  array
 	 */
-	public function request_headers( $xss_clean = FALSE )
+	public function headers( $xss_clean = FALSE )
 	{
 		// If header is already defined, return it immediately
 		if ( ! empty( $this->headers ) )
@@ -747,26 +779,11 @@ class Input
 				$header = str_replace( '_', ' ', strtolower( $header ) );
 				$header = str_replace( ' ', '-', ucwords( $header ) );
 
-				$this->headers[ $header ] = $this->_fetch_from_array( $_SERVER, $key, $xss_clean );
+				$this->headers[ $header ] = $this->_fetchFromArray( $_SERVER, $key, $xss_clean );
 			}
 		}
 
 		return $this->headers;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Is AJAX request?
-	 *
-	 * Test to see if a request contains the HTTP_X_REQUESTED_WITH header.
-	 *
-	 * @access  public
-	 * @return  bool
-	 */
-	public function is_ajax_request()
-	{
-		return ( ! empty( $_SERVER[ 'HTTP_X_REQUESTED_WITH' ] ) && strtolower( $_SERVER[ 'HTTP_X_REQUESTED_WITH' ] ) === 'xmlhttprequest' );
 	}
 
 	// --------------------------------------------------------------------
@@ -805,7 +822,7 @@ class Input
 	 * @access  public
 	 * @return  string|bool
 	 */
-	protected function _clean_input_keys( $string, $fatal = TRUE )
+	protected function _cleanInputKeys( $string, $fatal = TRUE )
 	{
 		if ( ! preg_match( '/^[a-z0-9:_\/|-]+$/i', $string ) )
 		{
@@ -824,7 +841,7 @@ class Input
 		// Clean UTF-8 if supported
 		if ( UTF8_ENABLED === TRUE )
 		{
-			return \O2System::UTF8()->clean_string( $string );
+			return \O2System::UTF8()->cleanString( $string );
 		}
 
 		return $string;
@@ -843,14 +860,14 @@ class Input
 	 * @access  protected
 	 * @return  string
 	 */
-	protected function _clean_input_data( $string )
+	protected function _cleanInputData( $string )
 	{
 		if ( is_array( $string ) )
 		{
 			$new_array = array();
 			foreach ( array_keys( $string ) as $key )
 			{
-				$new_array[ $this->_clean_input_keys( $key ) ] = $this->_clean_input_data( $string[ $key ] );
+				$new_array[ $this->_cleanInputKeys( $key ) ] = $this->_cleanInputData( $string[ $key ] );
 			}
 
 			return $new_array;
@@ -859,7 +876,7 @@ class Input
 		// Clean UTF-8 if supported
 		if ( UTF8_ENABLED === TRUE )
 		{
-			$string = \O2System::UTF8()->clean_string( $string );
+			$string = \O2System::UTF8()->cleanString( $string );
 		}
 
 		// Remove control characters
@@ -884,7 +901,7 @@ class Input
 	 * @access  public
 	 * @return  boolean
 	 */
-	public function is_post_insert()
+	public function isPostInsert()
 	{
 		if ( empty( $_POST[ 'id' ] ) AND
 			(
@@ -910,7 +927,7 @@ class Input
 	 * @access  public
 	 * @return  boolean
 	 */
-	public function is_post_update()
+	public function isPostUpdate()
 	{
 		if ( ! empty( $_POST[ 'id' ] ) AND
 			(
@@ -935,7 +952,7 @@ class Input
 	 * @access  public
 	 * @return  boolean
 	 */
-	public function is_post_cancel()
+	public function isPostCancel()
 	{
 		if ( isset( $_POST[ 'cancel' ] ) )
 		{
@@ -955,7 +972,7 @@ class Input
 	 * @access  public
 	 * @return  boolean
 	 */
-	public function is_post_redirect()
+	public function isPostRedirect()
 	{
 		if ( isset( $_POST[ 'redirect' ] ) )
 		{

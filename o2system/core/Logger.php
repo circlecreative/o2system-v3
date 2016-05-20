@@ -51,17 +51,12 @@ defined( 'ROOTPATH' ) OR exit( 'No direct script access allowed' );
  * @author         Circle Creative Dev Team
  * @link           http://circle-creative.com/products/o2system-codeigniter/user-guide/core/logger.html
  */
-class Logger extends Glob\Logger
+final class Logger extends Glob\Logger
 {
 	use Glob\Interfaces\MagicInterface;
 
 	public function __construct()
 	{
 		parent::__construct( \O2System::$config['log'] );
-	}
-
-	public function test()
-	{
-		print_out(func_get_args());
 	}
 }

@@ -52,7 +52,7 @@ defined( 'ROOTPATH' ) || exit( 'No direct script access allowed' );
  * @author         Circle Creative Dev Team
  * @link           http://o2system.center/wiki/#Language
  */
-class Language extends Glob\Language
+final class Language extends Glob\Language
 {
 	/**
 	 * Class Constructor

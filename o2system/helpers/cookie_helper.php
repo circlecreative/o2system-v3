@@ -112,7 +112,7 @@ if ( ! function_exists( 'set_cookie' ) )
 	function set_cookie( $name, $value = '', $expire = '', $domain = '', $path = '/', $prefix = '', $secure = FALSE, $httponly = FALSE )
 	{
 		// Set the config file options
-		\O2System::Input()->set_cookie( $name, $value, $expire, $domain, $path, $prefix, $secure, $httponly );
+		\O2System::Input()->setCookie( $name, $value, $expire, $domain, $path, $prefix, $secure, $httponly );
 	}
 }
 
@@ -153,6 +153,9 @@ if ( ! function_exists( 'delete_cookie' ) )
 	 */
 	function delete_cookie( $name, $domain = '', $path = '/', $prefix = '' )
 	{
-		set_cookie( $name, '', '', $domain, $path, $prefix );
+		if( get_cookie( $name ) )
+		{
+			set_cookie( $name, '', '', $domain, $path, $prefix );
+		}
 	}
 }

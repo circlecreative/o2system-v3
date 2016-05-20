@@ -97,7 +97,7 @@ class Button extends FactoryInterface
 		{
 			$attr = $label;
 		}
-		elseif ( is_string( $label ) )
+		elseif ( is_string( $label ) OR is_numeric( $label ) )
 		{
 			$this->_label[] = $label;
 		}

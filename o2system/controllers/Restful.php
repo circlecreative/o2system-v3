@@ -25,6 +25,22 @@ abstract class Restful extends Controller
 		500 => 'Internal Server Error',
 	);
 
+	protected $_allowed_request_methods = array(
+		'GET',
+		'POST',
+		'PUT',
+		'DELETE',
+		'OPTIONS',
+	);
+
+	protected $_allowed_request_headers = array(
+		'Authorization',
+		'Content-Type',
+		'Content-Disposition',
+	);
+
+	protected $_max_age = 86400;
+
 	public function __construct()
 	{
 		// Load Applications Language
@@ -81,52 +97,85 @@ abstract class Restful extends Controller
 		{
 			if ( $this->_authorize() === TRUE )
 			{
-				$this->__route_call( $method, $args );
+				return $this->__route_call( $method, $args );
+			}
+		}
+
+		if ( method_exists( $this, '_isAllowedOrigin' ) )
+		{
+			if ( $this->_isAllowedOrigin() === TRUE )
+			{
+				return $this->__route_call( $method, $args );
+			}
+			else
+			{
+				return $this->_send( array(
+					                     'status' => new ArrayObject( array(
+						                                                  'success'     => FALSE,
+						                                                  'code'        => 401,
+						                                                  'description' => HttpStatusCode::getDescription( 401 ),
+					                                                  ) ),
+				                     ) );
+			}
+		}
+
+		$this->__route_call( $method, $args );
+	}
+
+	private function __route_call( $method, $args = array() )
+	{
+		if ( $request_method = $this->input->server( 'REQUEST_METHOD' ) )
+		{
+			if ( $request_method === 'OPTIONS' )
+			{
+				$this->_send( array(
+					              'status'  => new ArrayObject( array(
+						                                            'success'     => TRUE,
+						                                            'code'        => 200,
+						                                            'description' => HttpStatusCode::getDescription( 200 ),
+					                                            ) ),
+					              'methods' => $this->_allowed_request_methods,
+				              ) );
+			}
+			elseif ( in_array( $request_method, $this->_allowed_request_methods ) )
+			{
+				if ( method_exists( $this, $method ) )
+				{
+					return call_user_func_array( array( $this, $method ), $args );
+				}
+				else
+				{
+					$this->_send( array(
+						              'status' => new ArrayObject( array(
+							                                           'success'     => FALSE,
+							                                           'code'        => 405,
+							                                           'description' => HttpStatusCode::getDescription( 405 ),
+						                                           ) ),
+					              ) );
+				}
 			}
 			else
 			{
 				$this->_send( array(
 					              'status' => new ArrayObject( array(
 						                                           'success'     => FALSE,
-						                                           'code'        => 401,
-						                                           'description' => HttpStatusCode::getDescription( 401 ),
+						                                           'code'        => 405,
+						                                           'description' => HttpStatusCode::getDescription( 405 ),
+						                                           'message'     => 'Forbidden Request Method',
 					                                           ) ),
 				              ) );
 			}
-		}
-		else
-		{
-			$this->__route_call( $method, $args );
-		}
-	}
-
-	private function __route_call( $method, $args = array() )
-	{
-		if ( method_exists( $this, $method ) )
-		{
-			return call_user_func_array( array( $this, $method ), $args );
-		}
-		else
-		{
-			$this->_send( array(
-				              'status' => new ArrayObject( array(
-					                                           'success'     => FALSE,
-					                                           'code'        => 405,
-					                                           'description' => HttpStatusCode::getDescription( 405 ),
-				                                           ) ),
-			              ) );
 		}
 	}
 
 	protected function _send( array $response )
 	{
-		//print_out($this->_toJson((array)$response['results']));
 		if ( isset( $response[ 'status' ][ 'code' ] ) AND array_key_exists( $response[ 'status' ][ 'code' ], $this->_http_response_codes ) )
 		{
 			$this->view->output->set_header( 'Access-Control-Allow-Origin', '*' );
-			$this->view->output->set_header( 'Access-Control-Allow-Credentials', 'true' );
-			$this->view->output->set_header( 'Access-Control-Expose-Headers', 'Access-Control-Allow-Origin' );
-			$this->view->output->set_header( 'Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE' );
+			$this->view->output->set_header( 'Access-Control-Allow-Methods', implode( ', ', $this->_allowed_request_methods ) );
+			$this->view->output->set_header( 'Access-Control-Allow-Headers', implode( ', ', $this->_allowed_request_headers ) );
+			$this->view->output->set_header( 'Access-Control-Max-Age', $this->_max_age );
 			$this->view->output->set_header_status( $response[ 'status' ][ 'code' ] );
 
 			$content_type = $this->input->server( 'CONTENT_RESULT' );
@@ -165,8 +214,6 @@ abstract class Restful extends Controller
 
 	protected function _toJson( array $response )
 	{
-		//print_out($response);
-		//print_out(json_encode( $response,JSON_FORCE_OBJECT));
 		return json_encode( $response, JSON_PRETTY_PRINT );
 	}
 

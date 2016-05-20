@@ -113,7 +113,7 @@ class Form extends FactoryInterface
 		{
 			if ( empty( $attr[ 'id' ] ) )
 			{
-				$attr[ 'id' ] = implode( '-', \O2System::URI()->segments ) . '-form';
+				$attr[ 'id' ] = implode( '-', \O2System::$active[ 'URI' ]->segments ) . '-form';
 			}
 		}
 

@@ -191,7 +191,7 @@ final class Config extends Glob\ArrayObject
 	 *
 	 * @return    string
 	 */
-	public function base_url( $uri = NULL, $suffix = NULL, $protocol = NULL )
+	public function baseURL( $uri = NULL, $suffix = NULL, $protocol = NULL )
 	{
 		// Set the base_url automatically if none was provided
 		if ( $this->offsetExists( 'domain' ) )

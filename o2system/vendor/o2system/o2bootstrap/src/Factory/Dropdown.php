@@ -112,7 +112,7 @@ class Dropdown extends Lists
 		return $this;
 	}
 
-	public function add_item( $item, $describe = NULL, $attr = array() )
+	public function add_item( $item, $describe = NULL, $attr = array(), $key = NULL )
 	{
 		if ( $describe === self::ITEM_HEADER )
 		{
@@ -131,13 +131,11 @@ class Dropdown extends Lists
 			{
 				$attr[ 'class' ] = 'dropdown-header';
 			}
+		}
 
-			parent::add_item( $item, $attr );
-		}
-		else
-		{
-			parent::add_item( $item, $describe, $attr );
-		}
+		parent::add_item( $item, $describe, $attr, $key );
+
+		return $this;
 	}
 
 	public function set_button( $button )
@@ -157,15 +155,18 @@ class Dropdown extends Lists
 		return $this;
 	}
 
-	public function set_caret( $caret )
+	public function set_caret( $caret = NULL )
 	{
 		if ( is_bool( $caret ) )
 		{
 			$this->caret = FALSE;
 		}
-		elseif ( is_string( $caret ) )
+		elseif ( is_string( $caret ) OR is_null( $caret ) )
 		{
-			$this->caret = new Tag( 'span', $caret, [ 'class' => 'caret' ] );
+			$this->caret = implode( PHP_EOL, array(
+				new Tag( 'span', $caret, [ 'class' => 'caret' ] ),
+				new Tag( 'span', 'Toggle Dropdown', [ 'class' => 'sr-only' ] ),
+			) );
 		}
 		elseif ( $caret instanceof Tag )
 		{
@@ -188,6 +189,11 @@ class Dropdown extends Lists
 	{
 		$this->_is_split = TRUE;
 		$this->set_size_class_prefix( 'btn-group' );
+
+		if ( empty( $this->caret ) )
+		{
+			$this->set_caret();
+		}
 
 		$this->caret = new Button( $this->caret, $this->button->get_attributes() );
 		$this->button->set_attributes( [ 'class' => $this->button->get_classes() ] );

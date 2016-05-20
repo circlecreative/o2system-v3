@@ -42,6 +42,7 @@ defined( 'ROOTPATH' ) OR exit( 'No direct script access allowed' );
 
 // ------------------------------------------------------------------------
 
+use O2System\Glob\ArrayObject;
 use O2System\Glob\Interfaces\DriverInterface;
 use O2System\Model;
 
@@ -65,7 +66,7 @@ class User extends DriverInterface
 	 */
 	public function account( $return = NULL )
 	{
-		if ( $this->is_login() )
+		if ( $this->isLogin() )
 		{
 			if ( $account = \O2System::Session()->userdata( 'account' ) )
 			{
@@ -99,49 +100,47 @@ class User extends DriverInterface
 	 * @access  public
 	 * @return  bool
 	 */
-	public function is_login()
+	public function isLogin()
 	{
 		if ( \O2System::Session()->has_userdata( 'account' ) )
 		{
-			\O2System::$active[ 'account' ] = \O2System::Session()->userdata( 'account' );
+			$account = \O2System::Session()->userdata( 'account' );
 
-			return TRUE;
-		}
-		elseif ( \O2System::Session()->has_userdata( '__rememberAttempts' ) === FALSE )
-		{
-			\O2System::Session()->set_userdata( '__rememberAttempts', TRUE );
-			\O2System::Session()->mark_tempdata( '__rememberAttempts', 300 );
-
-			//echo 'remember:' . ( isset( $_SERVER[ 'HTTP_HOST' ] ) ? $_SERVER[ 'HTTP_HOST' ] : $_SERVER[ 'SERVER_NAME' ] );
-			if ( $token = $this->get_remember_token() )
+			if ( $account instanceof ArrayObject )
 			{
-				return $this->_library->login->remember( $token );
-			}
-		}
-		elseif ( $this->_library->getConfig( 'sso', 'access' ) === TRUE AND \O2System::Session()->has_userdata( '__ssoAttempts' ) === FALSE )
-		{
-			\O2System::Session()->set_userdata( '__ssoAttempts', TRUE );
-			\O2System::Session()->mark_tempdata( '__ssoAttempts', 300 );
-
-			if ( $token = $this->get_sso_token() )
-			{
-				return $this->_library->login->sso( $token );
-			}
-			else
-			{
-				$origin = isset( $_SERVER[ 'HTTP_HOST' ] ) ? $_SERVER[ 'HTTP_HOST' ] : $_SERVER[ 'SERVER_NAME' ];
-				$origin = parse_domain( $origin );
-
-				$server = parse_domain( $this->_library->getConfig( 'sso', 'server' ) );
-
-				if ( $origin->host !== $server->host )
+				if ( $account->isEmpty() === FALSE )
 				{
-					$redirect = $server->origin . '/sso/request' . '?' . http_build_query( [ 'origin' => $origin->origin ] );
-					$redirect = is_https() ? 'https://' . $redirect : 'http://' . $redirect;
+					\O2System::$active[ 'account' ] = $account;
 
-					//print_out( $redirect );
+					return TRUE;
+				}
+			}
 
-					redirect( $redirect, 'refresh' );
+			\O2System::Session()->unset_userdata( 'account' );
+
+			return $this->isLogin();
+		}
+		elseif ( \O2System::UserAgent()->is_browser() )
+		{
+			if ( $credentials = $this->_library->cookie->getRemember() )
+			{
+				return $this->_library->login->fromCredentials( $credentials );
+			}
+			elseif ( $credentials = $this->_library->cookie->getSso() )
+			{
+				return $this->_library->login->fromCredentials( $credentials );
+			}
+		}
+
+		if ( $http_authorization = \O2System::Input()->server( 'HTTP_AUTHORIZATION' ) )
+		{
+			list( $JWT ) = sscanf( $http_authorization, 'Bearer JWT-%s' );
+
+			if ( isset( $JWT ) )
+			{
+				if ( $credentials = $this->_library->token->getCredentials( $JWT ) )
+				{
+					return $this->_library->login->fromCredentials( $credentials );
 				}
 			}
 		}
@@ -151,90 +150,6 @@ class User extends DriverInterface
 
 	// ------------------------------------------------------------------------
 
-	public function get_sso_token()
-	{
-		$sso = \O2System::Input()->cookie( 'sso' );
-
-		if ( ! empty( $sso ) )
-		{
-			$sso = $this->_library->encryption->decrypt( $sso );
-			$sso = is_serialized( $sso ) ? unserialize( $sso ) : $sso;
-
-			if ( isset( $sso[ 'token' ] ) )
-			{
-				if ( $cache = \O2System::Cache()->get( 'sso-' . $sso[ 'token' ] ) )
-				{
-					if ( $cache[ 'token' ] === $sso[ 'token' ] )
-					{
-						return $sso[ 'token' ];
-					}
-				}
-			}
-		}
-
-		delete_cookie( 'sso' );
-
-		return FALSE;
-	}
-
-	public function get_remember_token()
-	{
-		$remember = \O2System::Input()->cookie( 'remember' );
-
-		if ( ! empty( $remember ) )
-		{
-			$remember = $this->_library->encryption->decrypt( $remember );
-			$remember = is_serialized( $remember ) ? unserialize( $remember ) : $remember;
-
-			if ( isset( $remember[ 'token' ] ) )
-			{
-				if ( $cache = \O2System::Cache()->get( 'remember-' . $remember[ 'token' ] ) )
-				{
-					if ( $cache[ 'token' ] === $remember[ 'token' ] )
-					{
-						return $remember[ 'token' ];
-					}
-				}
-			}
-		}
-
-		delete_cookie( 'remember' );
-
-		return FALSE;
-	}
-
-	public function destroy_cookies()
-	{
-		// Try to get remember cookie
-		$remember = \O2System::Input()->cookie( 'remember' );
-
-		if ( ! empty( $remember ) )
-		{
-			$remember = $this->_library->encryption->decrypt( $remember );
-			$remember = is_serialized( $remember ) ? unserialize( $remember ) : $remember;
-
-			if ( isset( $remember[ 'token' ] ) )
-			{
-				\O2System::Cache()->delete( 'remember-' . $remember[ 'token' ] );
-				delete_cookie( 'remember' );
-			}
-		}
-
-		// Try to get sso cookie
-		$sso = \O2System::Input()->cookie( 'sso' );
-
-		if ( ! empty( $sso ) )
-		{
-			$sso = $this->_library->encryption->decrypt( $sso );
-			$sso = is_serialized( $sso ) ? unserialize( $sso ) : $sso;
-
-			if ( isset( $sso[ 'token' ] ) )
-			{
-				\O2System::Cache()->delete( 'sso-' . $sso[ 'token' ] );
-				delete_cookie( 'sso' );
-			}
-		}
-	}
 
 	/**
 	 * Logout
@@ -259,7 +174,7 @@ class User extends DriverInterface
 			if ( strpos( $api_url, $origin ) === FALSE )
 			{
 				$api_url = is_https() ? 'https://' . $api_url : 'http://' . $api_url . '/logout';
-				
+
 				redirect( $api_url . '?' . http_build_query( [ 'origin' => $origin ] ) );
 			}
 		}

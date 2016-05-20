@@ -254,7 +254,7 @@ class Output extends DriverInterface
 				if ( ! empty( $benchmark ) )
 				{
 					$output = str_replace(
-						array( '[elapsed_time]', '[memory_usage]', '[memory_peak_usage]', '[cpu_usage]' ),
+						array( '[elapsed_time]', '[memory_usage]', '[memory_peak_usage]', '[processor_usage]' ),
 						(array) $benchmark->elapsed(),
 						$output
 					);
@@ -265,6 +265,7 @@ class Output extends DriverInterface
 			$doc->preserveWhiteSpace = TRUE;
 			$doc->validateOnParse = TRUE;
 
+			$output = str_replace( [ '<!DOCTYPE html>', '<!doctype html>' ], '', $output );
 			$output = mb_convert_encoding( $output, 'HTML-ENTITIES', 'UTF-8' );
 
 			if ( ( empty( $output ) !== TRUE ) && ( @$doc->loadHTML( $output ) === TRUE ) )

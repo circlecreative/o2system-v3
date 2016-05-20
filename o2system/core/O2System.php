@@ -293,8 +293,9 @@ class O2System extends \O2System\Glob
 		 *  Initialized System Core Active Registry
 		 * ------------------------------------------------------
 		 */
-		static::$active = new \O2System\Glob\ArrayObject();
+		static::$active = new \O2System\RegistryActive();
 
+		// Define Active Language
 		if ( \O2System::$registry->offsetExists( 'languages' ) )
 		{
 			if ( isset( \O2System::$registry->languages[ \O2System::$config[ 'language' ] ] ) )
@@ -303,12 +304,21 @@ class O2System extends \O2System\Glob
 			}
 		}
 
+		// Define Active Namespaces
+		\O2System::$active[ 'namespaces' ] = new \O2System\Glob\ArrayIterator( [ 'O2System\\', static::$config[ 'namespace' ] ] );
+		\O2System::$active['namespace'] = \O2System::$active[ 'namespaces' ]->seek( 1 );
+
+
+		// Define Active Directories
+		\O2System::$active[ 'directories' ] = new \O2System\Glob\ArrayIterator( [ SYSTEMPATH, APPSPATH ] );
+		\O2System::$active['directory'] = \O2System::$active[ 'directories' ]->seek( 1 );
+
 		/*
 		 * ------------------------------------------------------
 		 *  Initialized System Benchmarking Class
 		 * ------------------------------------------------------
 		 */
-		$this->benchmark = new \O2System\Gears\Benchmark;
+		$this->benchmark = new \O2System\Benchmark;
 		$this->benchmark->start();
 
 		// Mark o2system start point
@@ -347,9 +357,7 @@ class O2System extends \O2System\Glob
 		 *  Reset Environment based on Debug Ips
 		 * ------------------------------------------------------
 		 */
-		$this->exceptions->setDebugIps( \O2System::$config[ 'debug_ips' ], $this->input->ip_address() );
-
-		//print_out($this);
+		$this->exceptions->setDebugIps( \O2System::$config[ 'debug_ips' ], $this->input->ipAddress() );
 
 		/*
 		 * ------------------------------------------------------
@@ -431,27 +439,10 @@ class O2System extends \O2System\Glob
 		 *  Re-load and Load the rest of core classes
 		 * ------------------------------------------------------
 		 */
-		$namespaces = [ static::$config[ 'namespace' ] . 'Core\\', 'O2System\\' ];
-
-		if ( static::$active->offsetExists( 'module' ) )
-		{
-			$parents = static::$registry->find_parents( static::$active[ 'module' ] );
-
-			if ( ! empty( $parents ) )
-			{
-				foreach ( $parents as $parent )
-				{
-					array_unshift( $namespaces, $parent->namespace . 'Core\\' );
-				}
-			}
-
-			array_unshift( $namespaces, static::$active[ 'module' ]->namespace . 'Core\\' );
-		}
+		$namespaces = \O2System::$active['namespaces']->getArrayReverse();
 
 		$core_classes = array(
 			'Router',
-			'Security',
-			'Input',
 			'View',
 		);
 
@@ -459,7 +450,11 @@ class O2System extends \O2System\Glob
 		{
 			foreach ( $namespaces as $namespace )
 			{
-				$namespace = '\\' . $namespace;
+				if($namespace !== 'O2System\\')
+				{
+					$namespace = '\\' . $namespace . 'Core\\';
+				}
+
 				$core_class_name = $namespace . $core_class;
 				$core_object_name = strtolower( $core_class );
 

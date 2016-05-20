@@ -74,23 +74,23 @@ class Register extends DriverInterface
 		)
 		{
 			$user[ 'email' ] = trim( $user[ 'email' ] );
-			$user[ 'password' ] = $this->_library->hash_password( $user[ 'password' ] );
+			$user[ 'password' ] = $this->_library->hashPassword( $user[ 'password' ] );
 
 			if ( $this->_library->getConfig( 'password', 'salt' ) )
 			{
-				$user[ 'salt' ] = $this->_library->generate_salt();
+				$user[ 'salt' ] = $this->_library->saltPassword();
 			}
 
 			if ( $buffer === TRUE )
 			{
 				$user[ 'token' ] = random_string( 'numeric' );
-				$this->_library->model->insert_buffer( $user );
+				$this->_library->model->insertRegistrationBuffer( $user );
 
 				$this->send_email( $user );
 			}
 			else
 			{
-				$this->_library->model->insert_account( $user );
+				$this->_library->model->insertAccount( $user );
 			}
 
 			return TRUE;
@@ -103,7 +103,7 @@ class Register extends DriverInterface
 
 	public function validate( $token )
 	{
-		if ( $buffer = $this->_library->model->get_buffer( $token ) )
+		if ( $buffer = $this->_library->model->getRegistrationBuffer( $token ) )
 		{
 			$expired_time = strtotime( $buffer->code_expired );
 
@@ -116,7 +116,7 @@ class Register extends DriverInterface
 				$registration[ 'token' ] = $buffer->code_value;
 				$this->send_email( $registration );
 
-				$this->_library->model->update_buffer( $buffer );
+				$this->_library->model->updateRegistrationBuffer( $buffer );
 
 				return FALSE;
 			}
@@ -126,13 +126,13 @@ class Register extends DriverInterface
 				{
 					$user = $buffer->metadata;
 					$user->token = random_string( 'numeric' );
-					$this->_library->model->insert_buffer( (array) $user, 'MSISDN' );
+					$this->_library->model->insertRegistrationBuffer( (array) $user, 'MSISDN' );
 
 					// Insert Account
-					$return = $this->_library->model->insert_account( $buffer->metadata );
+					$return = $this->_library->model->insertAccount( $buffer->metadata );
 
 					// Delete Buffer
-					if ( $this->_library->model->delete_buffer( $buffer ) )
+					if ( $this->_library->model->deleteRegistrationBuffer( $buffer ) )
 					{
 						return $return;
 					}
@@ -140,7 +140,7 @@ class Register extends DriverInterface
 				elseif ( $buffer->code_type === 'MSISDN' )
 				{
 					// Delete Buffer
-					if ( $this->_library->model->delete_buffer( $buffer ) )
+					if ( $this->_library->model->deleteRegistrationBuffer( $buffer ) )
 					{
 						return TRUE;
 					}
@@ -224,7 +224,7 @@ class Register extends DriverInterface
 	 */
 	protected function _is_email_exists( $email )
 	{
-		if ( is_object( $this->_library->model->get_account( $email ) ) )
+		if ( is_object( $this->_library->model->getAccount( $email ) ) )
 		{
 			return TRUE;
 		}
@@ -246,12 +246,12 @@ class Register extends DriverInterface
 	 */
 	protected function _is_username_exists( $username )
 	{
-		if ( is_object( $this->_library->model->get_account( $username ) ) )
+		if ( is_object( $this->_library->model->getAccount( $username ) ) )
 		{
 			return TRUE;
 		}
 
-		if ( is_object( $this->_library->model->get_buffer( $username ) ) )
+		if ( is_object( $this->_library->model->getRegistrationBuffer( $username ) ) )
 		{
 			return TRUE;
 		}
@@ -273,7 +273,7 @@ class Register extends DriverInterface
 	 */
 	protected function _is_msidn_exists( $msidn )
 	{
-		if ( is_object( $this->_library->model->get_account( $msidn ) ) )
+		if ( is_object( $this->_library->model->getAccount( $msidn ) ) )
 		{
 			return TRUE;
 		}

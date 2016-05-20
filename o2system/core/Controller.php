@@ -106,11 +106,9 @@ abstract class Controller extends ControllerInterface
 			$this->view->assets->add_asset( 'applications' );
 
 			// Load Module Assets
-			$parent_modules = \O2System::$registry->find_parents( \O2System::$active[ 'module' ] );
-
-			foreach ( $parent_modules as $parent_module )
+			foreach ( \O2System::$active['modules'] as $module )
 			{
-				$assets_files[] = $parent_module->parameter;
+				$assets_files[] = $module->parameter;
 			}
 
 			$assets_files[] = \O2System::$active[ 'module' ]->parameter;

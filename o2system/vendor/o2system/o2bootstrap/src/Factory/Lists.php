@@ -71,6 +71,8 @@ class Lists extends FactoryInterface
 		'unstyled',
 	);
 
+	protected $_nested_items;
+
 
 	public function build()
 	{
@@ -104,11 +106,74 @@ class Lists extends FactoryInterface
 		return $this;
 	}
 
-	public function add_item( $item, $describe = NULL, $attr = array() )
+	public function add_items( array $items )
+	{
+		foreach ( $items as $key => $item )
+		{
+			if ( $item instanceof \ArrayObject AND $item->offsetExists( 'id_parent' ) )
+			{
+				$this->_nested_items[ $item[ 'id_parent' ] ][] = $item;
+			}
+			else
+			{
+				$this->add_item( $item, $key );
+			}
+		}
+
+		//print_out($this->_nested_items);
+
+		if ( ! empty( $this->_nested_items ) )
+		{
+			$this->_items = $this->_buildNestedItems();
+
+			//print_out( $this->_items );
+		}
+
+		return $this;
+	}
+
+	protected function _buildNestedItems( $id_parent = 0 )
+	{
+		if ( isset( $this->_nested_items[ $id_parent ] ) )
+		{
+			foreach ( $this->_nested_items[ $id_parent ] as $key => $nested_items )
+			{
+				//print_out($nested_items);
+				// Has Child
+				if ( isset( $this->_nested_items[ $nested_items->id ] ) )
+				{
+					$items[ $key ] = new Tag( 'li', $nested_items[ 'item' ] );
+					$lists = new Lists();
+
+					$lists->add_items( $this->_buildNestedItems( $nested_items->id ) );
+
+					$items[ $key ]->append_content( $lists );
+				}
+				else
+				{
+					$items[] = new Tag( 'li', $nested_items[ 'item' ] );
+				}
+			}
+
+			return $items;
+		}
+	}
+
+	protected function _hasNestedChildItems( $id_parent )
+	{
+		return (bool) ( isset( $this->_nested_items[ $id_parent ] ) );
+	}
+
+	public function add_item( $item, $describe = NULL, $attr = array(), $key = NULL )
 	{
 		if ( $this->_tag === 'dl' )
 		{
-			$this->_items[] = new Tag( 'dt', new Tag( 'dd', $describe ), $attr );
+			$item = new Tag( 'dt', new Tag( 'dd', $describe ), $attr );
+
+			if ( isset( $describe ) )
+			{
+				$key = $describe;
+			}
 		}
 		else
 		{
@@ -187,15 +252,28 @@ class Lists extends FactoryInterface
 					}
 				}
 			}
+			elseif ( is_string( $describe ) )
+			{
+				$key = $describe;
+			}
 
 			if ( $item === self::ITEM_SEPARATOR )
 			{
-				$this->_items[] = new Tag( 'li', [ 'role' => 'separator', 'class' => 'divider' ] );
+				$item = new Tag( 'li', [ 'role' => 'separator', 'class' => 'divider' ] );
 			}
-			else
+			elseif ( ( $item instanceof FactoryInterface AND $item->get_tag() !== 'li' ) OR is_string( $item ) OR is_numeric( $item ) )
 			{
-				$this->_items[] = new Tag( 'li', $item, $attr );
+				$item = new Tag( 'li', $item, $attr );
 			}
+		}
+
+		if ( isset( $key ) )
+		{
+			$this->_items[ $key ] = $item;
+		}
+		else
+		{
+			$this->_items[] = $item;
 		}
 
 		return $this;
@@ -212,6 +290,8 @@ class Lists extends FactoryInterface
 	{
 		if ( ! empty( $this->_items ) )
 		{
+			$lists = array();
+
 			foreach ( $this->_items as $key => $item )
 			{
 				if ( isset( $this->_item_active ) )
@@ -227,10 +307,11 @@ class Lists extends FactoryInterface
 					$item->add_class( 'list-group-item' );
 				}
 
-				$lists[] = $item->render();
+				if ( method_exists( $item, 'render' ) )
+				{
+					$lists[] = $item->render();
+				}
 			}
-
-
 
 			return ( new Tag( $this->_tag, implode( PHP_EOL, $lists ), $this->_attributes ) )->render();
 		}

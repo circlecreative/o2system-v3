@@ -36,6 +36,19 @@ namespace O2System
 
 			$trace = new Trace();
 
+			if ( isset( $_SERVER[ 'DOCUMENT_ROOT' ] ) )
+			{
+				$root_dir = $_SERVER[ 'DOCUMENT_ROOT' ];
+			}
+			else
+			{
+				$root_dir = dirname( $_SERVER[ 'SCRIPT_FILENAME' ] );
+			}
+
+			$root_dir .= '/';
+
+			$assets_url = '//' . $_SERVER[ 'SERVER_NAME' ] . '/' . str_replace( $root_dir, '', __DIR__ ) . '/assets/';
+
 			ob_start();
 
 			// Load print out template
@@ -427,7 +440,7 @@ namespace O2System\Gears
 			 * Define the cpu usage at the start of the application, used for profiling.
 			 *-----------------------------------------------------------------------------
 			 */
-			$this->_start_cpu = $this->_get_cpu_usage();
+			$this->_start_cpu = $this->_getProcessorUsage();
 		}
 
 		/**
@@ -464,7 +477,7 @@ namespace O2System\Gears
 		 *
 		 * @return    int   time of elapsed time
 		 */
-		public function elapsed_time( $marker = 'total_execution' )
+		public function elapsedTime( $marker = 'total_execution' )
 		{
 			if ( empty( $this->_elapsed[ $marker ] ) )
 			{
@@ -489,10 +502,10 @@ namespace O2System\Gears
 		public function stop( $marker = 'total_execution', $decimals = 4 )
 		{
 			$this->_elapsed[ $marker ] = array(
-				'time'   => number_format( ( time() + microtime( TRUE ) ) - $this->_marker[ $marker ][ 'time' ],
+					'time'   => number_format( ( time() + microtime( TRUE ) ) - $this->_marker[ $marker ][ 'time' ],
 				                           $decimals ),
-				'memory' => ( memory_get_usage( TRUE ) - $this->_marker[ $marker ][ 'memory' ] ),
-				'cpu'    => $this->_get_cpu_usage(),
+					'memory' => ( memory_get_usage( TRUE ) - $this->_marker[ $marker ][ 'memory' ] ),
+					'cpu'    => $this->_getProcessorUsage(),
 			);
 		}
 		// ------------------------------------------------------------------------
@@ -509,7 +522,7 @@ namespace O2System\Gears
 		 *
 		 * @return  string  memory usage in MB
 		 */
-		public function memory_usage( $marker = 'total_execution' )
+		public function memoryUsage( $marker = 'total_execution' )
 		{
 			if ( empty( $this->_elapsed[ $marker ] ) )
 			{
@@ -523,7 +536,7 @@ namespace O2System\Gears
 
 		// ------------------------------------------------------------------------
 
-		public function cpu_usage( $marker = 'total_execution' )
+		public function processorUsage( $marker = 'total_execution' )
 		{
 			if ( empty( $this->_elapsed[ $marker ] ) )
 			{
@@ -540,7 +553,7 @@ namespace O2System\Gears
 		 *
 		 * @return  string  memory usage in MB
 		 */
-		public function memory_peak_usage()
+		public function memoryPeakUsage()
 		{
 			return round( memory_get_peak_usage( TRUE ) / 1024 / 1024, 2 ) . ' MB';
 		}
@@ -553,7 +566,7 @@ namespace O2System\Gears
 		 *
 		 * @return  int
 		 */
-		protected function _get_cpu_usage()
+		protected function _getProcessorUsage()
 		{
 			if ( stristr( PHP_OS, 'win' ) )
 			{
@@ -616,10 +629,10 @@ namespace O2System\Gears
 		public function elapsed( $marker = 'total_execution' )
 		{
 			$elapsed = new \stdClass;
-			$elapsed->time = $this->elapsed_time( $marker );
-			$elapsed->memory = $this->memory_usage( $marker );
-			$elapsed->memory_peak = $this->memory_peak_usage();
-			$elapsed->cpu = $this->cpu_usage( $marker );
+			$elapsed->time = $this->elapsedTime( $marker );
+			$elapsed->memory = $this->memoryUsage( $marker );
+			$elapsed->memory_peak = $this->memoryPeakUsage();
+			$elapsed->processor = $this->processorUsage( $marker );
 
 			return $elapsed;
 		}
@@ -663,7 +676,7 @@ namespace O2System\Gears
 		public static function start()
 		{
 			static::$_chronology = array();
-			static::$_chronology[] = static::__where_call( __CLASS__ . '::start()' );
+			static::$_chronology[] = static::__whereCall( __CLASS__ . '::start()' );
 		}
 
 		// ------------------------------------------------------------------------
@@ -679,7 +692,7 @@ namespace O2System\Gears
 		 *
 		 * @return          Tracer Object
 		 */
-		private static function __where_call( $call )
+		private static function __whereCall( $call )
 		{
 			$tracer = new Tracer();
 
@@ -709,7 +722,7 @@ namespace O2System\Gears
 		 */
 		public static function line( $vars, $export = FALSE )
 		{
-			$trace = static::__where_call( __CLASS__ . '::line()' );
+			$trace = static::__whereCall( __CLASS__ . '::line()' );
 
 			if ( $export === TRUE )
 			{
@@ -739,7 +752,7 @@ namespace O2System\Gears
 		 */
 		public static function marker()
 		{
-			$trace = static::__where_call( __CLASS__ . '::marker()' );
+			$trace = static::__whereCall( __CLASS__ . '::marker()' );
 			static::$_chronology[] = $trace;
 		}
 
@@ -758,7 +771,7 @@ namespace O2System\Gears
 		 */
 		public static function stop( $halt = TRUE )
 		{
-			static::$_chronology[] = static::__where_call( __CLASS__ . '::stop()' );
+			static::$_chronology[] = static::__whereCall( __CLASS__ . '::stop()' );
 			$chronology = static::$_chronology;
 			static::$_chronology = array();
 
@@ -1133,7 +1146,7 @@ namespace O2System\Gears
 			$this->_trace = array_reverse( $this->_trace );
 
 			// Generate Lines
-			$this->__generate_chronology();
+			$this->__generateChronology();
 		}
 
 		// ------------------------------------------------------------------------
@@ -1146,7 +1159,7 @@ namespace O2System\Gears
 		 * @access           private
 		 * @return           void
 		 */
-		private function __generate_chronology()
+		private function __generateChronology()
 		{
 			foreach ( $this->_trace as $trace )
 			{

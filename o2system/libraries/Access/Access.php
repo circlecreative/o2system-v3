@@ -75,6 +75,7 @@ class Access extends LibraryInterface
 	public function __reconstruct( array $config = array() )
 	{
 		\O2System::Load()->helpers( [ 'string', 'cookie' ] );
+		\O2System::Load()->library( 'o2system/useragent' );
 
 		$config = \O2System::$config->load( 'access', TRUE );
 
@@ -97,7 +98,7 @@ class Access extends LibraryInterface
 	 *
 	 * @access  public
 	 */
-	public function set_model_handler( Model $model )
+	public function setUserModel( Model $model )
 	{
 		$this->model = $model;
 	}
@@ -115,7 +116,7 @@ class Access extends LibraryInterface
 	 * @access  public
 	 * @return string
 	 */
-	public function hash_password( $password, $salt = NULL )
+	public function hashPassword( $password, $salt = NULL )
 	{
 		switch ( strtolower( @$this->_config[ 'password' ][ 'hash' ] ) )
 		{
@@ -144,7 +145,7 @@ class Access extends LibraryInterface
 	 * @access  public
 	 * @return  string|null
 	 */
-	public function generate_salt()
+	public function saltPassword()
 	{
 		if ( $this->_config[ 'hash_salt' ] === TRUE )
 		{

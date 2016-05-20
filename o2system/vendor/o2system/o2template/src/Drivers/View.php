@@ -108,10 +108,9 @@ final class View extends DriverInterface
 
 		if ( $view_filepath = $this->is_file( $view ) )
 		{
-			if ( pathinfo( $view_filepath, PATHINFO_EXTENSION ) === 'php' )
+			if ( in_array( pathinfo( $view_filepath, PATHINFO_EXTENSION ), [ 'php', 'phtml' ] ) )
 			{
-				$this->_library->setConfig('php', TRUE);
-				$output = $this->_library->parser->parse_source_code( file_get_contents( $view_filepath ), $vars );
+				$output = $this->_library->parser->parse_php( file_get_contents( $view_filepath ), $vars );
 			}
 			else
 			{

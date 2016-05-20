@@ -43,6 +43,7 @@ defined( 'ROOTPATH' ) || exit( 'No direct script access allowed' );
 // ------------------------------------------------------------------------
 
 use O2System\Glob\ArrayObject;
+use O2System\Registry;
 
 class Controller extends ArrayObject
 {
@@ -53,11 +54,12 @@ class Controller extends ArrayObject
 			'class'             => NULL,
 			'namespace'         => NULL,
 			'realpath'          => NULL,
+			'module'            => NULL,
 			'reflection'        => NULL,
 			'public_methods'    => array(),
 			'protected_methods' => array(),
 			'params'            => array(),
-			'method'            => NULL,
+			'method'            => 'index',
 		);
 
 		if ( is_string( $controller ) AND file_exists( $controller ) )
@@ -83,6 +85,21 @@ class Controller extends ArrayObject
 				'namespace' => $class_namespace,
 				'realpath'  => $directory . $path_info[ 'filename' ] . '.php',
 			);
+
+			if ( $module_directory = \O2System::Load()->getNamespacePath( str_replace( 'Controllers\\', '', $class_namespace ) ) )
+			{
+				$module_directory = str_replace( [ ROOTPATH, 'core' ], '', $module_directory );
+				$x_module_directory = explode( DIRECTORY_SEPARATOR, $module_directory );
+				$x_module_directory = array_diff( $x_module_directory, array_values( Registry::$package_types ) );
+				$x_module_directory = array_filter( $x_module_directory );
+
+				$module_parameter = implode( '/', $x_module_directory );
+
+				if ( $module = \O2System::$registry->find( $module_parameter, 'modules' ) )
+				{
+					$controller[ 'module' ] = $module;
+				}
+			}
 		}
 
 		parent::__construct( array_merge( $std_objects, $controller ) );
@@ -130,6 +147,8 @@ class Controller extends ArrayObject
 
 	public function isPublicMethod( $method )
 	{
+		//$method = camelcase( $method );
+
 		if ( array_key_exists( $method, $this->public_methods ) )
 		{
 			return TRUE;
@@ -141,6 +160,7 @@ class Controller extends ArrayObject
 	public function isProtectedMethod( $method )
 	{
 		$method = '_' . ltrim( $method, '_' );
+		//$method = camelcase( $method );
 
 		if ( array_key_exists( $method, $this->protected_methods ) )
 		{
