@@ -90,9 +90,9 @@ class Token extends DriverInterface
 			$user->offsetUnset( 'salt' );
 		}
 
-		\O2System::Session()->unset_userdata( '__loginAttempts' );
-		\O2System::Session()->unset_tempdata( '__rememberAttempts' );
-		\O2System::Session()->unset_tempdata( '__ssoAttempts' );
+		\O2System::Session()->unsetUserdata( '__loginAttempts' );
+		\O2System::Session()->unsetTempdata( '__rememberAttempts' );
+		\O2System::Session()->unsetTempdata( '__ssoAttempts' );
 
 		if ( $user->offsetExists( 'password' ) )
 		{
@@ -104,7 +104,7 @@ class Token extends DriverInterface
 		$ip_address = \O2System::Input()->ipAddress();
 		$user_agent = \O2System::Input()->userAgent();
 
-		\O2System::Session()->set_userdata( 'account', $user );
+		\O2System::Session()->setUserdata( 'account', $user );
 
 		$this->storage[ 'signature' ] = hash( "haval256,5", \O2System::$config[ 'encryption_key' ] . $id_user_account . $user_agent . $ip_address . microtime() );
 		$this->storage[ 'credentials' ] = array(

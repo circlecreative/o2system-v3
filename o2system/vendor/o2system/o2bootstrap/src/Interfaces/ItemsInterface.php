@@ -46,7 +46,7 @@ trait ItemsInterface
 	protected $_num_rows     = 2;
 	protected $_num_per_rows = 3;
 
-	public function is_empty()
+	public function isEmpty()
 	{
 		return $this->__isEmpty();
 	}
@@ -56,7 +56,7 @@ trait ItemsInterface
 		return (bool) empty( $this->_items );
 	}
 
-	public function add_lists( Lists $lists )
+	public function addLists(Lists $lists )
 	{
 		if ( $lists instanceof Lists )
 		{
@@ -66,21 +66,21 @@ trait ItemsInterface
 		return $this;
 	}
 
-	public function add_items( array $items )
+	public function addItems(array $items )
 	{
 		foreach ( $items as $key => $item )
 		{
-			$this->add_item( $item, $key );
+			$this->addItem( $item, $key );
 		}
 
 		return $this;
 	}
 
-	public function add_item( $item )
+	public function addItem($item )
 	{
 		if ( $this->_items instanceof Lists )
 		{
-			$this->_items->add_item( $item );
+			$this->_items->addItem( $item );
 		}
 		else
 		{
@@ -90,7 +90,7 @@ trait ItemsInterface
 		return $this;
 	}
 
-	public function set_items_map( array $map )
+	public function setItemsMap(array $map )
 	{
 		foreach ( $map as $key => $index )
 		{
@@ -103,7 +103,7 @@ trait ItemsInterface
 	}
 
 
-	public function set_num_rows( $rows )
+	public function setNumRows($rows )
 	{
 		if ( is_numeric( $rows ) )
 		{
@@ -113,7 +113,7 @@ trait ItemsInterface
 		return $this;
 	}
 
-	public function set_num_per_rows( $num )
+	public function setNumPerRows($num )
 	{
 		if ( is_numeric( $num ) )
 		{

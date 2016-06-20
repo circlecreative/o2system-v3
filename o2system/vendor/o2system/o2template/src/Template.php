@@ -111,7 +111,7 @@ namespace O2System
 				$assets = $this->_config[ 'assets' ][ 'autoload' ];
 				unset( $this->_config[ 'assets' ][ 'autoload' ] );
 
-				$this->assets->add_assets( $assets, 'core' );
+				$this->assets->addAssets( $assets, 'core' );
 			}
 
 			// Set Template Theme
@@ -153,7 +153,7 @@ namespace O2System
 		 *
 		 * @return $this
 		 */
-		public function set_charset( $charset )
+		public function setCharset($charset )
 		{
 			$_valid_charsets = array(
 				'UTF-8', // HTML5
@@ -176,7 +176,7 @@ namespace O2System
 		 *
 		 * @param $separator
 		 */
-		public function set_title_separator( $separator )
+		public function setTitleSeparator($separator )
 		{
 			$this->_title_separator = $separator;
 		}
@@ -188,10 +188,10 @@ namespace O2System
 		 *
 		 * @param $title
 		 */
-		public function set_title( $title )
+		public function setTitle($title )
 		{
-			$this->set_title_browser( $title );
-			$this->set_title_page( $title );
+			$this->setTitleBrowser( $title );
+			$this->setTitlePage( $title );
 		}
 
 		/**
@@ -201,10 +201,10 @@ namespace O2System
 		 *
 		 * @param $title
 		 */
-		public function add_title( $title )
+		public function addTitle($title )
 		{
-			$this->add_title_browser( $title );
-			$this->add_title_page( $title );
+			$this->addTitleBrowser( $title );
+			$this->addTitlePage( $title );
 		}
 
 		/**
@@ -212,7 +212,7 @@ namespace O2System
 		 *
 		 * @param $browser_title
 		 */
-		public function set_title_browser( $browser_title )
+		public function setTitleBrowser($browser_title )
 		{
 			$this->_title_browser = array( $browser_title );
 		}
@@ -222,7 +222,7 @@ namespace O2System
 		 *
 		 * @param $browser_title
 		 */
-		public function add_title_browser( $browser_title )
+		public function addTitleBrowser($browser_title )
 		{
 			if ( ! in_array( $browser_title, $this->_title_browser ) )
 			{
@@ -235,7 +235,7 @@ namespace O2System
 		 *
 		 * @param $page_title
 		 */
-		public function set_title_page( $page_title )
+		public function setTitlePage($page_title )
 		{
 			$this->_title_page = array( $page_title );
 		}
@@ -245,7 +245,7 @@ namespace O2System
 		 *
 		 * @param $page_title
 		 */
-		public function add_title_page( $page_title )
+		public function addTitlePage($page_title )
 		{
 			if ( ! in_array( $page_title, $this->_title_page ) )
 			{
@@ -262,7 +262,7 @@ namespace O2System
 		 *
 		 * @return $this
 		 */
-		public function set_vars( array $vars )
+		public function setVars(array $vars )
 		{
 			$this->_cached_vars = $vars;
 
@@ -278,7 +278,7 @@ namespace O2System
 		 *
 		 * @return $this
 		 */
-		public function add_vars( array $vars )
+		public function addVars(array $vars )
 		{
 			$this->_cached_vars = array_merge( $this->_cached_vars, $vars );
 
@@ -293,7 +293,7 @@ namespace O2System
 		 * @param $index
 		 * @param $value
 		 */
-		public function add_var( $index, $value )
+		public function addVar($index, $value )
 		{
 			$this->_cached_vars[ $index ] = $value;
 		}
@@ -307,7 +307,7 @@ namespace O2System
 		 *
 		 * @return $this
 		 */
-		public function set_paths( array $paths )
+		public function setPaths(array $paths )
 		{
 			// Add O2Template Path
 			array_unshift( $paths, __DIR__ . DIRECTORY_SEPARATOR );
@@ -326,11 +326,11 @@ namespace O2System
 		 *
 		 * @return $this
 		 */
-		public function add_paths( array $paths )
+		public function addPaths(array $paths )
 		{
 			foreach ( $paths as $path )
 			{
-				$this->add_path( $path );
+				$this->addPath( $path );
 			}
 
 			return $this;
@@ -345,7 +345,7 @@ namespace O2System
 		 *
 		 * @return $this
 		 */
-		public function add_path( $path )
+		public function addPath($path )
 		{
 			if ( ! in_array( $path, $this->_paths ) )
 			{
@@ -368,7 +368,7 @@ namespace O2System
 			$this->_cached_vars = array_merge( $this->_cached_vars, $vars );
 
 			// Set Charset Metadata
-			$this->metadata->add_meta( 'charset', $this->_charset );
+			$this->metadata->addMeta( 'charset', $this->_charset );
 
 			// Set Browser Title
 			$this->_cached_vars[ 'browser_title' ] = implode( ' ' . $this->_title_separator . ' ', $this->_title_browser );
@@ -393,7 +393,7 @@ namespace O2System
 			// Set Metadata Title
 			if ( $this->metadata->offsetExists( 'title' ) === FALSE )
 			{
-				$this->metadata->add_meta( 'title', $this->_cached_vars[ 'browser_title' ] );
+				$this->metadata->addMeta( 'title', $this->_cached_vars[ 'browser_title' ] );
 			}
 
 			$this->_cached_vars[ 'metadata' ] = $this->metadata;
@@ -414,38 +414,38 @@ namespace O2System
 
 				if ( isset( $this->theme->active[ 'partials' ] ) )
 				{
-					$this->partials->add_partials( $this->theme->active[ 'partials' ] );
+					$this->partials->addPartials( $this->theme->active[ 'partials' ] );
 				}
 
 				if ( $this->partials->offsetExists( 'content' ) === FALSE )
 				{
-					$this->partials->add_partial( 'content', $view );
+					$this->partials->addPartial( 'content', $view );
 				}
 
 				$this->_cached_vars[ 'partials' ] = $this->partials;
 
 				if ( isset( $this->theme->active[ 'settings' ][ 'metadata' ] ) )
 				{
-					$this->metadata->add_meta( $this->theme->active[ 'settings' ][ 'metadata' ] );
+					$this->metadata->addMeta( $this->theme->active[ 'settings' ][ 'metadata' ] );
 				}
 
 				if ( isset( $this->theme->active[ 'settings' ][ 'assets' ] ) )
 				{
-					$this->assets->add_assets( $this->theme->active[ 'settings' ][ 'assets' ], 'theme' );
+					$this->assets->addAssets( $this->theme->active[ 'settings' ][ 'assets' ], 'theme' );
 				}
 
-				$this->assets->add_asset( pathinfo( $this->theme->active[ 'layout' ], PATHINFO_FILENAME ), 'custom' );
+				$this->assets->addAsset( pathinfo( $this->theme->active[ 'layout' ], PATHINFO_FILENAME ), 'custom' );
 
 				$this->_cached_vars[ 'metadata' ] = $this->metadata;
 				$this->_cached_vars[ 'assets' ] = $this->assets;
 
 				// Load Layout
-				$output = $this->parser->parse_source_code( file_get_contents( $this->theme->active[ 'layout' ] ), $this->_cached_vars );
+				$output = $this->parser->parseSourceCode( file_get_contents( $this->theme->active[ 'layout' ] ), $this->_cached_vars );
 			}
 
 			// Send Final Output to Browser
-			$this->output->set_content_type( 'text/html' );
-			$this->output->set_content( $output );
+			$this->output->setContentType( 'text/html' );
+			$this->output->setContent( $output );
 		}
 	}
 }

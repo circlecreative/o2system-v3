@@ -29,20 +29,20 @@ class Partials extends DriverInterface implements IteratorAggregate, Countable, 
 		return $this->offsetGet( $offset );
 	}
 
-	public function set_partials( array $partials )
+	public function setPartials(array $partials )
 	{
 		$this->storage = $partials;
 	}
 
-	public function add_partials( array $partials )
+	public function addPartials(array $partials )
 	{
 		foreach ( $partials as $partial => $content )
 		{
-			$this->add_partial( $partial, $content );
+			$this->addPartial( $partial, $content );
 		}
 	}
 
-	public function add_partial( $index, $content )
+	public function addPartial($index, $content )
 	{
 		$vars = $this->_library->_cached_vars;
 		$vars[ 'partials' ] = $this;

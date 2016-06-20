@@ -243,7 +243,7 @@ class FTP {
 	 *
 	 * @return	bool
 	 */
-	protected function _is_conn()
+	protected function _isConn()
 	{
 		if ( ! is_resource($this->conn_id))
 		{
@@ -275,7 +275,7 @@ class FTP {
 	 */
 	public function changedir($path, $suppress_debug = FALSE)
 	{
-		if ( ! $this->_is_conn())
+		if ( ! $this->_isConn())
 		{
 			return FALSE;
 		}
@@ -306,7 +306,7 @@ class FTP {
 	 */
 	public function mkdir($path, $permissions = NULL)
 	{
-		if ($path === '' OR ! $this->_is_conn())
+		if ($path === '' OR ! $this->_isConn())
 		{
 			return FALSE;
 		}
@@ -345,7 +345,7 @@ class FTP {
 	 */
 	public function upload($locpath, $rempath, $mode = 'auto', $permissions = NULL)
 	{
-		if ( ! $this->_is_conn())
+		if ( ! $this->_isConn())
 		{
 			return FALSE;
 		}
@@ -399,7 +399,7 @@ class FTP {
 	 */
 	public function download($rempath, $locpath, $mode = 'auto')
 	{
-		if ( ! $this->_is_conn())
+		if ( ! $this->_isConn())
 		{
 			return FALSE;
 		}
@@ -441,7 +441,7 @@ class FTP {
 	 */
 	public function rename($old_file, $new_file, $move = FALSE)
 	{
-		if ( ! $this->_is_conn())
+		if ( ! $this->_isConn())
 		{
 			return FALSE;
 		}
@@ -483,9 +483,9 @@ class FTP {
 	 * @param	string	$filepath
 	 * @return	bool
 	 */
-	public function delete_file($filepath)
+	public function deleteFile($filepath)
 	{
-		if ( ! $this->_is_conn())
+		if ( ! $this->_isConn())
 		{
 			return FALSE;
 		}
@@ -514,9 +514,9 @@ class FTP {
 	 * @param	string	$filepath
 	 * @return	bool
 	 */
-	public function delete_dir($filepath)
+	public function deleteDir($filepath)
 	{
-		if ( ! $this->_is_conn())
+		if ( ! $this->_isConn())
 		{
 			return FALSE;
 		}
@@ -524,7 +524,7 @@ class FTP {
 		// Add a trailing slash to the file path if needed
 		$filepath = preg_replace('/(.+?)\/*$/', '\\1/', $filepath);
 
-		$list = $this->list_files($filepath);
+		$list = $this->listFiles($filepath);
 		if ( ! empty($list))
 		{
 			for ($i = 0, $c = count($list); $i < $c; $i++)
@@ -533,7 +533,7 @@ class FTP {
 				// so we'll recursively call delete_dir()
 				if ( ! preg_match('#/\.\.?$#', $list[$i]) && ! @ftp_delete($this->conn_id, $list[$i]))
 				{
-					$this->delete_dir($list[$i]);
+					$this->deleteDir($list[$i]);
 				}
 			}
 		}
@@ -562,7 +562,7 @@ class FTP {
 	 */
 	public function chmod($path, $perm)
 	{
-		if ( ! $this->_is_conn())
+		if ( ! $this->_isConn())
 		{
 			return FALSE;
 		}
@@ -588,9 +588,9 @@ class FTP {
 	 * @param	string	$path
 	 * @return	array
 	 */
-	public function list_files($path = '.')
+	public function listFiles($path = '.')
 	{
-		return $this->_is_conn()
+		return $this->_isConn()
 			? ftp_nlist($this->conn_id, $path)
 			: FALSE;
 	}
@@ -611,7 +611,7 @@ class FTP {
 	 */
 	public function mirror($locpath, $rempath)
 	{
-		if ( ! $this->_is_conn())
+		if ( ! $this->_isConn())
 		{
 			return FALSE;
 		}
@@ -687,7 +687,7 @@ class FTP {
 	 */
 	public function close()
 	{
-		return $this->_is_conn()
+		return $this->_isConn()
 			? @ftp_close($this->conn_id)
 			: FALSE;
 	}

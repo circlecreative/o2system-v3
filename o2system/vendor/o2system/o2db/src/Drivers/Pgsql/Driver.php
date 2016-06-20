@@ -121,7 +121,7 @@ class Driver extends DriverInterface
 
 		if ( is_object( $this->pdo_conn ) && ! empty( $this->schema ) )
 		{
-			$this->simple_query( 'SET search_path TO ' . $this->schema . ',public' );
+			$this->simpleQuery( 'SET search_path TO ' . $this->schema . ',public' );
 		}
 
 		return $this->pdo_conn;
@@ -136,7 +136,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    int
 	 */
-	public function insert_id( $name = NULL )
+	public function insertId($name = NULL )
 	{
 		if ( $name === NULL && version_compare( $this->version(), '8.1', '>=' ) )
 		{
@@ -158,7 +158,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    bool
 	 */
-	public function is_write_type( $sql )
+	public function isWriteType($sql )
 	{
 		return (bool) preg_match( '/^\s*"?(SET|INSERT(?![^\)]+\)\s+RETURNING)|UPDATE(?!.*\sRETURNING)|DELETE|CREATE|DROP|TRUNCATE|LOAD|COPY|ALTER|RENAME|GRANT|REVOKE|LOCK|UNLOCK|REINDEX)\s/i', str_replace( array( "\r\n", "\r", "\n" ), ' ', $sql ) );
 	}
@@ -195,7 +195,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    object
 	 */
-	public function order_by( $orderby, $direction = '', $escape = NULL )
+	public function orderBy($orderby, $direction = '', $escape = NULL )
 	{
 		$direction = strtoupper( trim( $direction ) );
 		if ( $direction === 'RANDOM' )
@@ -209,7 +209,7 @@ class Driver extends DriverInterface
 
 			if ( is_float( $orderby ) )
 			{
-				$this->simple_query( 'SET SEED ' . $orderby );
+				$this->simpleQuery( 'SET SEED ' . $orderby );
 			}
 
 			$orderby = $this->_random_keywords[ 0 ];
@@ -217,7 +217,7 @@ class Driver extends DriverInterface
 			$escape = FALSE;
 		}
 
-		return parent::order_by( $orderby, $direction, $escape );
+		return parent::orderBy( $orderby, $direction, $escape );
 	}
 
 	// --------------------------------------------------------------------
@@ -231,14 +231,14 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _list_tables_statement( $prefix_limit = FALSE )
+	protected function _listTablesStatement($prefix_limit = FALSE )
 	{
 		$sql = 'SELECT "table_name" FROM "information_schema"."tables" WHERE "table_schema" = \'' . $this->schema . "'";
 
 		if ( $prefix_limit === TRUE && $this->table_prefix !== '' )
 		{
 			return $sql . ' AND "table_name" LIKE \''
-			. $this->escape_like_string( $this->table_prefix ) . "%' "
+			. $this->escapeLikeString( $this->table_prefix ) . "%' "
 			. sprintf( $this->_like_escape_string, $this->_like_escape_character );
 		}
 
@@ -256,7 +256,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _list_columns_statement( $table = '' )
+	protected function _listColumnsStatement($table = '' )
 	{
 		return 'SELECT "column_name"
 			FROM "information_schema"."columns"
@@ -272,7 +272,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    array
 	 */
-	public function field_data( $table )
+	public function fieldData($table )
 	{
 		$sql = 'SELECT "column_name", "data_type", "character_maximum_length", "numeric_precision", "column_default"
 			FROM "information_schema"."columns"
@@ -282,7 +282,7 @@ class Driver extends DriverInterface
 		{
 			return FALSE;
 		}
-		$query = $query->result_object();
+		$query = $query->resultObject();
 
 		$result = array();
 		for ( $i = 0, $c = count( $query ); $i < $c; $i++ )
@@ -309,12 +309,12 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _update_statement( $table, $values )
+	protected function _updateStatement($table, $values )
 	{
 		$this->qb_limit = FALSE;
 		$this->qb_orderby = array();
 
-		return parent::_update_statement( $table, $values );
+		return parent::_updateStatement( $table, $values );
 	}
 
 	// --------------------------------------------------------------------
@@ -330,7 +330,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _update_batch_statement( $table, $values, $index )
+	protected function _updateBatchStatement($table, $values, $index )
 	{
 		$ids = array();
 		foreach ( $values as $key => $value )
@@ -356,7 +356,7 @@ class Driver extends DriverInterface
 
 		$this->where( $index . ' IN(' . implode( ',', $ids ) . ')', NULL, FALSE );
 
-		return 'UPDATE ' . $table . ' SET ' . substr( $cases, 0, -2 ) . $this->_compile_where_having( 'qb_where' );
+		return 'UPDATE ' . $table . ' SET ' . substr( $cases, 0, -2 ) . $this->_compileWhereHaving( 'qb_where' );
 	}
 
 	// --------------------------------------------------------------------

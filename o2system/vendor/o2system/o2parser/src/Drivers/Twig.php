@@ -103,7 +103,7 @@ class Twig extends Driver
      * @access  public
      * @return  string  Parse Output Result
      */
-    public function parse_string( $string, $vars = array() )
+    public function parseString($string, $vars = array() )
     {
         return static::$_engine->render( $string, $vars );
     }
@@ -117,7 +117,7 @@ class Twig extends Driver
      *
      * @access  public
      */
-    public function register_plugin()
+    public function registerPlugin()
     {
         list( $name ) = func_get_args();
         static::$_engine->addFunction( $name, new \Twig_Function_Function( $name ) );

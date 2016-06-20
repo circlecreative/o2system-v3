@@ -58,7 +58,7 @@ class Options extends Model
 
 		$db = ( ! is_array( $db ) ? $db : element( 'db', $db ) );
 
-		$db_fields = $this->db->list_fields( $db );
+		$db_fields = $this->db->listFields( $db );
 
 		if ( in_array( 'lang', $db_fields ) )
 		{
@@ -73,11 +73,11 @@ class Options extends Model
 
 		if ( in_array( 'ordering', $db_fields ) AND ! in_array( 'lft', $db_fields ) )
 		{
-			$this->db->order_by( 'ordering', 'asc' );
+			$this->db->orderBy( 'ordering', 'asc' );
 		}
 		elseif ( in_array( 'lft', $db_fields ) )
 		{
-			$this->db->order_by( 'lft', 'asc' );
+			$this->db->orderBy( 'lft', 'asc' );
 		}
 
 		$query = $this->db->get( $db );
@@ -95,7 +95,7 @@ class Options extends Model
 		$option = element( 'option', $config, 'name' );
 		$value = element( 'value', $config, 'id' );
 
-		if ( $query->num_rows() > 0 )
+		if ( $query->numRows() > 0 )
 		{
 			foreach ( $query->result() as $row )
 			{
@@ -145,13 +145,13 @@ class Options extends Model
 		return $options;
 	}
 
-	public function build_flat( $db )
+	public function buildFlat($db )
 	{
 		$config = ( ! is_array( $db ) ? $this->option_config : $db );
 
 		$db = ( ! is_array( $db ) ? $db : element( 'db', $db ) );
 
-		$db_fields = $this->db->list_fields( $db );
+		$db_fields = $this->db->listFields( $db );
 
 		if ( in_array( 'lang', $db_fields ) )
 		{
@@ -166,11 +166,11 @@ class Options extends Model
 
 		if ( in_array( 'ordering', $db_fields ) AND ! in_array( 'lft', $db_fields ) )
 		{
-			$this->db->order_by( 'ordering', 'asc' );
+			$this->db->orderBy( 'ordering', 'asc' );
 		}
 		elseif ( in_array( 'lft', $db_fields ) )
 		{
-			$this->db->order_by( 'lft', 'asc' );
+			$this->db->orderBy( 'lft', 'asc' );
 		}
 
 		$query = $this->db->get( $db );
@@ -180,7 +180,7 @@ class Options extends Model
 		$option = element( 'option', $config, 'name' );
 		$value = element( 'value', $config, 'id' );
 
-		if ( $query->num_rows() > 0 )
+		if ( $query->numRows() > 0 )
 		{
 			foreach ( $query->result() as $row )
 			{
@@ -203,13 +203,13 @@ class Options extends Model
 		return FALSE;
 	}
 
-	public function build_tree( $db, $parent_id = 0 )
+	public function buildTree($db, $parent_id = 0 )
 	{
 		$this->option_config = ( ! is_array( $db ) ? $this->option_config : $db );
 
 		$db = ( ! is_array( $db ) ? $db : element( 'db', $db ) );
 
-		$db_fields = $this->db->list_fields( $db );
+		$db_fields = $this->db->listFields( $db );
 
 		if ( in_array( 'lang', $db_fields ) )
 		{
@@ -229,11 +229,11 @@ class Options extends Model
 
 		if ( in_array( 'ordering', $db_fields ) AND ! in_array( 'lft', $db_fields ) )
 		{
-			$this->db->order_by( 'ordering', 'asc' );
+			$this->db->orderBy( 'ordering', 'asc' );
 		}
 		elseif ( in_array( 'lft', $db_fields ) )
 		{
-			$this->db->order_by( 'lft', 'asc' );
+			$this->db->orderBy( 'lft', 'asc' );
 		}
 
 		$query = $this->db->get( $db );
@@ -243,7 +243,7 @@ class Options extends Model
 		$option = element( 'option', $this->option_config, 'name' );
 		$value = element( 'value', $this->option_config, 'id' );
 
-		if ( $query->num_rows() > 0 )
+		if ( $query->numRows() > 0 )
 		{
 			foreach ( $query->result() as $row )
 			{
@@ -257,9 +257,9 @@ class Options extends Model
 					$_option = $row->$option;
 				}
 
-				if ( $this->has_child( $db, $row->id ) )
+				if ( $this->hasChild( $db, $row->id ) )
 				{
-					$_value_child = $this->build_tree( $db, $row->id );
+					$_value_child = $this->buildTree( $db, $row->id );
 
 					if ( ! empty( $_value_child ) )
 					{
@@ -292,7 +292,7 @@ class Options extends Model
 
 		$db = ( ! is_array( $db ) ? $db : element( 'db', $db ) );
 
-		$db_fields = $this->db->list_fields( 'plugin_' . $db );
+		$db_fields = $this->db->listFields( 'plugin_' . $db );
 
 		if ( in_array( 'lang', $db_fields ) )
 		{
@@ -301,7 +301,7 @@ class Options extends Model
 
 		if ( in_array( 'ordering', $db_fields ) )
 		{
-			$this->db->order_by( 'ordering', 'asc' );
+			$this->db->orderBy( 'ordering', 'asc' );
 		}
 
 		if ( element( 'conditions', $config ) )
@@ -334,7 +334,7 @@ class Options extends Model
 		$option = element( 'option', $config, $default_option );
 		$value = element( 'value', $config, 'id' );
 
-		if ( $query->num_rows() > 0 )
+		if ( $query->numRows() > 0 )
 		{
 			foreach ( $query->result() as $row )
 			{
@@ -368,7 +368,7 @@ class Options extends Model
 			$this->db->where( $config[ 'conditions' ] );
 		}
 
-		$query = $this->db->order_by( 'ordering', 'asc' )->get_where( 'plugin_options', array( 'parameter' => $parameter ) );
+		$query = $this->db->orderBy( 'ordering', 'asc' )->getWhere( 'plugin_options', array( 'parameter' => $parameter ) );
 
 		$options = array();
 
@@ -393,9 +393,9 @@ class Options extends Model
 
 	public function lookup( $parameter, $value )
 	{
-		$query = $this->db->get_where( 'plugin_options', array( 'parameter' => $parameter, 'value' => $value ) );
-		$row = $query->first_row();
-		if ( $query->num_rows() > 0 )
+		$query = $this->db->getWhere( 'plugin_options', array( 'parameter' => $parameter, 'value' => $value ) );
+		$row = $query->firstRow();
+		if ( $query->numRows() > 0 )
 		{
 			$option = ( is_serialized( $row->options ) ? unserialize( $row->options ) : $row->options );
 			$option = ( is_array( $option ) ? element( $this->active_language, $option ) : $option );
@@ -407,7 +407,7 @@ class Options extends Model
 
 	}
 
-	public function blood_type()
+	public function bloodType()
 	{
 		$result = array(
 			'o'  => 'O',
@@ -419,7 +419,7 @@ class Options extends Model
 		return $result;
 	}
 
-	public function tshirt_size()
+	public function tshirtSize()
 	{
 		$result = array(
 			'xs'   => 'XS',
@@ -434,7 +434,7 @@ class Options extends Model
 		return $result;
 	}
 
-	public function online_messengers()
+	public function onlineMessengers()
 	{
 		$result = array(
 			'yahoo'    => 'Yahoo! Messenger',
@@ -450,7 +450,7 @@ class Options extends Model
 		return $result;
 	}
 
-	public function social_networks()
+	public function socialNetworks()
 	{
 		$result = array(
 			'facebook' => 'Facebook',
@@ -505,7 +505,7 @@ class Options extends Model
 		$option = element( 'option', $config, 'name' );
 		$value = element( 'value', $config, 'id' );
 
-		if ( $query->num_rows() > 0 )
+		if ( $query->numRows() > 0 )
 		{
 			foreach ( $query->result() as $row )
 			{
@@ -521,11 +521,11 @@ class Options extends Model
 	public function currency( $root_option = 'please choose currency', $root_value = NULL )
 	{
 		$this->db->select( 'currency_name, currency_code' );
-		$query = $this->db->get_where( 'plugin_countries', array( 'currency_code' => 'idr' ) );
+		$query = $this->db->getWhere( 'plugin_countries', array( 'currency_code' => 'idr' ) );
 		$currency[ $root_option ] = $root_value;
-		if ( $query->num_rows() > 0 )
+		if ( $query->numRows() > 0 )
 		{
-			foreach ( $query->result_array() as $row )
+			foreach ( $query->resultArray() as $row )
 			{
 				if ( element( 'currency_name', $row ) and element( 'currency_code', $row ) )
 				{
@@ -546,7 +546,7 @@ class Options extends Model
 			$components[ $root_option ] = $root_value;
 		}
 
-		if ( $query->num_rows() > 0 )
+		if ( $query->numRows() > 0 )
 		{
 			foreach ( $query->result() as $row )
 			{
@@ -578,7 +578,7 @@ class Options extends Model
 		return $options;
 	}
 
-	public function templates_positions( $option = '', $root_option = TRUE )
+	public function templatesPositions($option = '', $root_option = TRUE )
 	{
 		$templates = $this->templates->packages();
 
@@ -615,7 +615,7 @@ class Options extends Model
 		return $options;
 	}
 
-	public function components_methods( $option = '', $root_option = TRUE )
+	public function componentsMethods($option = '', $root_option = TRUE )
 	{
 		$components = $this->components->packages();
 
@@ -672,7 +672,7 @@ class Options extends Model
 		return $options;
 	}
 
-	public function plugins_methods( $option = '', $root_option = TRUE )
+	public function pluginsMethods($option = '', $root_option = TRUE )
 	{
 		$plugins = $this->plugins->packages();
 
@@ -705,7 +705,7 @@ class Options extends Model
 		return $options;
 	}
 
-	public function link_types( $root_option = TRUE )
+	public function linkTypes($root_option = TRUE )
 	{
 		if ( $root_option === TRUE )
 		{
@@ -727,7 +727,7 @@ class Options extends Model
 		return $options;
 	}
 
-	public function get_export_database_options( $root_option = '', $root_value = '' )
+	public function getExportDatabaseOptions($root_option = '', $root_value = '' )
 	{
 		$export = array(
 			$root_option                                         => $root_value,
@@ -743,7 +743,7 @@ class Options extends Model
 		return $export;
 	}
 
-	public function get_export_data_options( $root_option = '', $root_option_value = '' )
+	public function getExportDataOptions($root_option = '', $root_option_value = '' )
 	{
 		$export = array(
 			$root_option                         => $root_option_value,
@@ -758,11 +758,11 @@ class Options extends Model
 		return $export;
 	}
 
-	public function get_lookup( $id, $database, $value = 'title' )
+	public function getLookup($id, $database, $value = 'title' )
 	{
 		$this->db->select( $value );
-		$query = $this->db->get_where( $database, array( 'id' => $id ) );
-		if ( $query->num_rows() > 0 )
+		$query = $this->db->getWhere( $database, array( 'id' => $id ) );
+		if ( $query->numRows() > 0 )
 		{
 			$row = $query->result();
 			if ( ! empty( $row[ 0 ] ) )

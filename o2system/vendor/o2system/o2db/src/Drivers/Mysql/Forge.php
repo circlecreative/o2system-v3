@@ -120,7 +120,7 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    string
 	 */
-	protected function _create_table_attr( $attributes )
+	protected function _createTableAttr($attributes )
 	{
 		$sql = '';
 
@@ -156,14 +156,14 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    string|string[]
 	 */
-	protected function _alter_table( $alter_type, $table, $field )
+	protected function _alterTable($alter_type, $table, $field )
 	{
 		if ( $alter_type === 'DROP' )
 		{
-			return parent::_alter_table( $alter_type, $table, $field );
+			return parent::_alterTable( $alter_type, $table, $field );
 		}
 
-		$sql = 'ALTER TABLE ' . $this->_driver->escape_identifiers( $table );
+		$sql = 'ALTER TABLE ' . $this->_driver->escapeIdentifiers( $table );
 		for ( $i = 0, $c = count( $field ); $i < $c; $i++ )
 		{
 			if ( $field[ $i ][ '_literal' ] !== FALSE )
@@ -181,7 +181,7 @@ class Forge extends ForgeInterface
 					$field[ $i ][ '_literal' ] = empty( $field[ $i ][ 'new_name' ] ) ? "\n\tMODIFY " : "\n\tCHANGE ";
 				}
 
-				$field[ $i ] = $field[ $i ][ '_literal' ] . $this->_process_column( $field[ $i ] );
+				$field[ $i ] = $field[ $i ][ '_literal' ] . $this->_processColumn( $field[ $i ] );
 			}
 		}
 
@@ -197,16 +197,16 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    string
 	 */
-	protected function _process_column( $field )
+	protected function _processColumn($field )
 	{
-		$extra_clause = isset( $field[ 'after' ] ) ? ' AFTER ' . $this->_driver->escape_identifiers( $field[ 'after' ] ) : '';
+		$extra_clause = isset( $field[ 'after' ] ) ? ' AFTER ' . $this->_driver->escapeIdentifiers( $field[ 'after' ] ) : '';
 
 		if ( empty( $extra_clause ) && isset( $field[ 'first' ] ) && $field[ 'first' ] === TRUE )
 		{
 			$extra_clause = ' FIRST';
 		}
 
-		return $this->_driver->escape_identifiers( $field[ 'name' ] ) . ( empty( $field[ 'new_name' ] ) ? '' : ' ' . $this->_driver->escape_identifiers( $field[ 'new_name' ] ) ) . ' ' . $field[ 'type' ] . $field[ 'length' ] . $field[ 'unsigned' ] . $field[ 'null' ] . $field[ 'default' ] . $field[ 'auto_increment' ] . $field[ 'unique' ] . ( empty( $field[ 'comment' ] ) ? '' : ' COMMENT ' . $field[ 'comment' ] ) . $extra_clause;
+		return $this->_driver->escapeIdentifiers( $field[ 'name' ] ) . ( empty( $field[ 'new_name' ] ) ? '' : ' ' . $this->_driver->escapeIdentifiers( $field[ 'new_name' ] ) ) . ' ' . $field[ 'type' ] . $field[ 'length' ] . $field[ 'unsigned' ] . $field[ 'null' ] . $field[ 'default' ] . $field[ 'auto_increment' ] . $field[ 'unique' ] . ( empty( $field[ 'comment' ] ) ? '' : ' COMMENT ' . $field[ 'comment' ] ) . $extra_clause;
 	}
 
 	// --------------------------------------------------------------------
@@ -218,7 +218,7 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    string
 	 */
-	protected function _process_indexes( $table )
+	protected function _processIndexes($table )
 	{
 		$sql = '';
 
@@ -243,7 +243,7 @@ class Forge extends ForgeInterface
 
 			is_array( $this->keys[ $i ] ) OR $this->keys[ $i ] = array( $this->keys[ $i ] );
 
-			$sql .= ",\n\tKEY " . $this->_driver->escape_identifiers( implode( '_', $this->keys[ $i ] ) ) . ' (' . implode( ', ', $this->_driver->escape_identifiers( $this->keys[ $i ] ) ) . ')';
+			$sql .= ",\n\tKEY " . $this->_driver->escapeIdentifiers( implode( '_', $this->keys[ $i ] ) ) . ' (' . implode( ', ', $this->_driver->escapeIdentifiers( $this->keys[ $i ] ) ) . ')';
 		}
 
 		$this->keys = array();

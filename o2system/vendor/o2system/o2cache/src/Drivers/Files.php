@@ -80,7 +80,7 @@ class Files extends Driver
 	 */
 	public function initialize()
 	{
-		if ( $this->is_supported() === FALSE )
+		if ( $this->isSupported() === FALSE )
 		{
 			throw new Exception( 'The File cache path is not writeable.', 103 );
 		}
@@ -245,7 +245,7 @@ class Files extends Driver
 	 */
 	public function destroy()
 	{
-		return $this->_clean_files( $this->path, FALSE, TRUE );
+		return $this->_cleanFiles( $this->path, FALSE, TRUE );
 	}
 
 	// ------------------------------------------------------------------------
@@ -261,7 +261,7 @@ class Files extends Driver
 	 * @access    protected
 	 * @return    bool    false on failure/true on success
 	 */
-	protected function _clean_files( $path, $del_dir = FALSE, $htdocs = FALSE, $_level = 0 )
+	protected function _cleanFiles($path, $del_dir = FALSE, $htdocs = FALSE, $_level = 0 )
 	{
 		// Trim the trailing slash
 		$path = rtrim( $path, '/\\' );
@@ -277,7 +277,7 @@ class Files extends Driver
 			{
 				if ( is_dir( $path . DIRECTORY_SEPARATOR . $filename ) && $filename[ 0 ] !== '.' )
 				{
-					$this->_clean_files( $path . DIRECTORY_SEPARATOR . $filename, $del_dir, $htdocs, $_level + 1 );
+					$this->_cleanFiles( $path . DIRECTORY_SEPARATOR . $filename, $del_dir, $htdocs, $_level + 1 );
 				}
 				elseif ( $htdocs !== TRUE OR ! preg_match( '/^(\.htaccess|index\.(html|htm|php)|web\.config)$/i', $filename ) )
 				{
@@ -306,7 +306,7 @@ class Files extends Driver
 	 */
 	public function info( $type = NULL )
 	{
-		return $this->_dir_file_info( $this->path );
+		return $this->_dirFileInfo( $this->path );
 	}
 
 	// ------------------------------------------------------------------------
@@ -325,7 +325,7 @@ class Files extends Driver
 	 *
 	 * @return  array
 	 */
-	protected function _dir_file_info( $source_dir, $top_level_only = TRUE, $_recursion = FALSE )
+	protected function _dirFileInfo($source_dir, $top_level_only = TRUE, $_recursion = FALSE )
 	{
 		static $_filedata = array();
 		$relative_path = $source_dir;
@@ -344,11 +344,11 @@ class Files extends Driver
 			{
 				if ( is_dir( $source_dir . $file ) && $file[ 0 ] !== '.' && $top_level_only === FALSE )
 				{
-					$this->_dir_file_info( $source_dir . $file . DIRECTORY_SEPARATOR, $top_level_only, TRUE );
+					$this->_dirFileInfo( $source_dir . $file . DIRECTORY_SEPARATOR, $top_level_only, TRUE );
 				}
 				elseif ( $file[ 0 ] !== '.' )
 				{
-					$_filedata[ $file ] = $this->_dir_file_info( $source_dir . $file );
+					$_filedata[ $file ] = $this->_dirFileInfo( $source_dir . $file );
 					$_filedata[ $file ][ 'relative_path' ] = $relative_path;
 				}
 			}
@@ -404,7 +404,7 @@ class Files extends Driver
 	 *
 	 * @return    bool
 	 */
-	public function is_supported()
+	public function isSupported()
 	{
 		// Try to create path
 		if ( ! is_dir( $this->_config[ 'path' ] ) )

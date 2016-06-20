@@ -106,7 +106,7 @@ class Validation
 	 *
 	 * @access  public
 	 */
-	public function set_source( array $source_vars )
+	public function setSource(array $source_vars )
 	{
 		$this->_source_vars = $source_vars;
 	}
@@ -114,7 +114,7 @@ class Validation
 	// ------------------------------------------------------------------------
 
 
-	public function set_rule( $field, $label, $rules, $messages = array() )
+	public function setRule($field, $label, $rules, $messages = array() )
 	{
 		$this->_rules[ $field ] = array(
 			'field'    => $field,
@@ -126,17 +126,17 @@ class Validation
 
 	// ------------------------------------------------------------------------
 
-	public function set_rules( array $rules )
+	public function setRules(array $rules )
 	{
 		foreach ( $rules as $rule )
 		{
-			$this->set_rule( $rule[ 'field' ], $rule[ 'label' ], $rule[ 'rules' ], $rule[ 'messages' ] );
+			$this->setRule( $rule[ 'field' ], $rule[ 'label' ], $rule[ 'rules' ], $rule[ 'messages' ] );
 		}
 	}
 
 	// ------------------------------------------------------------------------
 
-	public function has_rule( $field )
+	public function hasRule($field )
 	{
 		if ( array_key_exists( $this->_rules[ $field ] ) )
 		{
@@ -148,9 +148,9 @@ class Validation
 
 	// ------------------------------------------------------------------------
 
-	public function set_value( $field, $default = '' )
+	public function setValue($field, $default = '' )
 	{
-		if ( $this->has_rule( $field ) )
+		if ( $this->hasRule( $field ) )
 		{
 			if ( empty( $this->_source_vars[ $field ] ) )
 			{
@@ -165,7 +165,7 @@ class Validation
 
 	// ------------------------------------------------------------------------
 
-	public function set_message( $field, $message )
+	public function setMessage($field, $message )
 	{
 		$this->_custom_messages[ $field ] = $message;
 	}
@@ -178,7 +178,7 @@ class Validation
 		{
 			foreach ( $this->_rules as $field => $rule )
 			{
-				if ( isset( $this->_source_vars[ $field ] ) )
+				if ( isset( $this->_source_vars[ $field ] ) && !empty ($this->_source_vars[ $field ]) )
 				{
 					if ( is_callable( $rule[ 'rules' ] ) )
 					{
@@ -186,11 +186,11 @@ class Validation
 						{
 							if ( ! empty( $rule[ 'messages' ] ) )
 							{
-								$this->_set_error( $rule[ 'messages' ], $rule[ 'label' ] );
+								$this->_setError( $rule[ 'messages' ], $rule[ 'label' ] );
 							}
 							else
 							{
-								$this->_set_error( $field, $rule[ 'label' ] );
+								$this->_setError( $field, $rule[ 'label' ] );
 							}
 						}
 					}
@@ -230,15 +230,80 @@ class Validation
 
 									if ( ! empty( $rule[ 'messages' ] ) )
 									{
-										$this->_set_error( $rule[ 'messages' ], $vars );
+										$this->_setError( $rule[ 'messages' ], $vars );
 									}
 									elseif ( array_key_exists( $field, $this->_custom_messages ) )
 									{
-										$this->_set_error( $field, $vars );
+										$this->_setError( $field, $vars );
 									}
 									else
 									{
-										$this->_set_error( $method, $vars );
+										$this->_setError( $method, $vars );
+									}
+
+									break;
+								}
+							}
+						}
+					}
+				} else {
+					if ( is_callable( $rule[ 'rules' ] ) )
+					{
+						if ( $rule[ 'rules' ]( $this->_source_vars[ $field ] ) )
+						{
+							if ( ! empty( $rule[ 'messages' ] ) )
+							{
+								$this->_setError( $rule[ 'messages' ], $rule[ 'label' ] );
+							}
+							else
+							{
+								$this->_setError( $field, $rule[ 'label' ] );
+							}
+						}
+					}
+					elseif ( is_string( $rule[ 'rules' ] ) )
+					{
+						$methods = explode( '|', $rule[ 'rules' ] );
+
+						foreach ( $methods as $method )
+						{
+							$vars = array( trim( $field ) );
+
+							// Is the field name an array? If it is an array, we break it apart
+							// into its components so that we can fetch the corresponding POST data later
+							if ( preg_match_all( '/\[(.*?)\]/', $method, $matches ) )
+							{
+								$method = str_replace( $matches[ 0 ], '', $method );
+								$vars = array_merge( $vars, $matches[ 1 ] );
+							}
+
+							$method = 'is_' . $method;
+
+							if ( method_exists( __CLASS__, $method ) )
+							{
+								$call_args = $vars;
+
+								if ( $method === 'is_matches' )
+								{
+									if ( isset( $this->_source_vars[ $vars[ 1 ] ] ) )
+									{
+										$call_args[ 1 ] = $this->_source_vars[ $vars[ 1 ] ];
+									}
+								} else
+								{
+									array_unshift( $vars, $rule[ 'label' ] );
+
+									if ( ! empty( $rule[ 'messages' ] ) )
+									{
+										$this->_setError( $rule[ 'messages' ], $vars );
+									}
+									elseif ( array_key_exists( $field, $this->_custom_messages ) )
+									{
+										$this->_setError( $field, $vars );
+									}
+									else
+									{
+										$this->_setError( $method, $vars );
 									}
 
 									break;
@@ -255,7 +320,7 @@ class Validation
 
 	// ------------------------------------------------------------------------
 
-	protected function _set_error( $error, $vars = array() )
+	protected function _setError($error, $vars = array() )
 	{
 		if ( array_key_exists( $error, $this->_custom_messages ) )
 		{
@@ -324,14 +389,14 @@ class Validation
 
 	// ------------------------------------------------------------------------
 
-	public function get_errors()
+	public function getErrors()
 	{
 		return $this->_errors;
 	}
 
 	// ------------------------------------------------------------------------
 
-	public static function is_required( $string )
+	public static function isRequired($string )
 	{
 		if ( empty( $string ) OR strlen( $string ) == 0 )
 		{
@@ -343,7 +408,7 @@ class Validation
 
 	// ------------------------------------------------------------------------
 
-	public static function is_matches( $string, $match )
+	public static function isMatches($string, $match )
 	{
 		if ( $string === $match )
 		{
@@ -363,7 +428,7 @@ class Validation
 	 *
 	 * @return    bool
 	 */
-	public static function is_regex_match( $string, $regex )
+	public static function isRegexMatch($string, $regex )
 	{
 		return (bool) preg_match( $regex, $string );
 	}
@@ -371,7 +436,7 @@ class Validation
 	// --------------------------------------------------------------------
 
 
-	public static function is_float( $string )
+	public static function isFloat($string )
 	{
 		return filter_var( $string, FILTER_VALIDATE_FLOAT );
 	}
@@ -386,14 +451,14 @@ class Validation
 	 *
 	 * @return    bool
 	 */
-	public static function is_min_length( $string, $length )
+	public static function isMinLength($string, $length )
 	{
 		if ( ! is_numeric( $length ) )
 		{
 			return FALSE;
 		}
 
-		return ( $length <= mb_strlen( $string ) );
+		return ( $length <= mbStrlen( $string ) );
 	}
 
 	// --------------------------------------------------------------------
@@ -406,14 +471,14 @@ class Validation
 	 *
 	 * @return    bool
 	 */
-	public static function is_max_length( $string, $length )
+	public static function isMaxLength($string, $length )
 	{
 		if ( ! is_numeric( $length ) )
 		{
 			return FALSE;
 		}
 
-		return ( $length >= mb_strlen( $string ) );
+		return ( $length >= mbStrlen( $string ) );
 	}
 
 	// --------------------------------------------------------------------
@@ -426,17 +491,17 @@ class Validation
 	 *
 	 * @return    bool
 	 */
-	public static function is_exact_length( $string, $length )
+	public static function isExactLength($string, $length )
 	{
 		if ( ! is_numeric( $length ) )
 		{
 			return FALSE;
 		}
 
-		return ( mb_strlen( $string ) === (int) $length );
+		return ( mbStrlen( $string ) === (int) $length );
 	}
 
-	public static function is_dimension( $string, $format = 'W x H x L' )
+	public static function isDimension($string, $format = 'W x H x L' )
 	{
 		$string = strtolower( $string );
 		$string = preg_replace( '/\s+/', '', $string );
@@ -456,21 +521,21 @@ class Validation
 
 	// ------------------------------------------------------------------------
 
-	public static function is_ipv4( $string )
+	public static function isIpv4($string )
 	{
 		return filter_var( $string, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 );
 	}
 
 	// ------------------------------------------------------------------------
 
-	public static function is_ipv6( $string )
+	public static function isIpv6($string )
 	{
 		return filter_var( $string, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6 );
 	}
 
 	// ------------------------------------------------------------------------
 
-	public static function is_url( $string )
+	public static function isUrl($string )
 	{
 		if ( preg_match( '/^(?:([^:]*)\:)?\/\/(.+)$/', $string, $matches ) )
 		{
@@ -493,7 +558,7 @@ class Validation
 
 	// ------------------------------------------------------------------------
 
-	public static function is_email( $string )
+	public static function isEmail($string )
 	{
 		if ( function_exists( 'idn_to_ascii' ) && $strpos = strpos( $string, '@' ) )
 		{
@@ -505,7 +570,7 @@ class Validation
 
 	// ------------------------------------------------------------------------
 
-	public static function is_domain( $string )
+	public static function isDomain($string )
 	{
 		return ( preg_match( "/^([a-z\d](-*[a-z\d])*)(\.([a-z\d](-*[a-z\d])*))*$/i", $string ) //valid chars check
 			&& preg_match( "/^.{1,253}$/", $string ) //overall length check
@@ -514,7 +579,7 @@ class Validation
 
 	// ------------------------------------------------------------------------
 
-	public static function is_bool( $string )
+	public static function isBool($string )
 	{
 		return filter_var( $string, FILTER_VALIDATE_BOOLEAN );
 	}
@@ -528,7 +593,7 @@ class Validation
 	 *
 	 * @return    bool
 	 */
-	public static function is_alpha( $string )
+	public static function isAlpha($string )
 	{
 		return ctype_alpha( $string );
 	}
@@ -542,7 +607,7 @@ class Validation
 	 *
 	 * @return    bool
 	 */
-	public static function is_alpha_spaces( $string )
+	public static function isAlphaSpaces($string )
 	{
 		return (bool) preg_match( '/^[A-Z ]+$/i', $string );
 	}
@@ -556,7 +621,7 @@ class Validation
 	 *
 	 * @return    bool
 	 */
-	public static function is_alpha_numeric( $string )
+	public static function isAlphaNumeric($string )
 	{
 		return ctype_alnum( (string) $string );
 	}
@@ -570,7 +635,7 @@ class Validation
 	 *
 	 * @return    bool
 	 */
-	public static function is_alpha_numeric_spaces( $string )
+	public static function isAlphaNumericSpaces($string )
 	{
 		return (bool) preg_match( '/^[A-Z0-9 ]+$/i', $string );
 	}
@@ -584,7 +649,7 @@ class Validation
 	 *
 	 * @return    bool
 	 */
-	public static function is_alpha_dash( $string )
+	public static function isAlphaDash($string )
 	{
 		return (bool) preg_match( '/^[a-z0-9-]+$/i', $string );
 	}
@@ -598,7 +663,7 @@ class Validation
 	 *
 	 * @return    bool
 	 */
-	public static function is_alpha_underscore( $string )
+	public static function isAlphaUnderscore($string )
 	{
 		return (bool) preg_match( '/^[a-z0-9_]+$/i', $string );
 	}
@@ -612,7 +677,7 @@ class Validation
 	 *
 	 * @return    bool
 	 */
-	public static function is_alpha_underscore_dash( $string )
+	public static function isAlphaUnderscoreDash($string )
 	{
 		return (bool) preg_match( '/^[a-z0-9_-]+$/i', $string );
 	}
@@ -626,7 +691,7 @@ class Validation
 	 *
 	 * @return    bool
 	 */
-	public static function is_numeric( $str )
+	public static function isNumeric($str )
 	{
 		return (bool) preg_match( '/^[\-+]?[0-9]*\.?[0-9]+$/', $str );
 
@@ -641,7 +706,7 @@ class Validation
 	 *
 	 * @return    bool
 	 */
-	public static function is_integer( $str )
+	public static function isInteger($str )
 	{
 		return (bool) preg_match( '/^[\-+]?[0-9]+$/', $str );
 	}
@@ -655,7 +720,7 @@ class Validation
 	 *
 	 * @return    bool
 	 */
-	public static function is_decimal( $string )
+	public static function isDecimal($string )
 	{
 		return (bool) preg_match( '/^[\-+]?[0-9]+\.[0-9]+$/', $string );
 	}
@@ -670,7 +735,7 @@ class Validation
 	 *
 	 * @return    bool
 	 */
-	public static function is_greater( $string, $min )
+	public static function isGreater($string, $min )
 	{
 		return is_numeric( $string ) ? ( $string > $min ) : FALSE;
 	}
@@ -685,7 +750,7 @@ class Validation
 	 *
 	 * @return    bool
 	 */
-	public static function is_greater_equal( $string, $min )
+	public static function isGreaterEqual($string, $min )
 	{
 		return is_numeric( $string ) ? ( $string >= $min ) : FALSE;
 	}
@@ -700,7 +765,7 @@ class Validation
 	 *
 	 * @return    bool
 	 */
-	public static function is_less( $string, $max )
+	public static function isLess($string, $max )
 	{
 		return is_numeric( $string ) ? ( $string < $max ) : FALSE;
 	}
@@ -715,7 +780,7 @@ class Validation
 	 *
 	 * @return    bool
 	 */
-	public static function is_less_equal( $string, $max )
+	public static function isLessEqual($string, $max )
 	{
 		return is_numeric( $string ) ? ( $string <= $max ) : FALSE;
 	}
@@ -730,7 +795,7 @@ class Validation
 	 *
 	 * @return    bool
 	 */
-	public static function is_listed( $string, $list )
+	public static function isListed($string, $list )
 	{
 		if ( is_string( $list ) )
 		{
@@ -750,7 +815,7 @@ class Validation
 	 *
 	 * @return    bool
 	 */
-	public static function is_natural( $string )
+	public static function isNatural($string )
 	{
 		return ctype_digit( (string) $string );
 	}
@@ -764,7 +829,7 @@ class Validation
 	 *
 	 * @return    bool
 	 */
-	public static function is_natural_no_zero( $string )
+	public static function isNaturalNoZero($string )
 	{
 		return ( $string != 0 && ctype_digit( (string) $string ) );
 	}
@@ -781,28 +846,28 @@ class Validation
 	 *
 	 * @return    bool
 	 */
-	public function is_base64( $string )
+	public function isBase64($string )
 	{
 		return (bool) ( base64_encode( base64_decode( $string ) ) === $string );
 	}
 
 	// --------------------------------------------------------------------
 
-	public static function is_md5( $string )
+	public static function isMd5($string )
 	{
 		return preg_match( '/^[a-f0-9]{32}$/i', $string );
 	}
 
 	// ------------------------------------------------------------------------
 
-	public static function is_msisdn( $string, $leading = '62' )
+	public static function isMsisdn($string, $leading = '62' )
 	{
 		return (bool) preg_match( '/^(' . $leading . '[1-9]{1}[0-9]{1,2})[0-9]{6,8}$/', $string );
 	}
 
 	// ------------------------------------------------------------------------
 
-	public static function is_date( $string, $format = 'Y-m-d' )
+	public static function isDate($string, $format = 'Y-m-d' )
 	{
 		$date_time = \DateTime::createFromFormat( $format, $string );
 
@@ -811,10 +876,10 @@ class Validation
 
 	// ------------------------------------------------------------------------
 
-	public static function is_password( $string, $length = 8, $format = 'uppercase, lowercase, number, special' )
+	public static function isPassword($string, $length = 8, $format = 'uppercase, lowercase, number, special' )
 	{
 		// Length
-		if ( self::is_min_length( $string, $length ) === FALSE )
+		if ( self::isMinLength( $string, $length ) === FALSE )
 		{
 			return FALSE;
 		}

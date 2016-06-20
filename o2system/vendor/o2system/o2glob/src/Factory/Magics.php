@@ -235,7 +235,7 @@ trait Magics
 	 * @param   string $name Origin map index name
 	 * @param   mixed  $map  New map index name
 	 */
-	final public function __set_method_map( $name, $map )
+	final public function __setMethodMap($name, $map )
 	{
 		static::$_methods_maps[ $name ] = $map;
 	}
@@ -252,7 +252,7 @@ trait Magics
 	 * @param   string $name Origin map index name
 	 * @param   mixed  $map  New map index name
 	 */
-	final public function __set_property_map( $name, $map )
+	final public function __setPropertyMap($name, $map )
 	{
 		static::$_property_maps[ $name ] = $map;
 	}
@@ -269,7 +269,7 @@ trait Magics
 	 * @param string $name  registry property name
 	 * @param mixed  $value registry property value
 	 */
-	final public function __set_registry( $name, $value )
+	final public function __setRegistry($name, $value )
 	{
 		static::$_registry[ $name ] = $value;
 	}

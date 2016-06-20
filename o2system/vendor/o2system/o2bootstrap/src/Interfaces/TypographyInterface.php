@@ -40,57 +40,57 @@ namespace O2System\Bootstrap\Interfaces;
 
 trait TypographyInterface
 {
-    public function text_lowercase()
+    public function textLowercase()
     {
-        $this->add_class('text-lowercase');
+        $this->addClass('text-lowercase');
         return $this;
     }
 
-    public function text_uppercase()
+    public function textUppercase()
     {
-        $this->add_class('text-uppercase');
+        $this->addClass('text-uppercase');
         return $this;
     }
 
-    public function text_small()
+    public function textSmall()
     {
-        $this->add_class('text-small');
+        $this->addClass('text-small');
         return $this;
     }
 
-    public function text_capitalize()
+    public function textCapitalize()
     {
-        $this->add_class('text-capitalize');
+        $this->addClass('text-capitalize');
         return $this;
     }
 
-    public function text_muted()
+    public function textMuted()
     {
-        $this->add_class('text-muted');
+        $this->addClass('text-muted');
         return $this;
     }
 
-    public function text_primary()
+    public function textPrimary()
     {
-        $this->add_class('text-primary');
+        $this->addClass('text-primary');
         return $this;
     }
 
-    public function text_success()
+    public function textSuccess()
     {
-        $this->add_class('text-success');
+        $this->addClass('text-success');
         return $this;
     }
 
-    public function text_warning()
+    public function textWarning()
     {
-        $this->add_class('text-warning');
+        $this->addClass('text-warning');
         return $this;
     }
 
-    public function text_danger()
+    public function textDanger()
     {
-        $this->add_class('text-danger');
+        $this->addClass('text-danger');
         return $this;
     }
 }

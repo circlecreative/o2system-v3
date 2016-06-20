@@ -49,7 +49,7 @@ trait SizeInterface
 
 	protected $_size_class_prefix = NULL;
 
-	public function set_size_class_prefix( $prefix )
+	public function setSizeClassPrefix($prefix )
 	{
 		$this->_size_class_prefix = $prefix;
 	}
@@ -59,9 +59,9 @@ trait SizeInterface
 	 *
 	 * @return object
 	 */
-	public function is_tiny()
+	public function isTiny()
 	{
-		$this->add_class( $this->_size_class_prefix . '-' . 'xs' );
+		$this->addClass( $this->_size_class_prefix . '-' . 'xs' );
 
 		return $this;
 	}
@@ -73,9 +73,9 @@ trait SizeInterface
 	 *
 	 * @return object
 	 */
-	public function is_small()
+	public function isSmall()
 	{
-		$this->add_class( $this->_size_class_prefix . '-' . 'sm' );
+		$this->addClass( $this->_size_class_prefix . '-' . 'sm' );
 
 		return $this;
 	}
@@ -87,9 +87,9 @@ trait SizeInterface
 	 *
 	 * @return object
 	 */
-	public function is_medium()
+	public function isMedium()
 	{
-		$this->add_class( $this->_size_class_prefix . '-' . 'md' );
+		$this->addClass( $this->_size_class_prefix . '-' . 'md' );
 
 		return $this;
 	}
@@ -101,9 +101,9 @@ trait SizeInterface
 	 *
 	 * @return object
 	 */
-	public function is_large()
+	public function isLarge()
 	{
-		$this->add_class( $this->_size_class_prefix . '-' . 'lg' );
+		$this->addClass( $this->_size_class_prefix . '-' . 'lg' );
 
 		return $this;
 	}

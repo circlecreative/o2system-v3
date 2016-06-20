@@ -79,7 +79,7 @@ class Image extends FactoryInterface
 				}
 				else
 				{
-					$this->set_source( $source );
+					$this->setSource( $source );
 				}
 			}
 			elseif ( is_array( $source ) )
@@ -94,7 +94,7 @@ class Image extends FactoryInterface
 			{
 				if ( in_array( $type, [ 'circle', 'responsive', 'thumbnail' ] ) )
 				{
-					$this->add_class( 'img-' . $type );
+					$this->addClass( 'img-' . $type );
 				}
 			}
 			elseif ( is_array( $type ) )
@@ -105,7 +105,7 @@ class Image extends FactoryInterface
 
 		if ( isset( $attr ) )
 		{
-			$this->add_attributes( $attr );
+			$this->addAttributes( $attr );
 		}
 
 		return $this;
@@ -113,7 +113,7 @@ class Image extends FactoryInterface
 
 	// ------------------------------------------------------------------------
 
-	public function set_source( $source )
+	public function setSource( $source )
 	{
 		if ( is_file( $source ) )
 		{
@@ -137,32 +137,32 @@ class Image extends FactoryInterface
 	 *
 	 * @return object
 	 */
-	public function set_size( array $size )
+	public function setSize(array $size )
 	{
 		$key = key( $size );
 
 		if ( is_numeric( $key ) )
 		{
-			$this->set_width( reset( $size ) );
-			$this->set_height( end( $size ) );
+			$this->setWidth( reset( $size ) );
+			$this->setHeight( end( $size ) );
 		}
 		elseif ( isset( $size[ 'width' ] ) )
 		{
-			$this->set_width( $size[ 'width' ] );
-			$this->set_height( $size[ 'height' ] );
+			$this->setWidth( $size[ 'width' ] );
+			$this->setHeight( $size[ 'height' ] );
 		}
 
 		return $this;
 	}
 
-	public function set_width( $width )
+	public function setWidth($width )
 	{
 		$this->_attributes[ 'width' ] = $width;
 
 		return $this;
 	}
 
-	public function set_height( $height )
+	public function setHeight($height )
 	{
 		$this->_attributes[ 'height' ] = $height;
 
@@ -178,7 +178,7 @@ class Image extends FactoryInterface
 	 *
 	 * @return object
 	 */
-	public function set_alt( $alt )
+	public function setAlt($alt )
 	{
 		$this->_attributes[ 'alt' ] = $alt;
 
@@ -187,7 +187,7 @@ class Image extends FactoryInterface
 
 	// ------------------------------------------------------------------------
 
-	public function get_realpath()
+	public function getRealpath()
 	{
 		return $this->_realpath;
 	}

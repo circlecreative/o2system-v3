@@ -138,14 +138,14 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _list_tables_statement( $prefix_limit = FALSE )
+	protected function _listTablesStatement($prefix_limit = FALSE )
 	{
 		$sql = 'SELECT "tabname" FROM "syscat"."tables"
 			WHERE "type" = \'T\' AND LOWER("tabschema") = ' . $this->escape( strtolower( $this->database ) );
 
 		if ( $prefix_limit === TRUE && $this->table_prefix !== '' )
 		{
-			$sql .= ' AND "tabname" LIKE \'' . $this->escape_like_string( $this->table_prefix ) . "%' "
+			$sql .= ' AND "tabname" LIKE \'' . $this->escapeLikeString( $this->table_prefix ) . "%' "
 				. sprintf( $this->_like_escape_string, $this->_like_escape_character );
 		}
 
@@ -163,7 +163,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    array
 	 */
-	protected function _list_columns_statement( $table = '' )
+	protected function _listColumnsStatement($table = '' )
 	{
 		return 'SELECT "colname" FROM "syscat"."columns"
 			WHERE LOWER("tabschema") = ' . $this->escape( strtolower( $this->database ) ) . '
@@ -179,7 +179,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    array
 	 */
-	public function field_data( $table )
+	public function fieldData($table )
 	{
 		$sql = 'SELECT "colname" AS "name", "typename" AS "type", "default" AS "default", "length" AS "max_length",
 				CASE "keyseq" WHEN NULL THEN 0 ELSE 1 END AS "primary_key"
@@ -189,7 +189,7 @@ class Driver extends DriverInterface
 			ORDER BY "colno"';
 
 		return ( ( $query = $this->query( $sql ) ) !== FALSE )
-			? $query->result_object()
+			? $query->resultObject()
 			: FALSE;
 	}
 
@@ -205,12 +205,12 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _update_statement( $table, $values )
+	protected function _updateStatement($table, $values )
 	{
 		$this->qb_limit = FALSE;
 		$this->qb_orderby = array();
 
-		return parent::_update_statement( $table, $values );
+		return parent::_updateStatement( $table, $values );
 	}
 
 	// --------------------------------------------------------------------

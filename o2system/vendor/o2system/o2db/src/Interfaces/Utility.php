@@ -106,7 +106,7 @@ abstract class Utility
 	 *
 	 * @return    array
 	 */
-	public function list_databases()
+	public function listDatabases()
 	{
 		// Is there a cached result?
 		if ( isset( $this->_driver->data_cache[ 'db_names' ] ) )
@@ -122,7 +122,7 @@ abstract class Utility
 
 		$results = $this->_driver->query( $this->_list_databases );
 
-		if ( $results->num_rows() > 0 )
+		if ( $results->numRows() > 0 )
 		{
 			foreach ( $results as $row )
 			{
@@ -154,9 +154,9 @@ abstract class Utility
 	 *
 	 * @return    bool
 	 */
-	public function database_exists( $database_name )
+	public function databaseExists($database_name )
 	{
-		return in_array( $database_name, $this->list_databases() );
+		return in_array( $database_name, $this->listDatabases() );
 	}
 
 	// --------------------------------------------------------------------
@@ -168,16 +168,16 @@ abstract class Utility
 	 *
 	 * @return    mixed
 	 */
-	public function optimize_table( $table_name )
+	public function optimizeTable($table_name )
 	{
 		if ( $this->_optimize_table === FALSE )
 		{
 			return FALSE;
 		}
 
-		$results = $this->_driver->query( sprintf( $this->_optimize_table, $this->_driver->escape_identifiers( $table_name ) ) );
+		$results = $this->_driver->query( sprintf( $this->_optimize_table, $this->_driver->escapeIdentifiers( $table_name ) ) );
 
-		if($results->num_rows() > 0)
+		if($results->numRows() > 0)
 		{
 			return $results;
 		}
@@ -192,7 +192,7 @@ abstract class Utility
 	 *
 	 * @return    mixed
 	 */
-	public function optimize_database()
+	public function optimizeDatabase()
 	{
 		if ( $this->_optimize_table === FALSE )
 		{
@@ -200,11 +200,11 @@ abstract class Utility
 		}
 
 		$result = array();
-		foreach ( $this->_driver->list_tables() as $table_name )
+		foreach ( $this->_driver->listTables() as $table_name )
 		{
-			$results = $this->_driver->query( sprintf( $this->_optimize_table, $this->_driver->escape_identifiers( $table_name ) ) );
+			$results = $this->_driver->query( sprintf( $this->_optimize_table, $this->_driver->escapeIdentifiers( $table_name ) ) );
 
-			if($results->num_rows() > 0)
+			if($results->numRows() > 0)
 			{
 				$result[ $table_name ] = $results;
 			}
@@ -222,16 +222,16 @@ abstract class Utility
 	 *
 	 * @return    mixed
 	 */
-	public function repair_table( $table_name )
+	public function repairTable($table_name )
 	{
 		if ( $this->_repair_table === FALSE )
 		{
 			return FALSE;
 		}
 
-		$results = $this->_driver->query( sprintf( $this->_repair_table, $this->_driver->escape_identifiers( $table_name ) ) );
+		$results = $this->_driver->query( sprintf( $this->_repair_table, $this->_driver->escapeIdentifiers( $table_name ) ) );
 
-		if($results->num_rows() > 0)
+		if($results->numRows() > 0)
 		{
 			return $results;
 		}
@@ -251,7 +251,7 @@ abstract class Utility
 	 *
 	 * @return    string
 	 */
-	public function csv_from_result( $query, $delim = ',', $newline = "\n", $enclosure = '"' )
+	public function csvFromResult($query, $delim = ',', $newline = "\n", $enclosure = '"' )
 	{
 		if ( ! is_object( $query ) OR ! method_exists( $query, 'list_fields' ) )
 		{
@@ -260,7 +260,7 @@ abstract class Utility
 
 		$out = '';
 		// First generate the headings from the table column names
-		foreach ( $query->list_fields() as $name )
+		foreach ( $query->listFields() as $name )
 		{
 			$out .= $enclosure . str_replace( $enclosure, $enclosure . $enclosure, $name ) . $enclosure . $delim;
 		}
@@ -268,7 +268,7 @@ abstract class Utility
 		$out = substr( rtrim( $out ), 0, -strlen( $delim ) ) . $newline;
 
 		// Next blast through the result array and build out the rows
-		while ( $row = $query->unbuffered_row( 'array' ) )
+		while ( $row = $query->unbufferedRow( 'array' ) )
 		{
 			foreach ( $row as $item )
 			{
@@ -327,7 +327,7 @@ abstract class Utility
 		// If no table names were submitted we'll fetch the entire table list
 		if ( count( $prefs[ 'tables' ] ) === 0 )
 		{
-			$prefs[ 'tables' ] = $this->_driver->list_tables();
+			$prefs[ 'tables' ] = $this->_driver->listTables();
 		}
 
 		// Validate the format
@@ -377,9 +377,9 @@ abstract class Utility
 			// Load the Zip class and output it
 			$zip = new \O2System\File\Factory\Zip();
 
-			$zip->add_data( $prefs[ 'filename' ], $this->_backup( $prefs ) );
+			$zip->addData( $prefs[ 'filename' ], $this->_backup( $prefs ) );
 
-			return $zip->get_zip();
+			return $zip->getZIp();
 		}
 		elseif ( $prefs[ 'format' ] === 'txt' ) // Was a text file requested?
 		{

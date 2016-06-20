@@ -59,7 +59,7 @@ class Utility extends UtilityInterface
 	 *
 	 * @return    array
 	 */
-	public function list_databases()
+	public function listDatabases()
 	{
 		if ( isset( $this->_driver->data_cache[ 'db_names' ] ) )
 		{

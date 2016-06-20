@@ -38,6 +38,9 @@
 // ------------------------------------------------------------------------
 
 namespace O2System;
+
+use O2System\Glob\HttpHeader;
+
 defined( 'ROOTPATH' ) || exit( 'No direct script access allowed' );
 
 // ------------------------------------------------------------------------
@@ -61,7 +64,7 @@ class Router
 	 * @access  protected
 	 * @type    array
 	 */
-	protected $_config = array();
+	protected $_config = [ ];
 
 	/**
 	 * Validate Methods
@@ -69,7 +72,7 @@ class Router
 	 * @access  protected
 	 * @type    array
 	 */
-	protected $_validate_methods = array();
+	protected $_validate_methods = [ ];
 
 	// ------------------------------------------------------------------------
 
@@ -92,19 +95,20 @@ class Router
 
 		foreach ( $reflection->getMethods() as $method )
 		{
-			if ( strpos( $method->name, '_is' ) !== FALSE )
+			if ( strpos( $method->name, '_isValid' ) !== FALSE )
 			{
 				$this->_validate_methods[] = $method->name;
 			}
 		}
 
-		if ( \O2System::$active[ 'URI' ]->totalSegments( 'rsegments' ) == 0 )
-		{
-			$this->_setDefaultController();
-		}
-		else
+		if ( \O2System::$active[ 'URI' ]->totalSegments( 'segments' ) > 0 )
 		{
 			$this->_parseRoutes();
+		}
+
+		if ( \O2System::$active[ 'URI' ]->totalSegments( 'isegments' ) == 0 )
+		{
+			$this->_setDefaultController();
 		}
 
 		if ( $this->_validateRequest() === FALSE )
@@ -130,28 +134,55 @@ class Router
 	 */
 	protected function _setDefaultController()
 	{
-		if ( empty( $this->_config[ 'default_controller' ] ) )
+		if ( \O2System::$active[ 'URI' ]->totalSegments( 'rsegments' ) > 0 )
 		{
-			$this->showError( 404 );
-		}
-		else
-		{
-			// Is the method being specified?
-			if ( sscanf( $this->_config[ 'default_controller' ], '%[^/]/%s', $class, $method ) !== 2 )
+			foreach ( \O2System::$active[ 'URI' ]->rsegments as $key => $rsegment )
 			{
-				$method = 'index';
+				$controller = \O2System::$active[ 'directories' ]->current() . 'controllers' . prepare_filename( $rsegment ) . '.php';
+
+				if ( $controller = $this->__loadController( $controller ) )
+				{
+					\O2System::Log( 'debug', 'Default controller set.' );
+
+					$this->__setupController( $controller, \O2System::$active[ 'URI' ]->isegments );
+
+					return TRUE;
+
+					break;
+				}
 			}
+		}
+		elseif ( isset( $this->_config[ 'default_controller' ] ) )
+		{
+			sscanf( $this->_config[ 'default_controller' ], '%[^/]/%s', $class, $method );
+
+			$method = empty( $method ) ? 'index' : $method;
+
+			$rsegments = [ $class, $method ];
 
 			\O2System::Log( 'debug', 'Default controller set.' );
 
-			if ( \O2System::$active->offsetExists( 'module' ) )
+			if ( $module = \O2System::$active[ 'modules' ]->current() )
 			{
-				$segments = explode( '/', \O2System::$active[ 'module' ]->segments );
+				$rsegments = explode( '/', $module->segments );
 
-				return array_merge( $segments, [ $class, $method ] );
+				\O2System::$active[ 'URI' ]->setSegments( [ $class, $method ], 'isegments' );
+
+				if ( in_array( $class, $rsegments ) )
+				{
+					$rsegments = array_merge( $rsegments, [ $method ] );
+				}
+				else
+				{
+					$rsegments = array_merge( $rsegments, [ $class, $method ] );
+				}
 			}
 
-			\O2System::URI()->setRequest( [ $class, $method ] );
+			\O2System::$active[ 'URI' ]->setSegments( $rsegments, 'rsegments' );
+		}
+		else
+		{
+			$this->showError( 404 );
 		}
 	}
 
@@ -167,32 +198,32 @@ class Router
 	 */
 	protected function _parseRoutes()
 	{
-		$rstring = \O2System::$active[ 'URI' ]->rstring;
+		$string = \O2System::$active[ 'URI' ]->string;
 
 		// Get HTTP verb
 		$http_verb = isset( $_SERVER[ 'REQUEST_METHOD' ] ) ? strtolower( $_SERVER[ 'REQUEST_METHOD' ] ) : 'cli';
 
 		// Is there a literal match?  If so we're done
-		if ( isset( $this->_config[ $rstring ] ) )
+		if ( isset( $this->_config[ $string ] ) )
 		{
 			// Check default routes format
-			if ( is_string( $this->_config[ $rstring ] ) )
+			if ( is_string( $this->_config[ $string ] ) )
 			{
-				\O2System::$active[ 'URI' ]->setSegments( $this->_config[ $rstring ], 'rsegments' );
+				\O2System::URI()->setRequest( $this->_config[ $string ], 'rsegments' );
 
 				return;
 			}
 			// Is there a matching http verb?
-			elseif ( is_array( $this->_config[ $rstring ] ) AND isset( $this->_config[ $rstring ][ $http_verb ] ) )
+			elseif ( is_array( $this->_config[ $string ] ) AND isset( $this->_config[ $string ][ $http_verb ] ) )
 			{
-				\O2System::$active[ 'URI' ]->setSegments( $this->_config[ $rstring ][ $http_verb ], 'rsegments' );
+				\O2System::URI()->setRequest( $this->_config[ $string ][ $http_verb ], 'rsegments' );
 
 				return;
 			}
 		}
 
 		$route = $this->_config;
-		unset( $route[ 'default_controller' ], $route[ '404_override' ], $route[ 'translate_uri_dashes' ] );
+		unset( $route[ 'default_controller' ], $route[ '404_override' ] );
 
 		if ( ! empty( $route ) )
 		{
@@ -213,10 +244,10 @@ class Router
 				}
 
 				// Convert wildcards to RegEx
-				$key = str_replace( array( ':any', ':num' ), array( '[^/]+', '[0-9]+' ), $key );
+				$key = str_replace( [ ':any', ':num' ], [ '[^/]+', '[0-9]+' ], $key );
 
 				// Does the RegEx match?
-				if ( preg_match( '#^' . $key . '$#', $rstring, $matches ) )
+				if ( preg_match( '#^' . $key . '$#', $string, $matches ) )
 				{
 					// Are we using callbacks to process back-references?
 					if ( ! is_string( $value ) && is_callable( $value ) )
@@ -230,10 +261,10 @@ class Router
 					// Are we using the default routing method for back-references?
 					elseif ( strpos( $value, '$' ) !== FALSE && strpos( $key, '(' ) !== FALSE )
 					{
-						$value = preg_replace( '#^' . $key . '$#', $value, $rstring );
+						$value = preg_replace( '#^' . $key . '$#', $value, $string );
 					}
 
-					\O2System::$active[ 'URI' ]->setSegments( $value, 'rsegments' );
+					\O2System::URI()->setRequest( $value, 'rsegments' );
 
 					return;
 				}
@@ -263,15 +294,13 @@ class Router
 		if ( \O2System::$active->offsetExists( 'controller' ) === FALSE )
 		{
 			$validate_segments = \O2System::$active[ 'URI' ]->isegments;
-
+			
 			// Find controller first
 			$directories = \O2System::Load()->getPackagePaths( 'controllers', TRUE );
 
-			//print_out(\O2System::$active[ 'URI' ]);
-
-			$sub_directory = '';
-			$is_found = FALSE;
-			$directories_segments = array();
+			$sub_directory        = '';
+			$is_found             = FALSE;
+			$directories_segments = [ ];
 			foreach ( \O2System::$active[ 'URI' ]->isegments as $key => $segment )
 			{
 				$sub_directory .= str_replace( '-', '_', $segment ) . DIRECTORY_SEPARATOR;
@@ -280,7 +309,11 @@ class Router
 				{
 					if ( is_dir( $directory . $sub_directory ) )
 					{
-						$directories_segments[] = $segment;
+						if ( is_file( $directory . $sub_directory . prepare_filename( next( \O2System::$active[ 'URI' ]->isegments ) ) . '.php' ) )
+						{
+							$directories_segments[] = $segment;
+						}
+
 						$class_namespace = $namespace . prepare_class_name( $sub_directory );
 						\O2System::Load()->addNamespace( $class_namespace, $directory . $sub_directory );
 						$directories[ $class_namespace ] = $directory . $sub_directory;
@@ -292,16 +325,14 @@ class Router
 				if ( $is_found === TRUE )
 				{
 					$validate_segments = array_diff(
-							$validate_segments,
-							$directories_segments
+						$validate_segments,
+						$directories_segments
 					);
 
 					if ( empty( $validate_segments ) )
 					{
 						$validate_segments = explode( DIRECTORY_SEPARATOR, $sub_directory );
 					}
-
-					//break;
 				}
 			}
 
@@ -310,50 +341,17 @@ class Router
 			array_unshift( $validate_segments, NULL );
 			unset( $validate_segments[ 0 ] );
 
+			$validate_segments = empty( $validate_segments ) ? \O2System::$active[ 'URI' ]->rsegments : $validate_segments;
+
 			$directories = array_reverse( $directories );
 
-			$rsegments = array();
 			foreach ( $directories as $namespace => $directory )
 			{
 				foreach ( $validate_segments as $segment )
 				{
-					if ( $controller = $this->_isValidController( $directory . prepare_filename( $segment ) . '.php' ) )
+					if ( $controller = $this->__loadController( $directory . prepare_filename( $segment ) . '.php' ) )
 					{
-						\O2System::$active[ 'controller' ] = $controller;
-
-						if ( \O2System::$active[ 'modules' ]->isEmpty() === FALSE )
-						{
-							foreach ( \O2System::$active[ 'modules' ] as $key => $module )
-							{
-								if ( $controller->namespace === $module->namespace . 'Controllers\\' )
-								{
-									\O2System::$active[ 'module' ] = \O2System::$active[ 'modules' ]->seek( $key );
-									break;
-								}
-							}
-						}
-
-						if ( \O2System::$active->offsetExists( 'module' ) )
-						{
-							$search_namespace = explode( 'Controllers\\', $namespace );
-							$search_namespace = reset( $search_namespace );
-
-							if ( $namespace_key = array_search( $search_namespace, \O2System::$active[ 'namespaces' ]->getArrayCopy() ) )
-							{
-								\O2System::$active[ 'directory' ] = \O2System::$active[ 'namespaces' ]->seek( $namespace_key );
-							}
-
-							$search_directory = explode( 'controllers/', $directory );
-							$search_directory = reset( $search_directory );
-
-							if ( $directory_key = array_search( $search_directory, \O2System::$active[ 'directories' ]->getArrayCopy() ) )
-							{
-								\O2System::$active[ 'directory' ] = \O2System::$active[ 'directories' ]->seek( $directory_key );
-							}
-
-							// Now we need to update the URI Routed Segments
-							$rsegments = explode( '/', \O2System::$active[ 'module' ]->segments );
-						}
+						$this->__setupController( $controller, $validate_segments );
 
 						break;
 					}
@@ -361,171 +359,16 @@ class Router
 
 				if ( \O2System::$active->offsetExists( 'controller' ) )
 				{
-					$x_realpath = explode( 'Controllers\\', \O2System::$active[ 'controller' ]->class );
-					$x_segments = array_map( 'strtolower', explode( '\\', end( $x_realpath ) ) );
-					$rsegments = array_merge( $rsegments, $x_segments );
-
-					if ( $validate_segment_key = array_search( \O2System::$active[ 'controller' ]->parameter, $validate_segments ) )
-					{
-						$validate_segments = array_slice( $validate_segments, $validate_segment_key );
-						$validate_segments = array_values( $validate_segments );
-					}
-
 					break;
 				}
 			}
 
-			if ( \O2System::$active->offsetExists( 'controller' ) )
+			if ( \O2System::$active->offsetExists( 'controller' ) === FALSE )
 			{
-				$method_segment = 'index';
-
-				if ( isset( $validate_segments[ 0 ] ) )
-				{
-					if ( ! filter_var( $validate_segments[ 0 ], FILTER_VALIDATE_INT ) )
-					{
-						$method_segment = str_replace( '-', '_', $validate_segments[ 0 ] );
-
-						if ( in_array( $method_segment, [ 'add_new', 'edit' ] ) )
-						{
-							$method_segment = 'form';
-						}
-
-						array_shift( $validate_segments );
-					}
-				}
-
-				if ( isset( \O2System::$active[ 'controller' ]->method ) )
-				{
-					// _route() method exists
-					if ( \O2System::$active[ 'controller' ]->method === '_route' )
-					{
-						if ( \O2System::$active[ 'controller' ]->isPublicMethod( $method_segment ) )
-						{
-							// Route to public controller method()
-							\O2System::$active[ 'controller' ]->params[ 0 ] = $method_segment;
-						}
-						elseif ( \O2System::$active[ 'controller' ]->isProtectedMethod( $method_segment ) )
-						{
-							// Route to protected controller _method()
-							\O2System::$active[ 'controller' ]->params[ 0 ] = '_' . $method_segment;
-						}
-						else
-						{
-							if ( \O2System::$active[ 'controller' ]->isPublicMethod( 'index' ) )
-							{
-								// Route to public controller index()
-								\O2System::$active[ 'controller' ]->params[ 0 ] = 'index';
-								\O2System::$active[ 'controller' ]->params[ 1 ] = $method_segment;
-							}
-							elseif ( \O2System::$active[ 'controller' ]->isProtectedMethod( 'index' ) )
-							{
-								// Route to protected controller _index()
-								\O2System::$active[ 'controller' ]->params[ 0 ] = '_index';
-								\O2System::$active[ 'controller' ]->params[ 1 ] = $method_segment;
-							}
-							else
-							{
-								// Assign params[0] as method
-								\O2System::$active[ 'controller' ]->params[ 0 ] = $method_segment;
-							}
-						}
-					}
-					// index() method exists
-					elseif ( \O2System::$active[ 'controller' ]->method === 'index' )
-					{
-						if ( $method_segment !== 'index' )
-						{
-							if ( is_ajax() )
-							{
-								if ( \O2System::$active[ 'controller' ]->isProtectedMethod( $method_segment ) )
-								{
-									// Route to public controller method()
-									\O2System::$active[ 'controller' ]->method = '_' . $method_segment;
-								}
-								else
-								{
-									$this->showError( 403 );
-								}
-							}
-							elseif ( \O2System::$active[ 'controller' ]->isProtectedMethod( $method_segment ) )
-							{
-								$this->showError( 403 );
-							}
-							elseif ( \O2System::$active[ 'controller' ]->isPublicMethod( $method_segment ) )
-							{
-								// Route to public controller method()
-								\O2System::$active[ 'controller' ]->method = $method_segment;
-							}
-							else
-							{
-								\O2System::$active[ 'controller' ]->params[] = $method_segment;
-							}
-						}
-					}
-				}
-				elseif ( \O2System::$active[ 'controller' ] instanceof \O2System\Metadata\Controller )
-				{
-					if ( is_ajax() )
-					{
-						if ( \O2System::$active[ 'controller' ]->isProtectedMethod( $method_segment ) )
-						{
-							// Route to public controller method()
-							\O2System::$active[ 'controller' ]->method = '_' . $method_segment;
-						}
-						else
-						{
-							$this->showError( 403 );
-						}
-					}
-					elseif ( \O2System::$active[ 'controller' ]->isProtectedMethod( $method_segment ) )
-					{
-						$this->showError( 403 );
-					}
-					elseif ( \O2System::$active[ 'controller' ]->isPublicMethod( $method_segment ) )
-					{
-						// Route to public controller method()
-						\O2System::$active[ 'controller' ]->method = $method_segment;
-					}
-					else
-					{
-						$this->showError( 404 );
-					}
-				}
-
-				if ( isset( \O2System::$active[ 'controller' ]->method ) )
-				{
-					// We need to update again the URI Routed segments
-					array_push( $rsegments, \O2System::$active[ 'controller' ]->method );
-
-					\O2System::$active[ 'URI' ]->setSegments( $rsegments, 'rsegments' );
-
-					if ( \O2System::$active[ 'controller' ]->method === '_route' )
-					{
-						if ( \O2System::$active[ 'controller' ]->params[ 0 ] === \O2System::$active[ 'controller' ]->parameter )
-						{
-							\O2System::$active[ 'controller' ]->params[ 0 ] = 'index';
-						}
-					}
-
-					// @todo validate other segments
-					foreach ( $validate_segments as $segment )
-					{
-						if ( $this->_validateSegment( $segment ) === FALSE )
-						{
-							if ( \O2System::$active[ 'controller' ]->method === '_route' )
-							{
-								\O2System::$active[ 'controller' ]->params[ 1 ][] = $segment;
-							}
-							else
-							{
-								\O2System::$active[ 'controller' ]->params[] = $segment;
-							}
-						}
-					}
-				}
-
-				unset( \O2System::$active[ 'URI' ]->isegments, \O2System::$active[ 'URI' ]->istring );
-
+				return $this->_setDefaultController();
+			}
+			else
+			{
 				return TRUE;
 			}
 		}
@@ -539,7 +382,17 @@ class Router
 
 	// ------------------------------------------------------------------------
 
-	protected function _isValidController( $filepath )
+	protected function _isControllerSegment( $segment )
+	{
+
+	}
+
+	protected function _isControllerMethodSegment( $segment )
+	{
+
+	}
+
+	private function __loadController( $filepath )
 	{
 		if ( file_exists( $filepath ) )
 		{
@@ -549,6 +402,221 @@ class Router
 		}
 
 		return FALSE;
+	}
+
+	private function __setupController( $controller, $validate_segments )
+	{
+		if ( \O2System::$active[ 'modules' ]->isEmpty() === FALSE )
+		{
+			foreach ( \O2System::$active[ 'modules' ] as $key => $module )
+			{
+				if ( $controller->namespace === $module->namespace . 'Controllers\\' )
+				{
+					\O2System::$active[ 'modules' ]->setCurrent( $key );
+					break;
+				}
+			}
+		}
+
+		// Set Current Module Namespace, Directories and Routed Segments
+		$rsegments = [ ];
+		if ( $current_module = \O2System::$active[ 'modules' ]->current() )
+		{
+			foreach ( \O2System::$active[ 'modules' ] as $module_key => $module )
+			{
+				if ( $module->namespace === $current_module->namespace )
+				{
+					\O2System::$active[ 'modules' ]->setCurrent( $module_key );
+					break;
+				}
+			}
+
+			$search_namespace = explode( 'Controllers\\', $controller->namespace );
+			$search_namespace = reset( $search_namespace );
+
+			if ( $namespace_key = array_search( $search_namespace, \O2System::$active[ 'namespaces' ]->getArrayCopy() ) )
+			{
+				\O2System::$active[ 'namespaces' ]->setCurrent( $namespace_key );
+			}
+
+			$search_directory = explode( 'controllers' . DIRECTORY_SEPARATOR, $controller->realpath );
+			$search_directory = reset( $search_directory );
+
+			if ( $directory_key = array_search( $search_directory, \O2System::$active[ 'directories' ]->getArrayCopy() ) )
+			{
+				\O2System::$active[ 'directories' ]->setCurrent( $directory_key );
+			}
+
+			// Now we need to update the URI Routed Segments
+			$rsegments = explode( '/', $module->segments );
+		}
+
+		// Setup Routed Segments
+		if ( ! in_array( $controller->parameter, $rsegments ) )
+		{
+			$x_realpath = explode( 'Controllers\\', $controller->class );
+			$x_segments = array_map( 'strtolower', explode( '\\', end( $x_realpath ) ) );
+
+			$rsegments = array_merge( $rsegments, $x_segments );
+		}
+
+		if ( $validate_segment_key = array_search( $controller->parameter, $validate_segments ) )
+		{
+			$validate_segments = array_slice( $validate_segments, $validate_segment_key );
+			$validate_segments = array_values( $validate_segments );
+		}
+
+		$method_segment = 'index';
+
+		if ( isset( $validate_segments[ 0 ] ) )
+		{
+			if ( ! filter_var( $validate_segments[ 0 ], FILTER_VALIDATE_INT ) )
+			{
+				$method_segment = str_replace( '-', '_', $validate_segments[ 0 ] );
+				$method_segment = camelcase( $method_segment );
+
+				if ( in_array( $method_segment, [ 'add_new', 'edit' ] ) )
+				{
+					$method_segment = 'form';
+				}
+
+				array_shift( $validate_segments );
+			}
+		}
+
+		if ( isset( $controller->method ) )
+		{
+			// _route() method exists
+			if ( $controller->method === '_route' )
+			{
+				if ( $controller->isPublicMethod( $method_segment ) )
+				{
+					// Route to public controller method()
+					$controller->params[ 0 ] = $method_segment;
+				}
+				elseif ( $controller->isProtectedMethod( $method_segment ) )
+				{
+					// Route to protected controller _method()
+					$controller->params[ 0 ] = '_' . $method_segment;
+				}
+				else
+				{
+					if ( $controller->isPublicMethod( 'index' ) )
+					{
+						// Route to public controller index()
+						$controller->params[ 0 ] = 'index';
+						$controller->params[ 1 ] = $method_segment;
+					}
+					elseif ( $controller->isProtectedMethod( 'index' ) )
+					{
+						// Route to protected controller _index()
+						$controller->params[ 0 ] = '_index';
+						$controller->params[ 1 ] = $method_segment;
+					}
+					else
+					{
+						// Assign params[0] as method
+						$controller->params[ 0 ] = $method_segment;
+					}
+				}
+			}
+			// index() method exists
+			elseif ( $controller->method === 'index' )
+			{
+				if ( $method_segment !== 'index' )
+				{
+					if ( is_ajax() )
+					{
+						if ( $controller->isProtectedMethod( $method_segment ) )
+						{
+							// Route to public controller method()
+							$controller->method = '_' . $method_segment;
+						}
+						else
+						{
+							$this->showError( 403 );
+						}
+					}
+					elseif ( $controller->isProtectedMethod( $method_segment ) )
+					{
+						$this->showError( 403 );
+					}
+					elseif ( $controller->isPublicMethod( $method_segment ) )
+					{
+						// Route to public controller method()
+						$controller->method = $method_segment;
+					}
+					else
+					{
+						$controller->params[] = $method_segment;
+					}
+				}
+			}
+		}
+		else
+		{
+			if ( is_ajax() )
+			{
+				if ( $controller->isProtectedMethod( $method_segment ) )
+				{
+					// Route to public controller method()
+					$controller->method = '_' . $method_segment;
+				}
+				else
+				{
+					$this->showError( 403 );
+				}
+			}
+			elseif ( $controller->isProtectedMethod( $method_segment ) )
+			{
+				$this->showError( 403 );
+			}
+			elseif ( $controller->isPublicMethod( $method_segment ) )
+			{
+				// Route to public controller method()
+				$controller->method = $method_segment;
+			}
+			else
+			{
+				$this->showError( 404 );
+			}
+		}
+
+		if ( isset( $controller->method ) )
+		{
+			// We need to update again the URI Routed segments
+			array_push( $rsegments, $controller->method );
+
+			\O2System::$active[ 'URI' ]->setSegments( $rsegments, 'rsegments' );
+
+			if ( $controller->method === '_route' )
+			{
+				if ( $controller->params[ 0 ] === $controller->parameter )
+				{
+					$controller->params[ 0 ] = 'index';
+				}
+			}
+
+			// @todo validate other segments
+			foreach ( $validate_segments as $segment )
+			{
+				if ( $this->_validateSegment( $segment ) === FALSE )
+				{
+					if ( $controller->method === '_route' )
+					{
+						$controller->params[ 1 ][] = $segment;
+					}
+					else
+					{
+						$controller->params[] = $segment;
+					}
+				}
+			}
+		}
+
+		unset( \O2System::$active[ 'URI' ]->isegments, \O2System::$active[ 'URI' ]->istring );
+
+		\O2System::$active[ 'controller' ] = $controller;
 	}
 
 	/**
@@ -595,19 +663,19 @@ class Router
 
 		if ( empty( $class ) AND empty( $method ) )
 		{
-			$class = 'Error';
+			$class  = 'Error';
 			$method = 'index';
 		}
 
 		unset( \O2System::$active[ 'controller' ] );
 
-		$rsegments = array();
+		$rsegments = [ ];
 
-		if ( \O2System::$active->offsetExists( 'module' ) )
+		if ( $module = \O2System::$active[ 'modules' ]->current() )
 		{
-			$directory = ROOTPATH . \O2System::$active[ 'module' ]->realpath . 'controllers' . DIRECTORY_SEPARATOR;
+			$directory = ROOTPATH . $module->realpath . 'controllers' . DIRECTORY_SEPARATOR;
 
-			if ( $controller = $this->_isValidController( $directory . prepare_filename( $class ) . '.php' ) )
+			if ( $controller = $this->__loadController( $directory . prepare_filename( $class ) . '.php' ) )
 			{
 				\O2System::$active[ 'controller' ] = $controller;
 
@@ -617,20 +685,20 @@ class Router
 					{
 						if ( $controller->namespace === $module->namespace . 'Controllers\\' )
 						{
-							\O2System::$active[ 'module' ] = \O2System::$active[ 'modules' ]->seek( $key );
+							\O2System::$active[ 'modules' ]->setCurrent( $key );
 							break;
 						}
 					}
 				}
 
-				if ( \O2System::$active->offsetExists( 'module' ) )
+				if ( $module = \O2System::$active[ 'modules' ]->current() )
 				{
 					$search_namespace = explode( 'Controllers\\', $controller->namespace );
 					$search_namespace = reset( $search_namespace );
 
 					if ( $namespace_key = array_search( $search_namespace, \O2System::$active[ 'namespaces' ]->getArrayCopy() ) )
 					{
-						\O2System::$active[ 'directory' ] = \O2System::$active[ 'namespaces' ]->seek( $namespace_key );
+						\O2System::$active[ 'namespaces' ]->setCurrent( $namespace_key );
 					}
 
 					$search_directory = explode( 'controllers/', $directory );
@@ -638,11 +706,11 @@ class Router
 
 					if ( $directory_key = array_search( $search_directory, \O2System::$active[ 'directories' ]->getArrayCopy() ) )
 					{
-						\O2System::$active[ 'directory' ] = \O2System::$active[ 'directories' ]->seek( $directory_key );
+						\O2System::$active[ 'directories' ]->setCurrent( $directory_key );
 					}
 
 					// Now we need to update the URI Routed Segments
-					$rsegments = explode( '/', \O2System::$active[ 'module' ]->segments );
+					$rsegments = explode( '/', $module->segments );
 				}
 			}
 		}
@@ -682,7 +750,7 @@ class Router
 				array_push( $rsegments, \O2System::$active[ 'controller' ]->method );
 
 				\O2System::$active[ 'URI' ]->setSegments( $rsegments, 'rsegments' );
-				\O2System::$active[ 'controller' ]->params = array( $code );
+				\O2System::$active[ 'controller' ]->params = [ $code ];
 			}
 			elseif ( \O2System::$active[ 'controller' ]->method === '_route' )
 			{
@@ -692,10 +760,10 @@ class Router
 
 				\O2System::$active[ 'URI' ]->setSegments( $rsegments, 'rsegments' );
 
-				\O2System::$active[ 'controller' ]->params = array(
+				\O2System::$active[ 'controller' ]->params = [
 					'index',
-					array( $code ),
-				);
+					[ $code ],
+				];
 			}
 			else
 			{
@@ -719,7 +787,7 @@ class Router
 			{
 				if ( isset( $uri ) )
 				{
-					$uri = is_array( $uri ) ? implode( '/', $uri ) : $uri;
+					$uri       = is_array( $uri ) ? implode( '/', $uri ) : $uri;
 					$route_url = $route_url . trim( $uri, '/' );
 				}
 
@@ -727,7 +795,7 @@ class Router
 				{
 					if ( is_bool( $suffix ) )
 					{
-						$URI = \O2System::$config->offsetGet( 'URI' );
+						$URI    = \O2System::$config->offsetGet( 'URI' );
 						$suffix = ( empty( $URI[ 'suffix' ] ) ) ? '' : $URI[ 'suffix' ];
 
 						$route_url = rtrim( $route_url, $suffix );

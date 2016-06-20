@@ -60,12 +60,12 @@ class Header extends FactoryInterface
 		}
 		else
 		{
-			$this->set_title( $title );
+			$this->setTitle( $title );
 		}
 
 		if( isset( $attr ) )
 		{
-			$this->add_attributes( $attr );
+			$this->addAttributes( $attr );
 		}
 
 		return $this;
@@ -84,7 +84,7 @@ class Header extends FactoryInterface
 		return $this;
 	}
 
-	public function set_title( $title, $tag = 'h1', $attr = array() )
+	public function setTitle($title, $tag = 'h1', $attr = array() )
 	{
 		if( is_array( $tag ) )
 		{
@@ -95,7 +95,7 @@ class Header extends FactoryInterface
 		if( $title instanceof Tag )
 		{
 			$this->title = clone $title;
-			$this->title->set_tag( $tag );
+			$this->title->setTag( $tag );
 		}
 		else
 		{
@@ -105,7 +105,7 @@ class Header extends FactoryInterface
 		return $this;
 	}
 
-	public function set_subtext( $subtext, $tag = 'small', $attr = array() )
+	public function setSubtext($subtext, $tag = 'small', $attr = array() )
 	{
 		if( is_array( $tag ) )
 		{
@@ -116,7 +116,7 @@ class Header extends FactoryInterface
 		if( $subtext instanceof Tag )
 		{
 			$this->subtext = clone $subtext;
-			$this->subtext->set_tag( $tag );
+			$this->subtext->setTag( $tag );
 		}
 		else
 		{
@@ -126,7 +126,7 @@ class Header extends FactoryInterface
 		return $this;
 	}
 
-	public function is_page_header( $is_page_header )
+	public function isPageHeader($is_page_header )
 	{
 		$this->_is_page_header = (bool) $is_page_header;
 	}
@@ -137,7 +137,7 @@ class Header extends FactoryInterface
 		{
 			if( isset( $this->subtext ) )
 			{
-				$this->title->append_content( $this->subtext );
+				$this->title->appendContent( $this->subtext );
 			}
 
 			if( $this->is_page_header === TRUE )

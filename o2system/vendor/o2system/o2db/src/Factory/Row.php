@@ -65,12 +65,12 @@ namespace O2System\DB\Factory
 			}
 		}
 
-		public function fields_list()
+		public function fieldsList()
 		{
 			return array_keys( $this->_fields );
 		}
 
-		public function num_fields()
+		public function numFields()
 		{
 			return $this->count();
 		}
@@ -87,11 +87,11 @@ namespace O2System\DB\Factory
 
 		public function offsetSet( $field, $value )
 		{
-			if ( $this->_is_json( $value ) )
+			if ( $this->_isJson( $value ) )
 			{
 				$value = new Row\Metadata( json_decode( $value, TRUE ) );
 			}
-			elseif ( $this->_is_serialize( $value ) )
+			elseif ( $this->_isSerialize( $value ) )
 			{
 				$value = new Row\Metadata( unserialize( $value ) );
 			}
@@ -118,7 +118,7 @@ namespace O2System\DB\Factory
 		{
 			if ( $this->_num_fields == 0 )
 			{
-				$this->_num_fields = count( $this->fields_list() );
+				$this->_num_fields = count( $this->fieldsList() );
 			}
 
 			return $this->_num_fields;
@@ -146,7 +146,7 @@ namespace O2System\DB\Factory
 
 		// ------------------------------------------------------------------------
 
-		protected function _is_serialize( $string )
+		protected function _isSerialize($string )
 		{
 			// Bit of a give away this one
 			if ( ! is_string( $string ) )
@@ -223,7 +223,7 @@ namespace O2System\DB\Factory
 
 		// ------------------------------------------------------------------------
 
-		protected function _is_json( $string )
+		protected function _isJson($string )
 		{
 			// make sure provided input is of type string
 			if ( ! is_string( $string ) )

@@ -63,20 +63,20 @@ class With extends Relations
 	 *
 	 * @param   array $references list of references
 	 */
-	public function set_relationships( array $relationsips )
+	public function setRelationships(array $relationsips )
 	{
 		foreach ( $relationsips as $relationship )
 		{
-			$this->_set_relationship( $relationship );
+			$this->_setRelationship( $relationship );
 		}
 	}
 
 	// ------------------------------------------------------------------------
 
-	protected function _set_relationship( $relation )
+	protected function _setRelationship($relation )
 	{
 		// Try to load reference model
-		$relation_model = $this->_load_relation_model( $relation );
+		$relation_model = $this->_loadRelationModel( $relation );
 
 		$relationship = new \stdClass();
 
@@ -118,7 +118,7 @@ class With extends Relations
 				}
 				else
 				{
-					$relationship->fields = $this->_reference_model->db->list_fields( $relationship->table );
+					$relationship->fields = $this->_reference_model->db->listFields( $relationship->table );
 				}
 
 				if ( in_array( $relation_field, $relationship->fields ) )

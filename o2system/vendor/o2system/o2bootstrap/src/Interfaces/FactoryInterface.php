@@ -65,14 +65,14 @@ abstract class FactoryInterface
 
 	abstract public function build();
 
-	public function set_tag( $tag )
+	public function setTag($tag )
 	{
 		$this->_tag = $tag;
 
 		return $this;
 	}
 
-	public function get_tag()
+	public function getTag()
 	{
 		return $this->_tag;
 	}
@@ -85,19 +85,19 @@ abstract class FactoryInterface
 	 * @access  public
 	 * @return  $this
 	 */
-	public function set_id( $id )
+	public function setId($id )
 	{
-		$this->add_attribute( 'id', $id );
+		$this->addAttribute( 'id', $id );
 
 		return $this;
 	}
 
-	public function get_classes()
+	public function getClasses()
 	{
 		return $this->_attributes[ 'class' ];
 	}
 
-	public function add_classes( array $classes )
+	public function addClasses(array $classes )
 	{
 		if ( ! isset( $this->_attributes[ 'class' ] ) )
 		{
@@ -118,7 +118,7 @@ abstract class FactoryInterface
 		return $this;
 	}
 
-	public function set_class( $class )
+	public function setClass($class )
 	{
 		if ( is_string( $class ) )
 		{
@@ -130,7 +130,7 @@ abstract class FactoryInterface
 		return $this;
 	}
 
-	public function add_class( $class )
+	public function addClass($class )
 	{
 		if ( ! isset( $this->_attributes[ 'class' ] ) )
 		{
@@ -147,7 +147,7 @@ abstract class FactoryInterface
 		return $this;
 	}
 
-	public function remove_classes( array $classes )
+	public function removeClasses(array $classes )
 	{
 		if ( isset( $this->_attributes[ 'class' ] ) )
 		{
@@ -162,12 +162,12 @@ abstract class FactoryInterface
 		return $this;
 	}
 
-	public function remove_class( $class )
+	public function removeClass($class )
 	{
-		return $this->remove_classes( [ $class ] );
+		return $this->removeClasses( [ $class ] );
 	}
 
-	public function has_class( $class )
+	public function hasClass($class )
 	{
 		if ( isset( $this->_attributes[ 'class' ] ) )
 		{
@@ -182,19 +182,19 @@ abstract class FactoryInterface
 		return FALSE;
 	}
 
-	public function set_attributes( array $attributes )
+	public function setAttributes(array $attributes )
 	{
 		$this->_attributes = $attributes;
 
 		return $this;
 	}
 
-	public function get_attributes()
+	public function getAttributes()
 	{
 		return $this->_attributes;
 	}
 
-	public function add_attributes( array $attributes )
+	public function addAttributes(array $attributes )
 	{
 		if ( empty( $this->_attributes ) )
 		{
@@ -208,41 +208,41 @@ abstract class FactoryInterface
 		return $this;
 	}
 
-	public function add_attribute( $name, $value )
+	public function addAttribute($name, $value )
 	{
 		$this->_attributes[ $name ] = $value;
 
 		return $this;
 	}
 
-	public function remove_attributes( array $attributes )
+	public function removeAttributes(array $attributes )
 	{
 		foreach ( $attributes as $attribute )
 		{
-			$this->remove_attribute( $attribute );
+			$this->removeAttribute( $attribute );
 		}
 
 		return $this;
 	}
 
-	public function remove_attribute( $attribute )
+	public function removeAttribute($attribute )
 	{
 		unset( $this->_attributes[ $attribute ] );
 
 		return $this;
 	}
 
-	public function has_attribute( $attribute )
+	public function hasAttribute($attribute )
 	{
 		return (bool) array_key_exists( $attribute, $this->_attributes );
 	}
 
-	public function get_attribute( $key )
+	public function getAttribute($key )
 	{
 		return isset( $this->_attributes[ $key ] ) ? $this->_attributes[ $key ] : NULL;
 	}
 
-	protected function _stringify_attributes( array $attributes = array() )
+	protected function _stringifyAttributes(array $attributes = array() )
 	{
 		$attributes = empty( $attributes ) ? $this->_attributes : $attributes;
 
@@ -354,7 +354,7 @@ abstract class FactoryInterface
 		}
 		elseif ( $property === 'input' )
 		{
-			return $this->_set_field();
+			return $this->_setField();
 		}
 		elseif ( isset( $this->_items ) AND array_key_exists( $property, $this->_items ) )
 		{

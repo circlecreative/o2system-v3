@@ -161,35 +161,35 @@ class Form
 
 	public function __construct()
 	{
-		\O2System::View()->assets->add_asset( 'crud-form' );
+		\O2System::View()->assets->addAsset( 'crud-form' );
 	}
 
-	public function set_data( ArrayObject $data )
+	public function setData(ArrayObject $data )
 	{
 		$this->_data = $data;
 	}
 
-	public function set_config( array $config )
+	public function setConfig(array $config )
 	{
 		$this->_config = array_merge( $this->_config, $config );
 	}
 
-	public function set_attributes( array $attributes )
+	public function setAttributes(array $attributes )
 	{
 		$this->_attributes = $attributes;
 	}
 
-	public function set_title( $title )
+	public function setTitle($title )
 	{
 		$this->_title = $title;
 	}
 
-	public function set_fieldsets( array $fieldsets, $group = 'main' )
+	public function setFieldsets(array $fieldsets, $group = 'main' )
 	{
 		$this->_fieldsets[ $group ] = $fieldsets;
 	}
 
-	public function set_fieldset( array $fieldset, $legend = '', $group = 'main' )
+	public function setFieldset(array $fieldset, $legend = '', $group = 'main' )
 	{
 		if ( array_key_exists( $group, $this->_fieldsets ) )
 		{
@@ -197,7 +197,7 @@ class Form
 		}
 	}
 
-	public function set_buttons( array $buttons )
+	public function setButtons(array $buttons )
 	{
 		$this->_buttons = $buttons;
 
@@ -209,7 +209,7 @@ class Form
 	 *
 	 * @return $this
 	 */
-	public function set_fields( array $fields = array() )
+	public function setFields(array $fields = array() )
 	{
 		$this->_fieldsets[ 'blank' ][ 'fields' ] = $fields;
 
@@ -219,15 +219,15 @@ class Form
 	/**
 	 * @param array $hiddens
 	 */
-	public function set_hiddens( array $hiddens = array() )
+	public function setHiddens(array $hiddens = array() )
 	{
 		foreach ( $hiddens as $hidden )
 		{
-			$this->add_hidden( $hidden );
+			$this->addHidden( $hidden );
 		}
 	}
 
-	public function add_hidden( array $hidden )
+	public function addHidden(array $hidden )
 	{
 		$this->_hiddens[] = $hidden;
 	}
@@ -235,8 +235,8 @@ class Form
 	public function render()
 	{
 		$panel[ 'header' ] = new Panel( Panel::DEFAULT_PANEL );
-		$panel[ 'header' ]->set_title( $this->_title );
-		$panel[ 'header' ]->add_attribute( 'data-role', 'form-panel-header' );
+		$panel[ 'header' ]->setTitle( $this->_title );
+		$panel[ 'header' ]->addAttribute( 'data-role', 'form-panel-header' );
 
 		foreach ( $this->_fieldsets as $group => $fieldsets )
 		{
@@ -254,16 +254,16 @@ class Form
 
 				if ( isset( $fieldset[ 'type' ] ) )
 				{
-					$panel[ $group ]->add_item( ( new Fieldset( $fieldset[ 'legend' ], Fieldset::PANEL_FIELDSET ) )
-						                            ->add_items( $fieldset[ 'fields' ] )
-						                            ->set_attributes( $attr )
-						                            ->set_group_type( $fieldset[ 'type' ] ) );
+					$panel[ $group ]->addItem( ( new Fieldset( $fieldset[ 'legend' ], Fieldset::PANEL_FIELDSET ) )
+						                            ->addItems( $fieldset[ 'fields' ] )
+						                            ->setAttributes( $attr )
+						                            ->setGroupType( $fieldset[ 'type' ] ) );
 				}
 				else
 				{
-					$panel[ $group ]->add_item( ( new Fieldset( $fieldset[ 'legend' ], Fieldset::PANEL_FIELDSET ) )
-						                            ->add_items( $fieldset[ 'fields' ] )
-						                            ->set_attributes( $attr ) );
+					$panel[ $group ]->addItem( ( new Fieldset( $fieldset[ 'legend' ], Fieldset::PANEL_FIELDSET ) )
+						                            ->addItems( $fieldset[ 'fields' ] )
+						                            ->setAttributes( $attr ) );
 				}
 
 			}
@@ -271,8 +271,8 @@ class Form
 
 		if ( isset( $panel[ 'sidebar' ] ) )
 		{
-			$panel[ 'main' ]->add_class( 'col-sm-8' );
-			$panel[ 'sidebar' ]->add_class( 'col-sm-4' );
+			$panel[ 'main' ]->addClass( 'col-sm-8' );
+			$panel[ 'sidebar' ]->addClass( 'col-sm-4' );
 		}
 
 		return ( new Tag( 'form', implode( PHP_EOL, $panel ), $this->_attributes ) )->render();

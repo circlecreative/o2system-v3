@@ -70,7 +70,7 @@ class Wincache extends Driver
      */
     public function initialize()
     {
-        return $this->is_supported();
+        return $this->isSupported();
     }
 
     // ------------------------------------------------------------------------
@@ -223,7 +223,7 @@ class Wincache extends Driver
      * @return  bool
      * @throws  Exception
      */
-    public function is_supported()
+    public function isSupported()
     {
         if( ! extension_loaded( 'wincache' ) OR ! ini_get( 'wincache.ucenabled' ) )
         {

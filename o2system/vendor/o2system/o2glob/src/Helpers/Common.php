@@ -193,7 +193,7 @@ if ( ! function_exists( 'set_status_header' ) )
 	 */
 	function set_status_header( $code = 200, $description = '' )
 	{
-		( new \O2System\Glob\HttpStatusCode )->setResponse( $code, $description );
+		( new \O2System\Glob\HttpHeaderStatus )->setResponse( $code, $description );
 	}
 }
 
@@ -214,7 +214,7 @@ if ( ! function_exists( 'remove_invisible_characters' ) )
 	 */
 	function remove_invisible_characters( $str, $url_encoded = TRUE )
 	{
-		$non_displayables = array();
+		$non_displayables = [ ];
 
 		// every control character except newline (dec 10),
 		// carriage return (dec 13) and horizontal tab (dec 09)
@@ -349,7 +349,7 @@ if ( ! function_exists( 'function_usable' ) )
 				}
 				else
 				{
-					$_suhosin_func_blacklist = array();
+					$_suhosin_func_blacklist = [ ];
 				}
 			}
 
@@ -410,9 +410,9 @@ if ( ! function_exists( 'get_namespace' ) )
 		$class = is_object( $class ) ? get_class( $class ) : prepare_class_name( $class );
 
 		$x_class = explode( '\\', $class );
-		$x_class = array_slice( $x_class, 0, count( $x_class ) - 1 );
+		array_pop( $x_class );
 
-		return implode( '\\', $x_class ) . '\\';
+		return trim( implode( '\\', $x_class ), '\\' ) . '\\';
 	}
 }
 
@@ -429,7 +429,7 @@ if ( ! function_exists( 'get_class_name' ) )
 {
 	function get_class_name( $class )
 	{
-		$class = is_object( $class ) ? get_class( $class ) : prepare_class_name( $class );
+		$class   = is_object( $class ) ? get_class( $class ) : prepare_class_name( $class );
 		$x_class = explode( '\\', $class );
 
 		return end( $x_class );
@@ -452,30 +452,36 @@ if ( ! function_exists( 'prepare_class_name' ) )
 		$class = str_replace( [ '/', DIRECTORY_SEPARATOR, '.php' ], [ '\\', '\\', '' ], $class );
 		$class = trim( $class );
 
-		$segments = explode( '\\', $class );
+		$segments   = explode( '\\', $class );
+		$class_name = studlycapcase( end( $segments ) );
 
+		array_pop( $segments );
+
+		$namespaces = [ ];
 		foreach ( $segments as $segment )
 		{
-			$patterns = array(
+			$patterns = [
 				'/[\s]+/',
 				'/[-]+/',
 				'/[_]+/',
-			);
+			];
 
 			$segment = preg_replace( $patterns, '_', $segment );
 
 			if ( strpos( $segment, '_' ) !== FALSE )
 			{
-				$x_segment = array_map( 'ucfirst', explode( '_', $segment ) );
-				$x_class[] = implode( '_', $x_segment );
+				$x_segment    = array_map( 'studlycapcase', explode( '_', $segment ) );
+				$namespaces[] = implode( '_', $x_segment );
 			}
 			else
 			{
-				$x_class[] = ucfirst( $segment );
+				$namespaces[] = studlycapcase( $segment );
 			}
 		}
 
-		return implode( '\\', $x_class );
+		$namespaces = array_filter( $namespaces );
+
+		return ltrim( implode( '\\', $namespaces ) . '\\' . $class_name, '\\' );
 	}
 }
 
@@ -490,35 +496,39 @@ if ( ! function_exists( 'prepare_filename' ) )
 	 *
 	 * @return   mixed
 	 */
-	function prepare_filename( $filename )
+	function prepare_filename( $filename, $ext = NULL )
 	{
 		$filename = str_replace( [ '/', '\\' ], DIRECTORY_SEPARATOR, $filename );
 		$filename = trim( $filename );
 
 		$segments = explode( DIRECTORY_SEPARATOR, $filename );
+		$filename = studlycapcase( end( $segments ) );
 
+		array_pop( $segments );
+
+		$directories = [ ];
 		foreach ( $segments as $segment )
 		{
-			$patterns = array(
+			$patterns = [
 				'/[\s]+/',
 				'/[-]+/',
 				'/[_]+/',
-			);
+			];
 
 			$segment = preg_replace( $patterns, '_', $segment );
 
 			if ( strpos( $segment, '_' ) !== FALSE )
 			{
-				$x_segment = array_map( 'ucfirst', explode( '_', $segment ) );
-				$x_class[] = implode( '_', $x_segment );
+				$x_segment     = array_map( 'strtolower', explode( '_', $segment ) );
+				$directories[] = implode( '_', $x_segment );
 			}
 			else
 			{
-				$x_class[] = ucfirst( $segment );
+				$directories[] = strtolower( $segment );
 			}
 		}
 
-		return implode( DIRECTORY_SEPARATOR, $x_class );
+		return implode( DIRECTORY_SEPARATOR, $directories ) . DIRECTORY_SEPARATOR . $filename . $ext;
 	}
 }
 
@@ -552,10 +562,19 @@ if ( ! function_exists( 'underscore' ) )
 {
 	function underscore( $string )
 	{
-		$string[ 0 ] = strtolower( $string[ 0 ] );
-		$function = create_function( '$c', 'return "_" . strtolower($c[1]);' );
+		$string = trim( $string );
+		$string = preg_replace( "/[^A-Za-z0-9 ]/", '', $string );
+		$string = preg_replace( '/[ -]+/', '_', $string );
 
-		return preg_replace_callback( '/([A-Z])/', $function, $string );
+		preg_match_all( '!([A-Z][A-Z0-9]*(?=$|[A-Z][a-z0-9])|[A-Za-z][a-z0-9]+)!', $string, $matches );
+		$x_string = $matches[ 0 ];
+
+		foreach ( $x_string as &$match )
+		{
+			$match = $match == strtoupper( $match ) ? strtolower( $match ) : lcfirst( $match );
+		}
+
+		return implode( '_', $x_string );
 	}
 }
 
@@ -565,21 +584,22 @@ if ( ! function_exists( 'parse_domain' ) )
 	{
 		$domain = isset( $domain ) ? $domain : ( isset( $_SERVER[ 'HTTP_HOST' ] ) ? $_SERVER[ 'HTTP_HOST' ] : $_SERVER[ 'SERVER_NAME' ] );
 
-		$result = new \O2System\Glob\ArrayObject( array(
-			                                          'scheme'     => is_https() ? 'https://' : 'http://',
-			                                          'origin'     => $domain,
-			                                          'host'       => NULL,
-			                                          'www'        => FALSE,
-			                                          'port'       => 80,
-			                                          'domain'     => NULL,
-			                                          'sub_domain' => NULL,
-			                                          'tld'        => NULL,
-		                                          ) );
+		$result = new \O2System\Glob\ArrayObject(
+			[
+				'scheme'     => is_https() ? 'https://' : 'http://',
+				'origin'     => $domain,
+				'host'       => NULL,
+				'www'        => FALSE,
+				'port'       => 80,
+				'domain'     => NULL,
+				'sub_domain' => NULL,
+				'tld'        => NULL,
+			] );
 
 		if ( strpos( $domain, ':' ) !== FALSE )
 		{
-			$x_domain = explode( ':', $domain );
-			$domain = reset( $x_domain );
+			$x_domain         = explode( ':', $domain );
+			$domain           = reset( $x_domain );
 			$result[ 'port' ] = end( $x_domain );
 		}
 
@@ -592,7 +612,7 @@ if ( ! function_exists( 'parse_domain' ) )
 			array_shift( $x_domain );
 		}
 
-		$result[ 'tld' ] = array();
+		$result[ 'tld' ] = [ ];
 		foreach ( $x_domain as $key => $hostname )
 		{
 			if ( strlen( $hostname ) <= 3 AND $key >= 1 )
@@ -627,9 +647,9 @@ if ( ! function_exists( 'parse_domain' ) )
 		else
 		{
 			$result[ 'sub_domain' ] = $x_domain[ 0 ];
-			$x_domain = array_slice( $x_domain, 1 );
-			$result[ 'domain' ] = implode( '.', array_merge( $x_domain, $result[ 'tld' ] ) );
-			$result[ 'host' ] = implode( '.', $x_domain );
+			$x_domain               = array_slice( $x_domain, 1 );
+			$result[ 'domain' ]     = implode( '.', array_merge( $x_domain, $result[ 'tld' ] ) );
+			$result[ 'host' ]       = implode( '.', $x_domain );
 		}
 
 		if ( $result[ 'tld' ][ 0 ] === $result[ 'domain' ] )
@@ -650,6 +670,6 @@ if ( ! function_exists( 'parse_request' ) )
 {
 	function parse_request( $request = NULL )
 	{
-
+		// @todo parse from $_SERVER['REQUEST']
 	}
 }

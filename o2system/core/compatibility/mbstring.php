@@ -112,7 +112,7 @@ if( ! function_exists( 'mb_strlen' ) )
      *
      * @return    string
      */
-    function mb_strlen( $str, $encoding = NULL )
+    function mbStrlen($str, $encoding = NULL )
     {
         if( ICONV_ENABLED === TRUE )
         {
@@ -127,7 +127,7 @@ if( ! function_exists( 'mb_strlen' ) )
 
 // ------------------------------------------------------------------------
 
-if( ! function_exists( 'mb_strpos' ) )
+if( ! function_exists('mbStrpos') )
 {
     /**
      * mb_strpos()
@@ -144,7 +144,7 @@ if( ! function_exists( 'mb_strpos' ) )
      *
      * @return    mixed
      */
-    function mb_strpos( $haystack, $needle, $offset = 0, $encoding = NULL )
+    function mbStrpos($haystack, $needle, $offset = 0, $encoding = NULL )
     {
         if( ICONV_ENABLED === TRUE )
         {
@@ -176,7 +176,7 @@ if( ! function_exists( 'mb_substr' ) )
      *
      * @return    string
      */
-    function mb_substr( $str, $start, $length = NULL, $encoding = NULL )
+    function mbSubstr($str, $start, $length = NULL, $encoding = NULL )
     {
         if( ICONV_ENABLED === TRUE )
         {

@@ -71,7 +71,7 @@ class Apc extends Driver
      */
     public function initialize()
     {
-        return $this->is_supported();
+        return $this->isSupported();
     }
 
     // ------------------------------------------------------------------------
@@ -232,7 +232,7 @@ class Apc extends Driver
      * @return  bool
      * @throws  Exception
      */
-    public function is_supported()
+    public function isSupported()
     {
         if( ! extension_loaded( 'apc' ) OR ! ini_get( 'apc.enabled' ) )
         {

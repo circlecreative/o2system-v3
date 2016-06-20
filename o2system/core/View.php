@@ -70,7 +70,7 @@ class View extends Template
 		$config = \O2System::$config->load( 'view', TRUE );
 
 		// Set View Paths
-		$this->set_paths( \O2System::Load()->getPackagePaths( NULL, TRUE ) );
+		$this->setPaths( \O2System::Load()->getPackagePaths( NULL, TRUE ) );
 
 		parent::__reconstruct( $config );
 	}
@@ -95,12 +95,12 @@ class View extends Template
 
 			if ( isset( $vars[ 'title' ] ) )
 			{
-				$this->add_title( $vars[ 'title' ] );
+				$this->addTitle( $vars[ 'title' ] );
 			}
 			else
 			{
 				$title = readable( $path_info[ 'filename' ] );
-				$this->add_title( $title );
+				$this->addTitle( $title );
 			}
 
 			return $this->load( $page, $vars, $return );
@@ -109,12 +109,12 @@ class View extends Template
 		{
 			if ( isset( $vars[ 'title' ] ) )
 			{
-				$this->add_title( $vars[ 'title' ] );
+				$this->addTitle( $vars[ 'title' ] );
 			}
 			else
 			{
 				$title = readable( $page );
-				$this->add_title( $title );
+				$this->addTitle( $title );
 			}
 
 			return $this->load( APPSPATH . 'pages/' . $page . '.phtml', $vars, $return );
@@ -183,7 +183,7 @@ class View extends Template
 		{
 			if ( method_exists( \O2System::Controller(), '__output' ) )
 			{
-				\O2System::Controller()->__output( $this->output->get_content() );
+				\O2System::Controller()->__output( $this->output->getContent() );
 			}
 
 			$this->output->render();

@@ -37,13 +37,12 @@
  */
 // ------------------------------------------------------------------------
 
-namespace O2System\Libraries\Social;
-defined( 'BASEPATH' ) OR exit( 'No direct script access allowed' );
+namespace O2System\Libraries\Social\Drivers;
+defined( 'ROOTPATH' ) OR exit( 'No direct script access allowed' );
 
 // ------------------------------------------------------------------------
 
-use O2System\Libraries\Social\Factory\Driver;
-use O2System\Libraries\Social\Factory\Session;
+use O2System\Glob\Interfaces\DriverInterface;
 
 /**
  * Facebook SDK Driver
@@ -53,10 +52,21 @@ use O2System\Libraries\Social\Factory\Session;
  * @category      driver class
  * @author        Steeven Andrian Salim
  */
-class Google extends Driver
+class Google extends DriverInterface
 {
+	protected $_url = [
+		'share' => 'https://plus.google.com/share?url=%s',
+		'api'   => 'https://www.googleapis.com/plus',
+	];
 	protected $_api_url = 'https://www.googleapis.com/plus';
 	protected $_client  = NULL;
+
+	public function getShareLink( $link = NULL )
+	{
+		$link = isset( $link ) ? $link : current_url();
+
+		return sprintf( $this->_url[ 'share' ], urlencode( $link ) );
+	}
 
 	/**
 	 * Driver Constructor
@@ -65,7 +75,7 @@ class Google extends Driver
 	 */
 	public function initialize()
 	{
-		$controller =& get_instance();
+		/*$controller =& get_instance();
 		$load->helper( 'url' );
 
 		$this->_session_name = 'social_' . strtolower( get_namespace_class( get_called_class() ) );
@@ -75,10 +85,10 @@ class Google extends Driver
 			static::$_session = new Session( $this->_session_name );
 		}
 
-		$this->_client = new \Google_Client();
+		$this->_client = new \Google_Client();*/
 	}
 
-	public function get_authorize_url( $callback )
+	public function getAuthorizeUrl($callback )
 	{
 		$this->_config[ 'app_callback_url' ] = strpos( $callback, 'http' ) !== FALSE ? $callback : base_url( $callback );
 
@@ -88,12 +98,12 @@ class Google extends Driver
 		$this->_client->setScopes( $this->_config[ 'app_permissions' ] );
 
 		$controller =& get_instance();
-		$session->set_userdata( $this->_session_name, [ 'app_callback_url' => $this->_config[ 'app_callback_url' ] ] );
+		$session->setUserdata( $this->_session_name, [ 'app_callback_url' => $this->_config[ 'app_callback_url' ] ] );
 
 		return $this->_client->createAuthUrl();
 	}
 
-	public function set_connection()
+	public function setConnection()
 	{
 		$controller =& get_instance();
 		$request_token = $session->userdata( $this->_session_name );
@@ -116,7 +126,7 @@ class Google extends Driver
 				static::$_session[ 'access' ]->oauth_token = $access_token;
 				static::$_session[ 'access' ]->oauth_callback = $request_token[ 'app_callback_url' ];
 
-				$profile = $this->get_profile();
+				$profile = $this->getProfile();
 
 				// Set Session User Data
 				static::$_session[ 'user' ] = new \stdClass();
@@ -129,7 +139,7 @@ class Google extends Driver
 				static::$_session[ 'user' ]->avatar = $profile->picture;
 				static::$_session[ 'user' ]->cover = NULL;
 
-				$session->set_userdata( $this->_session_name, static::$_session );
+				$session->setUserdata( $this->_session_name, static::$_session );
 
 				return TRUE;
 			}
@@ -138,7 +148,7 @@ class Google extends Driver
 		return FALSE;
 	}
 
-	public function request_api( $path = NULL, $params = array(), $method = 'get' )
+	public function requestApi($path = NULL, $params = array(), $method = 'get' )
 	{
 		if( $this->is_connected() )
 		{
@@ -154,9 +164,9 @@ class Google extends Driver
 		return FALSE;
 	}
 
-	public function get_profile()
+	public function getProfile()
 	{
-		if( $this->request_api() )
+		if( $this->requestApi() )
 		{
 			$plus = new \Google_Service_Oauth2( $this->_client );
 
@@ -166,9 +176,9 @@ class Google extends Driver
 		return FALSE;
 	}
 
-	public function get_feeds( $page = 1, $count = 10, array $params = array() )
+	public function getFeeds($page = 1, $count = 10, array $params = array() )
 	{
-		if( $this->request_api() )
+		if( $this->requestApi() )
 		{
 			$plus = new \Google_Service_Plus( $this->_client );
 			$activities = $plus->activities->listActivities( static::$_session[ 'user' ]->id_user, 'public' );
@@ -179,17 +189,17 @@ class Google extends Driver
 		return FALSE;
 	}
 
-	public function post_feed( $feed, array $params = array() )
+	public function postFeed($feed, array $params = array() )
 	{
 
 	}
 
-	public function post_link( $status, $link )
+	public function postLink($status, $link )
 	{
 
 	}
 
-	public function post_media( $status, $media )
+	public function postMedia($status, $media )
 	{
 
 	}

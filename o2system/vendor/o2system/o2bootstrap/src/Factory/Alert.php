@@ -83,16 +83,16 @@ class Alert extends FactoryInterface
 	{
 		@list( $content, $type, $attr ) = func_get_args();
 
-		$this->set_contextual_class_prefix( 'alert' );
+		$this->setContextualClassPrefix( 'alert' );
 
 		if ( is_array( $content ) )
 		{
 			$lists = new Lists( Lists::LIST_UNSTYLED );
-			$lists->add_class( 'alert-list' );
+			$lists->addClass( 'alert-list' );
 
 			foreach ( $content as $list )
 			{
-				$lists->add_item( $list );
+				$lists->addItem( $list );
 			}
 
 			$this->_content[] = $lists;
@@ -103,7 +103,7 @@ class Alert extends FactoryInterface
 				in_array( $content, [ 'default', 'primary' ] )
 			)
 			{
-				$this->{'is_' . $content}();
+				$this->{'is' . studlycapcase($content)}();
 			}
 			else
 			{
@@ -115,7 +115,7 @@ class Alert extends FactoryInterface
 		{
 			if ( is_array( $type ) )
 			{
-				$this->add_attributes( $type );
+				$this->addAttributes( $type );
 			}
 			elseif ( is_string( $type ) )
 			{
@@ -123,7 +123,7 @@ class Alert extends FactoryInterface
 					in_array( $type, [ 'default', 'primary' ] )
 				)
 				{
-					$this->{'is_' . $type}();
+					$this->{'is' . studlycapcase($type)}();
 				}
 			}
 		}
@@ -132,7 +132,7 @@ class Alert extends FactoryInterface
 		{
 			if ( is_array( $attr ) )
 			{
-				$this->add_attributes( $attr );
+				$this->addAttributes( $attr );
 			}
 			elseif ( is_string( $attr ) )
 			{
@@ -140,7 +140,7 @@ class Alert extends FactoryInterface
 					in_array( $attr, [ 'default', 'primary' ] )
 				)
 				{
-					$this->{'is_' . $attr}();
+					$this->{'is' . studlycapcase($attr)}();
 				}
 			}
 		}
@@ -165,10 +165,10 @@ class Alert extends FactoryInterface
 	 *
 	 * @return object
 	 */
-	public function is_dismissible()
+	public function isDismissible()
 	{
 		$this->_is_dismissible = TRUE;
-		$this->add_class( 'alert-dismissible' );
+		$this->addClass( 'alert-dismissible' );
 
 		return $this;
 	}
@@ -183,18 +183,18 @@ class Alert extends FactoryInterface
 	 *
 	 * @return object
 	 */
-	public function set_title( $title, $tag = 'strong', $attr = array() )
+	public function setTitle($title, $tag = 'strong', $attr = array() )
 	{
 		if ( is_array( $tag ) )
 		{
 			$attr = $tag;
 		}
 
-		if ( $title instanceof Factory )
+		if ( $title instanceof FactoryInterface )
 		{
 			$this->title = clone $title;
-			$this->title->set_tag( $tag );
-			$this->title->add_class( 'alert-title' );
+			$this->title->setTag( $tag );
+			$this->title->addClass( 'alert-title' );
 		}
 		else
 		{
@@ -256,9 +256,9 @@ class Alert extends FactoryInterface
 			{
 				if ( isset( $this->icon ) )
 				{
-					$this->icon->add_class( 'alert-icon' );
+					$this->icon->addClass( 'alert-icon' );
 
-					$this->title->prepend_content( $this->icon );
+					$this->title->prependContent( $this->icon );
 				}
 
 				$output[] = $this->title;

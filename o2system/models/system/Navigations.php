@@ -60,7 +60,7 @@ class Navigations extends System
 		$this->load->helpers( [ 'url', 'html' ] );
 	}
 
-	public function get_positions( $module = NULL )
+	public function getPositions($module = NULL )
 	{
 		$this->db->distinct();
 		$this->db->select(
@@ -73,9 +73,9 @@ class Navigations extends System
 		{
 			if ( empty( $module ) )
 			{
-				if ( \O2System::$active->offsetExists( 'module' ) )
+				if ( $module = \O2System::$active[ 'modules' ]->current() )
 				{
-					$this->where( 'sys_registries.code', \O2System::$active[ 'module' ]->code );
+					$this->where( 'sys_registries.code', $module->code );
 				}
 			}
 			elseif( $module instanceof Module )
@@ -86,10 +86,10 @@ class Navigations extends System
 
 		$result = $this->db
 			->where( $this->table . '.record_status', 'PUBLISH' )
-			->order_by( $this->table . '.position' )
+			->orderBy( $this->table . '.position' )
 			->get();
 
-		if ( $result->num_rows() > 0 )
+		if ( $result->numRows() > 0 )
 		{
 			foreach ( $result as $row )
 			{
@@ -112,15 +112,15 @@ class Navigations extends System
 	 *
 	 * @return object
 	 */
-	public function get_items( $position, $conditions = NULL )
+	public function getItems($position, $conditions = NULL )
 	{
 		$this->db->from( $this->table );
 
 		if ( is_null( $conditions ) )
 		{
-			if ( \O2System::$active->offsetExists( 'module' ) )
+			if ( $module = \O2System::$active[ 'modules' ]->current() )
 			{
-				$this->db->where( 'code', \O2System::$active[ 'module' ]->code );
+				$this->db->where( 'code', $module->code );
 			}
 		}
 		elseif ( is_array( $conditions ) )
@@ -139,11 +139,11 @@ class Navigations extends System
 
 		$result = $this->db
 			->where( 'record_status', 'PUBLISH' )
-			->order_by( 'record_left', 'ASC' )
-			->order_by( 'record_ordering', 'ASC' )
+			->orderBy( 'record_left', 'ASC' )
+			->orderBy( 'record_ordering', 'ASC' )
 			->get();
 
-		if ( $result->num_rows() > 0 )
+		if ( $result->numRows() > 0 )
 		{
 			foreach ( $result as $row )
 			{
@@ -168,7 +168,7 @@ class Navigations extends System
 					}
 				}
 
-				if ( $this->has_childs( $row->id ) !== FALSE )
+				if ( $this->hasChilds( $row->id ) !== FALSE )
 				{
 					$row->css_class = trim( $row->css_class . ' has-sub' );
 
@@ -181,7 +181,7 @@ class Navigations extends System
 						$row->attr = ['class'=>'has-sub'];
 					}
 
-					$row->sub = $this->get_items( [ 'id_parent', $row->id ] );
+					$row->sub = $this->getItems( [ 'id_parent', $row->id ] );
 				}
 
 				$results[] = $row;

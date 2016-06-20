@@ -80,7 +80,7 @@ class Redis extends Driver
 	 */
 	public function initialize()
 	{
-		if ( $this->is_supported() )
+		if ( $this->isSupported() )
 		{
 			$handle = new \Redis();
 
@@ -306,7 +306,7 @@ class Redis extends Driver
 	 * @return  bool
 	 * @throws  Exception
 	 */
-	public function is_supported()
+	public function isSupported()
 	{
 		if ( ! extension_loaded( 'redis' ) )
 		{

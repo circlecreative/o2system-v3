@@ -154,7 +154,7 @@ namespace O2System
 				$this->_driver = new $class_name( $config );
 				$this->_driver->connect();
 
-				if ( $this->_driver->is_connected() )
+				if ( $this->_driver->isConnected() )
 				{
 					if ( ! isset( static::$_instance ) )
 					{

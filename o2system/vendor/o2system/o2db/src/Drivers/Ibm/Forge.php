@@ -47,14 +47,14 @@ class Forge
 	 *
 	 * @return    string|string[]
 	 */
-	protected function _alter_table( $alter_type, $table, $field )
+	protected function _alterTable($alter_type, $table, $field )
 	{
 		if ( $alter_type === 'CHANGE' )
 		{
 			$alter_type = 'MODIFY';
 		}
 
-		return parent::_alter_table( $alter_type, $table, $field );
+		return parent::_alterTable( $alter_type, $table, $field );
 	}
 
 	// --------------------------------------------------------------------
@@ -68,7 +68,7 @@ class Forge
 	 *
 	 * @return    void
 	 */
-	protected function _attr_type( &$attributes )
+	protected function _attrType(&$attributes )
 	{
 		switch ( strtoupper( $attributes[ 'TYPE' ] ) )
 		{
@@ -97,7 +97,7 @@ class Forge
 	 *
 	 * @return    void
 	 */
-	protected function _attr_unique( &$attributes, &$field )
+	protected function _attrUnique(&$attributes, &$field )
 	{
 		if ( ! empty( $attributes[ 'UNIQUE' ] ) && $attributes[ 'UNIQUE' ] === TRUE )
 		{
@@ -118,7 +118,7 @@ class Forge
 	 *
 	 * @return    void
 	 */
-	protected function _attr_auto_increment( &$attributes, &$field )
+	protected function _attrAutoIncrement(&$attributes, &$field )
 	{
 		// Not supported
 	}

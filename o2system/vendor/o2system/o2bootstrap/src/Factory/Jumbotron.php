@@ -73,7 +73,7 @@ class Jumbotron extends FactoryInterface
 
 		if ( is_array( $attr ) )
 		{
-			$this->add_attributes( $attr );
+			$this->addAttributes( $attr );
 		}
 
 		return $this;
@@ -99,7 +99,7 @@ class Jumbotron extends FactoryInterface
 		return $this;
 	}
 
-	public function set_image( $image )
+	public function setImage($image )
 	{
 		if ( is_file( $image ) )
 		{
@@ -112,7 +112,7 @@ class Jumbotron extends FactoryInterface
 			'background-size: cover',
 		);
 
-		$this->add_attribute( 'style', implode( ';', $style ) );
+		$this->addAttribute( 'style', implode( ';', $style ) );
 
 		return $this;
 	}
@@ -125,7 +125,7 @@ class Jumbotron extends FactoryInterface
 	 *
 	 * @return object
 	 */
-	public function set_header( $title, $tag = 'h1', $attr = array() )
+	public function setHeader($title, $tag = 'h1', $attr = array() )
 	{
 		if ( is_array( $tag ) )
 		{
@@ -135,21 +135,21 @@ class Jumbotron extends FactoryInterface
 		if ( $title instanceof FactoryInterface )
 		{
 			$this->header = clone $title;
-			$this->header->set_tag( $tag );
+			$this->header->setTag( $tag );
 		}
 		else
 		{
 			$this->header = new Tag( $tag, ucwords( $title ), $attr );
 		}
 
-		$this->header->add_class( 'jumbotron-header' );
+		$this->header->addClass( 'jumbotron-header' );
 		
 		return $this;
 	}
 	
 	// ------------------------------------------------------------------------
 
-	public function set_description( $description, $tag = 'p', $attr = array() )
+	public function setDescription($description, $tag = 'p', $attr = array() )
 	{
 		if ( is_array( $tag ) )
 		{
@@ -166,7 +166,7 @@ class Jumbotron extends FactoryInterface
 			$this->description = new Tag( $tag, $description, $attr );
 		}
 
-		$this->description->add_class( 'jumbotron-description' );
+		$this->description->addClass( 'jumbotron-description' );
 
 		return $this;
 	}
@@ -180,7 +180,7 @@ class Jumbotron extends FactoryInterface
 	 *
 	 * @return object
 	 */
-	public function set_link( $link, $attr = array() )
+	public function setLink($link, $attr = array() )
 	{
 		if ( $link instanceof Link )
 		{
@@ -196,7 +196,7 @@ class Jumbotron extends FactoryInterface
 
 	// ------------------------------------------------------------------------
 
-	public function add_button( $label, $attr = array() )
+	public function addButton($label, $attr = array() )
 	{
 		if ( $label instanceof Button )
 		{
@@ -229,13 +229,13 @@ class Jumbotron extends FactoryInterface
 				{
 					$header = clone $this->link;
 
-					if ( method_exists( $header, 'append_content' ) )
+					if ( method_exists( $header, 'appendContent' ) )
 					{
-						$header->append_content( $this->header );
+						$header->appendContent( $this->header );
 					}
-					elseif ( method_exists( $header, 'append_label' ) )
+					elseif ( method_exists( $header, 'appendLabel' ) )
 					{
-						$header->append_label( $this->header );
+						$header->appendLabel( $this->header );
 					}
 				}
 				else

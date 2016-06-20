@@ -187,7 +187,7 @@ abstract class Forge
 	 *
 	 * @return    bool
 	 */
-	public function create_database( $db_name )
+	public function createDatabase($db_name )
 	{
 		if ( $this->_create_database === FALSE )
 		{
@@ -215,7 +215,7 @@ abstract class Forge
 	 *
 	 * @return    bool
 	 */
-	public function drop_database( $db_name )
+	public function dropDatabase($db_name )
 	{
 		if ( $this->_drop_database === FALSE )
 		{
@@ -248,13 +248,13 @@ abstract class Forge
 	 *
 	 * @return    O2DB_DB_forge
 	 */
-	public function add_key( $key, $primary = FALSE )
+	public function addKey($key, $primary = FALSE )
 	{
 		if ( $primary === TRUE && is_array( $key ) )
 		{
 			foreach ( $key as $one )
 			{
-				$this->add_key( $one, $primary );
+				$this->addKey( $one, $primary );
 			}
 
 			return $this;
@@ -281,20 +281,20 @@ abstract class Forge
 	 *
 	 * @return    O2DB_DB_forge
 	 */
-	public function add_field( $field )
+	public function addField($field )
 	{
 		if ( is_string( $field ) )
 		{
 			if ( $field === 'id' )
 			{
-				$this->add_field( array(
+				$this->addField( array(
 					                  'id' => array(
 						                  'type'           => 'INT',
 						                  'constraint'     => 9,
 						                  'auto_increment' => TRUE,
 					                  ),
 				                  ) );
-				$this->add_key( 'id', TRUE );
+				$this->addKey( 'id', TRUE );
 			}
 			else
 			{
@@ -326,7 +326,7 @@ abstract class Forge
 	 *
 	 * @return    bool
 	 */
-	public function create_table( $table, $if_not_exists = FALSE, array $attributes = array() )
+	public function createTable($table, $if_not_exists = FALSE, array $attributes = array() )
 	{
 		if ( $table === '' )
 		{
@@ -342,7 +342,7 @@ abstract class Forge
 			throw new Exception( 'Field information is required.' );
 		}
 
-		$sql = $this->_create_table( $table, $if_not_exists, $attributes );
+		$sql = $this->_createTable( $table, $if_not_exists, $attributes );
 
 		if ( is_bool( $sql ) )
 		{
@@ -360,7 +360,7 @@ abstract class Forge
 			// Most databases don't support creating indexes from within the CREATE TABLE statement
 			if ( ! empty( $this->keys ) )
 			{
-				for ( $i = 0, $sqls = $this->_process_indexes( $table ), $c = count( $sqls ); $i < $c; $i++ )
+				for ($i = 0, $sqls = $this->_processIndexes( $table ), $c = count( $sqls ); $i < $c; $i++ )
 				{
 					$this->_driver->query( $sqls[ $i ] );
 				}
@@ -383,11 +383,11 @@ abstract class Forge
 	 *
 	 * @return    mixed
 	 */
-	protected function _create_table( $table, $if_not_exists, $attributes )
+	protected function _createTable($table, $if_not_exists, $attributes )
 	{
 		if ( $if_not_exists === TRUE && $this->_create_table_if === FALSE )
 		{
-			if ( $this->_driver->table_exists( $table ) )
+			if ( $this->_driver->tableExists( $table ) )
 			{
 				return TRUE;
 			}
@@ -398,32 +398,32 @@ abstract class Forge
 		}
 
 		$sql = ( $if_not_exists )
-			? sprintf( $this->_create_table_if, $this->_driver->escape_identifiers( $table ) )
+			? sprintf( $this->_create_table_if, $this->_driver->escapeIdentifiers( $table ) )
 			: 'CREATE TABLE';
 
-		$columns = $this->_process_fields( TRUE );
+		$columns = $this->_processFields( TRUE );
 		for ( $i = 0, $c = count( $columns ); $i < $c; $i++ )
 		{
 			$columns[ $i ] = ( $columns[ $i ][ '_literal' ] !== FALSE )
 				? "\n\t" . $columns[ $i ][ '_literal' ]
-				: "\n\t" . $this->_process_column( $columns[ $i ] );
+				: "\n\t" . $this->_processColumn( $columns[ $i ] );
 		}
 
 		$columns = implode( ',', $columns )
-			. $this->_process_primary_keys( $table );
+			. $this->_processPrimaryKeys( $table );
 
 		// Are indexes created from within the CREATE TABLE statement? (e.g. in MySQL)
 		if ( $this->_create_table_keys === TRUE )
 		{
-			$columns .= $this->_process_indexes( $table );
+			$columns .= $this->_processIndexes( $table );
 		}
 
 		// _create_table will usually have the following format: "%s %s (%s\n)"
 		$sql = sprintf( $this->_create_table . '%s',
 		                $sql,
-		                $this->_driver->escape_identifiers( $table ),
+		                $this->_driver->escapeIdentifiers( $table ),
 		                $columns,
-		                $this->_create_table_attr( $attributes )
+		                $this->_createTableAttr( $attributes )
 		);
 
 		return $sql;
@@ -438,7 +438,7 @@ abstract class Forge
 	 *
 	 * @return    string
 	 */
-	protected function _create_table_attr( $attributes )
+	protected function _createTableAttr($attributes )
 	{
 		$sql = '';
 
@@ -455,14 +455,14 @@ abstract class Forge
 
 	// --------------------------------------------------------------------
 
-	public function truncate_table( $table_name )
+	public function truncateTable($table_name )
 	{
 		if ( $table_name === '' )
 		{
 			throw new Exception( 'A table name is required for that operation.' );
 		}
 
-		$query = $this->_truncate_table( $this->_driver->table_prefix . $table_name );
+		$query = $this->_truncateTable( $this->_driver->table_prefix . $table_name );
 		
 		if ( $query === FALSE )
 		{
@@ -482,14 +482,14 @@ abstract class Forge
 	 *
 	 * @return    bool
 	 */
-	public function drop_table( $table_name, $if_exists = FALSE )
+	public function dropTable($table_name, $if_exists = FALSE )
 	{
 		if ( $table_name === '' )
 		{
 			throw new Exception( 'A table name is required for that operation.' );
 		}
 
-		$query = $this->_driver->_drop_table( $this->_driver->table_prefix . $table_name, $if_exists );
+		$query = $this->_driver->_dropTable( $this->_driver->table_prefix . $table_name, $if_exists );
 
 		if ( $query === FALSE )
 		{
@@ -527,7 +527,7 @@ abstract class Forge
 	 *
 	 * @return    string
 	 */
-	protected function _drop_table( $table, $if_exists )
+	protected function _dropTable($table, $if_exists )
 	{
 		$sql = 'DROP TABLE';
 
@@ -535,18 +535,18 @@ abstract class Forge
 		{
 			if ( $this->_drop_table_if === FALSE )
 			{
-				if ( ! $this->_driver->table_exists( $table ) )
+				if ( ! $this->_driver->tableExists( $table ) )
 				{
 					return TRUE;
 				}
 			}
 			else
 			{
-				$sql = sprintf( $this->_drop_table_if, $this->_driver->escape_identifiers( $table ) );
+				$sql = sprintf( $this->_drop_table_if, $this->_driver->escapeIdentifiers( $table ) );
 			}
 		}
 
-		return $sql . ' ' . $this->_driver->escape_identifiers( $table );
+		return $sql . ' ' . $this->_driver->escapeIdentifiers( $table );
 	}
 
 	// --------------------------------------------------------------------
@@ -559,7 +559,7 @@ abstract class Forge
 	 *
 	 * @return    bool
 	 */
-	public function rename_table( $table_name, $new_table_name )
+	public function renameTable($table_name, $new_table_name )
 	{
 		if ( $table_name === '' OR $new_table_name === '' )
 		{
@@ -573,8 +573,8 @@ abstract class Forge
 		}
 
 		$result = $this->_driver->query( sprintf( $this->_rename_table,
-		                                     $this->_driver->escape_identifiers( $this->_driver->table_prefix . $table_name ),
-		                                     $this->_driver->escape_identifiers( $this->_driver->table_prefix . $new_table_name ) )
+		                                     $this->_driver->escapeIdentifiers( $this->_driver->table_prefix . $table_name ),
+		                                     $this->_driver->escapeIdentifiers( $this->_driver->table_prefix . $new_table_name ) )
 		);
 
 		if ( $result && ! empty( $this->_driver->data_cache[ 'table_names' ] ) )
@@ -602,7 +602,7 @@ abstract class Forge
 	 *
 	 * @return    bool
 	 */
-	public function add_column( $table, $field, $_after = NULL )
+	public function addColumn($table, $field, $_after = NULL )
 	{
 		// Work-around for literal column definitions
 		is_array( $field ) OR $field = array( $field );
@@ -615,10 +615,10 @@ abstract class Forge
 				$field[ $k ][ 'after' ] = $_after;
 			}
 
-			$this->add_field( array( $k => $field[ $k ] ) );
+			$this->addField( array( $k => $field[ $k ] ) );
 		}
 
-		$sqls = $this->_alter_table( 'ADD', $this->_driver->table_prefix . $table, $this->_process_fields() );
+		$sqls = $this->_alterTable( 'ADD', $this->_driver->table_prefix . $table, $this->_processFields() );
 		$this->_reset();
 		if ( $sqls === FALSE )
 		{
@@ -646,9 +646,9 @@ abstract class Forge
 	 *
 	 * @return    bool
 	 */
-	public function drop_column( $table, $column_name )
+	public function dropColumn($table, $column_name )
 	{
-		$sql = $this->_alter_table( 'DROP', $this->_driver->table_prefix . $table, $column_name );
+		$sql = $this->_alterTable( 'DROP', $this->_driver->table_prefix . $table, $column_name );
 		if ( $sql === FALSE )
 		{
 			throw new Exception('Unsupported feature of the database platform you are using.');
@@ -667,14 +667,14 @@ abstract class Forge
 	 *
 	 * @return    bool
 	 */
-	public function modify_column( $table, $field )
+	public function modifyColumn($table, $field )
 	{
 		// Work-around for literal column definitions
 		is_array( $field ) OR $field = array( $field );
 
 		foreach ( array_keys( $field ) as $k )
 		{
-			$this->add_field( array( $k => $field[ $k ] ) );
+			$this->addField( array( $k => $field[ $k ] ) );
 		}
 
 		if ( count( $this->fields ) === 0 )
@@ -682,7 +682,7 @@ abstract class Forge
 			throw new Exception( 'Field information is required.' );
 		}
 
-		$sqls = $this->_alter_table( 'CHANGE', $this->_driver->table_prefix . $table, $this->_process_fields() );
+		$sqls = $this->_alterTable( 'CHANGE', $this->_driver->table_prefix . $table, $this->_processFields() );
 		$this->_reset();
 		if ( $sqls === FALSE )
 		{
@@ -711,14 +711,14 @@ abstract class Forge
 	 *
 	 * @return    string|string[]
 	 */
-	protected function _alter_table( $alter_type, $table, $field )
+	protected function _alterTable($alter_type, $table, $field )
 	{
-		$sql = 'ALTER TABLE ' . $this->_driver->escape_identifiers( $table ) . ' ';
+		$sql = 'ALTER TABLE ' . $this->_driver->escapeIdentifiers( $table ) . ' ';
 
 		// DROP has everything it needs now.
 		if ( $alter_type === 'DROP' )
 		{
-			return $sql . 'DROP COLUMN ' . $this->_driver->escape_identifiers( $field );
+			return $sql . 'DROP COLUMN ' . $this->_driver->escapeIdentifiers( $field );
 		}
 
 		$sql .= ( $alter_type === 'ADD' )
@@ -729,7 +729,7 @@ abstract class Forge
 		for ( $i = 0, $c = count( $field ); $i < $c; $i++ )
 		{
 			$sqls[] = $sql
-				. ( $field[ $i ][ '_literal' ] !== FALSE ? $field[ $i ][ '_literal' ] : $this->_process_column( $field[ $i ] ) );
+				. ( $field[ $i ][ '_literal' ] !== FALSE ? $field[ $i ][ '_literal' ] : $this->_processColumn( $field[ $i ] ) );
 		}
 
 		return $sqls;
@@ -744,7 +744,7 @@ abstract class Forge
 	 *
 	 * @return    array
 	 */
-	protected function _process_fields( $create_table = FALSE )
+	protected function _processFields($create_table = FALSE )
 	{
 		$fields = array();
 
@@ -763,7 +763,7 @@ abstract class Forge
 				continue;
 			}
 
-			isset( $attributes[ 'TYPE' ] ) && $this->_attr_type( $attributes );
+			isset( $attributes[ 'TYPE' ] ) && $this->_attrType( $attributes );
 
 			$field = array(
 				'name'           => $key,
@@ -778,7 +778,7 @@ abstract class Forge
 				'_literal'       => FALSE,
 			);
 
-			isset( $attributes[ 'TYPE' ] ) && $this->_attr_unsigned( $attributes, $field );
+			isset( $attributes[ 'TYPE' ] ) && $this->_attrUnsigned( $attributes, $field );
 
 			if ( $create_table === FALSE )
 			{
@@ -792,7 +792,7 @@ abstract class Forge
 				}
 			}
 
-			$this->_attr_default( $attributes, $field );
+			$this->_attrDefault( $attributes, $field );
 
 			if ( isset( $attributes[ 'NULL' ] ) )
 			{
@@ -810,8 +810,8 @@ abstract class Forge
 				$field[ 'null' ] = ' NOT NULL';
 			}
 
-			$this->_attr_auto_increment( $attributes, $field );
-			$this->_attr_unique( $attributes, $field );
+			$this->_attrAutoIncrement( $attributes, $field );
+			$this->_attrUnique( $attributes, $field );
 
 			if ( isset( $attributes[ 'COMMENT' ] ) )
 			{
@@ -852,9 +852,9 @@ abstract class Forge
 	 *
 	 * @return    string
 	 */
-	protected function _process_column( $field )
+	protected function _processColumn($field )
 	{
-		return $this->_driver->escape_identifiers( $field[ 'name' ] )
+		return $this->_driver->escapeIdentifiers( $field[ 'name' ] )
 		. ' ' . $field[ 'type' ] . $field[ 'length' ]
 		. $field[ 'unsigned' ]
 		. $field[ 'default' ]
@@ -874,7 +874,7 @@ abstract class Forge
 	 *
 	 * @return    void
 	 */
-	protected function _attr_type( &$attributes )
+	protected function _attrType(&$attributes )
 	{
 		// Usually overridden by drivers
 	}
@@ -898,7 +898,7 @@ abstract class Forge
 	 *
 	 * @return    void
 	 */
-	protected function _attr_unsigned( &$attributes, &$field )
+	protected function _attrUnsigned(&$attributes, &$field )
 	{
 		if ( empty( $attributes[ 'UNSIGNED' ] ) OR $attributes[ 'UNSIGNED' ] !== TRUE )
 		{
@@ -942,7 +942,7 @@ abstract class Forge
 	 *
 	 * @return    void
 	 */
-	protected function _attr_default( &$attributes, &$field )
+	protected function _attrDefault(&$attributes, &$field )
 	{
 		if ( $this->_default === FALSE )
 		{
@@ -976,7 +976,7 @@ abstract class Forge
 	 *
 	 * @return    void
 	 */
-	protected function _attr_unique( &$attributes, &$field )
+	protected function _attrUnique(&$attributes, &$field )
 	{
 		if ( ! empty( $attributes[ 'UNIQUE' ] ) && $attributes[ 'UNIQUE' ] === TRUE )
 		{
@@ -994,7 +994,7 @@ abstract class Forge
 	 *
 	 * @return    void
 	 */
-	protected function _attr_auto_increment( &$attributes, &$field )
+	protected function _attrAutoIncrement(&$attributes, &$field )
 	{
 		if ( ! empty( $attributes[ 'AUTO_INCREMENT' ] ) && $attributes[ 'AUTO_INCREMENT' ] === TRUE && stripos( $field[ 'type' ], 'int' ) !== FALSE )
 		{
@@ -1011,7 +1011,7 @@ abstract class Forge
 	 *
 	 * @return    string
 	 */
-	protected function _process_primary_keys( $table )
+	protected function _processPrimaryKeys($table )
 	{
 		$sql = '';
 
@@ -1025,8 +1025,8 @@ abstract class Forge
 
 		if ( count( $this->primary_keys ) > 0 )
 		{
-			$sql .= ",\n\tCONSTRAINT " . $this->_driver->escape_identifiers( 'pk_' . $table )
-				. ' PRIMARY KEY(' . implode( ', ', $this->_driver->escape_identifiers( $this->primary_keys ) ) . ')';
+			$sql .= ",\n\tCONSTRAINT " . $this->_driver->escapeIdentifiers( 'pk_' . $table )
+				. ' PRIMARY KEY(' . implode( ', ', $this->_driver->escapeIdentifiers( $this->primary_keys ) ) . ')';
 		}
 
 		return $sql;
@@ -1041,7 +1041,7 @@ abstract class Forge
 	 *
 	 * @return    string
 	 */
-	protected function _process_indexes( $table )
+	protected function _processIndexes($table )
 	{
 		$sqls = array();
 
@@ -1066,9 +1066,9 @@ abstract class Forge
 
 			is_array( $this->keys[ $i ] ) OR $this->keys[ $i ] = array( $this->keys[ $i ] );
 
-			$sqls[] = 'CREATE INDEX ' . $this->_driver->escape_identifiers( $table . '_' . implode( '_', $this->keys[ $i ] ) )
-				. ' ON ' . $this->_driver->escape_identifiers( $table )
-				. ' (' . implode( ', ', $this->_driver->escape_identifiers( $this->keys[ $i ] ) ) . ');';
+			$sqls[] = 'CREATE INDEX ' . $this->_driver->escapeIdentifiers( $table . '_' . implode( '_', $this->keys[ $i ] ) )
+				. ' ON ' . $this->_driver->escapeIdentifiers( $table )
+				. ' (' . implode( ', ', $this->_driver->escapeIdentifiers( $this->keys[ $i ] ) ) . ');';
 		}
 
 		return $sqls;

@@ -156,7 +156,7 @@ class Smarty extends Driver
 	 * @access  public
 	 * @return  string  Parse Output Result
 	 */
-	public function parse_string( $string, $vars = array() )
+	public function parseString($string, $vars = array() )
 	{
 		if ( ! is_string( $string ) ) return '';
 
@@ -181,7 +181,7 @@ class Smarty extends Driver
 	 * @internal param array $cache_attr caching attributes if any
 	 *
 	 */
-	public function register_plugin()
+	public function registerPlugin()
 	{
 		@list( $type, $tag, $callback, $cacheable, $cache_attr ) = func_get_args();
 

@@ -65,11 +65,11 @@ class Lists extends FactoryInterface
 	protected $_tag         = 'ul';
 	protected $_item_active = NULL;
 
-	protected $_types = array(
+	protected $_types = [
 		'group',
 		'inline',
 		'unstyled',
-	);
+	];
 
 	protected $_nested_items;
 
@@ -80,11 +80,11 @@ class Lists extends FactoryInterface
 
 		if ( is_array( $type ) )
 		{
-			$this->add_attributes( $type );
+			$this->addAttributes( $type );
 		}
 		elseif ( in_array( strtolower( str_replace( 'LIST_', '', $type ) ), $this->_types ) )
 		{
-			$this->add_class( 'list-' . strtolower( str_replace( 'LIST_', '', $type ) ) );
+			$this->addClass( 'list-' . strtolower( str_replace( 'LIST_', '', $type ) ) );
 		}
 		elseif ( $type === self::LIST_NUMBERED )
 		{
@@ -99,14 +99,14 @@ class Lists extends FactoryInterface
 		{
 			if ( is_array( $attr ) )
 			{
-				$this->add_attributes( $attr );
+				$this->addAttributes( $attr );
 			}
 		}
 
 		return $this;
 	}
 
-	public function add_items( array $items )
+	public function addItems( array $items )
 	{
 		foreach ( $items as $key => $item )
 		{
@@ -116,7 +116,7 @@ class Lists extends FactoryInterface
 			}
 			else
 			{
-				$this->add_item( $item, $key );
+				$this->addItem( $item, $key );
 			}
 		}
 
@@ -143,11 +143,11 @@ class Lists extends FactoryInterface
 				if ( isset( $this->_nested_items[ $nested_items->id ] ) )
 				{
 					$items[ $key ] = new Tag( 'li', $nested_items[ 'item' ] );
-					$lists = new Lists();
+					$lists         = new Lists();
 
-					$lists->add_items( $this->_buildNestedItems( $nested_items->id ) );
+					$lists->addItems( $this->_buildNestedItems( $nested_items->id ) );
 
-					$items[ $key ]->append_content( $lists );
+					$items[ $key ]->appendContent( $lists );
 				}
 				else
 				{
@@ -164,7 +164,7 @@ class Lists extends FactoryInterface
 		return (bool) ( isset( $this->_nested_items[ $id_parent ] ) );
 	}
 
-	public function add_item( $item, $describe = NULL, $attr = array(), $key = NULL )
+	public function addItem( $item, $describe = NULL, $attr = [ ], $key = NULL )
 	{
 		if ( $this->_tag === 'dl' )
 		{
@@ -228,7 +228,7 @@ class Lists extends FactoryInterface
 				}
 				elseif ( $item instanceof FactoryInterface )
 				{
-					if ( $this->has_class( 'list-group' ) )
+					if ( $this->hasClass( 'list-group' ) )
 					{
 						$badge[] = $item;
 						$badge[] = $describe;
@@ -239,13 +239,13 @@ class Lists extends FactoryInterface
 					{
 						$badge = clone $item;
 
-						if ( method_exists( $badge, 'append_label' ) )
+						if ( method_exists( $badge, 'appendLabel' ) )
 						{
-							$badge->append_label( $describe );
+							$badge->appendLabel( $describe );
 						}
-						elseif ( method_exists( $badge, 'append_content' ) )
+						elseif ( method_exists( $badge, 'appendContent' ) )
 						{
-							$badge->append_content( $describe );
+							$badge->appendContent( $describe );
 						}
 
 						$item = $badge;
@@ -261,7 +261,7 @@ class Lists extends FactoryInterface
 			{
 				$item = new Tag( 'li', [ 'role' => 'separator', 'class' => 'divider' ] );
 			}
-			elseif ( ( $item instanceof FactoryInterface AND $item->get_tag() !== 'li' ) OR is_string( $item ) OR is_numeric( $item ) )
+			elseif ( ( $item instanceof FactoryInterface AND $item->getTag() !== 'li' ) OR is_string( $item ) OR is_numeric( $item ) )
 			{
 				$item = new Tag( 'li', $item, $attr );
 			}
@@ -279,7 +279,7 @@ class Lists extends FactoryInterface
 		return $this;
 	}
 
-	public function set_active( $index )
+	public function setActive( $index )
 	{
 		$this->_item_active = (int) $index;
 
@@ -290,7 +290,7 @@ class Lists extends FactoryInterface
 	{
 		if ( ! empty( $this->_items ) )
 		{
-			$lists = array();
+			$lists = [ ];
 
 			foreach ( $this->_items as $key => $item )
 			{
@@ -298,13 +298,13 @@ class Lists extends FactoryInterface
 				{
 					if ( $key == $this->_item_active )
 					{
-						$item->add_class( 'active' );
+						$item->addClass( 'active' );
 					}
 				}
 
-				if ( $this->has_class( 'list-group' ) )
+				if ( $this->hasClass( 'list-group' ) )
 				{
-					$item->add_class( 'list-group-item' );
+					$item->addClass( 'list-group-item' );
 				}
 
 				if ( method_exists( $item, 'render' ) )
@@ -319,13 +319,13 @@ class Lists extends FactoryInterface
 		return '';
 	}
 
-	public function __call( $method, $args = array() )
+	public function __call( $method, $args = [ ] )
 	{
 		$method = str_replace( 'is_', '', $method );
 
 		if ( method_exists( $this, $method ) )
 		{
-			return call_user_func_array( array( $this, $method ), $args );
+			return call_user_func_array( [ $this, $method ], $args );
 		}
 		else
 		{

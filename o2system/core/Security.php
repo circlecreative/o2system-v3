@@ -1043,12 +1043,12 @@ final class Security
 				}
 				else
 				{
-					\O2System::Session()->set_userdata( 'last_session_request', (int) $session->userdata + 1 );
+					\O2System::Session()->setUserdata( 'last_session_request', (int) $session->userdata + 1 );
 				}
 			}
 			else
 			{
-				\O2System::Session()->set_userdata( 'last_session_request', 1 );
+				\O2System::Session()->setUserdata( 'last_session_request', 1 );
 			}
 		}
 

@@ -91,14 +91,14 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    string|string[]
 	 */
-	protected function _alter_table( $alter_type, $table, $field )
+	protected function _alterTable($alter_type, $table, $field )
 	{
 		if ( $alter_type === 'CHANGE' )
 		{
 			$alter_type = 'MODIFY';
 		}
 
-		return parent::_alter_table( $alter_type, $table, $field );
+		return parent::_alterTable( $alter_type, $table, $field );
 	}
 
 	// --------------------------------------------------------------------
@@ -112,7 +112,7 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    void
 	 */
-	protected function _attr_type( &$attributes )
+	protected function _attrType(&$attributes )
 	{
 		switch ( strtoupper( $attributes[ 'TYPE' ] ) )
 		{
@@ -152,11 +152,11 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    void
 	 */
-	protected function _attr_unique( &$attributes, &$field )
+	protected function _attrUnique(&$attributes, &$field )
 	{
 		if ( ! empty( $attributes[ 'UNIQUE' ] ) && $attributes[ 'UNIQUE' ] === TRUE )
 		{
-			$field[ 'unique' ] = ' UNIQUE CONSTRAINT ' . $this->_driver->escape_identifiers( $field[ 'name' ] );
+			$field[ 'unique' ] = ' UNIQUE CONSTRAINT ' . $this->_driver->escapeIdentifiers( $field[ 'name' ] );
 		}
 	}
 
@@ -170,7 +170,7 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    void
 	 */
-	protected function _attr_auto_increment( &$attributes, &$field )
+	protected function _attrAutoIncrement(&$attributes, &$field )
 	{
 		// Not supported
 	}

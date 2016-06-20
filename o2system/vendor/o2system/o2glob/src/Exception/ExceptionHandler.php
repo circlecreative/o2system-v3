@@ -10,12 +10,12 @@ namespace O2System\Glob\Exception;
 
 
 use O2System\Gears\Trace;
-use O2System\Glob\HttpStatusCode;
+use O2System\Glob\HttpHeaderStatus;
 
 class ExceptionHandler
 {
 	protected $_ob_level = 0;
-	protected $_paths    = array();
+	protected $_paths    = [ ];
 
 	// ------------------------------------------------------------------------
 
@@ -38,9 +38,9 @@ class ExceptionHandler
 	 */
 	public function registerHandler()
 	{
-		set_exception_handler( array( $this, 'showException' ) );
-		register_shutdown_function( array( $this, 'shutdown' ) );
-		set_error_handler( array( $this, 'showError' ) );
+		set_exception_handler( [ $this, 'showException' ] );
+		register_shutdown_function( [ $this, 'shutdown' ] );
+		set_error_handler( [ $this, 'showError' ] );
 	}
 
 	// ------------------------------------------------------------------------
@@ -96,7 +96,7 @@ class ExceptionHandler
 	 */
 	public function setStatusCode( $code )
 	{
-		HttpStatusCode::setHeader( $code );
+		HttpHeaderStatus::setHeader( $code );
 	}
 
 	// ------------------------------------------------------------------------
@@ -155,23 +155,26 @@ class ExceptionHandler
 		{
 			if ( \O2System::Exceptions()->getEnvironment() === 'production' )
 			{
-				redirect( domain_url( 'error/500' ), 'refresh' );
+				if ( \O2System::$active[ 'URI' ]->hasSegment( 'error' ) === FALSE )
+				{
+					redirect( 'error/500', 'refresh' );
+				}
 			}
 
 			if ( ! isset( $exception->library ) )
 			{
-				$exception->library = array(
+				$exception->library = [
 					'name'        => 'O2System Framework',
 					'description' => 'Open Source PHP Framework',
 					'version'     => SYSTEM_VERSION,
-				);
+				];
 			}
 
 			if ( ! isset( $exception->header ) )
 			{
 				\O2System::$language->load( 'exception' );
-				$common_description = \O2System::$language->line( 'EXCEPTIONDESCRIPTION_COMMON' );
-				$exception->header = \O2System::$language->line( 'EXCEPTIONHEADER_' . get_class_name( $exception ) );
+				$common_description     = \O2System::$language->line( 'EXCEPTIONDESCRIPTION_COMMON' );
+				$exception->header      = \O2System::$language->line( 'EXCEPTIONHEADER_' . get_class_name( $exception ) );
 				$exception->description = \O2System::$language->line( 'EXCEPTIONDESCRIPTION_' . get_class_name( $exception ) );
 			}
 		}
@@ -180,18 +183,18 @@ class ExceptionHandler
 			if ( ! isset( $exception->library ) )
 			{
 
-				$exception->library = array(
+				$exception->library = [
 					'name'        => 'O2System Glob (O2Glob)',
 					'description' => 'Open Source Mini PHP Core Framework',
 					'version'     => '1.0',
-				);
+				];
 			}
 
 			if ( ! isset( $exception->header ) )
 			{
 				\O2System\Glob::$language->load( 'exception' );
-				$common_description = \O2System::$language->line( 'EXCEPTIONDESCRIPTION_COMMON' );
-				$exception->header = \O2System::$language->line( 'EXCEPTIONHEADER_' . get_class_name( $exception ) );
+				$common_description     = \O2System::$language->line( 'EXCEPTIONDESCRIPTION_COMMON' );
+				$exception->header      = \O2System::$language->line( 'EXCEPTIONHEADER_' . get_class_name( $exception ) );
 				$exception->description = \O2System::$language->line( 'EXCEPTIONDESCRIPTION_' . get_class_name( $exception ) );
 			}
 		}
@@ -255,7 +258,7 @@ class ExceptionHandler
 		// they are above the error_reporting threshold.
 		if ( $is_error )
 		{
-			$this->setStatusCode( HttpStatusCode::INTERNAL_SERVER_ERROR );
+			$this->setStatusCode( HttpHeaderStatus::INTERNAL_SERVER_ERROR );
 		}
 
 		// Should we ignore the error? We'll get the current error_reporting
@@ -268,7 +271,7 @@ class ExceptionHandler
 		$this->logException( $severity, $message, $filepath, $line );
 
 		// Should we display the error?
-		if ( str_ireplace( array( 'off', 'none', 'no', 'false', 'null' ), '', ini_get( 'display_errors' ) ) )
+		if ( str_ireplace( [ 'off', 'none', 'no', 'false', 'null' ], '', ini_get( 'display_errors' ) ) )
 		{
 			$this->showPhpError( $severity, $message, $filepath, $line );
 		}
@@ -292,10 +295,10 @@ class ExceptionHandler
 	 */
 	public function show404( $page = '', $log_error = TRUE )
 	{
-		HttpStatusCode::setHeader( HttpStatusCode::NOT_FOUND );
+		HttpHeaderStatus::setHeader( HttpHeaderStatus::NOT_FOUND );
 
-		$heading = HttpStatusCode::getHeader( HttpStatusCode::NOT_FOUND );
-		$message = HttpStatusCode::getDescription( HttpStatusCode::NOT_FOUND );
+		$heading = HttpHeaderStatus::getHeader( HttpHeaderStatus::NOT_FOUND );
+		$message = HttpHeaderStatus::getDescription( HttpHeaderStatus::NOT_FOUND );
 
 		// By default we log this, but allow a dev to skip it
 		if ( $log_error )

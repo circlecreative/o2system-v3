@@ -86,7 +86,7 @@ class Mapper
             $class_name = explode( '\\', $class_name );
             $table = strtolower( end( $class_name ) );
 
-            if( $this->_model->db->table_exists( $table ) )
+            if( $this->_model->db->tableExists( $table ) )
             {
                 $this->_model->table = $table;
             }
@@ -104,7 +104,7 @@ class Mapper
         {
             if( empty( $this->_model->fields ) )
             {
-                $this->_model->fields = $this->_model->db->list_fields( $table );
+                $this->_model->fields = $this->_model->db->listFields( $table );
             }
 
             if( empty( $this->_model->primary_key ) OR empty( $this->_model->primary_keys ) )
@@ -159,11 +159,11 @@ class Mapper
 
         foreach( $this->_model->table_prefixes as $table_prefix )
         {
-            if( $this->_model->db->table_exists( $table_prefix . $reference_table ) )
+            if( $this->_model->db->tableExists( $table_prefix . $reference_table ) )
             {
                 if( empty( $reference_fields ) )
                 {
-                    $reference_fields = $this->_model->db->list_fields( $table_prefix . $reference_table );
+                    $reference_fields = $this->_model->db->listFields( $table_prefix . $reference_table );
                 }
 
                 $this->_map[ $reference_alias ] = new \ArrayObject( array(
@@ -194,7 +194,7 @@ class Mapper
      *
      * @return  $this
      */
-    public function set_relation( $relation = 'left' )
+    public function setRelation($relation = 'left' )
     {
         $this->_relation = $relation;
 
@@ -241,7 +241,7 @@ class Mapper
      *
      * @return array|bool
      */
-    public function get_references()
+    public function getReferences()
     {
         if( ! empty( $this->_map ) )
         {

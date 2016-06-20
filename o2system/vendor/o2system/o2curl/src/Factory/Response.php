@@ -88,8 +88,8 @@ class Response
 	{
 		$this->meta = new Metadata( $info );
 		$this->raw_body = $response;
-		$this->body = $this->_parse_response( $response );
-		$this->headers = $this->_parse_headers( $response );
+		$this->body = $this->_parseResponse( $response );
+		$this->headers = $this->_parseHeaders( $response );
 
 		if ( isset( $this->body->meta ) )
 		{
@@ -111,7 +111,7 @@ class Response
 	 *
 	 * @return \O2System\CURL\Factory\Metadata|string
 	 */
-	protected function _parse_response( $response )
+	protected function _parseResponse($response )
 	{
 		if ( strpos( $response, 'HTTP' ) !== FALSE )
 		{
@@ -136,7 +136,7 @@ class Response
 	 * thanks to ricardovermeltfoort@gmail.com
 	 * http://php.net/manual/en/function.http-parse-headers.php#112986
 	 */
-	protected function _parse_headers( $response )
+	protected function _parseHeaders($response )
 	{
 		$raw_headers = substr( $response, 0, $this->meta->header_size );
 

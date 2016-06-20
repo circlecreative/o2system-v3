@@ -77,25 +77,25 @@ class Badge extends FactoryInterface
 
 		if ( isset( $container ) )
 		{
-			$this->set_container( $container );
+			$this->setContainer( $container );
 		}
 
 		if ( isset( $attr ) )
 		{
-			$this->add_attributes( $attr );
+			$this->addAttributes( $attr );
 		}
 
 		return $this;
 	}
 
-	public function set_value( $badge )
+	public function setValue($badge )
 	{
 		$this->_value = $badge;
 
 		return $this;
 	}
 
-	public function set_container( $container )
+	public function setContainer($container )
 	{
 		$this->container = $container;
 
@@ -123,13 +123,13 @@ class Badge extends FactoryInterface
 		{
 			if ( isset( $this->container ) )
 			{
-				if ( method_exists( $this->container, 'append_label' ) )
+				if ( method_exists( $this->container, 'appendLabel' ) )
 				{
-					$this->container->append_label( new Tag( $this->_tag, $this->_value, $this->_attributes ) );
+					$this->container->appendLabel( new Tag( $this->_tag, $this->_value, $this->_attributes ) );
 				}
-				elseif ( method_exists( $this->container, 'append_content' ) )
+				elseif ( method_exists( $this->container, 'appendContent' ) )
 				{
-					$this->container->append_content( new Tag( $this->_tag, $this->_value, $this->_attributes ) );
+					$this->container->appendContent( new Tag( $this->_tag, $this->_value, $this->_attributes ) );
 				}
 
 				return $this->container->render();

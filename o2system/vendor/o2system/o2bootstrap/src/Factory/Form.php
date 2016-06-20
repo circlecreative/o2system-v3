@@ -75,7 +75,7 @@ class Form extends FactoryInterface
 
 		if ( is_string( $type ) )
 		{
-			$this->add_class( 'form-' . $type );
+			$this->addClass( 'form-' . $type );
 		}
 		elseif ( is_array( $type ) )
 		{
@@ -84,7 +84,7 @@ class Form extends FactoryInterface
 
 		if ( isset( $attr ) )
 		{
-			$this->add_attributes( $attr );
+			$this->addAttributes( $attr );
 		}
 
 		return $this;
@@ -94,7 +94,7 @@ class Form extends FactoryInterface
 	// ------------------------------------------------------------------------
 
 
-	public function add_group( $group )
+	public function addGroup($group )
 	{
 		if ( ! in_array( $group, array_keys( $this->fieldsets ) ) )
 		{
@@ -102,12 +102,12 @@ class Form extends FactoryInterface
 		}
 	}
 
-	public function set_type( $type )
+	public function setType($type )
 	{
 		$this->_type = $type;
 	}
 
-	public function set_attributes( array $attr )
+	public function setAttributes(array $attr )
 	{
 		if ( class_exists( 'O2System', FALSE ) )
 		{
@@ -117,12 +117,12 @@ class Form extends FactoryInterface
 			}
 		}
 
-		$this->add_attributes( $attr );
+		$this->addAttributes( $attr );
 
 		return $this;
 	}
 
-	public function set_layout( $layout )
+	public function setLayout($layout )
 	{
 		$this->_layout = $layout;
 
@@ -130,7 +130,7 @@ class Form extends FactoryInterface
 		{
 			case 'columns':
 
-				$this->add_group( 'sidebar' );
+				$this->addGroup( 'sidebar' );
 
 				break;
 
@@ -143,18 +143,18 @@ class Form extends FactoryInterface
 		return $this;
 	}
 
-	public function set_fieldsets( array $fieldsets, $group = 'main' )
+	public function setFieldsets(array $fieldsets, $group = 'main' )
 	{
 		if ( array_key_exists( $group, $this->_fieldsets ) )
 		{
 			foreach ( $fieldsets as $legend => $fieldset )
 			{
-				$this->set_fieldset( $fieldset, $legend, $group );
+				$this->setFieldset( $fieldset, $legend, $group );
 			}
 		}
 	}
 
-	public function set_fieldset( array $fieldset, $legend = '', $group = 'main' )
+	public function setFieldset(array $fieldset, $legend = '', $group = 'main' )
 	{
 		if ( array_key_exists( $group, $this->_fieldsets ) )
 		{
@@ -162,7 +162,7 @@ class Form extends FactoryInterface
 		}
 	}
 
-	public function set_buttons( array $buttons )
+	public function setButtons(array $buttons )
 	{
 		$this->_custom_buttons = $buttons;
 	}
@@ -203,8 +203,8 @@ class Form extends FactoryInterface
 				{
 					if ( is_file( $filepath = $layout_path . $this->_config[ 'layout' ] . $extension ) )
 					{
-						$content = $this->_library->parser->parse_file( $filepath, [ 'fieldsets' => $fieldsets, 'buttons' => $buttons ], TRUE );
-						$form->set_content( $content );
+						$content = $this->_library->parser->parseFile( $filepath, [ 'fieldsets' => $fieldsets, 'buttons' => $buttons ], TRUE );
+						$form->setContent( $content );
 					}
 				}
 			}

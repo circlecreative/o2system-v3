@@ -38,7 +38,7 @@ interface iXHProfRuns {
 	 * Also, a brief description of the run is returned via the
 	 * $run_desc out parameter.
 	 */
-	public function get_run($run_id, $type, &$run_desc);
+	public function getRun($run_id, $type, &$run_desc);
 
 	/**
 	 * Save XHProf data for a profiler run of specified type
@@ -52,7 +52,7 @@ interface iXHProfRuns {
 	 * Returns the run id for the saved XHProf run.
 	 *
 	 */
-	public function save_run($xhprof_data, $type, $run_id = null);
+	public function saveRun($xhprof_data, $type, $run_id = null);
 }
 
 
@@ -70,11 +70,11 @@ class XHProfRuns_Default implements iXHProfRuns {
 	private $dir = '';
 	private $suffix = 'xhprof';
 
-	private function gen_run_id($type) {
+	private function genRunId($type) {
 		return uniqid();
 	}
 
-	private function file_name($run_id, $type) {
+	private function fileName($run_id, $type) {
 
 		$file = "$run_id.$type." . $this->suffix;
 
@@ -97,7 +97,7 @@ class XHProfRuns_Default implements iXHProfRuns {
 
 				$dir = sys_get_temp_dir();
 
-				xhprof_error("Warning: Must specify directory location for XHProf runs. ".
+				xhprofError("Warning: Must specify directory location for XHProf runs. ".
 				             "Trying {$dir} as default. You can either pass the " .
 				             "directory location as an argument to the constructor ".
 				             "for XHProfRuns_Default() or set xhprof.output_dir ".
@@ -107,11 +107,11 @@ class XHProfRuns_Default implements iXHProfRuns {
 		$this->dir = $dir;
 	}
 
-	public function get_run($run_id, $type, &$run_desc) {
-		$file_name = $this->file_name($run_id, $type);
+	public function getRun($run_id, $type, &$run_desc) {
+		$file_name = $this->fileName($run_id, $type);
 
 		if (!file_exists($file_name)) {
-			xhprof_error("Could not find file $file_name");
+			xhprofError("Could not find file $file_name");
 			$run_desc = "Invalid Run Id = $run_id";
 			return null;
 		}
@@ -121,31 +121,31 @@ class XHProfRuns_Default implements iXHProfRuns {
 		return unserialize($contents);
 	}
 
-	public function save_run($xhprof_data, $type, $run_id = null) {
+	public function saveRun($xhprof_data, $type, $run_id = null) {
 
 		// Use PHP serialize function to store the XHProf's
 		// raw profiler data.
 		$xhprof_data = serialize($xhprof_data);
 
 		if ($run_id === null) {
-			$run_id = $this->gen_run_id($type);
+			$run_id = $this->genRunId($type);
 		}
 
-		$file_name = $this->file_name($run_id, $type);
+		$file_name = $this->fileName($run_id, $type);
 		$file = fopen($file_name, 'w');
 
 		if ($file) {
 			fwrite($file, $xhprof_data);
 			fclose($file);
 		} else {
-			xhprof_error("Could not open $file_name\n");
+			xhprofError("Could not open $file_name\n");
 		}
 
 		 //echo "Saved run in {$file_name}.\nRun id = {$run_id}.\n"; die;
 		return $run_id;
 	}
 
-	function list_runs() {
+	function listRuns() {
 		if (is_dir($this->dir)) {
 			echo "<hr/>Existing runs:\n<ul>\n";
 			$files = glob("{$this->dir}/*.{$this->suffix}");

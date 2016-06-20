@@ -262,7 +262,8 @@ class Encryption
 
 		empty( $params[ 'cipher' ] ) && $params[ 'cipher' ] = $this->_cipher;
 		empty( $params[ 'key' ] ) OR $this->_key = $params[ 'key' ];
-		$this->{'_' . $this->_driver . '_initialize'}( $params );
+
+		$this->{'_' . camelcase($this->_driver . '_initialize')}( $params );
 
 		return $this;
 	}
@@ -276,12 +277,12 @@ class Encryption
 	 *
 	 * @return  void
 	 */
-	protected function _mcrypt_initialize( $params )
+	protected function _mcryptInitialize($params )
 	{
 		if ( ! empty( $params[ 'cipher' ] ) )
 		{
 			$params[ 'cipher' ] = strtolower( $params[ 'cipher' ] );
-			$this->_cipher_alias( $params[ 'cipher' ] );
+			$this->_cipherAlias( $params[ 'cipher' ] );
 
 			if ( ! in_array( $params[ 'cipher' ], mcrypt_list_algorithms(), TRUE ) )
 			{
@@ -336,12 +337,12 @@ class Encryption
 	 *
 	 * @return  void
 	 */
-	protected function _openssl_initialize( $params )
+	protected function _opensslInitialize($params )
 	{
 		if ( ! empty( $params[ 'cipher' ] ) )
 		{
 			$params[ 'cipher' ] = strtolower( $params[ 'cipher' ] );
-			$this->_cipher_alias( $params[ 'cipher' ] );
+			$this->_cipherAlias( $params[ 'cipher' ] );
 			$this->_cipher = $params[ 'cipher' ];
 		}
 
@@ -387,7 +388,7 @@ class Encryption
 	 *
 	 * @return  string
 	 */
-	public function create_key( $length )
+	public function createKey($length )
 	{
 		return ( $this->_driver === 'mcrypt' )
 			? mcrypt_create_iv( $length, MCRYPT_DEV_URANDOM )
@@ -406,14 +407,14 @@ class Encryption
 	 */
 	public function encrypt( $data, array $params = NULL )
 	{
-		if ( ( $params = $this->_get_params( $params ) ) === FALSE )
+		if ( ( $params = $this->_getParams( $params ) ) === FALSE )
 		{
 			return FALSE;
 		}
 
 		isset( $params[ 'key' ] ) OR $params[ 'key' ] = $this->hkdf( $this->_key, 'sha512', NULL, self::strlen( $this->_key ), 'encryption' );
 
-		if ( ( $data = $this->{'_' . $this->_driver . '_encrypt'}( $data, $params ) ) === FALSE )
+		if ( ( $data = $this->{'_' . camelcase($this->_driver . '_encrypt')}( $data, $params ) ) === FALSE )
 		{
 			return FALSE;
 		}
@@ -440,7 +441,7 @@ class Encryption
 	 *
 	 * @return  string
 	 */
-	protected function _mcrypt_encrypt( $data, $params )
+	protected function _mcryptEncrypt($data, $params )
 	{
 		if ( ! is_resource( $params[ 'handle' ] ) )
 		{
@@ -506,7 +507,7 @@ class Encryption
 	 *
 	 * @return  string
 	 */
-	protected function _openssl_encrypt( $data, $params )
+	protected function _opensslEncrypt($data, $params )
 	{
 		if ( empty( $params[ 'handle' ] ) )
 		{
@@ -545,7 +546,7 @@ class Encryption
 	 */
 	public function decrypt( $data, array $params = NULL )
 	{
-		if ( ( $params = $this->_get_params( $params ) ) === FALSE )
+		if ( ( $params = $this->_getParams( $params ) ) === FALSE )
 		{
 			return FALSE;
 		}
@@ -589,7 +590,7 @@ class Encryption
 
 		isset( $params[ 'key' ] ) OR $params[ 'key' ] = $this->hkdf( $this->_key, 'sha512', NULL, self::strlen( $this->_key ), 'encryption' );
 
-		return $this->{'_' . $this->_driver . '_decrypt'}( $data, $params );
+		return $this->{'_' . camelcase($this->_driver . '_decrypt')}( $data, $params );
 	}
 
 	// --------------------------------------------------------------------
@@ -602,7 +603,7 @@ class Encryption
 	 *
 	 * @return  string
 	 */
-	protected function _mcrypt_decrypt( $data, $params )
+	protected function _mcryptDecrypt($data, $params )
 	{
 		if ( ! is_resource( $params[ 'handle' ] ) )
 		{
@@ -665,7 +666,7 @@ class Encryption
 	 *
 	 * @return  string
 	 */
-	protected function _openssl_decrypt( $data, $params )
+	protected function _opensslDecrypt($data, $params )
 	{
 		if ( $iv_size = openssl_cipher_iv_length( $params[ 'handle' ] ) )
 		{
@@ -697,7 +698,7 @@ class Encryption
 	 *
 	 * @return  array
 	 */
-	protected function _get_params( $params )
+	protected function _getParams($params )
 	{
 		if ( empty( $params ) )
 		{
@@ -765,7 +766,7 @@ class Encryption
 			'hmac_key'    => $params[ 'hmac_key' ],
 		);
 
-		$this->_cipher_alias( $params[ 'cipher' ] );
+		$this->_cipherAlias( $params[ 'cipher' ] );
 		$params[ 'handle' ] = ( $params[ 'cipher' ] !== $this->_cipher OR $params[ 'mode' ] !== $this->_mode )
 			? $this->{'_' . $this->_driver . '_get_handle'}( $params[ 'cipher' ], $params[ 'mode' ] )
 			: $this->_handle;
@@ -783,7 +784,7 @@ class Encryption
 	 *
 	 * @return  resource
 	 */
-	protected function _mcrypt_get_handle( $cipher, $mode )
+	protected function _mcryptGetHandle($cipher, $mode )
 	{
 		return mcrypt_module_open( $cipher, '', $mode, '' );
 	}
@@ -798,7 +799,7 @@ class Encryption
 	 *
 	 * @return  string
 	 */
-	protected function _openssl_get_handle( $cipher, $mode )
+	protected function _opensslGetHandle($cipher, $mode )
 	{
 		// OpenSSL methods aren't suffixed with '-stream' for this mode
 		return ( $mode === 'stream' )
@@ -817,7 +818,7 @@ class Encryption
 	 *
 	 * @return  void
 	 */
-	protected function _cipher_alias( &$cipher )
+	protected function _cipherAlias(&$cipher )
 	{
 		static $dictionary;
 
@@ -962,7 +963,7 @@ class Encryption
 	protected static function strlen( $str )
 	{
 		return ( self::$func_override )
-			? mb_strlen( $str, '8bit' )
+			? mbStrlen( $str, '8bit' )
 			: strlen( $str );
 	}
 
@@ -985,7 +986,7 @@ class Encryption
 			// string on PHP 5.3
 			isset( $length ) OR $length = ( $start >= 0 ? self::strlen( $str ) - $start : -$start );
 
-			return mb_substr( $str, $start, $length, '8bit' );
+			return mbSubstr( $str, $start, $length, '8bit' );
 		}
 
 		return isset( $length )

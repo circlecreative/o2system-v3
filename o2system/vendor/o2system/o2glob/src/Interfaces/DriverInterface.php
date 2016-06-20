@@ -21,17 +21,9 @@ class DriverInterface
 	/**
 	 * Instance of the library class
 	 *
-	 * @type object
+	 * @type DriverInterface
 	 */
 	protected $_library;
-
-	/**
-	 * Array of methods and properties for the parent class(es)
-	 *
-	 * @static
-	 * @var    array
-	 */
-	protected static $_reflections = array();
 
 	protected $_errors = array();
 

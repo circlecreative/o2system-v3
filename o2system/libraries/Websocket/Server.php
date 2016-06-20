@@ -47,605 +47,469 @@ defined( 'ROOTPATH' ) OR exit( 'No direct script access allowed' );
 
 class Server
 {
-	/**
-	 * Server Stream Socket
-	 *
-	 * @type    resource
-	 */
-	protected $_stream_socket;
-	
-	/**
-	 * Server Stream Context
-	 *
-	 * @type    resource
-	 */
-	protected $_stream_context;
-	
-	/**
-	 * Server Stream SSL
-	 *
-	 * @type bool
-	 */
-	protected $_stream_ssl = FALSE;
-	
-	/**
-	 * Server Certificate
-	 *
-	 * @type array
-	 */
-	protected $_certificate = NULL;
-	
-	protected $_sockets     = array();
-	protected $_ips         = array();
-	protected $_channels    = array();
-	protected $_connections = array();
-	protected $_requests    = array();
-	
-	// server settings:
-	public $validate_origin  = TRUE;
-	protected $_allowed_origins = array();
-	protected $_max_connections = 5;
-	protected $_max_clients     = 30;
-	protected $_max_requests    = 50;
-	
-	
-	public function __construct( $host = 'localhost', $port = 8000, $openssl = FALSE )
-	{
-		ob_implicit_flush( TRUE );
-		$this->_stream_ssl = $openssl;
-		$this->_create_socket( $host, $port );
-	}
-	
-	/**
-	 * Set whether the client origin should be checked on new connections.
-	 *
-	 * @param bool $validate
-	 *
-	 * @return bool True if value could validated and set successfully.
-	 */
-	public function set_validate_origin( $validate )
-	{
-		if ( is_bool( $validate ) )
-		{
-			$this->validate_origin = $validate;
-		}
-		
-		return $this;
-	}
-	
-	/**
-	 * Sets how many clients are allowed to connect to server until no more
-	 * connections are accepted.
-	 *
-	 * @param in $max Max. total connections to server.
-	 *
-	 * @return bool True if value could be set.
-	 */
-	public function set_max_clients( $limit )
-	{
-		if ( is_int( $limit ) )
-		{
-			$this->_max_clients = (int) $limit;
-		}
-		
-		return $this;
-	}
-	
-	/**
-	 * Sets value for the max. connection per ip to this server.
-	 *
-	 * @param int $limit Connection limit for an ip.
-	 *
-	 * @return bool True if value could be set.
-	 */
-	public function set_max_connections( $limit )
-	{
-		if ( is_int( $limit ) )
-		{
-			$this->_max_connections = $limit;
-		}
-		
-		return $this;
-	}
-	
-	/**
-	 * Sets how many requests a client is allowed to do per minute.
-	 *
-	 * @param int $limit Requets/Min limit (per client).
-	 *
-	 * @return bool True if value could be set.
-	 */
-	public function set_max_requests( $limit )
-	{
-		if ( is_int( $limit ) )
-		{
-			$this->_max_requests = $limit;
-		}
-		
-		return $this;
-	}
-	
-	/**
-	 * Adds a new channel object to the channel storage.
-	 *
-	 * @param string $key     Name of channel.
-	 * @param object $channel The channel object.
-	 */
-	public function register_channel( $key, Channel $channel )
-	{
-		$this->_channels[ $key ] = $channel;
-		
-		// status is kind of a system-app, needs some special cases:
-		if ( $key === 'status' )
-		{
-			$info = array(
-				'max_clients'     => $this->_max_clients,
-				'max_connections' => $this->_max_connections,
-				'max_requests'    => $this->_max_requests,
-			);
-			
-			$this->_channels[ $key ]->set_info( $info );
-		}
-	}
-	
-	/**
-	 * Create a socket on given host/port
-	 *
-	 * @param string $host The host/bind address to use
-	 * @param int    $port The actual port to bind on
-	 */
-	protected function _create_socket( $host, $port )
-	{
-		$protocol = ( $this->_stream_ssl === TRUE ) ? 'tls://' : 'tcp://';
-		$url = $protocol . $host . ':' . $port;
-		$this->_stream_context = stream_context_create();
-		
-		if ( $this->_stream_ssl === TRUE )
-		{
-			$this->_set_stream_ssl();
-		}
-		if ( ! $this->_stream_socket = stream_socket_server( $url, $errno, $err, STREAM_SERVER_BIND | STREAM_SERVER_LISTEN, $this->_stream_context ) )
-		{
-			die( 'Error creating socket: ' . $err );
-		}
-		
-		$this->_sockets[] = $this->_stream_socket;
-	}
-	
-	protected function _set_stream_ssl()
-	{
-		// Generate PEM file
-		if ( ! file_exists( $filepath = \O2System::$config[ 'upload' ] . 'files' . DIRECTORY_SEPARATOR . 'server.pem' ) )
-		{
-			$csr = array(
-				"countryName"            => "DE",
-				"stateOrProvinceName"    => "none",
-				"localityName"           => "none",
-				"organizationName"       => "none",
-				"organizationalUnitName" => "none",
-				"commonName"             => "foo.lh",
-				"emailAddress"           => "baz@foo.lh",
-			);
 
-			$pkey = openssl_pkey_new();
-			$cert = openssl_csr_new( $csr, $pkey );
-			$cert = openssl_csr_sign( $cert, NULL, $pkey, 365 );
+	/**
+	 * The address of the server
+	 *
+	 * @var String
+	 */
+	private $address;
+	/**
+	 * The port for the master socket
+	 *
+	 * @var int
+	 */
+	private $port;
+	/**
+	 * The master socket
+	 *
+	 * @var Resource
+	 */
+	private $master;
+	/**
+	 * The array of sockets (1 socket = 1 client)
+	 *
+	 * @var Array of resource
+	 */
+	private $sockets;
+	/**
+	 * The array of connected clients
+	 *
+	 * @var Array of clients
+	 */
+	private $clients;
+	/**
+	 * If true, the server will print messages to the terminal
+	 *
+	 * @var Boolean
+	 */
+	private $verboseMode;
 
-			$pem = array();
-			openssl_x509_export( $cert, $pem[ 0 ] );
-			openssl_pkey_export( $pkey, $pem[ 1 ], 'o2system' );
-			$pem = implode( $pem );
-
-			file_put_contents( $filepath, $pem );
+	/**
+	 * Server constructor
+	 *
+	 * @param $address The address IP or hostname of the server (default: 127.0.0.1).
+	 * @param $port    The port for the master socket (default: 5001)
+	 */
+	public function __construct( $address = '127.0.0.1', $port = 5001, $verboseMode = FALSE )
+	{
+		$this->console( "Server starting..." );
+		$this->address     = $address;
+		$this->port        = $port;
+		$this->verboseMode = $verboseMode;
+		// socket creation
+		$socket = socket_create( AF_INET, SOCK_STREAM, SOL_TCP );
+		socket_set_option( $socket, SOL_SOCKET, SO_REUSEADDR, 1 );
+		if ( ! is_resource( $socket ) )
+		{
+			$this->console( "socket_create() failed: " . socket_strerror( socket_last_error() ), TRUE );
 		}
-		
-		// apply ssl context:
-		stream_context_set_option( $this->_stream_context, 'ssl', 'local_cert', $filepath );
-		stream_context_set_option( $this->_stream_context, 'ssl', 'passphrase', 'o2system' );
-		stream_context_set_option( $this->_stream_context, 'ssl', 'allow_self_signed', TRUE );
-		stream_context_set_option( $this->_stream_context, 'ssl', 'verify_peer', FALSE );
+		if ( ! socket_bind( $socket, $this->address, $this->port ) )
+		{
+			$this->console( "socket_bind() failed: " . socket_strerror( socket_last_error() ), TRUE );
+		}
+		if ( ! socket_listen( $socket, 20 ) )
+		{
+			$this->console( "socket_listen() failed: " . socket_strerror( socket_last_error() ), TRUE );
+		}
+		$this->master  = $socket;
+		$this->sockets = [ $socket ];
+		$this->console( "Server started on {$this->address}:{$this->port}" );
 	}
 
-	protected function _read_buffer( $stream )
+	/**
+	 * Create a client object with its associated socket
+	 *
+	 * @param $socket
+	 */
+	private function connect( $socket )
 	{
-		if ( $this->_stream_ssl === TRUE )
+		$this->console( "Creating client..." );
+		$client          = new Client( uniqid(), $socket );
+		$this->clients[] = $client;
+		$this->sockets[] = $socket;
+		$this->console( "Client #{$client->getId()} is successfully created!" );
+	}
+
+	/**
+	 * Do the handshaking between client and server
+	 *
+	 * @param $client
+	 * @param $headers
+	 */
+	private function handshake( $client, $headers )
+	{
+		$this->console( "Getting client WebSocket version..." );
+		if ( preg_match( "/Sec-WebSocket-Version: (.*)\r\n/", $headers, $match ) )
 		{
-			$buffer = fread( $stream, 8192 );
-			// extremely strange chrome behavior: first frame with ssl only contains 1 byte?!
-			if ( strlen( $buffer ) === 1 )
-			{
-				$buffer .= fread( $stream, 8192 );
-			}
-			
-			return $buffer;
+			$version = $match[ 1 ];
 		}
 		else
 		{
-			$buffer = '';
-			$size = 8192;
-			$metadata[ 'unread_bytes' ] = 0;
-			
-			while ( $metadata[ 'unread_bytes' ] > 0 )
+			$this->console( "The client doesn't support WebSocket" );
+
+			return FALSE;
+		}
+		$this->console( "Client WebSocket version is {$version}, (required: 13)" );
+		if ( $version == 13 )
+		{
+			// Extract header variables
+			$this->console( "Getting headers..." );
+			if ( preg_match( "/GET (.*) HTTP/", $headers, $match ) )
 			{
-				if ( feof( $stream ) )
-				{
-					return FALSE;
-				}
-				
-				$result = fread( $stream, $size );
-				
-				if ( $result === FALSE || feof( $stream ) )
-				{
-					return FALSE;
-				}
-				
-				$buffer .= $result;
-				$metadata = stream_get_meta_data( $stream );
-				$size = ( $metadata[ 'unread_bytes' ] > $size ) ? $size : $metadata[ 'unread_bytes' ];
+				$root = $match[ 1 ];
 			}
-			
-			return $buffer;
+			if ( preg_match( "/Host: (.*)\r\n/", $headers, $match ) )
+			{
+				$host = $match[ 1 ];
+			}
+			if ( preg_match( "/Origin: (.*)\r\n/", $headers, $match ) )
+			{
+				$origin = $match[ 1 ];
+			}
+			if ( preg_match( "/Sec-WebSocket-Key: (.*)\r\n/", $headers, $match ) )
+			{
+				$key = $match[ 1 ];
+			}
+			$this->console( "Client headers are:" );
+			$this->console( "\t- Root: " . $root );
+			$this->console( "\t- Host: " . $host );
+			$this->console( "\t- Origin: " . $origin );
+			$this->console( "\t- Sec-WebSocket-Key: " . $key );
+			$this->console( "Generating Sec-WebSocket-Accept key..." );
+			$acceptKey = $key . '258EAFA5-E914-47DA-95CA-C5AB0DC85B11';
+			$acceptKey = base64_encode( sha1( $acceptKey, TRUE ) );
+			$upgrade   = "HTTP/1.1 101 Switching Protocols\r\n" .
+				"Upgrade: websocket\r\n" .
+				"Connection: Upgrade\r\n" .
+				"Sec-WebSocket-Accept: $acceptKey" .
+				"\r\n\r\n";
+			$this->console( "Sending this response to the client #{$client->getId()}:\r\n" . $upgrade );
+			socket_write( $client->getSocket(), $upgrade );
+			$client->setHandshake( TRUE );
+			$this->console( "Handshake is successfully done!" );
+
+			return TRUE;
+		}
+		else
+		{
+			$this->console( "WebSocket version 13 required (the client supports version {$version})" );
+
+			return FALSE;
 		}
 	}
 
-	public function write_buffer( $stream, $string )
+	/**
+	 * Disconnect a client and close the connection
+	 *
+	 * @param $socket
+	 */
+	private function disconnect( $client )
 	{
-		$length = strlen( $string );
-		
-		for ( $written = 0; $written < $length; $written += $fwrite )
+		$this->console( "Disconnecting client #{$client->getId()}" );
+		$client->setIsConnected( FALSE );
+		$i = array_search( $client, $this->clients );
+		$j = array_search( $client->getSocket(), $this->sockets );
+		if ( $j >= 0 )
 		{
-			$fwrite = @fwrite( $stream, substr( $string, $written ) );
-			
-			if ( $fwrite === FALSE )
+			if ( $client->getSocket() )
 			{
-				return FALSE;
-			}
-			elseif ( $fwrite === 0 )
-			{
-				return FALSE;
+				array_splice( $this->sockets, $j, 1 );
+				socket_shutdown( $client->getSocket(), 2 );
+				socket_close( $client->getSocket() );
+				$this->console( "Socket closed" );
 			}
 		}
-		
-		return $written;
+		if ( $i >= 0 )
+		{
+			array_splice( $this->clients, $i, 1 );
+		}
+		$this->console( "Client #{$client->getId()} disconnected" );
 	}
-	
+
 	/**
-	 * Main server method. Listens for connections, handles connectes/disconnectes, e.g.
+	 * Get the client associated with the socket
+	 *
+	 * @param $socket
+	 *
+	 * @return A client object if found, if not false
+	 */
+	private function getClientBySocket( $socket )
+	{
+		foreach ( $this->clients as $client )
+		{
+			if ( $client->getSocket() == $socket )
+			{
+				$this->console( "Client found" );
+
+				return $client;
+			}
+		}
+
+		return FALSE;
+	}
+
+	/**
+	 * Do an action
+	 *
+	 * @param $client
+	 * @param $action
+	 */
+	private function action( $client, $action )
+	{
+		$action = $this->unmask( $action );
+		$this->console( "Performing action: " . $action );
+		if ( $action == "exit" || $action == "quit" )
+		{
+			$this->console( "Killing a child process" );
+			posix_kill( $client->getPid(), SIGTERM );
+			$this->console( "Process {$client->getPid()} is killed!" );
+		}
+	}
+
+	/**
+	 * Run the server
 	 */
 	public function run()
 	{
+		$this->console( "Start running..." );
+
 		while ( TRUE )
 		{
-			$changed_sockets = $this->_sockets;
-			@stream_select( $changed_sockets, $write = NULL, $except = NULL, 0, 5000 );
-			
-			foreach ( $changed_sockets as $socket )
+			$changed_sockets = $this->sockets;
+			if ( $changed_sockets )
 			{
-				if ( $socket == $this->_stream_socket )
+				@socket_select( $changed_sockets, $write = NULL, $except = NULL, 1 );
+				foreach ( $changed_sockets as $socket )
 				{
-					if ( ( $stream_socket = stream_socket_accept( $this->_stream_socket ) ) === FALSE )
+					if ( $socket == $this->master )
 					{
-						$this->send_message( 'Socket error: ' . socket_strerror( socket_last_error( $stream_socket ) ) );
-						continue;
+						if ( ( $acceptedSocket = socket_accept( $this->master ) ) < 0 )
+						{
+							$this->console( "Socket error: " . socket_strerror( socket_last_error( $acceptedSocket ) ) );
+						}
+						else
+						{
+							$this->connect( $acceptedSocket );
+						}
 					}
 					else
 					{
-						$connection = new Connection( $this, $stream_socket );
-						$this->_connections[ (int) $stream_socket ] = $connection;
-						$this->_sockets[] = $stream_socket;
-						
-						if ( count( $this->_connections ) > $this->_max_clients )
+						$this->console( "Finding the socket that associated to the client..." );
+						$client = $this->getClientBySocket( $socket );
+						if ( $client )
 						{
-							$connection->on_disconnect();
-							
-							if ( $this->get_channel( 'status' ) !== FALSE )
+							$this->console( "Receiving data from the client" );
+							$data = NULL;
+							while ( $bytes = @socket_recv( $socket, $r_data, 2048, MSG_DONTWAIT ) )
 							{
-								$this->get_channel( 'status' )->statusMsg( 'Attention: Client Limit Reached!', 'warning' );
+								$data .= $r_data;
 							}
-
-							continue;
-						}
-						
-						$this->_store_ip( $connection->ip_address );
-
-						if ( $this->is_reached_max_connections( $connection->ip_address ) === FALSE )
-						{
-							$connection->on_disconnect();
-							
-							if ( $this->get_channel( 'status' ) !== FALSE )
+							if ( ! $client->getHandshake() )
 							{
-								$this->get_channel( 'status' )->send_status( 'Connection/Ip limit for ip ' . $connection->ip_address . ' was reached!', 'warning' );
+								$this->console( "Doing the handshake" );
+								if ( $this->handshake( $client, $data ) )
+								{
+									$this->startProcess( $client );
+								}
+								else
+								{
+									$this->disconnect( $client );
+								}
 							}
-							continue;
+							elseif ( $bytes === 0 )
+							{
+								$this->disconnect( $client );
+							}
+							else
+							{
+								// When received data from client
+								$this->action( $client, $data );
+							}
 						}
-					}
-				}
-				else
-				{
-					$connection = $this->_connections[ (int) $socket ];
-
-					if ( $connection instanceof Connection )
-					{
-						unset( $this->_connections[ (int) $socket ] );
-						continue;
-					}
-
-					$data = $this->_read_buffer( $socket );
-					$bytes = strlen( $data );
-					
-					if ( $bytes === 0 )
-					{
-						$connection->on_disconnect();
-						continue;
-					}
-					elseif ( $data === FALSE )
-					{
-						$this->remove_error_connection( $connection );
-						continue;
-					}
-					elseif ( $connection->waitingForData === FALSE && $this->is_reached_max_requests( $connection->conn_id ) === FALSE )
-					{
-						$connection->on_disconnect();
-					}
-					else
-					{
-						$connection->on_data( $data );
 					}
 				}
 			}
 		}
 	}
-	
+
 	/**
-	 * Returns a server channel.
+	 * Start a child process for pushing data
 	 *
-	 * @param string $key Name of channel.
-	 *
-	 * @return object The channel object.
+	 * @param unknown_type $client
 	 */
-	public function get_channel( $key )
+	private function startProcess( $client )
 	{
-		if ( empty( $key ) )
+		$this->console( "Start a client process" );
+		$pid = pcntl_fork();
+		if ( $pid == -1 )
 		{
-			return FALSE;
+			die( 'could not fork' );
 		}
-		if ( array_key_exists( $key, $this->_channels ) )
-		{
-			return $this->_channels[ $key ];
-		}
-		
-		return FALSE;
-	}
-	
-	
-	/**
-	 * Echos a message to standard output.
-	 *
-	 * @param string $message Message to display.
-	 * @param string $type    Type of message.
-	 */
-	public function log( $message, $type = 'info' )
-	{
-		echo date( 'Y-m-d H:i:s' ) . ' [' . ( $type ? $type : 'error' ) . '] ' . $message . PHP_EOL;
-	}
-	
-	/**
-	 * Removes a client from client storage.
-	 *
-	 * @param Object $connection Client object.
-	 */
-	public function remove_closed_connection( $connection )
-	{
-		$this->_remove_ip( $connection->ip_address );
-
-		if ( isset( $this->_requests[ $connection->conn_id ] ) )
-		{
-			unset( $this->_requests[ $connection->conn_id ] );
-		}
-		unset( $this->_connections[ (int) $connection->socket ] );
-		
-		// trigger status channel:
-		if ( $this->get_channel( 'status' ) !== FALSE )
-		{
-			$this->get_channel( 'status' )->client_disconnect( $connection->ip_address, $connection->port );
-		}
-
-		if( $index = array_search( $connection->socket, $this->_sockets ))
-		{
-			unset( $this->_sockets[ $index ] );
-		}
-
-		unset( $connection );
-	}
-	
-	/**
-	 * Removes a client and all references in case of timeout/error.
-	 *
-	 * @param object $connection The connection object to remove.
-	 */
-	public function remove_error_connection( Connection $connection )
-	{
-		// remove reference in connection channel:
-		if ( isset( $connection->channel ) )
-		{
-			$connection->channel->on_disconnect( $connection );
-		}
-
-		$this->_remove_ip( $connection->ip_address );
-
-		if ( isset( $this->_requests[ $connection->conn_id ] ) )
-		{
-			unset( $this->_requests[ $connection->conn_id ] );
-		}
-		unset( $this->_connections[ (int) $connection->socket ] );
-
-		// trigger status channel:
-		if ( $this->get_channel( 'status' ) !== FALSE )
-		{
-			$this->get_channel( 'status' )->client_disconnect( $connection->ip_address, $connection->port );
-		}
-
-		if( $index = array_search( $connection->socket, $this->_sockets ))
-		{
-			unset( $this->_sockets[ $index ] );
-		}
-
-		unset( $connection );
-	}
-	
-	/**
-	 * Checks if the submitted origin (part of websocket handshake) is allowed
-	 * to connect. Allowed origins can be set at server startup.
-	 *
-	 * @param string $domain The origin-domain from websocket handshake.
-	 *
-	 * @return bool If domain is allowed to connect method returns true.
-	 */
-	public function is_allowed_origin( $domain )
-	{
-		return (bool) isset( $this->_allowed_origins[ $domain ] );
-	}
-	
-	/**
-	 * Adds a new ip to ip storage.
-	 *
-	 * @param string $ip An ip address.
-	 */
-	protected function _store_ip( $ip )
-	{
-		if ( isset( $this->_ips[ $ip ] ) )
-		{
-			$this->_ips[ $ip ]++;
+		elseif ( $pid )
+		{ // process
+			$client->setPid( $pid );
 		}
 		else
 		{
-			$this->_ips[ $ip ] = 1;
+			// we are the child
+			while ( TRUE )
+			{
+				// check if the client is connected
+				if ( ! $client->isConnected() )
+				{
+					break;
+				}
+				// push something to the client
+				$seconds = rand( 2, 5 );
+				$this->send( $client, "I am waiting {$seconds} seconds" );
+				sleep( $seconds );
+			}
 		}
-	}
-	
-	/**
-	 * Removes an ip from ip storage.
-	 *
-	 * @param string $ip An ip address.
-	 *
-	 * @return bool True if ip could be removed.
-	 */
-	protected function _remove_ip( $ip )
-	{
-		if ( ! isset( $this->_ips[ $ip ] ) )
-		{
-			return FALSE;
-		}
-		if ( $this->_ips[ $ip ] === 1 )
-		{
-			unset( $this->_ips[ $ip ] );
-			
-			return TRUE;
-		}
-		$this->_ips[ $ip ]--;
-		
-		return TRUE;
-	}
-	
-	/**
-	 * Checks if an ip has reached the maximum connection limit.
-	 *
-	 * @param string $ip An ip address.
-	 *
-	 * @return bool False if ip has reached max. connection limit. True if connection is allowed.
-	 */
-	public function is_reached_max_connections( $ip )
-	{
-		if ( empty( $ip ) )
-		{
-			return FALSE;
-		}
-		if ( ! isset ( $this->_ips[ $ip ] ) )
-		{
-			return TRUE;
-		}
-		
-		return ( $this->_ips[ $ip ] > $this->_max_connections ) ? FALSE : TRUE;
-	}
-	
-	/**
-	 * Checkes if a client has reached its max. requests per minute limit.
-	 *
-	 * @param string $conn_id A client id. (unique client identifier)
-	 *
-	 * @return bool True if limit is not yet reached. False if request limit is reached.
-	 */
-	public function is_reached_max_requests( $conn_id )
-	{
-		// no data in storage - no danger:
-		if ( ! isset( $this->_requests[ $conn_id ] ) )
-		{
-			$this->_requests[ $conn_id ] = array(
-				'lastRequest'   => time(),
-				'totalRequests' => 1,
-			);
-			
-			return TRUE;
-		}
-		
-		// time since last request > 1min - no danger:
-		if ( time() - $this->_requests[ $conn_id ][ 'lastRequest' ] > 60 )
-		{
-			$this->_requests[ $conn_id ] = array(
-				'lastRequest'   => time(),
-				'totalRequests' => 1,
-			);
-			
-			return TRUE;
-		}
-		
-		// did requests in last minute - check limits:
-		if ( $this->_requests[ $conn_id ][ 'totalRequests' ] > $this->_max_requests )
-		{
-			return FALSE;
-		}
-		
-		$this->_requests[ $conn_id ][ 'totalRequests' ]++;
-		
-		return TRUE;
-	}
-	
-	/**
-	 * Adds a domain to the allowed origin storage.
-	 *
-	 * @param sting $domain A domain name from which connections to server are allowed.
-	 *
-	 * @return bool True if domain was added to storage.
-	 */
-	public function set_origin( $domain )
-	{
-		$domain = str_replace( 'http://', '', $domain );
-		$domain = str_replace( 'www.', '', $domain );
-		$domain = ( strpos( $domain, '/' ) !== FALSE ) ? substr( $domain, 0, strpos( $domain, '/' ) ) : $domain;
-		
-		if ( ! empty( $domain ) )
-		{
-			$this->_allowed_origins[ $domain ] = TRUE;
-		}
-		
-		return $this;
 	}
 
-	public function send_message( $message, $type = 'INFO', $vars = array() )
+	/**
+	 * Send a text to client
+	 *
+	 * @param $client
+	 * @param $text
+	 */
+	private function send( $client, $text )
 	{
-		$message = \O2System::$language->line( $message );
-
-		if ( ! empty( $vars ) )
+		$this->console( "Send '" . $text . "' to client #{$client->getId()}" );
+		$text = $this->encode( $text );
+		if ( socket_write( $client->getSocket(), $text, strlen( $text ) ) === FALSE )
 		{
-			array_unshift( $vars, $message );
+			$this->console( "Unable to write to client #{$client->getId()}'s socket" );
+			$this->disconnect( $client );
+		}
+	}
 
-			$message = call_user_func_array( 'sprintf', $vars );
+	/**
+	 * Encode a text for sending to clients via ws://
+	 *
+	 * @param $text
+	 * @param $messageType
+	 */
+	function encode( $message, $messageType = 'text' )
+	{
+		switch ( $messageType )
+		{
+			case 'continuous':
+				$b1 = 0;
+				break;
+			case 'text':
+				$b1 = 1;
+				break;
+			case 'binary':
+				$b1 = 2;
+				break;
+			case 'close':
+				$b1 = 8;
+				break;
+			case 'ping':
+				$b1 = 9;
+				break;
+			case 'pong':
+				$b1 = 10;
+				break;
+		}
+		$b1 += 128;
+		$length      = strlen( $message );
+		$lengthField = "";
+		if ( $length < 126 )
+		{
+			$b2 = $length;
+		}
+		elseif ( $length <= 65536 )
+		{
+			$b2        = 126;
+			$hexLength = dechex( $length );
+			//$this->stdout("Hex Length: $hexLength");
+			if ( strlen( $hexLength ) % 2 == 1 )
+			{
+				$hexLength = '0' . $hexLength;
+			}
+			$n = strlen( $hexLength ) - 2;
+			for ( $i = $n; $i >= 0; $i = $i - 2 )
+			{
+				$lengthField = chr( hexdec( substr( $hexLength, $i, 2 ) ) ) . $lengthField;
+			}
+			while ( strlen( $lengthField ) < 2 )
+			{
+				$lengthField = chr( 0 ) . $lengthField;
+			}
+		}
+		else
+		{
+			$b2        = 127;
+			$hexLength = dechex( $length );
+			if ( strlen( $hexLength ) % 2 == 1 )
+			{
+				$hexLength = '0' . $hexLength;
+			}
+			$n = strlen( $hexLength ) - 2;
+			for ( $i = $n; $i >= 0; $i = $i - 2 )
+			{
+				$lengthField = chr( hexdec( substr( $hexLength, $i, 2 ) ) ) . $lengthField;
+			}
+			while ( strlen( $lengthField ) < 8 )
+			{
+				$lengthField = chr( 0 ) . $lengthField;
+			}
 		}
 
-		if ( defined( 'CONSOLE_PATH' ) )
+		return chr( $b1 ) . chr( $b2 ) . $lengthField . $message;
+	}
+
+	/**
+	 * Unmask a received payload
+	 *
+	 * @param $buffer
+	 */
+	private function unmask( $payload )
+	{
+		$length = ord( $payload[ 1 ] ) & 127;
+		if ( $length == 126 )
 		{
-			echo ' ::: [ ' . strtoupper( $type ) . ' ] ' . $message . PHP_EOL;
-			time_nanosleep( 0, 200000000 );
+			$masks = substr( $payload, 4, 4 );
+			$data  = substr( $payload, 8 );
+		}
+		elseif ( $length == 127 )
+		{
+			$masks = substr( $payload, 10, 4 );
+			$data  = substr( $payload, 14 );
+		}
+		else
+		{
+			$masks = substr( $payload, 2, 4 );
+			$data  = substr( $payload, 6 );
+		}
+		$text = '';
+		for ( $i = 0; $i < strlen( $data ); ++$i )
+		{
+			$text .= $data[ $i ] ^ $masks[ $i % 4 ];
+		}
+
+		return $text;
+	}
+
+	/**
+	 * Print a text to the terminal
+	 *
+	 * @param $text the text to display
+	 * @param $exit if true, the process will exit
+	 */
+	private function console( $text, $exit = FALSE )
+	{
+		$text = date( '[Y-m-d H:i:s] ' ) . $text . "\r\n";
+		if ( $exit )
+		{
+			die( $text );
+		}
+		if ( $this->verboseMode )
+		{
+			echo $text;
 		}
 	}
 }

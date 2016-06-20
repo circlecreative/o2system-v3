@@ -36,7 +36,7 @@ class Slide extends FactoryInterface
 
 		if ( is_array( $attr ) )
 		{
-			$this->add_attributes( $attr );
+			$this->addAttributes( $attr );
 		}
 
 		return $this;
@@ -62,7 +62,7 @@ class Slide extends FactoryInterface
 		return $this;
 	}
 
-	public function set_image( $image )
+	public function setImage($image )
 	{
 		if ( $image instanceof Image )
 		{
@@ -71,7 +71,7 @@ class Slide extends FactoryInterface
 		else
 		{
 			$this->image = new Image( Image::RESPONSIVE_IMAGE );
-			$this->image->set_source( $image );
+			$this->image->setSource( $image );
 		}
 
 		return $this;
@@ -85,7 +85,7 @@ class Slide extends FactoryInterface
 	 *
 	 * @return object
 	 */
-	public function set_caption( $caption, $tag = 'h1', $attr = array() )
+	public function setCaption($caption, $tag = 'h1', $attr = array() )
 	{
 		if ( is_array( $tag ) )
 		{
@@ -95,8 +95,8 @@ class Slide extends FactoryInterface
 		if ( $caption instanceof FactoryInterface )
 		{
 			$this->caption = clone $caption;
-			$this->caption->set_tag( $tag );
-			$this->caption->add_class( 'carousel-header' );
+			$this->caption->setTag( $tag );
+			$this->caption->addClass( 'carousel-header' );
 		}
 		else
 		{
@@ -124,7 +124,7 @@ class Slide extends FactoryInterface
 
 	// ------------------------------------------------------------------------
 
-	public function set_description( $description, $tag = 'p', $attr = array() )
+	public function setDescription($description, $tag = 'p', $attr = array() )
 	{
 		if ( is_array( $tag ) )
 		{
@@ -153,7 +153,7 @@ class Slide extends FactoryInterface
 	 *
 	 * @return object
 	 */
-	public function set_link( $link, $attr = array() )
+	public function setLink($link, $attr = array() )
 	{
 		if ( $link instanceof Link )
 		{
@@ -169,7 +169,7 @@ class Slide extends FactoryInterface
 
 	// ------------------------------------------------------------------------
 
-	public function add_button( $label, $attr = array() )
+	public function addButton($label, $attr = array() )
 	{
 		if ( $label instanceof Button )
 		{
@@ -199,9 +199,9 @@ class Slide extends FactoryInterface
 			if ( isset( $this->link ) )
 			{
 				$image = clone $this->link;
-				$image->set_label( $this->image );
+				$image->setLabel( $this->image );
 
-				$this->link->set_label( $this->caption );
+				$this->link->setLabel( $this->caption );
 				$caption = new Tag( 'div', $this->link, [ 'class' => 'carousel-caption' ] );
 			}
 			else
@@ -212,14 +212,14 @@ class Slide extends FactoryInterface
 
 			if ( isset( $this->description ) )
 			{
-				$caption->append_content( $this->description );
+				$caption->appendContent( $this->description );
 			}
 
 			if ( ! empty( $this->buttons ) )
 			{
 				$button = new Tag( 'p', implode( PHP_EOL, $this->buttons ), [ 'class' => 'thumbnail-buttons' ] );
 
-				$caption->append_content( $button );
+				$caption->appendContent( $button );
 			}
 
 			return $image . ( new Tag( $this->_tag, $caption, $this->_attributes ) )->render();

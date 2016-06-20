@@ -60,7 +60,7 @@ class Buttons extends ArrayObject
 					}
 				}
 
-				$buttons[ $key ] = ( new Button( $label, $contextual, $button[ 'attr' ] ) )->set_icon( @$button[ 'icon' ] );
+				$buttons[ $key ] = ( new Button( $label, $contextual, $button[ 'attr' ] ) )->setIcon( @$button[ 'icon' ] );
 			}
 		}
 

@@ -115,7 +115,7 @@ namespace O2System
 		 */
 		public function initialize()
 		{
-			$this->set_driver( $this->_config[ 'driver' ] );
+			$this->setDriver( $this->_config[ 'driver' ] );
 		}
 
 		/**
@@ -129,7 +129,7 @@ namespace O2System
 		 *
 		 * @return \O2System\Libraries\Template Instance of O2System\Core\Template class
 		 */
-		public function set_driver( $driver )
+		public function setDriver($driver )
 		{
 			$driver = strtolower( $driver );
 
@@ -150,11 +150,11 @@ namespace O2System
 			}
 		}
 
-		public function parse_file( $file, $vars = array() )
+		public function parseFile($file, $vars = array() )
 		{
 			if ( is_file( $file ) )
 			{
-				return $this->parse_source_code( file_get_contents( $file ), $vars );
+				return $this->parseSourceCode( file_get_contents( $file ), $vars );
 			}
 
 			return FALSE;
@@ -172,33 +172,33 @@ namespace O2System
 		 *
 		 * @return string
 		 */
-		public function parse_source_code( $source_code = '', $vars = array() )
+		public function parseSourceCode($source_code = '', $vars = array() )
 		{
 			// Parse PHP
 			if ( $this->_config[ 'php' ] === TRUE )
 			{
-				$source_code = $this->parse_php( $source_code, $vars );
+				$source_code = $this->parsePhp( $source_code, $vars );
 			}
 
 			// Parse Shortcode
 			if ( $this->_config[ 'shortcode' ] === TRUE )
 			{
-				$source_code = $this->parse_shortcode( $source_code );
+				$source_code = $this->parseShortcode( $source_code );
 			}
 
 			// Parse String
-			$source_code = $this->parse_string( $source_code, $vars );
+			$source_code = $this->parseString( $source_code, $vars );
 
 			// Parse Markdown
 			if ( $this->_config[ 'markdown' ] === TRUE )
 			{
-				$source_code = $this->parse_markdown( $source_code );
+				$source_code = $this->parseMarkdown( $source_code );
 			}
 
 			// Parse BBCode
 			if ( $this->_config[ 'bbcode' ] === TRUE )
 			{
-				$source_code = $this->parse_bbcode( $source_code );
+				$source_code = $this->parseBbcode( $source_code );
 			}
 
 			return $source_code;
@@ -216,9 +216,9 @@ namespace O2System
 		 *
 		 * @return string
 		 */
-		public function parse_string( $source_code, $vars = array() )
+		public function parseString($source_code, $vars = array() )
 		{
-			return $this->_driver->parse_string( $source_code, $vars );
+			return $this->_driver->parseString( $source_code, $vars );
 		}
 
 		/**
@@ -232,7 +232,7 @@ namespace O2System
 		 *
 		 * @return string
 		 */
-		public function parse_markdown( $source_code, $flavour = 'default' )
+		public function parseMarkdown($source_code, $flavour = 'default' )
 		{
 			if ( $flavour === 'github' )
 			{
@@ -305,7 +305,7 @@ namespace O2System
 		 *
 		 * @return string
 		 */
-		public function parse_bbcode( $source_code )
+		public function parseBbcode($source_code )
 		{
 			if ( ! class_exists( 'JBBCode\Parser' ) )
 			{
@@ -331,7 +331,7 @@ namespace O2System
 		 *
 		 * @return string
 		 */
-		public function parse_shortcode( $source_code )
+		public function parseShortcode($source_code )
 		{
 			if ( $shortcodes = $this->shortcode->fetch( $source_code ) )
 			{
@@ -357,7 +357,7 @@ namespace O2System
 		 *
 		 * @return string
 		 */
-		public function parse_php( $source_code, $vars = array() )
+		public function parsePhp($source_code, $vars = array() )
 		{
 			$source_code = htmlspecialchars_decode( $source_code );
 			$vars = is_object( $vars ) ? get_object_vars( $vars ) : $vars;
@@ -390,7 +390,7 @@ namespace O2System
 			// to standard PHP echo statements.
 			if ( ! ini_get( 'short_open_tag' ) AND
 				$this->_config[ 'rewrite_short_tags' ] === TRUE AND
-				function_usable( 'eval' )
+				functionUsable( 'eval' )
 			)
 			{
 				echo eval( '?>' . preg_replace( '/;*\s*\?>/', '; ?>', str_replace( '<?=', '<?php echo ', $source_code ) ) );

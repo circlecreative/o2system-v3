@@ -196,5 +196,5 @@ abstract class Driver extends DriverInterface
      * @return  bool
      * @throws  Exception
      */
-    abstract public function is_supported();
+    abstract public function isSupported();
 }

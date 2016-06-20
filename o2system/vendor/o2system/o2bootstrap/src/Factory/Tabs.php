@@ -62,7 +62,7 @@ class Tabs extends FactoryInterface
      */
     public function stacked()
     {
-        $this->add_class('nav-stacked');
+        $this->addClass('nav-stacked');
 
         return $this;
     }
@@ -76,7 +76,7 @@ class Tabs extends FactoryInterface
      */
     public function justified()
     {
-        $this->add_class('nav-justified');
+        $this->addClass('nav-justified');
 
         return $this;
     }
@@ -102,13 +102,13 @@ class Tabs extends FactoryInterface
         {
             if(! isset($this->_attributes['id']))
             {
-                $this->set_id( 'nav-' . $for );
+                $this->setId( 'nav-' . $for );
             }
         }
 
         if(isset($type))
         {
-            $this->add_class( 'nav-' . $type);
+            $this->addClass( 'nav-' . $type);
         }
 
         return $this;

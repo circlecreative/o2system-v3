@@ -57,11 +57,11 @@ class Trail extends DriverInterface
 {
 	public function log( array $log )
 	{
-		if ( \O2System::Useragent()->is_robot() ) return FALSE;
+		if ( \O2System::Useragent()->isRobot() ) return FALSE;
 
 		$id_user_account = NULL;
 
-		if ( $this->_library->user->is_login() )
+		if ( $this->_library->user->isLogin() )
 		{
 			$id_user_account = $this->_library->user->account( 'id' );
 		}
@@ -107,7 +107,7 @@ class Trail extends DriverInterface
 		{
 			$_SESSION[ 'trail' ] = $session_data;
 
-			return $this->_library->model->insert_trail( array(
+			return $this->_library->model->insertTrail( array(
 				                                             'id_user_account'  => $id_user_account,
 				                                             'user_ip'          => \O2System::Input()->ipAddress(),
 				                                             'user_agent'       => \O2System::Input()->userAgent(),
@@ -136,7 +136,7 @@ class Trail extends DriverInterface
 
 	public function getLog()
 	{
-		if ( $this->_library->user->is_login() )
+		if ( $this->_library->user->isLogin() )
 		{
 			$conditions[ 'id_user_account' ] = $this->_library->user->account( 'id' );
 		}
@@ -148,7 +148,7 @@ class Trail extends DriverInterface
 
 	public function getLogs()
 	{
-		if ( $this->_library->user->is_login() )
+		if ( $this->_library->user->isLogin() )
 		{
 			$conditions[ 'id_user_account' ] = $this->_library->user->account( 'id' );
 		}

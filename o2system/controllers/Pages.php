@@ -68,11 +68,6 @@ class Pages extends Controller
     }
     // ------------------------------------------------------------------------
 
-    protected function _build_vars()
-    {
-
-    }
-
     /**
      * Index Method
      *

@@ -83,23 +83,23 @@ class Metadata extends DriverInterface implements IteratorAggregate, Countable, 
 	 *
 	 * @return $this
 	 */
-	public function set_meta( array $meta )
+	public function setMeta(array $meta )
 	{
 		$this->storage = array();
-		$this->add_meta( $meta );
+		$this->addMeta( $meta );
 
 		return $this;
 	}
 
 	// ------------------------------------------------------------------------
 
-	public function add_meta( $meta, $content = NULL )
+	public function addMeta($meta, $content = NULL )
 	{
 		if ( is_array( $meta ) )
 		{
 			foreach ( $meta as $name => $content )
 			{
-				$this->add_meta( $name, $content );
+				$this->addMeta( $name, $content );
 			}
 		}
 		elseif ( is_string( $meta ) )
@@ -123,7 +123,7 @@ class Metadata extends DriverInterface implements IteratorAggregate, Countable, 
 		}
 	}
 
-	public function set_charset( $charset )
+	public function setCharset($charset )
 	{
 		$this->_config[ 'charset' ] = $charset;
 	}
@@ -173,7 +173,7 @@ class Metadata extends DriverInterface implements IteratorAggregate, Countable, 
 	 */
 	public function offsetSet( $offset, $value )
 	{
-		$this->add_meta( $offset, $value );
+		$this->addMeta( $offset, $value );
 	}
 
 	/**

@@ -109,7 +109,7 @@ namespace O2System
 					$driver->setConfig( $config );
 
 					if ( $driver === FALSE OR
-						( $driver instanceof DriverInterface AND $driver->is_supported() === FALSE )
+						( $driver instanceof DriverInterface AND $driver->isSupported() === FALSE )
 					)
 					{
 						throw new Cache\UnsupportedDriverException( 'CACHE_UNSUPPORTEDDRIVER', 2002, $config );

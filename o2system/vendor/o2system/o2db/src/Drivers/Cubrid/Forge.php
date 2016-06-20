@@ -110,14 +110,14 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    string|string[]
 	 */
-	protected function _alter_table( $alter_type, $table, $field )
+	protected function _alterTable($alter_type, $table, $field )
 	{
 		if ( in_array( $alter_type, array( 'DROP', 'ADD' ), TRUE ) )
 		{
-			return parent::_alter_table( $alter_type, $table, $field );
+			return parent::_alterTable( $alter_type, $table, $field );
 		}
 
-		$sql = 'ALTER TABLE ' . $this->_driver->escape_identifiers( $table );
+		$sql = 'ALTER TABLE ' . $this->_driver->escapeIdentifiers( $table );
 		$sqls = array();
 		for ( $i = 0, $c = count( $field ); $i < $c; $i++ )
 		{
@@ -128,7 +128,7 @@ class Forge extends ForgeInterface
 			else
 			{
 				$alter_type = empty( $field[ $i ][ 'new_name' ] ) ? ' MODIFY ' : ' CHANGE ';
-				$sqls[] = $sql . $alter_type . $this->_process_column( $field[ $i ] );
+				$sqls[] = $sql . $alter_type . $this->_processColumn( $field[ $i ] );
 			}
 		}
 
@@ -144,18 +144,18 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    string
 	 */
-	protected function _process_column( $field )
+	protected function _processColumn($field )
 	{
 		$extra_clause = isset( $field[ 'after' ] )
-			? ' AFTER ' . $this->_driver->escape_identifiers( $field[ 'after' ] ) : '';
+			? ' AFTER ' . $this->_driver->escapeIdentifiers( $field[ 'after' ] ) : '';
 
 		if ( empty( $extra_clause ) && isset( $field[ 'first' ] ) && $field[ 'first' ] === TRUE )
 		{
 			$extra_clause = ' FIRST';
 		}
 
-		return $this->_driver->escape_identifiers( $field[ 'name' ] )
-		. ( empty( $field[ 'new_name' ] ) ? '' : ' ' . $this->_driver->escape_identifiers( $field[ 'new_name' ] ) )
+		return $this->_driver->escapeIdentifiers( $field[ 'name' ] )
+		. ( empty( $field[ 'new_name' ] ) ? '' : ' ' . $this->_driver->escapeIdentifiers( $field[ 'new_name' ] ) )
 		. ' ' . $field[ 'type' ] . $field[ 'length' ]
 		. $field[ 'unsigned' ]
 		. $field[ 'null' ]
@@ -176,7 +176,7 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    void
 	 */
-	protected function _attr_type( &$attributes )
+	protected function _attrType(&$attributes )
 	{
 		switch ( strtoupper( $attributes[ 'TYPE' ] ) )
 		{
@@ -204,7 +204,7 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    string
 	 */
-	protected function _process_indexes( $table )
+	protected function _processIndexes($table )
 	{
 		$sql = '';
 
@@ -229,8 +229,8 @@ class Forge extends ForgeInterface
 
 			is_array( $this->keys[ $i ] ) OR $this->keys[ $i ] = array( $this->keys[ $i ] );
 
-			$sql .= ",\n\tKEY " . $this->_driver->escape_identifiers( implode( '_', $this->keys[ $i ] ) )
-				. ' (' . implode( ', ', $this->_driver->escape_identifiers( $this->keys[ $i ] ) ) . ')';
+			$sql .= ",\n\tKEY " . $this->_driver->escapeIdentifiers( implode( '_', $this->keys[ $i ] ) )
+				. ' (' . implode( ', ', $this->_driver->escapeIdentifiers( $this->keys[ $i ] ) ) . ')';
 		}
 
 		$this->keys = array();

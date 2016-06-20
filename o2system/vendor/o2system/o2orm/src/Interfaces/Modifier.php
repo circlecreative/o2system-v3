@@ -18,17 +18,17 @@ trait Modifier
 	 * in the destination database table.
 	 *
 	 * @param   array $row           Insert Row Data
-	 * @param   bool  $affected_rows Return num of affected rows
+	 * @param   bool  $affectedRows Return num of affected rows
 	 *
 	 * @access  protected
 	 * @return  mixed
 	 */
-	protected function insert( $row, $affected_rows = FALSE )
+	protected function insert( $row, $affectedRows = FALSE )
 	{
 		print_out($row);
 		$return = FALSE;
 
-		if ( $this->db->table_exists( $this->table ) AND ! empty( $row ) )
+		if ( $this->db->tableExists( $this->table ) AND ! empty( $row ) )
 		{
 			if ( ! isset( $row[ 'record_status' ] ) )
 			{
@@ -51,16 +51,16 @@ trait Modifier
 
 			$return = $this->db->insert( $this->table, $row );
 
-			if ( $this->db->affected_rows() > 0 )
+			if ( $this->db->affectedRows() > 0 )
 			{
-				if ( $affected_rows === TRUE )
+				if ( $affectedRows === TRUE )
 				{
-					$return = $affected_rows === TRUE ? $this->db->insert_id() : TRUE;
+					$return = $affectedRows === TRUE ? $this->db->insertId() : TRUE;
 				}
 
-				if ( $this->db->field_exists( 'record_left', $this->table ) )
+				if ( $this->db->fieldExists( 'record_left', $this->table ) )
 				{
-					$this->rebuild_tree( $this->table );
+					$this->rebuildTree( $this->table );
 				}
 			}
 		}
@@ -74,12 +74,12 @@ trait Modifier
 	 * Insert multiple rows into the table. Returns an array of multiple IDs.
 	 *
 	 * @param   array $rows
-	 * @param   bool  $affected_rows Return num of affected rows
+	 * @param   bool  $affectedRows Return num of affected rows
 	 *
 	 * @access  protected
 	 * @return  mixed
 	 */
-	protected function insert_many( array $rows, $affected_rows = FALSE )
+	protected function insertMany(array $rows, $affectedRows = FALSE )
 	{
 		$return = FALSE;
 
@@ -88,16 +88,16 @@ trait Modifier
 			$return = $this->insert( $row );
 		}
 
-		if ( $this->db->affected_rows() > 0 )
+		if ( $this->db->affectedRows() > 0 )
 		{
-			if ( $affected_rows === TRUE )
+			if ( $affectedRows === TRUE )
 			{
-				$return = $affected_rows === TRUE ? $this->db->insert_id() : TRUE;
+				$return = $affectedRows === TRUE ? $this->db->insertId() : TRUE;
 			}
 
-			if ( $this->db->field_exists( 'record_left', $this->table ) )
+			if ( $this->db->fieldExists( 'record_left', $this->table ) )
 			{
-				$this->rebuild_tree( $this->table );
+				$this->rebuildTree( $this->table );
 			}
 		}
 
@@ -113,12 +113,12 @@ trait Modifier
 	 * in the destination database table.
 	 *
 	 * @param   array $row           Update row data
-	 * @param   bool  $affected_rows Return num of affected rows
+	 * @param   bool  $affectedRows Return num of affected rows
 	 *
 	 * @access  protected
 	 * @return  mixed
 	 */
-	protected function update( $row, $affected_rows = FALSE )
+	protected function update( $row, $affectedRows = FALSE )
 	{
 		$return = FALSE;
 
@@ -131,16 +131,16 @@ trait Modifier
 
 		$return = $this->db->where( 'id', $row[ 'id' ] )->update( $this->table, $row );
 
-		if ( $this->db->affected_rows() > 0 )
+		if ( $this->db->affectedRows() > 0 )
 		{
-			if ( $affected_rows === TRUE )
+			if ( $affectedRows === TRUE )
 			{
-				$return = $affected_rows === TRUE ? $this->db->affected_rows() : TRUE;
+				$return = $affectedRows === TRUE ? $this->db->affectedRows() : TRUE;
 			}
 
-			if ( $this->db->field_exists( 'record_left', $this->table ) )
+			if ( $this->db->fieldExists( 'record_left', $this->table ) )
 			{
-				$this->rebuild_tree( $this->table );
+				$this->rebuildTree( $this->table );
 			}
 		}
 
@@ -155,12 +155,12 @@ trait Modifier
 	 *
 	 * @param   array $row           Update row data
 	 * @param   array $conditions    Update conditions
-	 * @param   bool  $affected_rows Return num of affected rows
+	 * @param   bool  $affectedRows Return num of affected rows
 	 *
 	 * @access  protected
 	 * @return  mixed
 	 */
-	protected function update_by( $row, array $conditions, $affected_rows = FALSE )
+	protected function updateBy($row, array $conditions, $affectedRows = FALSE )
 	{
 		$return = FALSE;
 
@@ -173,16 +173,16 @@ trait Modifier
 
 		$return = $this->db->where( $conditions )->update( $this->table, $row );
 
-		if ( $this->db->affected_rows() > 0 )
+		if ( $this->db->affectedRows() > 0 )
 		{
-			if ( $affected_rows === TRUE )
+			if ( $affectedRows === TRUE )
 			{
-				$return = $affected_rows === TRUE ? $this->db->affected_rows() : TRUE;
+				$return = $affectedRows === TRUE ? $this->db->affectedRows() : TRUE;
 			}
 
-			if ( $this->db->field_exists( 'record_left', $this->table ) )
+			if ( $this->db->fieldExists( 'record_left', $this->table ) )
 			{
-				$this->rebuild_tree( $this->table );
+				$this->rebuildTree( $this->table );
 			}
 		}
 
@@ -197,7 +197,7 @@ trait Modifier
 	 *
 	 * @return mixed
 	 */
-	protected function update_many( array $rows, $affected_rows = FALSE )
+	protected function updateMany(array $rows, $affectedRows = FALSE )
 	{
 		$return = FALSE;
 
@@ -206,16 +206,16 @@ trait Modifier
 			$return = $this->update( $row );
 		}
 
-		if ( $this->db->affected_rows() > 0 )
+		if ( $this->db->affectedRows() > 0 )
 		{
-			if ( $affected_rows === TRUE )
+			if ( $affectedRows === TRUE )
 			{
-				$return = $affected_rows === TRUE ? $this->db->affected_rows() : TRUE;
+				$return = $affectedRows === TRUE ? $this->db->affectedRows() : TRUE;
 			}
 
-			if ( $this->db->field_exists( 'record_left', $this->table ) )
+			if ( $this->db->fieldExists( 'record_left', $this->table ) )
 			{
-				$this->rebuild_tree( $this->table );
+				$this->rebuildTree( $this->table );
 			}
 		}
 
@@ -229,9 +229,9 @@ trait Modifier
 		return $this->update( [ 'id' => $id, 'record_status' => 'TRASH' ] );
 	}
 
-	protected function trash_by( $id, $conditions = array() )
+	protected function trashBy($id, $conditions = array() )
 	{
-		return $this->update_by( [ 'id' => $id, 'record_status' => 'TRASH' ], $conditions );
+		return $this->updateBy( [ 'id' => $id, 'record_status' => 'TRASH' ], $conditions );
 	}
 
 	/**
@@ -241,7 +241,7 @@ trait Modifier
 	 *
 	 * @return mixed
 	 */
-	protected function trash_many( array $ids )
+	protected function trashMany(array $ids )
 	{
 		$return = FALSE;
 
@@ -255,28 +255,28 @@ trait Modifier
 
 	// ------------------------------------------------------------------------
 
-	protected function trash_many_by( array $ids, $conditions = array() )
+	protected function trashManyBy(array $ids, $conditions = array() )
 	{
 		$return = FALSE;
 
 		foreach ( $ids as $id )
 		{
-			$return = $this->trash_by( $id, $conditions );
+			$return = $this->trashBy( $id, $conditions );
 		}
 
 		return $return;
 	}
 
-	protected function delete( $id, $force = FALSE, $affected_rows = FALSE )
+	protected function delete( $id, $force = FALSE, $affectedRows = FALSE )
 	{
 		$return = FALSE;
 
 		// Recursive Search Parenting
 		if ( $force === TRUE )
 		{
-			$query = $this->db->select( 'id' )->get_where( $this->table, [ 'id_parent' => $id ] );
+			$query = $this->db->select( 'id' )->getWhere( $this->table, [ 'id_parent' => $id ] );
 
-			if ( $query->num_rows() > 0 )
+			if ( $query->numRows() > 0 )
 			{
 				foreach ( $query->result() as $row )
 				{
@@ -290,13 +290,13 @@ trait Modifier
 
 		foreach ( $fields as $field )
 		{
-			if ( $this->db->field_exists( $field, $this->table ) )
+			if ( $this->db->fieldExists( $field, $this->table ) )
 			{
-				$query = $this->db->select( $field )->get_where( $this->table, [ 'id' => $id ], 1 );
+				$query = $this->db->select( $field )->getWhere( $this->table, [ 'id' => $id ], 1 );
 
-				if ( $query->num_rows() > 0 )
+				if ( $query->numRows() > 0 )
 				{
-					if ( ! empty( $query->first_row()->{$field} ) )
+					if ( ! empty( $query->firstRow()->{$field} ) )
 					{
 						$directory = new \RecursiveDirectoryIterator( APPSPATH );
 						$iterator = new \RecursiveIteratorIterator( $directory );
@@ -320,23 +320,23 @@ trait Modifier
 		// Finaly Delete This Data
 		$return = $this->db->where( 'id', $id )->delete( $this->table );
 
-		if ( $this->db->affected_rows() > 0 )
+		if ( $this->db->affectedRows() > 0 )
 		{
-			if ( $affected_rows === TRUE )
+			if ( $affectedRows === TRUE )
 			{
-				$return = $affected_rows === TRUE ? $this->db->affected_rows() : TRUE;
+				$return = $affectedRows === TRUE ? $this->db->affectedRows() : TRUE;
 			}
 
-			if ( $this->db->field_exists( 'record_left', $this->table ) )
+			if ( $this->db->fieldExists( 'record_left', $this->table ) )
 			{
-				$this->rebuild_tree( $this->table );
+				$this->rebuildTree( $this->table );
 			}
 		}
 
 		return $return;
 	}
 
-	protected function delete_by( $id, $conditions = array(), $force = FALSE, $affected_rows = FALSE )
+	protected function deleteBy($id, $conditions = array(), $force = FALSE, $affectedRows = FALSE )
 	{
 		$this->db->where( $conditions );
 
@@ -350,7 +350,7 @@ trait Modifier
 	 *
 	 * @return mixed
 	 */
-	protected function delete_many( array $ids, $force = FALSE, $affected_rows = FALSE )
+	protected function deleteMany(array $ids, $force = FALSE, $affectedRows = FALSE )
 	{
 		$return = FALSE;
 
@@ -359,41 +359,41 @@ trait Modifier
 			$this->delete( $id, $force );
 		}
 
-		if ( $this->db->affected_rows() > 0 )
+		if ( $this->db->affectedRows() > 0 )
 		{
-			if ( $affected_rows === TRUE )
+			if ( $affectedRows === TRUE )
 			{
-				$return = $affected_rows === TRUE ? $this->db->affected_rows() : TRUE;
+				$return = $affectedRows === TRUE ? $this->db->affectedRows() : TRUE;
 			}
 
-			if ( $this->db->field_exists( 'record_left', $this->table ) )
+			if ( $this->db->fieldExists( 'record_left', $this->table ) )
 			{
-				$this->rebuild_tree( $this->table );
+				$this->rebuildTree( $this->table );
 			}
 		}
 
 		return $return;
 	}
 
-	protected function delete_many_by( array $ids, $conditions = array(), $force = FALSE, $affected_rows = FALSE )
+	protected function deleteManyBy(array $ids, $conditions = array(), $force = FALSE, $affectedRows = FALSE )
 	{
 		$return = FALSE;
 
 		foreach ( $ids as $id )
 		{
-			$this->delete_by( $id, $conditions, $force );
+			$this->deleteBy( $id, $conditions, $force );
 		}
 
-		if ( $this->db->affected_rows() > 0 )
+		if ( $this->db->affectedRows() > 0 )
 		{
-			if ( $affected_rows === TRUE )
+			if ( $affectedRows === TRUE )
 			{
-				$return = $affected_rows === TRUE ? $this->db->affected_rows() : TRUE;
+				$return = $affectedRows === TRUE ? $this->db->affectedRows() : TRUE;
 			}
 
-			if ( $this->db->field_exists( 'record_left', $this->table ) )
+			if ( $this->db->fieldExists( 'record_left', $this->table ) )
 			{
-				$this->rebuild_tree( $this->table );
+				$this->rebuildTree( $this->table );
 			}
 		}
 

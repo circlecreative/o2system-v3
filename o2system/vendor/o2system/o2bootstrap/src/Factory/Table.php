@@ -106,15 +106,15 @@ class Table extends FactoryInterface
 
 		if ( isset( $attr ) )
 		{
-			$this->add_attributes( $attr );
+			$this->addAttributes( $attr );
 		}
 	}
 
-	public function set_caption( $caption, $attr = array() )
+	public function setCaption($caption, $attr = array() )
 	{
 		if ( $caption instanceof FactoryInterface )
 		{
-			$caption->set_tag( 'caption' );
+			$caption->setTag( 'caption' );
 		}
 		else
 		{
@@ -134,7 +134,7 @@ class Table extends FactoryInterface
 	 * @access  public
 	 * @return  $this
 	 */
-	public function set_headers( array $headers )
+	public function setHeaders(array $headers )
 	{
 		$this->_headers = $headers;
 
@@ -149,7 +149,7 @@ class Table extends FactoryInterface
 	 * @access  public
 	 * @return  $this
 	 */
-	public function set_footers( array $footers )
+	public function setFooters(array $footers )
 	{
 		$this->_footers = $footers;
 
@@ -164,22 +164,22 @@ class Table extends FactoryInterface
 	 * @access  public
 	 * @return  $this
 	 */
-	public function set_rows( array $rows )
+	public function setRows(array $rows )
 	{
 		foreach ( $rows as $row )
 		{
-			$this->add_row( $row );
+			$this->addRow( $row );
 		}
 
 		return $this;
 	}
 
-	public function set_colgroup( array $cols )
+	public function setColgroup(array $cols )
 	{
 
 	}
 
-	public function add_row( array $row, $attr = array() )
+	public function addRow(array $row, $attr = array() )
 	{
 		$values = array_values( $row );
 
@@ -189,7 +189,7 @@ class Table extends FactoryInterface
 
 			foreach ( $values as $value )
 			{
-				$row->append_content( new Tag( 'td', $value ) );
+				$row->appendContent( new Tag( 'td', $value ) );
 			}
 
 			$this->_rows[] = $row;
@@ -203,9 +203,9 @@ class Table extends FactoryInterface
 	 *
 	 * @return object
 	 */
-	public function is_striped()
+	public function isStriped()
 	{
-		$this->add_class( 'table-striped' );
+		$this->addClass( 'table-striped' );
 
 		return $this;
 	}
@@ -215,9 +215,9 @@ class Table extends FactoryInterface
 	 *
 	 * @return object
 	 */
-	public function is_bordered()
+	public function isBordered()
 	{
-		$this->add_class( 'table-bordered' );
+		$this->addClass( 'table-bordered' );
 
 		return $this;
 	}
@@ -227,9 +227,9 @@ class Table extends FactoryInterface
 	 *
 	 * @return object
 	 */
-	public function is_hovered()
+	public function isHovered()
 	{
-		$this->add_class( 'table-hover' );
+		$this->addClass( 'table-hover' );
 
 		return $this;
 	}
@@ -239,9 +239,9 @@ class Table extends FactoryInterface
 	 *
 	 * @return object
 	 */
-	public function is_condensed()
+	public function isCondensed()
 	{
-		$this->add_class( 'table-condensed' );
+		$this->addClass( 'table-condensed' );
 
 		return $this;
 	}
@@ -251,7 +251,7 @@ class Table extends FactoryInterface
 	 *
 	 * @return object
 	 */
-	public function is_responsive()
+	public function isResponsive()
 	{
 		$this->_is_responsive = TRUE;
 
@@ -279,7 +279,7 @@ class Table extends FactoryInterface
 
 			foreach ( $this->_headers as $column )
 			{
-				$thead->append_content( new Tag( 'th', $column ) );
+				$thead->appendContent( new Tag( 'th', $column ) );
 			}
 
 			$output[] = new Tag( 'thead', $thead->render() );
@@ -294,7 +294,7 @@ class Table extends FactoryInterface
 
 				foreach ( $this->_footers as $column )
 				{
-					$tfoot->append_content( new Tag( 'th', $column ) );
+					$tfoot->appendContent( new Tag( 'th', $column ) );
 				}
 
 				$output[] = new Tag( 'tfoot', $tfoot );

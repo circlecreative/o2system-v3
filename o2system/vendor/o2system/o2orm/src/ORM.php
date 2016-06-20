@@ -117,16 +117,16 @@ class Model
 		// Set table fields
 		if ( isset( $this->table ) )
 		{
-			$this->fields = $this->db->list_fields( $this->table );
+			$this->fields = $this->db->listFields( $this->table );
 		}
 
 		if ( ! empty( $data ) )
 		{
-			$this->set_data( $data );
+			$this->setData( $data );
 		}
 
 		// Set Result Class
-		//$this->db->set_row_class( '\O2System\ORM\Factory\Row', [ &$this ] );
+		//$this->db->setRowClass( '\O2System\ORM\Factory\Row', [ &$this ] );
 	}
 
 	// ------------------------------------------------------------------------
@@ -139,7 +139,7 @@ class Model
 	 *
 	 * @access  public
 	 */
-	public function set_data( $field, $value = NULL )
+	public function setData($field, $value = NULL )
 	{
 		if ( is_array( $field ) )
 		{
@@ -169,7 +169,7 @@ class Model
 		if ( method_exists( $this, $setter ) )
 		{
 			$value = call_user_func( array( $this, $setter ), $value );
-			$this->set_data( $field, $value );
+			$this->setData( $field, $value );
 		}
 		else
 		{
@@ -252,7 +252,7 @@ class Model
 
 			foreach ( $this->table_prefixes as $prefix )
 			{
-				if ( $this->db->table_exists( $prefix . $table ) )
+				if ( $this->db->tableExists( $prefix . $table ) )
 				{
 					if ( ! empty( $params ) )
 					{

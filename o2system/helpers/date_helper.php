@@ -74,7 +74,7 @@ if ( ! function_exists( 'timestamp' ) )
 			$timestamp = strtotime( $timestamp );
 		}
 
-		return date( 'Y-m-d H:m:s', $timestamp );
+		return date( 'Y-m-d H:i:s', $timestamp );
 	}
 }
 // ------------------------------------------------------------------------
@@ -158,7 +158,7 @@ if ( ! function_exists( 'format_date' ) )
 	 *
 	 * @return  string
 	 */
-	function format_date( $timestamp = NULL, $format = '%l, %d-%F-%Y %h:%m:%s %a' )
+	function format_date( $timestamp = NULL, $format = '%l, %d-%F-%Y %h:%i:%s %a' )
 	{
 		$timestamp = ( is_null( $timestamp ) ? now() : ( is_numeric( $timestamp ) ? $timestamp : strtotime( $timestamp ) ) );
 		$date = parse_date( $timestamp );

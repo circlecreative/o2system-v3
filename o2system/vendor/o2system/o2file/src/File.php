@@ -193,7 +193,7 @@ class File
 	 *
 	 * @return    bool
 	 */
-	public static function is_really_writable( $file )
+	public static function isReallyWritable($file )
 	{
 		// If we're on a Unix server with safe_mode off we call is_writable
 		if ( DIRECTORY_SEPARATOR === '/' AND
@@ -260,7 +260,7 @@ class File
 			$fileinfo->chmod = @substr( sprintf( '%o', fileperms( $filename ) ), -4 );
 			$fileinfo->permissions = @fileperms( $filename );
 			$fileinfo->readable = is_readable( $filename );
-			$fileinfo->writable = self::is_really_writable( $filename );
+			$fileinfo->writable = self::isReallyWritable( $filename );
 			$fileinfo->executable = is_executable( $filename );
 
 			return $fileinfo;

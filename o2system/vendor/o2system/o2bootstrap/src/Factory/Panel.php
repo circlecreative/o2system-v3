@@ -67,7 +67,7 @@ class Panel extends FactoryInterface
 
 	public function build()
 	{
-		$this->set_contextual_class_prefix( 'panel' );
+		$this->setContextualClassPrefix( 'panel' );
 
 		@list( $title, $type, $attr ) = func_get_args();
 
@@ -75,17 +75,17 @@ class Panel extends FactoryInterface
 		{
 			if ( is_array( $title ) )
 			{
-				$this->add_attributes( $title );
+				$this->addAttributes( $title );
 			}
 			elseif ( is_string( $title ) )
 			{
 				if ( in_array( $title, $this->_contextual_classes ) )
 				{
-					$this->{'is_' . $title}();
+					$this->{'is' . studlycapcase($title)}();
 				}
 				else
 				{
-					$this->set_title( $title );
+					$this->setTitle( $title );
 				}
 			}
 		}
@@ -94,13 +94,13 @@ class Panel extends FactoryInterface
 		{
 			if ( is_array( $type ) )
 			{
-				$this->add_attributes( $type );
+				$this->addAttributes( $type );
 			}
 			elseif ( is_string( $type ) )
 			{
 				if ( in_array( $type, $this->_contextual_classes ) )
 				{
-					$this->{'is_' . $type}();
+					$this->{'is' . studlycapcase($type)}();
 				}
 			}
 		}
@@ -109,13 +109,13 @@ class Panel extends FactoryInterface
 		{
 			if ( is_array( $attr ) )
 			{
-				$this->add_attributes( $attr );
+				$this->addAttributes( $attr );
 			}
 			elseif ( is_string( $attr ) )
 			{
 				if ( in_array( $attr, $this->_contextual_classes ) )
 				{
-					$this->{'is_' . $attr}();
+					$this->{'is' . studlycapcase($attr)}();
 				}
 			}
 		}
@@ -144,7 +144,7 @@ class Panel extends FactoryInterface
 	 *
 	 * @return object
 	 */
-	public function set_title( $title, $tag = 'h3', $attr = array() )
+	public function setTitle($title, $tag = 'h3', $attr = array() )
 	{
 		if ( is_array( $tag ) )
 		{
@@ -154,15 +154,15 @@ class Panel extends FactoryInterface
 		if ( $title instanceof Link )
 		{
 			$this->title = clone $title;
-			$this->title->add_attributes( $attr );
-			$this->title->add_class( 'panel-title' );
+			$this->title->addAttributes( $attr );
+			$this->title->addClass( 'panel-title' );
 		}
 		elseif ( $title instanceof Tag )
 		{
 			$this->title = clone $title;
-			$this->title->set_tag( $tag );
-			$this->title->add_attributes( $attr );
-			$this->title->add_class( 'panel-title' );
+			$this->title->setTag( $tag );
+			$this->title->addAttributes( $attr );
+			$this->title->addClass( 'panel-title' );
 		}
 		else
 		{
@@ -172,35 +172,35 @@ class Panel extends FactoryInterface
 		return $this;
 	}
 
-	public function set_options( $options )
+	public function setOptions($options )
 	{
 		if ( $options instanceof FactoryInterface )
 		{
 			$this->options = clone $options;
-			$this->options->add_class( 'panel-options pull-right' );
+			$this->options->addClass( 'panel-options pull-right' );
 		}
 
 		return $this;
 	}
 
-	public function set_body( $body )
+	public function setBody($body )
 	{
-		return $this->set_content( $body );
+		return $this->setContent( $body );
 	}
 
-	public function reset_body()
+	public function resetBody()
 	{
-		return $this->reset_content();
+		return $this->resetContent();
 	}
 
-	public function prepend_body( $body )
+	public function prependBody($body )
 	{
-		return $this->prepend_content( $body );
+		return $this->prependContent( $body );
 	}
 
-	public function append_body( $body )
+	public function appendBody($body )
 	{
-		return $this->append_content( $body );
+		return $this->appendContent( $body );
 	}
 
 	/**
@@ -211,7 +211,7 @@ class Panel extends FactoryInterface
 	 *
 	 * @return object
 	 */
-	public function set_footer( $title, $tag = 'div', $attr = array() )
+	public function setFooter($title, $tag = 'div', $attr = array() )
 	{
 		if ( is_array( $tag ) )
 		{
@@ -221,8 +221,8 @@ class Panel extends FactoryInterface
 		if ( $title instanceof Tag )
 		{
 			$this->footer = clone $title;
-			$this->footer->set_tag( $tag );
-			$this->footer->add_class( 'panel-footer' );
+			$this->footer->setTag( $tag );
+			$this->footer->addClass( 'panel-footer' );
 		}
 		else
 		{
@@ -248,14 +248,14 @@ class Panel extends FactoryInterface
 		return $this;
 	}
 
-	public function set_table( Tag $table )
+	public function setTable(Tag $table )
 	{
 		$this->table = $table;
 
 		return $this;
 	}
 
-	public function set_lists( Lists $lists )
+	public function setLists(Lists $lists )
 	{
 		$this->lists = $lists;
 
@@ -274,10 +274,10 @@ class Panel extends FactoryInterface
 			if ( isset( $this->title ) AND isset( $this->options ) )
 			{
 				$grid = new Grid();
-				$grid->set_class( 'panel-heading' );
-				$grid->set_num_per_rows( 2 );
-				$grid->add_item( $this->title );
-				$grid->add_item( $this->options );
+				$grid->setClass( 'panel-heading' );
+				$grid->setNumPerRows( 2 );
+				$grid->addItem( $this->title );
+				$grid->addItem( $this->options );
 
 				$output[] = $grid;
 			}
@@ -310,10 +310,10 @@ class Panel extends FactoryInterface
 			if ( isset( $this->title ) AND isset( $this->options ) )
 			{
 				$grid = new Grid();
-				$grid->set_class( 'panel-heading' );
-				$grid->set_num_per_rows( 2 );
-				$grid->add_item( $this->title );
-				$grid->add_item( $this->options );
+				$grid->setClass( 'panel-heading' );
+				$grid->setNumPerRows( 2 );
+				$grid->addItem( $this->title );
+				$grid->addItem( $this->options );
 
 				$output[] = $grid;
 			}
@@ -341,10 +341,10 @@ class Panel extends FactoryInterface
 			if ( isset( $this->title ) AND isset( $this->options ) )
 			{
 				$grid = new Grid();
-				$grid->set_class( 'panel-heading' );
-				$grid->set_num_per_rows( 2 );
-				$grid->add_item( $this->title );
-				$grid->add_item( $this->options );
+				$grid->setClass( 'panel-heading' );
+				$grid->setNumPerRows( 2 );
+				$grid->addItem( $this->title );
+				$grid->addItem( $this->options );
 
 				$output[] = $grid;
 			}

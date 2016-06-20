@@ -76,12 +76,12 @@ final class Assets extends DriverInterface
 
 	// ------------------------------------------------------------------------
 
-	public function is_collected( $asset, $group )
+	public function isCollected($asset, $group )
 	{
 
 	}
 
-	public function add_assets( array $assets, $group = 'custom' )
+	public function addAssets(array $assets, $group = 'custom' )
 	{
 		if ( isset( $this->_collections[ $group ] ) )
 		{
@@ -114,7 +114,7 @@ final class Assets extends DriverInterface
 		return $this;
 	}
 
-	public function add_asset( $asset, $group = 'custom' )
+	public function addAsset($asset, $group = 'custom' )
 	{
 		if ( isset( $this->_collections[ $group ] ) )
 		{
@@ -137,7 +137,7 @@ final class Assets extends DriverInterface
 		return $this;
 	}
 
-	public function add_css( $css, $attr = NULL, $group = 'custom' )
+	public function addCss($css, $attr = NULL, $group = 'custom' )
 	{
 		if ( is_string( $attr ) )
 		{
@@ -187,7 +187,7 @@ final class Assets extends DriverInterface
 		return $this;
 	}
 
-	public function add_js( $js, $attr = array(), $group = 'custom' )
+	public function addJs($js, $attr = array(), $group = 'custom' )
 	{
 		if ( is_string( $attr ) )
 		{
@@ -235,25 +235,25 @@ final class Assets extends DriverInterface
 		return $this;
 	}
 
-	public function add_fonts( $fonts )
+	public function addFonts($fonts )
 	{
-		$this->add_assets( $fonts );
+		$this->addAssets( $fonts );
 	}
 
-	public function add_font( $font, $attr = array() )
+	public function addFont($font, $attr = array() )
 	{
-		$this->add_css( $font, $attr, 'fonts' );
+		$this->addCss( $font, $attr, 'fonts' );
 	}
 
-	public function add_icons( $icons )
+	public function addIcons($icons )
 	{
 		foreach ( $icons as $icon )
 		{
-			$this->add_icon( $icon );
+			$this->addIcon( $icon );
 		}
 	}
 
-	public function add_icon( $icon, $attr = array() )
+	public function addIcon($icon, $attr = array() )
 	{
 		$attr = array_merge( array(
 			                     'rel'  => 'shortcut-icon',
@@ -286,15 +286,15 @@ final class Assets extends DriverInterface
 		return $this;
 	}
 
-	public function add_packages( array $packages, $group = 'plugins' )
+	public function addPackages(array $packages, $group = 'plugins' )
 	{
 		foreach ( $packages as $package )
 		{
-			$this->add_package( $package, $group );
+			$this->addPackage( $package, $group );
 		}
 	}
 
-	public function add_package( $package, $group = 'plugins' )
+	public function addPackage($package, $group = 'plugins' )
 	{
 		$this->_collections[ $group ]['packages'][] = $package;
 	}

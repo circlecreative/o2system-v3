@@ -82,14 +82,14 @@ class Relation
         $this->_self_model =& $self_model;
 
         // Try to load reference model
-        $relation_model = $this->_load_model( $relation );
+        $relation_model = $this->_loadModel( $relation );
 
         if( $relation_model instanceof Model )
         {
             $this->model =& $relation_model;
 
-            $this->_set_table( $relation_model->table );
-            $this->_set_primary_key( $relation_model->primary_key );
+            $this->_setTable( $relation_model->table );
+            $this->_setPrimaryKey( $relation_model->primary_key );
         }
         else
         {
@@ -97,13 +97,13 @@ class Relation
             {
                 $x_reference = explode( '.', $relation );
 
-                $this->_set_table( $x_reference[ 0 ] );
-                $this->_set_primary_key( $x_reference[ 1 ] );
+                $this->_setTable( $x_reference[ 0 ] );
+                $this->_setPrimaryKey( $x_reference[ 1 ] );
             }
             else
             {
-                $this->_set_table( $relation );
-                $this->_set_primary_key();
+                $this->_setTable( $relation );
+                $this->_setPrimaryKey();
             }
         }
     }
@@ -118,14 +118,14 @@ class Relation
      *
      * @param   string|null $primary_key   working table foreign key
      */
-    protected function _set_primary_key( $primary_key = NULL )
+    protected function _setPrimaryKey($primary_key = NULL )
     {
         $primary_key = isset($primary_key) ? $primary_key : $this->primary_key;
 
         if( in_array( $primary_key, $this->fields ))
         {
             $this->primary_key = $primary_key;
-            $this->set_related_key( $primary_key );
+            $this->setRelatedKey( $primary_key );
         }
     }
 
@@ -141,7 +141,7 @@ class Relation
      *
      * @param   string|null $primary_key   working table foreign key
      */
-    public function set_related_key( $foreign_key )
+    public function setRelatedKey($foreign_key )
     {
         $foreign_keys = array(
             $foreign_key . '_' . $this->object_key,
@@ -201,19 +201,19 @@ class Relation
      *
      * @param   string  $table
      */
-    protected function _set_table( $table )
+    protected function _setTable($table )
     {
         $table = str_replace( static::$table_prefixes, '', $table);
 
         foreach( static::$table_prefixes as $prefix )
         {
-            if( in_array( $prefix . $table, $this->_self_model->db->list_tables() ) )
+            if( in_array( $prefix . $table, $this->_self_model->db->listTables() ) )
             {
                 // Set Reference Table
                 $this->table = $prefix . $table;
 
                 // Set Reference Fields
-                $this->fields = array_keys( $this->_self_model->db->list_fields( $this->table ) );
+                $this->fields = array_keys( $this->_self_model->db->listFields( $this->table ) );
 
                 $x_table = explode( '_', $table );
                 $x_table = array_map( 'Inflector::singular', $x_table );
@@ -229,13 +229,13 @@ class Relation
         {
             $prefix = $this->_self_model->table . '_' ;
 
-            if( in_array( $prefix . $table, $this->_self_model->db->list_tables() ) )
+            if( in_array( $prefix . $table, $this->_self_model->db->listTables() ) )
             {
                 // Set Reference Table
                 $this->table = $prefix . $table;
 
                 // Set Reference Fields
-                $this->fields = array_keys( $this->_self_model->db->list_fields( $this->table ) );
+                $this->fields = array_keys( $this->_self_model->db->listFields( $this->table ) );
 
                 $x_table = explode( '_', $table );
                 $x_table = array_map( 'Inflector::singular', $x_table );
@@ -257,7 +257,7 @@ class Relation
      *
      * @param   string|object $related model name or instance of ORM model
      */
-    protected function _load_model( $relation )
+    protected function _loadModel($relation )
     {
         if( $relation instanceof Model )
         {

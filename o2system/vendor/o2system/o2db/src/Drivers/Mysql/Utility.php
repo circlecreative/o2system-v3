@@ -111,7 +111,7 @@ class Utility extends UtilityInterface
 			}
 
 			// Get the table schema
-			$query = $this->_driver->query( 'SHOW CREATE TABLE ' . $this->_driver->escape_identifiers( $this->_driver->database . '.' . $table ) );
+			$query = $this->_driver->query( 'SHOW CREATE TABLE ' . $this->_driver->escapeIdentifiers( $this->_driver->database . '.' . $table ) );
 
 			// No result means the table name was invalid
 			if ( $query === FALSE )
@@ -124,11 +124,11 @@ class Utility extends UtilityInterface
 
 			if ( $add_drop === TRUE )
 			{
-				$output .= 'DROP TABLE IF EXISTS ' . $this->_driver->protect_identifiers( $table ) . ';' . $newline . $newline;
+				$output .= 'DROP TABLE IF EXISTS ' . $this->_driver->protectIdentifiers( $table ) . ';' . $newline . $newline;
 			}
 
 			$i = 0;
-			$result = $query->result_array();
+			$result = $query->resultArray();
 			foreach ( $result[ 0 ] as $value )
 			{
 				if ( $i++ % 2 )
@@ -144,9 +144,9 @@ class Utility extends UtilityInterface
 			}
 
 			// Grab all the data from the current table
-			$query = $this->_driver->query( 'SELECT * FROM ' . $this->_driver->protect_identifiers( $table ) );
+			$query = $this->_driver->query( 'SELECT * FROM ' . $this->_driver->protectIdentifiers( $table ) );
 
-			if ( $query->num_rows() === 0 )
+			if ( $query->numRows() === 0 )
 			{
 				continue;
 			}
@@ -158,7 +158,7 @@ class Utility extends UtilityInterface
 			$i = 0;
 			$field_str = '';
 			$is_int = array();
-			while ( $field = $query->result_id->fetch_field() )
+			while ( $field = $query->result_id->fetchField() )
 			{
 				// Most versions of MySQL store timestamp as a string
 				$is_int[ $i ] = in_array( strtolower( $field->type ),
@@ -166,7 +166,7 @@ class Utility extends UtilityInterface
 				                          TRUE );
 
 				// Create a string of field names
-				$field_str .= $this->_driver->escape_identifiers( $field->name ) . ', ';
+				$field_str .= $this->_driver->escapeIdentifiers( $field->name ) . ', ';
 				$i++;
 			}
 
@@ -174,7 +174,7 @@ class Utility extends UtilityInterface
 			$field_str = preg_replace( '/, $/', '', $field_str );
 
 			// Build the insert string
-			foreach ( $query->result_array() as $row )
+			foreach ( $query->resultArray() as $row )
 			{
 				$val_str = '';
 
@@ -201,7 +201,7 @@ class Utility extends UtilityInterface
 				$val_str = preg_replace( '/, $/', '', $val_str );
 
 				// Build the INSERT string
-				$output .= 'INSERT INTO ' . $this->_driver->protect_identifiers( $table ) . ' (' . $field_str . ') VALUES (' . $val_str . ');' . $newline;
+				$output .= 'INSERT INTO ' . $this->_driver->protectIdentifiers( $table ) . ' (' . $field_str . ') VALUES (' . $val_str . ');' . $newline;
 			}
 
 			$output .= $newline . $newline;

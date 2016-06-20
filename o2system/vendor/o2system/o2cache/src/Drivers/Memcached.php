@@ -86,7 +86,7 @@ class Memcached extends Driver
 	 */
 	public function initialize()
 	{
-		if ( $this->is_supported() )
+		if ( $this->isSupported() )
 		{
 			if ( class_exists( 'Memcached', FALSE ) )
 			{
@@ -281,7 +281,7 @@ class Memcached extends Driver
 	 * @return  bool
 	 * @throws  Exception
 	 */
-	public function is_supported()
+	public function isSupported()
 	{
 		if ( ! extension_loaded( 'memcached' ) AND ! extension_loaded( 'memcache' ) )
 		{

@@ -16,13 +16,13 @@ trait Ordering
 	 *
 	 * @access  public
 	 */
-	protected function _before_process_row_ordering( array $row, $table = NULL )
+	protected function _beforeProcessRowOrdering(array $row, $table = NULL )
 	{
 		$table = isset( $table ) ? $table : $this->table;
 
 		if ( ! isset( $row[ 'ordering' ] ) )
 		{
-			$row[ 'record_ordering' ] = $this->db->count_all_results( $table ) + 1;
+			$row[ 'record_ordering' ] = $this->db->countAllResults( $table ) + 1;
 		}
 	}
 }

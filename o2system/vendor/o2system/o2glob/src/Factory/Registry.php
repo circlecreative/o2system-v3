@@ -91,7 +91,7 @@ class Registry extends \ArrayObject
 	 */
 	public function setCacheHandler( Cache $cache )
 	{
-		if($cache->is_setup())
+		if($cache->isSetup())
 		{
 			static::$cacheHandler = $cache;
 		}

@@ -29,7 +29,7 @@ class Connection
 	 *
 	 * @type    string
 	 */
-	public $conn_id = NULL;
+	public $id_connection = NULL;
 
 	/**
 	 * Connection IP Address
@@ -57,7 +57,7 @@ class Connection
 	 *
 	 * @type bool
 	 */
-	protected $_is_handshake = FALSE;
+	protected $_is_handshaked = FALSE;
 	
 	/**
 	 * Connection Data Status
@@ -84,21 +84,21 @@ class Connection
 		$this->ip_address = $x_socket_name[ 0 ];
 		$this->port = $x_socket_name[ 1 ];
 		
-		$this->conn_id = md5( $this->ip_address . $this->port . spl_object_hash( $this ) );
+		$this->id_connection = md5( $this->ip_address . $this->port . spl_object_hash( $this ) );
 		
-		$this->send_message( 'Connected' );
+		$this->sendMessage( 'Connected' );
 	}
 	
 	protected function _handshake( $data )
 	{
-		$this->send_message( 'Performing handshake' );
+		$this->sendMessage( 'Performing handshake' );
 		$lines = preg_split( "/\r\n/", $data );
 		
 		// check for valid http-header:
 		if ( ! preg_match( '/\AGET (\S+) HTTP\/1.1\z/', $lines[ 0 ], $matches ) )
 		{
-			$this->send_message( 'Invalid request: ' . $lines[ 0 ] );
-			$this->send_http_response( 400 );
+			$this->sendMessage( 'Invalid request: ' . $lines[ 0 ] );
+			$this->sendHttpResponse( 400 );
 			stream_socket_shutdown( $this->socket, STREAM_SHUT_RDWR );
 			
 			return FALSE;
@@ -106,14 +106,14 @@ class Connection
 		
 		// check for valid channel:
 		$channel = $matches[ 1 ];
-		$this->channel = $this->_server->get_channel( substr( $channel, 1 ) );
+		$this->channel = $this->_server->getChannel( substr( $channel, 1 ) );
 
 		if ( $this->channel === FALSE )
 		{
-			$this->send_message( 'Invalid channel: ' . $channel );
-			$this->send_http_response( 404 );
+			$this->sendMessage( 'Invalid channel: ' . $channel );
+			$this->sendHttpResponse( 404 );
 			stream_socket_shutdown( $this->socket, STREAM_SHUT_RDWR );
-			$this->_server->remove_error_connection( $this );
+			$this->_server->removeErrorConnection( $this );
 			
 			return FALSE;
 		}
@@ -131,10 +131,10 @@ class Connection
 		// check for supported websocket version:
 		if ( ! isset( $headers[ 'Sec-WebSocket-Version' ] ) OR $headers[ 'Sec-WebSocket-Version' ] < 6 )
 		{
-			$this->send_message( 'Unsupported websocket version.' );
-			$this->send_http_response( 501 );
+			$this->sendMessage( 'Unsupported websocket version.' );
+			$this->sendHttpResponse( 501 );
 			stream_socket_shutdown( $this->socket, STREAM_SHUT_RDWR );
-			$this->_server->remove_error_connection( $this );
+			$this->_server->removeErrorConnection( $this );
 			
 			return FALSE;
 		}
@@ -147,30 +147,30 @@ class Connection
 			
 			if ( $origin === FALSE )
 			{
-				$this->send_message( 'No origin provided.' );
-				$this->send_http_response( 401 );
+				$this->sendMessage( 'No origin provided.' );
+				$this->sendHttpResponse( 401 );
 				stream_socket_shutdown( $this->socket, STREAM_SHUT_RDWR );
-				$this->_server->remove_error_connection( $this );
+				$this->_server->removeErrorConnection( $this );
 				
 				return FALSE;
 			}
 			
 			if ( empty( $origin ) )
 			{
-				$this->send_message( 'Empty origin provided.' );
-				$this->send_http_response( 401 );
+				$this->sendMessage( 'Empty origin provided.' );
+				$this->sendHttpResponse( 401 );
 				stream_socket_shutdown( $this->socket, STREAM_SHUT_RDWR );
-				$this->_server->remove_error_connection( $this );
+				$this->_server->removeErrorConnection( $this );
 				
 				return FALSE;
 			}
 			
-			if ( $this->_server->is_allowed_origin( $origin ) === FALSE )
+			if ( $this->_server->isAllowedOrigin( $origin ) === FALSE )
 			{
-				$this->send_message( 'Invalid origin provided.' );
-				$this->send_http_response( 401 );
+				$this->sendMessage( 'Invalid origin provided.' );
+				$this->sendHttpResponse( 401 );
 				stream_socket_shutdown( $this->socket, STREAM_SHUT_RDWR );
-				$this->_server->remove_error_connection( $this );
+				$this->_server->removeErrorConnection( $this );
 				
 				return FALSE;
 			}
@@ -190,25 +190,25 @@ class Connection
 		}
 		
 		$response .= '' . PHP_EOL;
-		if ( FALSE === ( $this->_server->write_buffer( $this->socket, $response ) ) )
+		if ( FALSE === ( $this->_server->writeBuffer( $this->socket, $response ) ) )
 		{
 			return FALSE;
 		}
 
-		$this->_is_handshake = TRUE;
-		$this->_server->send_message( 'Handshake sent' );
+		$this->_is_handshaked = TRUE;
+		$this->_server->sendMessage( 'Handshake sent' );
 		$this->channel->onConnect( $this );
 		
 		// trigger status application:
-		if ( $this->_server->get_channel( 'status' ) !== FALSE )
+		if ( $this->_server->getChannel( 'status' ) !== FALSE )
 		{
-			$this->_server->get_channel( 'status' )->clientConnected( $this->ip_address, $this->port );
+			$this->_server->getChannel( 'status' )->clientConnected( $this->ip_address, $this->port );
 		}
 		
 		return TRUE;
 	}
 	
-	public function send_http_response( $code = 400 )
+	public function sendHttpResponse( $code = 400 )
 	{
 		$header = 'HTTP/1.1 ';
 		
@@ -236,12 +236,12 @@ class Connection
 		}
 
 		$header .= '' . PHP_EOL;
-		$this->_server->write_buffer( $this->socket, $header );
+		$this->_server->writeBuffer( $this->socket, $header );
 	}
 	
-	public function on_data( $data )
+	public function onData( $data )
 	{
-		if ( $this->_is_handshake )
+		if ( $this->_is_handshaked )
 		{
 			return $this->_handle( $data );
 		}
@@ -260,7 +260,7 @@ class Connection
 			$this->_is_waiting_data = FALSE;
 		}
 		
-		$decoded_data = $this->_decode_hybi10( $data );
+		$decoded_data = $this->_hybi10Decode( $data );
 		
 		if ( $decoded_data === FALSE )
 		{
@@ -276,16 +276,16 @@ class Connection
 		}
 		
 		// trigger status application:
-		if ( $this->_server->get_channel( 'status' ) !== FALSE )
+		if ( $this->_server->getChannel( 'status' ) !== FALSE )
 		{
-			$this->_server->get_channel( 'status' )->clientActivity( $this->port );
+			$this->_server->getChannel( 'status' )->clientActivity( $this->port );
 		}
 		
 		if ( ! isset( $decoded_data[ 'type' ] ) )
 		{
-			$this->send_http_response( 401 );
+			$this->sendHttpResponse( 401 );
 			stream_socket_shutdown( $this->socket, STREAM_SHUT_RDWR );
-			$this->_server->remove_error_connection( $this );
+			$this->_server->removeErrorConnection( $this );
 			
 			return FALSE;
 		}
@@ -293,13 +293,13 @@ class Connection
 		switch ( $decoded_data[ 'type' ] )
 		{
 			case 'text':
-				$this->channel->on_data( $decoded_data[ 'payload' ], $this );
+				$this->channel->onData( $decoded_data[ 'payload' ], $this );
 				break;
 			
 			case 'binary':
 				if ( method_exists( $this->channel, 'onBinaryData' ) )
 				{
-					$this->channel->on_binary_data( $decoded_data[ 'payload' ], $this );
+					$this->channel->onBinaryData( $decoded_data[ 'payload' ], $this );
 				}
 				else
 				{
@@ -309,7 +309,7 @@ class Connection
 			
 			case 'ping':
 				$this->send( $decoded_data[ 'payload' ], 'pong', FALSE );
-				$this->_server->send_message( 'Ping? Pong!' );
+				$this->_server->sendMessage( 'Ping? Pong!' );
 				break;
 			
 			case 'pong':
@@ -318,7 +318,7 @@ class Connection
 			
 			case 'close':
 				$this->close();
-				$this->_server->send_message( 'Disconnected' );
+				$this->_server->sendMessage( 'Disconnected' );
 				break;
 		}
 		
@@ -327,11 +327,11 @@ class Connection
 	
 	public function send( $payload, $type = 'text', $masked = FALSE )
 	{
-		$encodedData = $this->_encode_hybi10( $payload, $type, $masked );
+		$encodedData = $this->_hybi10Encode( $payload, $type, $masked );
 
-		if ( ! $this->_server->write_buffer( $this->socket, $encodedData ) )
+		if ( ! $this->_server->writeBuffer( $this->socket, $encodedData ) )
 		{
-			$this->_server->remove_closed_connection( $this );
+			$this->_server->removeClosedConnection( $this );
 			
 			return FALSE;
 		}
@@ -383,25 +383,25 @@ class Connection
 		
 		if ( $this->channel )
 		{
-			$this->channel->on_disconnect( $this );
+			$this->channel->onDisconnect( $this );
 		}
 
 		stream_socket_shutdown( $this->socket, STREAM_SHUT_RDWR );
-		$this->_server->remove_closed_connection( $this );
+		$this->_server->removeClosedConnection( $this );
 	}
 	
-	public function on_disconnect()
+	public function onDisconnect()
 	{
-		$this->send_message( 'Disconnected', 'info' );
+		$this->sendMessage( 'Disconnected', 'info' );
 		$this->close( 1000 );
 	}
 	
-	public function send_message( $message, $type = 'info' )
+	public function sendMessage( $message, $type = 'info' )
 	{
-		$this->_server->send_message( '[client ' . $this->ip . ':' . $this->port . '] ' . $message, $type );
+		$this->_server->sendMessage( '[client ' . $this->ip . ':' . $this->port . '] ' . $message, $type );
 	}
 	
-	protected function _encode_hybi10( $payload, $type = 'text', $masked = TRUE )
+	protected function _hybi10Encode( $payload, $type = 'text', $masked = TRUE )
 	{
 		$frame_headers = array();
 		$frame = '';
@@ -486,7 +486,7 @@ class Connection
 		return $frame;
 	}
 	
-	protected function _decode_hybi10( $data )
+	protected function _hybi10Decode( $data )
 	{
 		$payload_length = '';
 		$payload_mask = '';

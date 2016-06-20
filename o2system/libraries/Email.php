@@ -155,21 +155,21 @@ class Email
 		}
 	}
 
-	public function set_host( $host )
+	public function setHost($host )
 	{
 		$this->_php_mailer->Host = $host;
 
 		return $this;
 	}
 
-	public function set_charset( $charset )
+	public function setCharset($charset )
 	{
 		$this->_php_mailer->CharSet = $charset;
 
 		return $this;
 	}
 
-	public function set_content_type( $type )
+	public function setContentType($type )
 	{
 		if ( ! in_array( $type, [ 'html', 'plain', 'text' ] ) )
 		{
@@ -184,7 +184,7 @@ class Email
 		return $this;
 	}
 
-	public function set_protocol()
+	public function setProtocol()
 	{
 		$args = func_get_args();
 
@@ -225,7 +225,7 @@ class Email
 				if ( isset( $args[ 1 ][ 'host' ] ) )
 				{
 					$this->_php_mailer->Host = $args[ 1 ][ 'host' ];
-					$this->set_host( $args[ 1 ][ 'host' ] );
+					$this->setHost( $args[ 1 ][ 'host' ] );
 				}
 			}
 		}
@@ -271,7 +271,7 @@ class Email
 				// If the PHP installation does not support short tags we'll
 				// do a little string replacement, changing the short tags
 				// to standard PHP echo statements.
-				if ( ! ini_get( 'short_open_tag' ) AND function_usable( 'eval' ) )
+				if ( ! ini_get( 'short_open_tag' ) AND functionUsable( 'eval' ) )
 				{
 					echo eval( '?>' . preg_replace( '/;*\s*\?>/', '; ?>', str_replace( '<?=', '<?php echo ', $body ) ) );
 				}
@@ -285,7 +285,7 @@ class Email
 			}
 		}
 
-		$this->set_content_type( 'html' );
+		$this->setContentType( 'html' );
 
 		$this->_php_mailer->Body = $body;
 		$this->_php_mailer->AltBody = strip_tags( $body );
@@ -293,7 +293,7 @@ class Email
 		return $this;
 	}
 
-	public function alt_message( $message, $vars = array() )
+	public function altMessage($message, $vars = array() )
 	{
 		if ( \O2System::instance()->__isset( 'view' ) )
 		{
@@ -324,7 +324,7 @@ class Email
 				// If the PHP installation does not support short tags we'll
 				// do a little string replacement, changing the short tags
 				// to standard PHP echo statements.
-				if ( ! ini_get( 'short_open_tag' ) AND function_usable( 'eval' ) )
+				if ( ! ini_get( 'short_open_tag' ) AND functionUsable( 'eval' ) )
 				{
 					echo eval( '?>' . preg_replace( '/;*\s*\?>/', '; ?>', str_replace( '<?=', '<?php echo ', $message ) ) );
 				}
@@ -351,27 +351,27 @@ class Email
 
 		if ( isset( $return_path ) )
 		{
-			$this->return_path( $return_path );
+			$this->returnPath( $return_path );
 		}
 
 		return $this;
 	}
 
-	public function from_name( $name )
+	public function fromName($name )
 	{
 		$this->_php_mailer->FromName = $name;
 
 		return $this;
 	}
 
-	public function return_path( $return_path )
+	public function returnPath($return_path )
 	{
 		$this->_php_mailer->ReturnPath = $return_path;
 
 		return $this;
 	}
 
-	public function reply_to( $address, $name )
+	public function replyTo($address, $name )
 	{
 		$this->_php_mailer->addReplyTo( $address, $name );
 
@@ -516,12 +516,12 @@ class Email
 		return $this;
 	}
 
-	public function get_body()
+	public function getBody()
 	{
 		return $this->_php_mailer->Body;
 	}
 
-	public function get_alt_body()
+	public function getAltBody()
 	{
 		return $this->_php_mailer->AltBody;
 	}
@@ -551,7 +551,7 @@ class Email
 		return FALSE;
 	}
 
-	public function get_errors()
+	public function getErrors()
 	{
 		return $this->_errors;
 	}

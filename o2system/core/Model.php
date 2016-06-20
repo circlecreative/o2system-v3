@@ -252,11 +252,11 @@ class Model extends ModelInterface
 
 		foreach ( $fields as $field )
 		{
-			if ( $this->db->field_exists( $field, $table ) )
+			if ( $this->db->fieldExists( $field, $table ) )
 			{
 				$result = $this->db->select( $field )->get_where( $table, [ $this->primary_key => $id ], 1 );
 
-				if ( $result->num_rows() > 0 )
+				if ( $result->numRows() > 0 )
 				{
 					if ( ! empty( $result->first()->{$field} ) )
 					{

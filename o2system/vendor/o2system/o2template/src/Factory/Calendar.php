@@ -164,7 +164,7 @@ class Calendar
         // Set the next_prev_url to the controller if required but not defined
         if( $this->show_next_prev === TRUE && empty( $this->next_prev_url ) )
         {
-            $this->next_prev_url = $this->CI->config->site_url( $this->CI->router->class . '/' . $this->CI->router->method );
+            $this->next_prev_url = $this->CI->config->siteUrl( $this->CI->router->class . '/' . $this->CI->router->method );
         }
 
         return $this;
@@ -208,13 +208,13 @@ class Calendar
             $month = '0' . $month;
         }
 
-        $adjusted_date = $this->adjust_date( $month, $year );
+        $adjusted_date = $this->adjustDate( $month, $year );
 
         $month = $adjusted_date[ 'month' ];
         $year = $adjusted_date[ 'year' ];
 
         // Determine the total days in the month
-        $total_days = $this->get_total_days( $month, $year );
+        $total_days = $this->getTotalDays( $month, $year );
 
         // Set the starting day of the week
         $start_days = array(
@@ -242,7 +242,7 @@ class Calendar
         $is_current_month = ( $cur_year == $year && $cur_month == $month );
 
         // Generate the template data array
-        $this->parse_template();
+        $this->parseTemplate();
 
         // Begin building the calendar output
         $out = $this->replacements[ 'table_open' ] . "\n\n" . $this->replacements[ 'heading_row_start' ] . "\n";
@@ -253,7 +253,7 @@ class Calendar
             // Add a trailing slash to the URL if needed
             $this->next_prev_url = preg_replace( '/(.+?)\/*$/', '\\1/', $this->next_prev_url );
 
-            $adjusted_date = $this->adjust_date( $month - 1, $year );
+            $adjusted_date = $this->adjustDate( $month - 1, $year );
             $out .= str_replace( '{previous_url}', $this->next_prev_url . $adjusted_date[ 'year' ] . '/' . $adjusted_date[ 'month' ], $this->replacements[ 'heading_previous_cell' ] ) . "\n";
         }
 
@@ -261,14 +261,14 @@ class Calendar
         $colspan = ( $this->show_next_prev === TRUE ) ? 5 : 7;
 
         $this->replacements[ 'heading_title_cell' ] = str_replace( '{colspan}', $colspan,
-                                                                   str_replace( '{heading}', $this->get_month_name( $month ) . '&nbsp;' . $year, $this->replacements[ 'heading_title_cell' ] ) );
+                                                                   str_replace( '{heading}', $this->getMonthName( $month ) . '&nbsp;' . $year, $this->replacements[ 'heading_title_cell' ] ) );
 
         $out .= $this->replacements[ 'heading_title_cell' ] . "\n";
 
         // "next" month link
         if( $this->show_next_prev === TRUE )
         {
-            $adjusted_date = $this->adjust_date( $month + 1, $year );
+            $adjusted_date = $this->adjustDate( $month + 1, $year );
             $out .= str_replace( '{next_url}', $this->next_prev_url . $adjusted_date[ 'year' ] . '/' . $adjusted_date[ 'month' ], $this->replacements[ 'heading_next_cell' ] );
         }
 
@@ -276,7 +276,7 @@ class Calendar
                 // Write the cells containing the days of the week
                 . $this->replacements[ 'week_row_start' ] . "\n";
 
-        $day_names = $this->get_day_names();
+        $day_names = $this->getDayNames();
 
         for( $i = 0; $i < 7; $i++ )
         {
@@ -320,8 +320,8 @@ class Calendar
                     if( $day <= 0 )
                     {
                         // Day of previous month
-                        $prev_month = $this->adjust_date( $month - 1, $year );
-                        $prev_month_days = $this->get_total_days( $prev_month[ 'month' ], $prev_month[ 'year' ] );
+                        $prev_month = $this->adjustDate( $month - 1, $year );
+                        $prev_month_days = $this->getTotalDays( $prev_month[ 'month' ], $prev_month[ 'year' ] );
                         $out .= str_replace( '{day}', $prev_month_days + $day, $this->replacements[ 'cal_cell_other' ] );
                     }
                     else
@@ -359,7 +359,7 @@ class Calendar
      *
      * @return    string
      */
-    public function get_month_name( $month )
+    public function getMonthName($month )
     {
         if( $this->month_type === 'short' )
         {
@@ -395,7 +395,7 @@ class Calendar
      *
      * @return    array
      */
-    public function get_day_names( $day_type = '' )
+    public function getDayNames($day_type = '' )
     {
         if( $day_type !== '' )
         {
@@ -438,7 +438,7 @@ class Calendar
      *
      * @return    array
      */
-    public function adjust_date( $month, $year )
+    public function adjustDate($month, $year )
     {
         $date = array();
 
@@ -475,7 +475,7 @@ class Calendar
      *
      * @return    int
      */
-    public function get_total_days( $month, $year )
+    public function getTotalDays($month, $year )
     {
         $this->CI->load->helper( 'date' );
 
@@ -491,7 +491,7 @@ class Calendar
      *
      * @return    array
      */
-    public function default_template()
+    public function defaultTemplate()
     {
         return array(
             'table_open'                => '<table border="0" cellpadding="4" cellspacing="0">',
@@ -531,9 +531,9 @@ class Calendar
      *
      * @return    CI_Calendar
      */
-    public function parse_template()
+    public function parseTemplate()
     {
-        $this->replacements = $this->default_template();
+        $this->replacements = $this->defaultTemplate();
 
         if( empty( $this->template ) )
         {

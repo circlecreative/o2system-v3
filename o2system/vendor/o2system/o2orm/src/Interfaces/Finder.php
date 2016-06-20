@@ -26,14 +26,14 @@ trait Finder
 	{
 		if ( is_array( $criteria ) )
 		{
-			return $this->find_in( $criteria, $field );
+			return $this->findIn( $criteria, $field );
 		}
 
 		$field = isset( $field ) ? $field : $this->primary_key;
 
 		$result = $this->db->limit( 1 )->where( $field, $criteria )->get( $this->table );
 
-		if ( $result->num_rows() > 0 )
+		if ( $result->numRows() > 0 )
 		{
 			return $result;
 		}
@@ -52,11 +52,11 @@ trait Finder
 	 * @access  protected
 	 * @return  null|object O2System\ORM\Factory\Result
 	 */
-	protected function find_by( array $conditions )
+	protected function findBy(array $conditions )
 	{
 		$result = $this->db->limit( 1 )->where( $conditions )->get( $this->table );
 
-		if ( $result->num_rows() > 0 )
+		if ( $result->numRows() > 0 )
 		{
 			return $result;
 		}
@@ -76,13 +76,13 @@ trait Finder
 	 * @access  protected
 	 * @return  array
 	 */
-	protected function find_in( array $in_criteria, $field = 'id' )
+	protected function findIn( array $in_criteria, $field = 'id' )
 	{
 		$field = isset( $field ) ? $field : $this->primary_key;
 
-		$result = $this->db->where_in( $field, $in_criteria )->get( $this->table );
+		$result = $this->db->whereIn( $field, $in_criteria )->get( $this->table );
 
-		if ( $result->num_rows() > 0 )
+		if ( $result->numRows() > 0 )
 		{
 			return $result;
 		}
@@ -102,13 +102,13 @@ trait Finder
 	 * @access  protected
 	 * @return  array
 	 */
-	protected function find_not_in( array $not_in_criteria, $field = 'id' )
+	protected function findNotIn( array $not_in_criteria, $field = 'id' )
 	{
 		$field = isset( $field ) ? $field : $this->primary_key;
 
-		$result = $this->db->where_in( $field, $not_in_criteria )->get( $this->table );
+		$result = $this->db->whereIn( $field, $not_in_criteria )->get( $this->table );
 
-		if ( $result->num_rows() > 0 )
+		if ( $result->numRows() > 0 )
 		{
 			return $result;
 		}
@@ -128,13 +128,13 @@ trait Finder
 	 * @access  protected
 	 * @return  array
 	 */
-	protected function find_many( $criteria, $field = NULL )
+	protected function findMany($criteria, $field = NULL )
 	{
 		$field = isset( $field ) ? $field : $this->primary_key;
 
 		$result = $this->db->where( $field, $criteria )->get( $this->table );
 
-		if ( $result->num_rows() > 0 )
+		if ( $result->numRows() > 0 )
 		{
 			return $result;
 		}
@@ -154,7 +154,7 @@ trait Finder
 	 *
 	 * @return null|object  O2System\ORM\Factory\Result
 	 */
-	protected function find_many_by( array $conditions )
+	protected function findManyBy(array $conditions )
 	{
 		foreach ( $conditions as $field => $in_criteria )
 		{
@@ -164,13 +164,13 @@ trait Finder
 			}
 			elseif ( is_array( $in_criteria ) )
 			{
-				$this->db->where_in( $field, $in_criteria );
+				$this->db->whereIn( $field, $in_criteria );
 			}
 		}
 
 		$result = $this->db->get( $this->table );
 
-		if ( $result->num_rows() > 0 )
+		if ( $result->numRows() > 0 )
 		{
 			return $result;
 		}

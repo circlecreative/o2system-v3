@@ -27,7 +27,7 @@ class Grid extends FactoryInterface
 
 		if ( isset( $attr ) AND is_array( $attr ) )
 		{
-			$this->add_attributes( $attr );
+			$this->addAttributes( $attr );
 		}
 
 		return $this;
@@ -54,21 +54,21 @@ class Grid extends FactoryInterface
 
 				if ( isset( $col_xs ) )
 				{
-					$column->add_class( 'col-xs-' . $col_xs );
+					$column->addClass( 'col-xs-' . $col_xs );
 				}
 
 				if ( isset( $col_sm ) )
 				{
-					$column->add_class( 'col-sm-' . $col_sm );
+					$column->addClass( 'col-sm-' . $col_sm );
 				}
 
-				$column->add_class( 'col-md-' . $col_md );
-				$column->add_class( 'col-lg-' . $col_lg );
+				$column->addClass( 'col-md-' . $col_md );
+				$column->addClass( 'col-lg-' . $col_lg );
 
 				$this->_items[ $key ] = $column;
 			}
 
-			$container->set_content( implode( PHP_EOL, $this->_items ) );
+			$container->setContent( implode( PHP_EOL, $this->_items ) );
 
 			return ( new Tag( $this->_tag, $container, $this->_attributes ) )->render();
 		}

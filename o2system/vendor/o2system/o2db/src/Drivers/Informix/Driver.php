@@ -140,14 +140,14 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _list_tables_statement( $prefix_limit = FALSE )
+	protected function _listTablesStatement($prefix_limit = FALSE )
 	{
 		$sql = 'SELECT "tabname" FROM "systables"
 			WHERE "tabid" > 99 AND "tabtype" = \'T\' AND LOWER("owner") = ' . $this->escape( strtolower( $this->username ) );
 
 		if ( $prefix_limit === TRUE && $this->table_prefix !== '' )
 		{
-			$sql .= ' AND "tabname" LIKE \'' . $this->escape_like_string( $this->table_prefix ) . "%' "
+			$sql .= ' AND "tabname" LIKE \'' . $this->escapeLikeString( $this->table_prefix ) . "%' "
 				. sprintf( $this->_like_escape_string, $this->_like_escape_character );
 		}
 
@@ -165,7 +165,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _list_columns_statement( $table = '' )
+	protected function _listColumnsStatement($table = '' )
 	{
 		if ( strpos( $table, '.' ) !== FALSE )
 		{
@@ -192,7 +192,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    array
 	 */
-	public function field_data( $table )
+	public function fieldData($table )
 	{
 		$sql = 'SELECT "syscolumns"."colname" AS "name",
 				CASE "syscolumns"."coltype"
@@ -239,7 +239,7 @@ class Driver extends DriverInterface
 			ORDER BY "syscolumns"."colno"';
 
 		return ( ( $query = $this->query( $sql ) ) !== FALSE )
-			? $query->result_object()
+			? $query->resultObject()
 			: FALSE;
 	}
 
@@ -255,12 +255,12 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _update_statement( $table, $values )
+	protected function _updateStatement($table, $values )
 	{
 		$this->qb_limit = FALSE;
 		$this->qb_orderby = array();
 
-		return parent::_update_statement( $table, $values );
+		return parent::_updateStatement( $table, $values );
 	}
 
 	// --------------------------------------------------------------------
@@ -277,7 +277,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _truncate_statement( $table )
+	protected function _truncateStatement($table )
 	{
 		return 'TRUNCATE TABLE ONLY ' . $table;
 	}

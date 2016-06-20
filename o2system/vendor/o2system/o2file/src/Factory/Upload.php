@@ -77,25 +77,25 @@ class Upload
 
 		if ( isset( $this->_config[ 'allowed_mimes' ] ) )
 		{
-			$this->set_allowed_mimes( $this->_config[ 'allowed_mimes' ] );
+			$this->setAllowedMimes( $this->_config[ 'allowed_mimes' ] );
 		}
 
 		if ( isset( $this->_config[ 'allowed_extensions' ] ) )
 		{
-			$this->set_allowed_extensions( $this->_config[ 'allowed_extensions' ] );
+			$this->setAllowedExtensions( $this->_config[ 'allowed_extensions' ] );
 		}
 	}
 
 	// ------------------------------------------------------------------------
 
-	public function set_path( $path )
+	public function setPath($path )
 	{
 		$this->_config[ 'path' ] = $path . DIRECTORY_SEPARATOR;
 	}
 
 	// ------------------------------------------------------------------------
 
-	public function set_allowed_mimes( $mimes )
+	public function setAllowedMimes($mimes )
 	{
 		if ( is_string( $mimes ) )
 		{
@@ -106,7 +106,7 @@ class Upload
 
 	// ------------------------------------------------------------------------
 
-	public function set_allowed_extensions( $extensions )
+	public function setAllowedExtensions($extensions )
 	{
 		if ( is_string( $extensions ) )
 		{
@@ -117,49 +117,49 @@ class Upload
 
 	// ------------------------------------------------------------------------
 
-	public function set_min_size( $size, $unit = 'M' )
+	public function setMinSize($size, $unit = 'M' )
 	{
 		$this->_config[ 'min_size' ] = (int) $size . $unit;
 	}
 
 	// ------------------------------------------------------------------------
 
-	public function set_max_size( $size, $unit = 'M' )
+	public function setMaxSize($size, $unit = 'M' )
 	{
 		$this->_config[ 'max_size' ] = (int) $size . $unit;
 	}
 
 	// ------------------------------------------------------------------------
 
-	public function set_min_width( $width )
+	public function setMinWidth($width )
 	{
 		$this->_config[ 'min_width' ] = (int) $width;
 	}
 
 	// ------------------------------------------------------------------------
 
-	public function set_min_height( $height )
+	public function setMinHeight($height )
 	{
 		$this->_config[ 'min_height' ] = (int) $height;
 	}
 
 	// ------------------------------------------------------------------------
 
-	public function set_max_width( $width )
+	public function setMaxWidth($width )
 	{
 		$this->_config[ 'max_width' ] = (int) $width;
 	}
 
 	// ------------------------------------------------------------------------
 
-	public function set_max_height( $height )
+	public function setMaxHeight($height )
 	{
 		$this->_config[ 'max_height' ] = (int) $height;
 	}
 
 	// ------------------------------------------------------------------------
 
-	public function set_filename( $filename, $delimiter = '-' )
+	public function setFilename($filename, $delimiter = '-' )
 	{
 		$filename = strtolower( trim( $filename ) );
 		$filename = preg_replace( '/[^\w-]/', '', $filename );;
@@ -178,14 +178,14 @@ class Upload
 
 	// ------------------------------------------------------------------------
 
-	public function set_max_increment_filename( $increment )
+	public function setMaxIncrementFilename($increment )
 	{
 		$this->_config[ 'max_increment_filename' ] = (int) $increment;
 	}
 
 	// ------------------------------------------------------------------------
 
-	public function do_upload( $field )
+	public function doUpload($field )
 	{
 		if ( isset( $_FILES[ $field ] ) )
 		{
@@ -205,13 +205,13 @@ class Upload
 						'size'     => $files[ $field ][ 'size' ][ $key ],
 					);
 
-					if ( $this->_upload_file( md5( $field . $key ) ) )
+					if ( $this->_uploadFile( md5( $field . $key ) ) )
 					{
-						$info[ $value ] = $this->get_info();
+						$info[ $value ] = $this->getInfo();
 					}
 					else
 					{
-						$errors[ $value ] = $this->get_errors();
+						$errors[ $value ] = $this->getErrors();
 					}
 				}
 
@@ -235,7 +235,7 @@ class Upload
 			}
 			else
 			{
-				return $this->_upload_file( $field );
+				return $this->_uploadFile( $field );
 			}
 		}
 
@@ -244,7 +244,7 @@ class Upload
 
 	// ------------------------------------------------------------------------
 
-	protected function _upload_file( $field )
+	protected function _uploadFile($field )
 	{
 		if ( isset( $this->_config[ 'path' ] ) )
 		{
@@ -340,7 +340,7 @@ class Upload
 			                                 'extension' => $file->getExtension(),
 			                                 'mime'      => $file->getMimetype(),
 			                                 'size'      => $file->getSize(),
-			                                 'url'       => $this->_path_to_url( $path . $filename . '.' . $file->getExtension() ),
+			                                 'url'       => $this->_pathToUrl( $path . $filename . '.' . $file->getExtension() ),
 		                                 ), \ArrayObject::ARRAY_AS_PROPS );
 
 		if ( $dimension = getimagesize( $file->getRealPath() ) )
@@ -421,21 +421,21 @@ class Upload
 
 	// ------------------------------------------------------------------------
 
-	public function get_info()
+	public function getInfo()
 	{
 		return $this->_info;
 	}
 
 	// ------------------------------------------------------------------------
 
-	public function get_errors()
+	public function getErrors()
 	{
 		return $this->_errors;
 	}
 
 	// ------------------------------------------------------------------------
 
-	protected function _path_to_url( $path )
+	protected function _pathToUrl($path )
 	{
 		$base_url = isset( $_SERVER[ 'REQUEST_SCHEME' ] ) ? $_SERVER[ 'REQUEST_SCHEME' ] : 'http';
 		$base_url .= '://' . $_SERVER[ 'SERVER_NAME' ];

@@ -59,11 +59,11 @@ use Sunra\PhpSimple\HtmlDomParser;
  */
 class Output extends DriverInterface
 {
-	protected $_headers = array();
+	protected $_headers = [ ];
 
 	protected $_content      = '';
-	protected $_prepend_body = array();
-	protected $_append_body  = array();
+	protected $_prepend_body = [ ];
+	protected $_append_body  = [ ];
 
 	protected $_zlib_support = FALSE;
 
@@ -86,14 +86,27 @@ class Output extends DriverInterface
 		}
 	}
 
-	public function set_cache_lifetime( $lifetime )
+	public function setCacheLifetime( $lifetime )
 	{
 		$this->_cache_lifetime = (int) $lifetime;
 	}
 
-	public function set_header_status( $code, $description = NULL )
+	public function clearHeaders()
 	{
-		\O2System\Glob\HttpStatusCode::setHeader( $code, $description );
+		if ( ! headers_sent() )
+		{
+			foreach ( headers_list() as $header )
+			{
+				header_remove( $header );
+			}
+		}
+
+		return $this;
+	}
+
+	public function setHeaderStatus( $code, $description = NULL )
+	{
+		\O2System\Glob\HttpHeaderStatus::setHeader( $code, $description );
 	}
 
 	/**
@@ -102,7 +115,7 @@ class Output extends DriverInterface
 	 * @param string $key   header name
 	 * @param string $value header value
 	 */
-	public function set_header( $key, $value = NULL )
+	public function setHeader( $key, $value = NULL )
 	{
 		// If zlib.output_compression is enabled it will compress the output,
 		// but it will not modify the content-length header to compensate for
@@ -130,11 +143,11 @@ class Output extends DriverInterface
 	 *
 	 * @param array $headers headers array
 	 */
-	public function set_headers( array $headers = array() )
+	public function setHeaders( array $headers = [ ] )
 	{
 		foreach ( $headers as $header => $value )
 		{
-			$this->set_header( $header, $value );
+			$this->setHeader( $header, $value );
 		}
 
 		return $this;
@@ -150,7 +163,7 @@ class Output extends DriverInterface
 	 *
 	 * @return    \O2System\Output
 	 */
-	public function set_content_type( $mime, $charset = NULL )
+	public function setContentType( $mime, $charset = NULL )
 	{
 		static $mimes;
 
@@ -180,7 +193,7 @@ class Output extends DriverInterface
 		$header = 'Content-Type: ' . $mime
 			. ( empty( $charset ) ? '' : '; charset=' . $this->_library->_charset );
 
-		$this->_headers[] = array( $header, TRUE );
+		$this->_headers[] = [ $header, TRUE ];
 
 		return $this;
 	}
@@ -188,36 +201,36 @@ class Output extends DriverInterface
 	// --------------------------------------------------------------------
 
 
-	public function set_content( $content )
+	public function setContent( $content )
 	{
 		$this->_content = $content;
 
 		return $this;
 	}
 
-	public function prepend_content( $content )
+	public function prependContent( $content )
 	{
 		$this->_content = $content . $this->_content;
 	}
 
-	public function append_content( $content )
+	public function appendContent( $content )
 	{
 		$this->_content .= $content;
 
 		return $this;
 	}
 
-	public function prepend_body( $content )
+	public function prependBody( $content )
 	{
 		$this->_prepend_body[] = $content;
 	}
 
-	public function append_body( $content )
+	public function appendBody( $content )
 	{
 		$this->_append_body[] = $content;
 	}
 
-	public function get_content()
+	public function getContent()
 	{
 		return $this->_content;
 	}
@@ -254,16 +267,16 @@ class Output extends DriverInterface
 				if ( ! empty( $benchmark ) )
 				{
 					$output = str_replace(
-						array( '[elapsed_time]', '[memory_usage]', '[memory_peak_usage]', '[processor_usage]' ),
+						[ '[elapsed_time]', '[memory_usage]', '[memory_peak_usage]', '[processor_usage]' ],
 						(array) $benchmark->elapsed(),
 						$output
 					);
 				}
 			}
 
-			$doc = new \DomDocument();
+			$doc                     = new \DomDocument();
 			$doc->preserveWhiteSpace = TRUE;
-			$doc->validateOnParse = TRUE;
+			$doc->validateOnParse    = TRUE;
 
 			$output = str_replace( [ '<!DOCTYPE html>', '<!doctype html>' ], '', $output );
 			$output = mb_convert_encoding( $output, 'HTML-ENTITIES', 'UTF-8' );
@@ -274,12 +287,11 @@ class Output extends DriverInterface
 
 				if ( ( $output = $doc->saveXML( $doc->documentElement, LIBXML_NOEMPTYTAG ) ) !== FALSE )
 				{
-					$regex = array
-					(
+					$regex = [
 						'~' . preg_quote( '<![CDATA[', '~' ) . '~'                                                                     => '',
 						'~' . preg_quote( ']]>', '~' ) . '~'                                                                           => '',
 						'~></(?:area|base(?:font)?|br|col|command|embed|frame|hr|img|input|keygen|link|meta|param|source|track|wbr)>~' => ' />',
-					);
+					];
 
 					$output = '<!DOCTYPE html>' . "\n" . preg_replace( array_keys( $regex ), $regex, $output );
 				}
@@ -302,7 +314,7 @@ class Output extends DriverInterface
 					if ( isset( $body->innertext ) )
 					{
 						$body->innertext = implode( PHP_EOL, $this->_prepend_body ) . $body->innertext . implode( PHP_EOL, $this->_append_body );
-						$output = $HTMLDom->outertext;
+						$output          = $HTMLDom->outertext;
 					}
 				}
 			}
@@ -310,7 +322,7 @@ class Output extends DriverInterface
 			// Is minify requested
 			if ( $this->_config[ 'minify' ] === TRUE )
 			{
-				$output = $this->_minify_html( $output );
+				$output = $this->_minifyHtml( $output );
 			}
 		}
 
@@ -362,12 +374,12 @@ class Output extends DriverInterface
 		{
 			$expired = time() + ( $this->_config[ 'cache' ][ 'lifetime' ] * 60 );
 
-			$cache = array(
+			$cache = [
 				'headers'          => $this->_headers,
 				'output'           => $output,
 				'create_timestamp' => time(),
 				'expire_timestamp' => $expired,
-			);
+			];
 
 			$this->_cache->save( $this->_etag, $cache, $expired );
 		}
@@ -416,38 +428,38 @@ class Output extends DriverInterface
 
 	protected function _compress( $output )
 	{
-		$search = array(
+		$search = [
 			'/\n/',            // replace end of line by a space
 			'/\>[^\S ]+/s',        // strip whitespaces after tags, except space
 			'/[^\S ]+\</s',        // strip whitespaces before tags, except space
 			'/(\s)+/s'        // shorten multiple whitespace sequences
-		);
+		];
 
-		$replace = array(
+		$replace = [
 			' ',
 			'>',
 			'<',
 			'\\1',
-		);
+		];
 
 		$output = preg_replace( $search, $replace, $output );
 
 		return $output;
 	}
 
-	protected function _compress_css( $css )
+	protected function _compressCss( $css )
 	{
 		/* remove comments */
 		$css = preg_replace( '!/*[^*]**+([^/][^*]**+)*/!', '', $css );
 
 		/* remove tabs, spaces, newlines, etc. */
-		$css = str_replace( array( "rn", "r", "n", "t", '  ', '    ', '    ' ), '', $css );
+		$css = str_replace( [ "rn", "r", "n", "t", '  ', '    ', '    ' ], '', $css );
 
 		return $css;
 	}
 
 
-	protected function _minify_html( $output )
+	protected function _minifyHtml( $output )
 	{
 		// Find all the <pre>,<code>,<textarea>, and <javascript> tags
 		// We'll want to return them to this unprocessed state later.

@@ -43,6 +43,7 @@ defined( 'ROOTPATH' ) OR exit( 'No direct script access allowed' );
 // ------------------------------------------------------------------------
 
 use O2System\Glob\Interfaces\LibraryInterface;
+use O2System\Libraries\Access\Interfaces\UsersModel;
 use O2System\Model;
 
 /**
@@ -63,7 +64,7 @@ class Access extends LibraryInterface
 	 *
 	 * @access  public
 	 *
-	 * @type    object
+	 * @type    UsersModel
 	 */
 	public $model = NULL;
 
@@ -155,13 +156,13 @@ class Access extends LibraryInterface
 		return NULL;
 	}
 
-	public function get_sso_key()
+	public function getSsoKey()
 	{
 		$sso_key = substr( md5( microtime() ), 1, 10 );
 
 		if ( \O2System::Cache()->get( $sso_key ) )
 		{
-			return $this->get_sso_key();
+			return $this->getSsoKey();
 		}
 
 		return $sso_key;
@@ -169,7 +170,7 @@ class Access extends LibraryInterface
 
 	public function restrict( $uri = 'login' )
 	{
-		if ( $this->user->is_login() === FALSE )
+		if ( $this->user->isLogin() === FALSE )
 		{
 			redirect( $uri );
 		}

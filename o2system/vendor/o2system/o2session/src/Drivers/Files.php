@@ -321,7 +321,7 @@ class Files extends Driver implements \SessionHandlerInterface
         if( $this->close() )
         {
             return is_file( $this->_file_path . $session_id )
-                ? ( unlink( $this->_file_path . $session_id ) && $this->_cookie_destroy() )
+                ? ( unlink( $this->_file_path . $session_id ) && $this->_cookieDestroy() )
                 : TRUE;
         }
         elseif( $this->_file_path !== NULL )
@@ -329,7 +329,7 @@ class Files extends Driver implements \SessionHandlerInterface
             clearstatcache();
 
             return is_file( $this->_file_path . $session_id )
-                ? ( unlink( $this->_file_path . $session_id ) && $this->_cookie_destroy() )
+                ? ( unlink( $this->_file_path . $session_id ) && $this->_cookieDestroy() )
                 : TRUE;
         }
 

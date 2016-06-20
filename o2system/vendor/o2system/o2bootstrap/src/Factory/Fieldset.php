@@ -47,7 +47,7 @@ class Fieldset extends Tag
 	const PANEL_FIELDSET = 'PANEL_FIELDSET';
 
 	protected $_tag           = 'fieldset';
-	protected $_fieldset_type = 'PANEL_DEFAULT';
+	protected $_fieldsetType = 'PANEL_DEFAULT';
 	protected $_group_type    = 'FORM_GROUP';
 
 	public $legend = NULL;
@@ -55,47 +55,47 @@ class Fieldset extends Tag
 
 	public function build()
 	{
-		@list( $legend, $fieldset_type, $attr ) = func_get_args();
+		@list( $legend, $fieldsetType, $attr ) = func_get_args();
 
 		if ( is_string( $legend ) )
 		{
 			if ( in_array( $legend, [ self::PANEL_DEFAULT, self::PANEL_FIELDSET ] ) )
 			{
-				$this->set_fieldset_type( $legend );
+				$this->setFieldsetType( $legend );
 			}
 			elseif ( in_array( $legend, [ Group::FORM_GROUP_INLINE, Group::FORM_GROUP_VERTICAL, Group::FORM_GROUP_HORIZONTAL ] ) )
 			{
-				$this->set_group_type( $legend );
+				$this->setGroupType( $legend );
 			}
 			else
 			{
-				$this->set_legend( $legend );
+				$this->setLegend( $legend );
 			}
 		}
 		elseif ( $legend instanceof Tag )
 		{
-			$this->set_legend( $legend );
+			$this->setLegend( $legend );
 		}
 
-		if ( is_array( $fieldset_type ) )
+		if ( is_array( $fieldsetType ) )
 		{
-			$attr = $fieldset_type;
+			$attr = $fieldsetType;
 		}
-		elseif ( is_string( $fieldset_type ) )
+		elseif ( is_string( $fieldsetType ) )
 		{
-			if ( in_array( $fieldset_type, [ self::PANEL_DEFAULT, self::PANEL_FIELDSET ] ) )
+			if ( in_array( $fieldsetType, [ self::PANEL_DEFAULT, self::PANEL_FIELDSET ] ) )
 			{
-				$this->set_fieldset_type( $fieldset_type );
+				$this->setFieldsetType( $fieldsetType );
 			}
-			elseif ( in_array( $fieldset_type, [ Group::FORM_GROUP_INLINE, Group::FORM_GROUP_VERTICAL, Group::FORM_GROUP_HORIZONTAL ] ) )
+			elseif ( in_array( $fieldsetType, [ Group::FORM_GROUP_INLINE, Group::FORM_GROUP_VERTICAL, Group::FORM_GROUP_HORIZONTAL ] ) )
 			{
-				$this->set_group_type( $fieldset_type );
+				$this->setGroupType( $fieldsetType );
 			}
 		}
 
 		if ( isset( $attr ) )
 		{
-			$this->add_attributes( $attr );
+			$this->addAttributes( $attr );
 		}
 
 		return $this;
@@ -114,17 +114,17 @@ class Fieldset extends Tag
 		return $this;
 	}
 
-	public function set_fieldset_type( $fieldset_type )
+	public function setFieldsetType( $fieldsetType )
 	{
-		if ( in_array( $fieldset_type, [ self::PANEL_DEFAULT, self::PANEL_FIELDSET ] ) )
+		if ( in_array( $fieldsetType, [ self::PANEL_DEFAULT, self::PANEL_FIELDSET ] ) )
 		{
-			$this->_fieldset_type = $fieldset_type;
+			$this->_fieldsetType = $fieldsetType;
 		}
 
 		return $this;
 	}
 
-	public function set_group_type( $group_type )
+	public function setGroupType( $group_type )
 	{
 		if ( in_array( $group_type, [ Group::FORM_GROUP, Group::FORM_GROUP_INLINE, Group::FORM_GROUP_VERTICAL, Group::FORM_GROUP_HORIZONTAL ] ) )
 		{
@@ -135,7 +135,7 @@ class Fieldset extends Tag
 		return $this;
 	}
 
-	public function set_legend( $legend, $attr = array() )
+	public function setLegend( $legend, $attr = array() )
 	{
 		if ( is_string( $legend ) )
 		{
@@ -149,17 +149,17 @@ class Fieldset extends Tag
 		return $this;
 	}
 
-	public function add_items( array $items )
+	public function addItems(array $items )
 	{
 		foreach ( $items as $label => $item )
 		{
-			$this->add_item( $item );
+			$this->addItem( $item );
 		}
 
 		return $this;
 	}
 
-	public function add_item( $item )
+	public function addItem($item )
 	{
 		if ( $item instanceof Group )
 		{
@@ -176,36 +176,36 @@ class Fieldset extends Tag
 				{
 					$attr = isset( $item[ 'label' ][ 'attr' ] ) ? $item[ 'label' ][ 'attr' ] : [ 'for' => $item[ 'input' ][ 'name' ] ];
 					$label = new Tag( 'label', $item[ 'label' ][ 'text' ], $attr );
-					$label->add_class( 'control-label' );
+					$label->addClass( 'control-label' );
 
 					if ( isset( $item[ 'label' ][ 'tag' ] ) )
 					{
-						$label->set_tag( $item[ 'label' ][ 'tag' ] );
+						$label->setTag( $item[ 'label' ][ 'tag' ] );
 					}
 
-					$group->add_item( $label );
+					$group->addItem( $label );
 				}
 			}
 
 			// Set Input
 			$input = new Input();
-			$input->set_type( $item[ 'input' ][ 'type' ] );
-			$input->set_attributes( $item[ 'input' ][ 'attr' ] );
+			$input->setType( $item[ 'input' ][ 'type' ] );
+			$input->setAttributes( $item[ 'input' ][ 'attr' ] );
 
 			if ( isset( $item[ 'input' ][ 'options' ] ) )
 			{
-				$input->set_options( $item[ 'input' ][ 'options' ] );
+				$input->setOptions( $item[ 'input' ][ 'options' ] );
 			}
 
 			$properties = $item[ 'input' ];
 			unset( $properties[ 'type' ], $properties[ 'attr' ], $properties[ 'options' ] );
 
-			$input->set_properties( $properties );
+			$input->setProperties( $properties );
 
 			// Set Value
 			if ( ! empty( $item[ 'input' ][ 'value' ] ) )
 			{
-				$input->set_value( $item[ 'input' ][ 'value' ], TRUE );
+				$input->setValue( $item[ 'input' ][ 'value' ], TRUE );
 			}
 
 			if ( isset( $item[ 'container' ] ) )
@@ -214,20 +214,20 @@ class Fieldset extends Tag
 
 				if ( isset( $item[ 'container' ][ 'tag' ] ) )
 				{
-					$container->set_tag( $item[ 'container' ][ 'tag' ] );
+					$container->setTag( $item[ 'container' ][ 'tag' ] );
 				}
 
-				$group->add_item( $container );
+				$group->addItem( $container );
 			}
 			else
 			{
-				$group->add_item( $input );
+				$group->addItem( $input );
 			}
 
 			// Set Help
 			if ( ! empty( $item[ 'help' ] ) )
 			{
-				$group->add_item( new Tag( 'span', $item[ 'help' ], [ 'class' => 'help-block help-control' ] ) );
+				$group->addItem( new Tag( 'span', $item[ 'help' ], [ 'class' => 'help-block help-control' ] ) );
 			}
 
 			$this->_items[] = $group;
@@ -236,28 +236,28 @@ class Fieldset extends Tag
 
 	public function render()
 	{
-		switch ( $this->_fieldset_type )
+		switch ( $this->_fieldsetType )
 		{
 			case self::PANEL_FIELDSET :
 
 				$fieldset = new Panel( Panel::DEFAULT_PANEL, $this->_attributes );
 
-				$this->legend->append_content( ( new Link( [ 'class' => 'panel-collapse pull-right' ] ) )
-					                               ->set_icon( 'fa fa-chevron-up' ) );
+				$this->legend->appendContent( ( new Link( [ 'class' => 'panel-collapse pull-right' ] ) )
+					                               ->setIcon( 'fa fa-chevron-up' ) );
 
-				$fieldset->set_title( $this->legend );
+				$fieldset->setTitle( $this->legend );
 
 				if ( $this->_group_type === Form::HORIZONTAL_FORM )
 				{
-					$fieldset->add_class( 'form-horizontal' );
+					$fieldset->addClass( 'form-horizontal' );
 				}
 				elseif ( $this->_group_type === Form::VERTICAL_FORM )
 				{
-					$fieldset->add_class( 'form-vertical' );
+					$fieldset->addClass( 'form-vertical' );
 				}
 				elseif ( $this->_group_type === Form::INLINE_FORM )
 				{
-					$fieldset->add_class( 'form-inline' );
+					$fieldset->addClass( 'form-inline' );
 				}
 
 				break;
@@ -269,7 +269,7 @@ class Fieldset extends Tag
 				break;
 		}
 
-		$fieldset->set_body( implode( PHP_EOL, $this->_items ) );
+		$fieldset->setBody( implode( PHP_EOL, $this->_items ) );
 
 		return $fieldset->render();
 	}

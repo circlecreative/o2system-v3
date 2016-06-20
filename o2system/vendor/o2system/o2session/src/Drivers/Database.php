@@ -200,7 +200,7 @@ class Database extends Driver implements \SessionHandlerInterface
 	 */
 	public function read( $session_id )
 	{
-		if ( $this->_get_lock( $session_id ) !== FALSE )
+		if ( $this->_getLock( $session_id ) !== FALSE )
 		{
 			// Needed by write() to detect session_regenerate_id() calls
 			$this->_session_id = $session_id;
@@ -258,7 +258,7 @@ class Database extends Driver implements \SessionHandlerInterface
 		// Was the ID regenerated?
 		if ( $session_id !== $this->_session_id )
 		{
-			if ( ! $this->_release_lock() OR ! $this->_get_lock( $session_id ) )
+			if ( ! $this->_releaseLock() OR ! $this->_getLock( $session_id ) )
 			{
 				return FALSE;
 			}
@@ -327,7 +327,7 @@ class Database extends Driver implements \SessionHandlerInterface
 	public function close()
 	{
 		return ( $this->_lock )
-			? $this->_release_lock()
+			? $this->_releaseLock()
 			: TRUE;
 	}
 
@@ -354,11 +354,11 @@ class Database extends Driver implements \SessionHandlerInterface
 			}
 
 			return $this->_db->delete( $this->_config[ 'storage' ][ 'save_path' ][ 'table' ] )
-				? ( $this->close() && $this->_cookie_destroy() )
+				? ( $this->close() && $this->_cookieDestroy() )
 				: FALSE;
 		}
 
-		return ( $this->close() && $this->_cookie_destroy() );
+		return ( $this->close() && $this->_cookieDestroy() );
 	}
 
 	// ------------------------------------------------------------------------
@@ -390,7 +390,7 @@ class Database extends Driver implements \SessionHandlerInterface
 	 * @access  public
 	 * @return  bool
 	 */
-	protected function _get_lock( $session_id )
+	protected function _getLock($session_id )
 	{
 		if ( $this->_platform === 'mysql' )
 		{
@@ -417,7 +417,7 @@ class Database extends Driver implements \SessionHandlerInterface
 			return FALSE;
 		}
 
-		return parent::_get_lock( $session_id );
+		return parent::_getLock( $session_id );
 	}
 
 	// ------------------------------------------------------------------------
@@ -430,7 +430,7 @@ class Database extends Driver implements \SessionHandlerInterface
 	 * @access  public
 	 * @return  bool
 	 */
-	protected function _release_lock()
+	protected function _releaseLock()
 	{
 		if ( ! $this->_lock )
 		{
@@ -450,7 +450,7 @@ class Database extends Driver implements \SessionHandlerInterface
 		}
 		elseif ( $this->_platform === 'postgre' )
 		{
-			if ( $this->_db->simple_query( 'SELECT pg_advisory_unlock(' . $this->_lock . ')' ) )
+			if ( $this->_db->simpleQuery( 'SELECT pg_advisory_unlock(' . $this->_lock . ')' ) )
 			{
 				$this->_lock = FALSE;
 
@@ -460,6 +460,6 @@ class Database extends Driver implements \SessionHandlerInterface
 			return FALSE;
 		}
 
-		return parent::_release_lock();
+		return parent::_releaseLock();
 	}
 }

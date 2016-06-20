@@ -36,13 +36,13 @@ trait Adjacency
 	 * @access  public
 	 * @return  mixed
 	 */
-	public function get_children( $id_parent, $table = NULL)
+	public function getChildren($id_parent, $table = NULL)
 	{
 		$table = isset( $table ) ? $table : $this->table;
 
-		$result = $this->db->get_where( $table, [ $this->parent_key => $id_parent ] );
+		$result = $this->db->getWhere( $table, [ $this->parent_key => $id_parent ] );
 
-		if ( $result->num_rows() > 0 )
+		if ( $result->numRows() > 0 )
 		{
 			return $result;
 		}
@@ -59,13 +59,13 @@ trait Adjacency
 	 * @access  public
 	 * @return  bool
 	 */
-	public function has_children( $id_parent, $table = NULL )
+	public function hasChildren($id_parent, $table = NULL )
 	{
 		$table = isset( $table ) ? $table : $this->table;
 
-		$result = $this->db->select( 'id' )->get_where( $table, [ $this->parent_key => $id_parent ] );
+		$result = $this->db->select( 'id' )->getWhere( $table, [ $this->parent_key => $id_parent ] );
 
-		if ( $result->num_rows() > 0 )
+		if ( $result->numRows() > 0 )
 		{
 			return TRUE;
 		}

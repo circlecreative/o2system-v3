@@ -152,14 +152,14 @@ class Driver extends DriverInterface
 	 *
 	 * @return    object
 	 */
-	public function db_connect( $persistent = FALSE )
+	public function dbConnect($persistent = FALSE )
 	{
 		if ( ! empty( $this->charset ) && preg_match( '/utf[^8]*8/i', $this->charset ) )
 		{
 			$this->options[ PDO::SQLSRV_ENCODING_UTF8 ] = 1;
 		}
 
-		$this->pdo_conn = parent::db_connect( $persistent );
+		$this->pdo_conn = parent::dbConnect( $persistent );
 
 		if ( ! is_object( $this->pdo_conn ) OR is_bool( $this->_quoted_identifier ) )
 		{
@@ -168,7 +168,7 @@ class Driver extends DriverInterface
 
 		// Determine how identifiers are escaped
 		$query = $this->query( 'SELECT CASE WHEN (@@OPTIONS | 256) = @@OPTIONS THEN 1 ELSE 0 END AS qi' );
-		$query = $query->row_array();
+		$query = $query->rowArray();
 		$this->_quoted_identifier = empty( $query ) ? FALSE : (bool) $query[ 'qi' ];
 		$this->_escape_character = ( $this->_quoted_identifier ) ? '"' : array( '[', ']' );
 
@@ -186,19 +186,19 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _list_tables_statement( $prefix_limit = FALSE )
+	protected function _listTablesStatement($prefix_limit = FALSE )
 	{
-		$sql = 'SELECT ' . $this->escape_identifiers( 'name' )
-			. ' FROM ' . $this->escape_identifiers( 'sysobjects' )
-			. ' WHERE ' . $this->escape_identifiers( 'type' ) . " = 'U'";
+		$sql = 'SELECT ' . $this->escapeIdentifiers( 'name' )
+			. ' FROM ' . $this->escapeIdentifiers( 'sysobjects' )
+			. ' WHERE ' . $this->escapeIdentifiers( 'type' ) . " = 'U'";
 
 		if ( $prefix_limit === TRUE && $this->table_prefix !== '' )
 		{
-			$sql .= ' AND ' . $this->escape_identifiers( 'name' ) . " LIKE '" . $this->escape_like_string( $this->table_prefix ) . "%' "
+			$sql .= ' AND ' . $this->escapeIdentifiers( 'name' ) . " LIKE '" . $this->escapeLikeString( $this->table_prefix ) . "%' "
 				. sprintf( $this->_like_escape_string, $this->_like_escape_character );
 		}
 
-		return $sql . ' ORDER BY ' . $this->escape_identifiers( 'name' );
+		return $sql . ' ORDER BY ' . $this->escapeIdentifiers( 'name' );
 	}
 
 	// --------------------------------------------------------------------
@@ -212,7 +212,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _list_columns_statement( $table = '' )
+	protected function _listColumnsStatement($table = '' )
 	{
 		return 'SELECT COLUMN_NAME
 			FROM INFORMATION_SCHEMA.Columns
@@ -228,7 +228,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    array
 	 */
-	public function field_data( $table )
+	public function fieldData($table )
 	{
 		$sql = 'SELECT COLUMN_NAME, DATA_TYPE, CHARACTER_MAXIMUM_LENGTH, NUMERIC_PRECISION, COLUMN_DEFAULT
 			FROM INFORMATION_SCHEMA.Columns
@@ -238,7 +238,7 @@ class Driver extends DriverInterface
 		{
 			return FALSE;
 		}
-		$query = $query->result_object();
+		$query = $query->resultObject();
 
 		$result = array();
 		for ( $i = 0, $c = count( $query ); $i < $c; $i++ )
@@ -265,12 +265,12 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _update_statement( $table, $values )
+	protected function _updateStatement($table, $values )
 	{
 		$this->qb_limit = FALSE;
 		$this->qb_orderby = array();
 
-		return parent::_update_statement( $table, $values );
+		return parent::_updateStatement( $table, $values );
 	}
 
 	// --------------------------------------------------------------------
@@ -288,7 +288,7 @@ class Driver extends DriverInterface
 	{
 		if ( $this->qb_limit )
 		{
-			return 'WITH ci_delete AS (SELECT TOP ' . $this->qb_limit . ' * FROM ' . $table . $this->_compile_where_having( 'qb_where' ) . ') DELETE FROM ci_delete';
+			return 'WITH ci_delete AS (SELECT TOP ' . $this->qb_limit . ' * FROM ' . $table . $this->_compileWhereHaving( 'qb_where' ) . ') DELETE FROM ci_delete';
 		}
 
 		return parent::_delete( $table );
@@ -321,7 +321,7 @@ class Driver extends DriverInterface
 		// An ORDER BY clause is required for ROW_NUMBER() to work
 		if ( $this->qb_offset && ! empty( $this->qb_orderby ) )
 		{
-			$orderby = $this->_compile_order_by();
+			$orderby = $this->_compileOrderBy();
 
 			// We have to strip the ORDER BY clause
 			$sql = trim( substr( $sql, 0, strrpos( $sql, $orderby ) ) );
@@ -346,9 +346,9 @@ class Driver extends DriverInterface
 			}
 
 			return 'SELECT ' . $select . " FROM (\n\n"
-			. preg_replace( '/^(SELECT( DISTINCT)?)/i', '\\1 ROW_NUMBER() OVER(' . trim( $orderby ) . ') AS ' . $this->escape_identifiers( 'O2DB_rownum' ) . ', ', $sql )
-			. "\n\n) " . $this->escape_identifiers( 'O2DB_subquery' )
-			. "\nWHERE " . $this->escape_identifiers( 'O2DB_rownum' ) . ' BETWEEN ' . ( $this->qb_offset + 1 ) . ' AND ' . $limit;
+			. preg_replace( '/^(SELECT( DISTINCT)?)/i', '\\1 ROW_NUMBER() OVER(' . trim( $orderby ) . ') AS ' . $this->escapeIdentifiers( 'O2DB_rownum' ) . ', ', $sql )
+			. "\n\n) " . $this->escapeIdentifiers( 'O2DB_subquery' )
+			. "\nWHERE " . $this->escapeIdentifiers( 'O2DB_rownum' ) . ' BETWEEN ' . ( $this->qb_offset + 1 ) . ' AND ' . $limit;
 		}
 
 		return preg_replace( '/(^\SELECT (DISTINCT)?)/i', '\\1 TOP ' . $limit . ' ', $sql );
@@ -367,12 +367,12 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string|bool
 	 */
-	protected function _insert_batch( $table, $keys, $values )
+	protected function _insertBatch($table, $keys, $values )
 	{
 		// Multiple-value inserts are only supported as of SQL Server 2008
 		if ( version_compare( $this->version(), '10', '>=' ) )
 		{
-			return parent::_insert_batch( $table, $keys, $values );
+			return parent::_insertBatch( $table, $keys, $values );
 		}
 
 		throw new Exception('Unsupported feature of the database platform you are using.');

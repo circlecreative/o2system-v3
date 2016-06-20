@@ -117,13 +117,13 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _list_tables_statement( $prefix_limit = FALSE )
+	protected function _listTablesStatement($prefix_limit = FALSE )
 	{
 		$sql = 'SELECT "RDB$RELATION_NAME" FROM "RDB$RELATIONS" WHERE "RDB$RELATION_NAME" NOT LIKE \'RDB$%\' AND "RDB$RELATION_NAME" NOT LIKE \'MON$%\'';
 
 		if ( $prefix_limit === TRUE && $this->table_prefix !== '' )
 		{
-			return $sql . ' AND "RDB$RELATION_NAME" LIKE \'' . $this->escape_like_string( $this->table_prefix ) . "%' "
+			return $sql . ' AND "RDB$RELATION_NAME" LIKE \'' . $this->escapeLikeString( $this->table_prefix ) . "%' "
 			. sprintf( $this->_like_escape_string, $this->_like_escape_character );
 		}
 
@@ -141,7 +141,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _list_columns_statement( $table = '' )
+	protected function _listColumnsStatement($table = '' )
 	{
 		return 'SELECT "RDB$FIELD_NAME" FROM "RDB$RELATION_FIELDS" WHERE "RDB$RELATION_NAME" = ' . $this->escape( $table );
 	}
@@ -155,7 +155,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    array
 	 */
-	public function field_data( $table )
+	public function fieldData($table )
 	{
 		$sql = 'SELECT "rfields"."RDB$FIELD_NAME" AS "name",
 				CASE "fields"."RDB$FIELD_TYPE"
@@ -183,7 +183,7 @@ class Driver extends DriverInterface
 			ORDER BY "rfields"."RDB$FIELD_POSITION"';
 
 		return ( ( $query = $this->query( $sql ) ) !== FALSE )
-			? $query->result_object()
+			? $query->resultObject()
 			: FALSE;
 	}
 
@@ -199,11 +199,11 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _update_statement( $table, $values )
+	protected function _updateStatement($table, $values )
 	{
 		$this->qb_limit = FALSE;
 
-		return parent::_update_statement( $table, $values );
+		return parent::_updateStatement( $table, $values );
 	}
 
 	// --------------------------------------------------------------------
@@ -220,7 +220,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _truncate_statement( $table )
+	protected function _truncateStatement($table )
 	{
 		return 'DELETE FROM ' . $table;
 	}

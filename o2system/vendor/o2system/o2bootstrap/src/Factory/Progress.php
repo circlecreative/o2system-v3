@@ -73,18 +73,18 @@ class Progress extends FactoryInterface
 	{
 		@list( $progress, $type, $attr ) = func_get_args();
 
-		$this->set_contextual_class_prefix( 'progress-bar' );
+		$this->setContextualClassPrefix( 'progress-bar' );
 
 		if ( isset( $progress ) )
 		{
-			$this->set_progress( $progress );
+			$this->setProgress( $progress );
 		}
 
 		if ( isset( $type ) )
 		{
 			if ( is_array( $type ) )
 			{
-				$this->add_attributes( $type );
+				$this->addAttributes( $type );
 			}
 			elseif ( is_string( $type ) )
 			{
@@ -92,7 +92,7 @@ class Progress extends FactoryInterface
 					in_array( $type, [ 'default', 'primary' ] )
 				)
 				{
-					$this->{'is_' . $type}();
+					$this->{'is' . studlycapcase($type)}();
 				}
 			}
 		}
@@ -101,7 +101,7 @@ class Progress extends FactoryInterface
 		{
 			if ( is_array( $attr ) )
 			{
-				$this->add_attributes( $attr );
+				$this->addAttributes( $attr );
 			}
 			elseif ( is_string( $attr ) )
 			{
@@ -109,7 +109,7 @@ class Progress extends FactoryInterface
 					in_array( $attr, [ 'default', 'primary' ] )
 				)
 				{
-					$this->{'is_' . $attr}();
+					$this->{'is' . studlycapcase($attr)}();
 				}
 			}
 		}
@@ -129,25 +129,25 @@ class Progress extends FactoryInterface
 		return $this;
 	}
 
-	public function set_progress( $value )
+	public function setProgress($value )
 	{
 		$this->progress = new Tag( 'span', (int) $value . '%', [ 'class' => 'sr-only' ] );
-		$this->add_attribute( 'aria-valuenow', (int) $value );
-		$this->add_attribute( 'style', 'width:' . (int) $value . '%' );
+		$this->addAttribute( 'aria-valuenow', (int) $value );
+		$this->addAttribute( 'style', 'width:' . (int) $value . '%' );
 
 		return $this;
 	}
 
-	public function set_min_value( $value )
+	public function setMinValue($value )
 	{
-		$this->add_attribute( 'aria-valuemin', (int) $value );
+		$this->addAttribute( 'aria-valuemin', (int) $value );
 
 		return $this;
 	}
 
-	public function set_max_value( $value )
+	public function setMaxValue($value )
 	{
-		$this->add_attribute( 'aria-valuemax', (int) $value );
+		$this->addAttribute( 'aria-valuemax', (int) $value );
 
 		return $this;
 	}
@@ -159,9 +159,9 @@ class Progress extends FactoryInterface
 	 *
 	 * @return object
 	 */
-	public function is_striped()
+	public function isStriped()
 	{
-		$this->add_class( 'progress-bar-striped' );
+		$this->addClass( 'progress-bar-striped' );
 
 		return $this;
 	}
@@ -175,9 +175,9 @@ class Progress extends FactoryInterface
 	 *
 	 * @return object
 	 */
-	public function is_animated()
+	public function isAnimated()
 	{
-		$this->is_active();
+		$this->isActive();
 
 		return $this;
 	}
@@ -191,9 +191,9 @@ class Progress extends FactoryInterface
 	 *
 	 * @return object
 	 */
-	public function is_active()
+	public function isActive()
 	{
-		$this->add_class( 'active' );
+		$this->addClass( 'active' );
 
 		return $this;
 	}
@@ -211,12 +211,12 @@ class Progress extends FactoryInterface
 		{
 			if ( ! isset( $this->_attributes[ 'aria-valuemin' ] ) )
 			{
-				$this->add_attribute( 'aria-valuemin', 0 );
+				$this->addAttribute( 'aria-valuemin', 0 );
 			}
 
 			if ( ! isset( $this->_attributes[ 'aria-valuemax' ] ) )
 			{
-				$this->add_attribute( 'aria-valuemax', 100 );
+				$this->addAttribute( 'aria-valuemax', 100 );
 			}
 
 			return ( new Tag( $this->_tag, new Tag( $this->_tag, $this->progress, $this->_attributes ), [ 'class' => 'progress' ] ) )->render();

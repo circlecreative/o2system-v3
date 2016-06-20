@@ -69,7 +69,7 @@ class Wiki
         }
     }
 
-    public function set_lang( $lang )
+    public function setLang($lang )
     {
         $this->_lang = $lang;
 
@@ -146,7 +146,7 @@ class Wiki
 
             foreach( $this->_files as $file )
             {
-                $contents[ ] = $parser->parse_markdown( file_get_contents( $file ), $flavour );
+                $contents[ ] = $parser->parseMarkdown( file_get_contents( $file ), $flavour );
             }
 
             return implode( PHP_EOL, $contents );

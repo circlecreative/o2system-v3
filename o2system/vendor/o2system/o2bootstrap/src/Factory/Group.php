@@ -115,9 +115,9 @@ class Group extends FactoryInterface
 				$this->_tag = 'div';
 
 				// Set SizeInterface class prefix
-				$this->set_size_class_prefix( 'btn-group' );
-				$this->add_class( 'btn-group' );
-				$this->add_attribute( 'role', 'group' );
+				$this->setSizeClassPrefix( 'btn-group' );
+				$this->addClass( 'btn-group' );
+				$this->addAttribute( 'role', 'group' );
 				break;
 
 			case self::INPUT_GROUP:
@@ -125,38 +125,38 @@ class Group extends FactoryInterface
 				$this->_tag = 'div';
 
 				// Set SizeInterface class prefix
-				$this->set_size_class_prefix( 'input-group' );
-				$this->add_class( 'input-group' );
+				$this->setSizeClassPrefix( 'input-group' );
+				$this->addClass( 'input-group' );
 				break;
 
 			case self::FORM_GROUP:
 				$this->_type = self::FORM_GROUP;
 				$this->_tag = 'div';
-				$this->add_class( 'form-group' );
+				$this->addClass( 'form-group' );
 				break;
 
 			case self::FORM_GROUP_INLINE:
 				$this->_type = self::FORM_GROUP_INLINE;
 				$this->_tag = 'div';
-				$this->add_class( 'form-inline' );
+				$this->addClass( 'form-inline' );
 				break;
 
 			case self::FORM_GROUP_VERTICAL:
 				$this->_type = self::FORM_GROUP_VERTICAL;
 				$this->_tag = 'div';
-				$this->add_class( 'form-vertical' );
+				$this->addClass( 'form-vertical' );
 				break;
 
 			case self::FORM_GROUP_HORIZONTAL:
 				$this->_type = self::FORM_GROUP_HORIZONTAL;
 				$this->_tag = 'div';
-				$this->add_class( 'form-horizontal' );
+				$this->addClass( 'form-horizontal' );
 				break;
 
 			case self::LIST_GROUP:
 				$this->_type = self::LIST_GROUP;
 				$this->_tag = 'ul';
-				$this->add_class( 'list-group' );
+				$this->addClass( 'list-group' );
 				break;
 
 			case self::LIST_BUTTON_GROUP:
@@ -164,49 +164,49 @@ class Group extends FactoryInterface
 			case self::LIST_CUSTOM_GROUP:
 				$this->_type = self::LIST_GROUP;
 				$this->_tag = 'div';
-				$this->add_class( 'list-group' );
+				$this->addClass( 'list-group' );
 				break;
 
 			case self::PROGRESS_BAR_GROUP:
 				$this->_type = self::PROGRESS_BAR_GROUP;
 				$this->_tag = 'div';
-				$this->add_class( 'progress' );
+				$this->addClass( 'progress' );
 				break;
 
 			case self::THUMBNAIL_GROUP:
 				$this->_type = self::THUMBNAIL_GROUP;
 				$this->_tag = 'div';
-				$this->add_classes( [ 'row', 'thumbnails' ] );
+				$this->addClasses( [ 'row', 'thumbnails' ] );
 				break;
 
 			case self::MEDIA_GROUP:
 				$this->_type = self::MEDIA_GROUP;
 				$this->_tag = 'div';
-				$this->add_class( 'media-list' );
+				$this->addClass( 'media-list' );
 				break;
 			case self::PANEL_GROUP:
 				$this->_type = self::PANEL_GROUP;
 				$this->_tag = 'div';
-				$this->add_class( 'panel-group' );
+				$this->addClass( 'panel-group' );
 				break;
 		}
 
 		return $this;
 	}
 
-	public function is_vertical()
+	public function isVertical()
 	{
 		if ( $this->_type === self::BUTTON_GROUP )
 		{
 			$this->_is_vertical = TRUE;
-			$this->remove_class( 'btn-group' );
-			$this->add_class( 'btn-group-vertical' );
+			$this->removeClass( 'btn-group' );
+			$this->addClass( 'btn-group-vertical' );
 
 			foreach ( $this->_items as $key => $item )
 			{
 				if ( $item instanceof Dropdown )
 				{
-					$item->button->add_class( 'dropdown-toggle' );
+					$item->button->addClass( 'dropdown-toggle' );
 				}
 			}
 		}
@@ -214,17 +214,17 @@ class Group extends FactoryInterface
 		return $this;
 	}
 
-	public function is_justified()
+	public function isJustified()
 	{
 		if ( $this->_type === self::BUTTON_GROUP )
 		{
 			$this->_is_justified = TRUE;
-			$this->add_class( 'btn-group-justified' );
+			$this->addClass( 'btn-group-justified' );
 
 			foreach ( $this->_items as $key => $item )
 			{
 				$link = clone $item;
-				//$link->set_tag( 'a' );
+				//$link->setTag( 'a' );
 				$this->_items[ $key ] = $link;
 			}
 		}
@@ -235,7 +235,7 @@ class Group extends FactoryInterface
 
 	// ------------------------------------------------------------------------
 
-	public function add_item( $item, $key = NULL )
+	public function addItem($item, $key = NULL )
 	{
 		if ( $item instanceof Dropdown )
 		{
@@ -244,7 +244,7 @@ class Group extends FactoryInterface
 				$this->_is_vertical === TRUE
 			)
 			{
-				$item->remove_class( 'dropdown' )->add_class( 'btn-group' )->add_attribute( 'role', 'group' );
+				$item->removeClass( 'dropdown' )->addClass( 'btn-group' )->addAttribute( 'role', 'group' );
 			}
 		}
 		elseif ( $item instanceof Progress )
@@ -265,7 +265,7 @@ class Group extends FactoryInterface
 			)
 			{
 				$button = clone $item;
-				$button->set_tag( 'a' );
+				$button->setTag( 'a' );
 
 				$item = $button;
 			}
@@ -297,10 +297,10 @@ class Group extends FactoryInterface
 				foreach ( $this->_items as $key => $item )
 				{
 					$container = new Tag( 'div', $item, [ 'class' => 'thumbnail-item' ] );
-					$container->add_class( 'col-xs-' . $col_xs );
-					$container->add_class( 'col-sm-' . $col_sm );
-					$container->add_class( 'col-md-' . $col_md );
-					$container->add_class( 'col-lg-' . $col_lg );
+					$container->addClass( 'col-xs-' . $col_xs );
+					$container->addClass( 'col-sm-' . $col_sm );
+					$container->addClass( 'col-md-' . $col_md );
+					$container->addClass( 'col-lg-' . $col_lg );
 
 					$this->_items[ $key ] = $container;
 				}

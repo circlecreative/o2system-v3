@@ -701,7 +701,7 @@ if ( ! function_exists( 'mb_stripos_all' ) )
 			if ( is_integer( $i ) )
 			{
 				$aStrPos[] = $i;
-				$s = $i + mb_strlen( $needle );
+				$s = $i + mbStrlen( $needle );
 			}
 		}
 

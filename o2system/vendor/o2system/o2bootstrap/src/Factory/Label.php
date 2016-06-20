@@ -88,8 +88,8 @@ class Label extends FactoryInterface
 	 */
 	public function build()
 	{
-		$this->set_size_class_prefix( 'label' );
-		$this->set_contextual_class_prefix( 'label' );
+		$this->setSizeClassPrefix( 'label' );
+		$this->setContextualClassPrefix( 'label' );
 
 		@list( $label, $for, $attr, $type ) = func_get_args();
 
@@ -103,29 +103,29 @@ class Label extends FactoryInterface
 		}
 		elseif ( is_array( $label ) )
 		{
-			$this->add_attributes( $label );
+			$this->addAttributes( $label );
 		}
 
 		if ( isset( $for ) )
 		{
 			if ( is_array( $for ) )
 			{
-				$this->add_attributes( $for );
+				$this->addAttributes( $for );
 			}
 			elseif ( is_string( $for ) )
 			{
 				if ( in_array( $for, $this->_contextual_classes ) )
 				{
-					$this->{'is_' . $for}();
+					$this->{'is' . studlycapcase($for)}();
 				}
 				elseif ( in_array( $for, $this->_sizes ) )
 				{
-					$this->{'is_' . $for}();
+					$this->{'is' . studlycapcase($for)}();
 				}
 				else
 				{
 					$this->_tag = 'label';
-					$this->add_attribute( 'for', $for );
+					$this->addAttribute( 'for', $for );
 				}
 			}
 		}
@@ -134,17 +134,17 @@ class Label extends FactoryInterface
 		{
 			if ( is_array( $attr ) )
 			{
-				$this->add_attributes( $attr );
+				$this->addAttributes( $attr );
 			}
 			elseif ( is_string( $attr ) )
 			{
 				if ( in_array( $attr, $this->_contextual_classes ) )
 				{
-					$this->{'is_' . $attr}();
+					$this->{'is' . studlycapcase($attr)}();
 				}
 				elseif ( in_array( $attr, $this->_sizes ) )
 				{
-					$this->{'is_' . $attr}();
+					$this->{'is' . studlycapcase($attr)}();
 				}
 			}
 		}
@@ -153,7 +153,7 @@ class Label extends FactoryInterface
 		{
 			if ( is_string( $type ) AND in_array( $type, $this->_contextual_classes ) )
 			{
-				$this->{'is_' . $type}();
+				$this->{'is' . studlycapcase($type)}();
 			}
 		}
 
@@ -163,10 +163,10 @@ class Label extends FactoryInterface
 
 	// ------------------------------------------------------------------------
 
-	public function set_heading( $heading, $attr = array() )
+	public function setHeading($heading, $attr = array() )
 	{
 		$this->heading = new Tag( 'h3', $heading, $attr );
-		$this->heading->add_class( 'label-heading' );
+		$this->heading->addClass( 'label-heading' );
 
 		return $this;
 	}
@@ -183,9 +183,9 @@ class Label extends FactoryInterface
 			if ( isset( $this->heading ) )
 			{
 				$label = new Label( $this->_label, $this->_attributes );
-				$label->set_tag( $this->_tag );
+				$label->setTag( $this->_tag );
 
-				$this->heading->append_content( $label );
+				$this->heading->appendContent( $label );
 
 				return $this->heading->render();
 			}

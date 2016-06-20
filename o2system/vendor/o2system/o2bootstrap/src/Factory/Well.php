@@ -71,7 +71,7 @@ class Well extends FactoryInterface
 	{
 		@list( $content, $type, $attr ) = func_get_args();
 
-		$this->set_size_class_prefix( 'well' );
+		$this->setSizeClassPrefix( 'well' );
 
 		if ( is_array( $content ) )
 		{
@@ -80,7 +80,7 @@ class Well extends FactoryInterface
 				! isset( $content[ 'style' ] )
 			)
 			{
-				$this->set_content( $content );
+				$this->setContent( $content );
 			}
 			else
 			{
@@ -91,11 +91,11 @@ class Well extends FactoryInterface
 		{
 			if ( in_array( $content, $this->_sizes ) AND $content !== 'tiny' )
 			{
-				$this->{'is_' . $content}();
+				$this->{'is' . studlycapcase($content)}();
 			}
 			else
 			{
-				$this->set_content( $content );
+				$this->setContent( $content );
 			}
 		}
 
@@ -103,13 +103,13 @@ class Well extends FactoryInterface
 		{
 			if ( is_array( $type ) )
 			{
-				$this->add_attributes( $type );
+				$this->addAttributes( $type );
 			}
 			elseif ( is_string( $type ) )
 			{
 				if ( in_array( $type, $this->_sizes ) AND $type !== 'tiny' )
 				{
-					$this->{'is_' . $type}();
+					$this->{'is' . studlycapcase($type)}();
 				}
 			}
 		}
@@ -118,13 +118,13 @@ class Well extends FactoryInterface
 		{
 			if ( is_array( $attr ) )
 			{
-				$this->add_attributes( $attr );
+				$this->addAttributes( $attr );
 			}
 			elseif ( is_string( $attr ) )
 			{
 				if ( in_array( $attr, $this->_sizes ) AND $attr !== 'tiny' )
 				{
-					$this->{'is_' . $attr}();
+					$this->{'is' . studlycapcase($attr)}();
 				}
 			}
 		}

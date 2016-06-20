@@ -108,13 +108,13 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _list_tables_statement( $prefix_limit = FALSE )
+	protected function _listTablesStatement($prefix_limit = FALSE )
 	{
 		$sql = 'SELECT "NAME" FROM "SQLITE_MASTER" WHERE "TYPE" = \'table\'';
 
 		if ( $prefix_limit === TRUE && $this->table_prefix !== '' )
 		{
-			return $sql . ' AND "NAME" LIKE \'' . $this->escape_like_string( $this->table_prefix ) . "%' "
+			return $sql . ' AND "NAME" LIKE \'' . $this->escapeLikeString( $this->table_prefix ) . "%' "
 			. sprintf( $this->_like_escape_string, $this->_like_escape_character );
 		}
 
@@ -132,7 +132,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _list_columns_statement( $table = '' )
+	protected function _listColumnsStatement($table = '' )
 	{
 		// Not supported
 		return FALSE;
@@ -147,14 +147,14 @@ class Driver extends DriverInterface
 	 *
 	 * @return    array
 	 */
-	public function field_data( $table )
+	public function fieldData($table )
 	{
-		if ( ( $query = $this->query( 'PRAGMA TABLE_INFO(' . $this->protect_identifiers( $table, TRUE, NULL, FALSE ) . ')' ) ) === FALSE )
+		if ( ( $query = $this->query( 'PRAGMA TABLE_INFO(' . $this->protectIdentifiers( $table, TRUE, NULL, FALSE ) . ')' ) ) === FALSE )
 		{
 			return FALSE;
 		}
 
-		$query = $query->result_array();
+		$query = $query->resultArray();
 		if ( empty( $query ) )
 		{
 			return FALSE;
@@ -204,7 +204,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _truncate_statement( $table )
+	protected function _truncateStatement($table )
 	{
 		return 'DELETE FROM ' . $table;
 	}

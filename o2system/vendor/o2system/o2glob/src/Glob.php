@@ -72,7 +72,7 @@ namespace O2System
 		{
 			foreach ( [ 'Loader', 'Config', 'Language', 'Exceptions', 'Logger' ] as $class )
 			{
-				$class_name = $class;
+				$class_name  = $class;
 				$object_name = strtolower( $class );
 
 				if ( isset( $this->_object_maps[ $object_name ] ) )
@@ -121,7 +121,7 @@ namespace O2System\Glob
 		 * @param array $array
 		 * @param int   $option
 		 */
-		public function __construct( $array = array(), $option = \ArrayObject::ARRAY_AS_PROPS )
+		public function __construct( $array = [ ], $option = \ArrayObject::ARRAY_AS_PROPS )
 		{
 			parent::__construct( $array, $option );
 		}
@@ -203,11 +203,11 @@ namespace O2System\Glob
 		 *
 		 * @return array|mixed|object
 		 */
-		public function __call( $method, $args = array() )
+		public function __call( $method, $args = [ ] )
 		{
 			if ( method_exists( $this, $method ) )
 			{
-				return call_user_func_array( array( $this, $method ), $args );
+				return call_user_func_array( [ $this, $method ], $args );
 			}
 			elseif ( $this->offsetExists( $method ) )
 			{
@@ -293,7 +293,7 @@ namespace O2System\Glob
 								break;
 							case 'flatten':
 								$value = is_object( $value ) ? get_object_vars( $value ) : $value;
-								$glue = isset( $args[ 2 ] ) ? $args[ 2 ] : ', ';
+								$glue  = isset( $args[ 2 ] ) ? $args[ 2 ] : ', ';
 
 								foreach ( $value as $key => $val )
 								{
@@ -322,13 +322,13 @@ namespace O2System\Glob
 								break;
 							case 'flatten_keys':
 								$value = is_object( $value ) ? get_object_vars( $value ) : $value;
-								$glue = isset( $args[ 2 ] ) ? $args[ 2 ] : ', ';
+								$glue  = isset( $args[ 2 ] ) ? $args[ 2 ] : ', ';
 
 								return implode( $glue, array_keys( $value ) );
 								break;
 							case 'flatten_values':
 								$value = is_object( $value ) ? get_object_vars( $value ) : $value;
-								$glue = isset( $args[ 2 ] ) ? $args[ 2 ] : ', ';
+								$glue  = isset( $args[ 2 ] ) ? $args[ 2 ] : ', ';
 
 								foreach ( array_values( $value ) as $val )
 								{
@@ -419,6 +419,18 @@ namespace O2System\Glob
 	class ArrayIterator extends \ArrayObject
 	{
 		private $position = 0;
+
+		public function setPosition( $position )
+		{
+			$this->position = (int) $position;
+
+			return $this;
+		}
+
+		public function setCurrent( $position )
+		{
+			return $this->setPosition( $position );
+		}
 
 		public function seek( $position )
 		{
@@ -516,7 +528,10 @@ namespace O2System\Glob
 				$i = 0;
 				foreach ( parent::getArrayCopy() as $key => $value )
 				{
-					if ( $i < $limit ) $ArrayCopy[ $key ] = $value;
+					if ( $i < $limit )
+					{
+						$ArrayCopy[ $key ] = $value;
+					}
 					$i++;
 				}
 
@@ -561,7 +576,7 @@ namespace O2System\Glob
 			foreach ( $chunks as $key => $limit )
 			{
 				$ArrayChunks[ $key ] = array_slice( $ArrayCopy, $offset, $limit, $preserve_keys );
-				$offset = $limit;
+				$offset              = $limit;
 			}
 
 			return $ArrayChunks;
@@ -652,14 +667,14 @@ namespace O2System\Glob
 		 * @access  protected
 		 * @type    array
 		 */
-		protected $_config = array(
-			'class_paths' => array(
+		protected $_config = [
+			'class_paths' => [
 				'interfaces',
 				'metadata',
 				'factory',
 				'drivers',
-			),
-		);
+			],
+		];
 
 		/**
 		 * List of Loaded Libraries
@@ -668,7 +683,7 @@ namespace O2System\Glob
 		 * @access  protected
 		 * @type    array
 		 */
-		protected static $_libraries_classes = array();
+		protected static $_libraries_classes = [ ];
 
 		/**
 		 * List of Loaded Models
@@ -677,7 +692,7 @@ namespace O2System\Glob
 		 * @access  protected
 		 * @type    array
 		 */
-		protected static $_models_classes = array();
+		protected static $_models_classes = [ ];
 
 		/**
 		 * List of Loaded Controllers
@@ -686,7 +701,7 @@ namespace O2System\Glob
 		 * @access  protected
 		 * @type    array
 		 */
-		protected static $_controllers_classes = array();
+		protected static $_controllers_classes = [ ];
 
 		/**
 		 * List of Loaded Helper Files
@@ -694,7 +709,7 @@ namespace O2System\Glob
 		 * @access  protected
 		 * @type    array
 		 */
-		protected $_helpers = array();
+		protected $_helpers = [ ];
 
 		/**
 		 * Holds all the Prefix Class maps.
@@ -702,7 +717,7 @@ namespace O2System\Glob
 		 * @access  protected
 		 * @type    array
 		 */
-		protected $_prefixes_maps = array();
+		protected $_prefixes_maps = [ ];
 
 		/**
 		 * Holds all the PSR-4 compliant namespaces maps.
@@ -711,7 +726,7 @@ namespace O2System\Glob
 		 * @access  protected
 		 * @type    array
 		 */
-		protected $_psr_namespace_maps = array();
+		protected $_psr_namespace_maps = [ ];
 
 		/**
 		 * List of Packages Paths
@@ -719,7 +734,7 @@ namespace O2System\Glob
 		 * @access  protected
 		 * @type    array
 		 */
-		protected $_packages_paths = array();
+		protected $_packages_paths = [ ];
 
 		// ------------------------------------------------------------------------
 
@@ -743,7 +758,7 @@ namespace O2System\Glob
 		public function registerHandler( $throw = TRUE, $prepend = TRUE )
 		{
 			// Register Autoloader
-			spl_autoload_register( array( $this, 'findClass' ), $throw, $prepend );
+			spl_autoload_register( [ $this, 'findClass' ], $throw, $prepend );
 		}
 
 		// ------------------------------------------------------------------------
@@ -771,9 +786,12 @@ namespace O2System\Glob
 			elseif ( is_dir( $path = realpath( $path ) . DIRECTORY_SEPARATOR ) )
 			{
 				$namespaces = rtrim( $namespaces, '\\' ) . '\\';
-				$path = str_replace( '/', DIRECTORY_SEPARATOR, $path );
+				$path       = str_replace( '/', DIRECTORY_SEPARATOR, $path );
 
-				if ( $path === DIRECTORY_SEPARATOR ) return;
+				if ( $path === DIRECTORY_SEPARATOR )
+				{
+					return;
+				}
 
 				if ( array_key_exists( $namespaces, $this->_psr_namespace_maps ) )
 				{
@@ -788,7 +806,7 @@ namespace O2System\Glob
 					{
 						if ( $namespaces === 'O2System\\' )
 						{
-							$this->_psr_namespace_maps[ $namespaces ] = $path . 'core' . DIRECTORY_SEPARATOR;
+							$this->_psr_namespace_maps[ $namespaces ]            = $path . 'core' . DIRECTORY_SEPARATOR;
 							$this->_psr_namespace_maps[ $namespaces . 'Core\\' ] = $path . 'core' . DIRECTORY_SEPARATOR;
 						}
 						else
@@ -828,10 +846,10 @@ namespace O2System\Glob
 				{
 					if ( $this->_psr_namespace_maps[ $namespace ] !== $path )
 					{
-						$this->_psr_namespace_maps[ $namespace ] = array(
+						$this->_psr_namespace_maps[ $namespace ] = [
 							$this->_psr_namespace_maps[ $namespace ],
 							$path,
-						);
+						];
 					}
 				}
 				elseif ( is_array( $this->_psr_namespace_maps[ $namespace ] ) )
@@ -858,10 +876,10 @@ namespace O2System\Glob
 				{
 					if ( $this->_packages_paths[ $namespace ] !== $path )
 					{
-						$this->_packages_paths[ $namespace ] = array(
+						$this->_packages_paths[ $namespace ] = [
 							$this->_packages_paths[ $namespace ],
 							$path,
-						);
+						];
 					}
 				}
 				elseif ( is_array( $this->_packages_paths[ $namespace ] ) )
@@ -888,7 +906,7 @@ namespace O2System\Glob
 
 			if ( $namespace = array_search( $path, $this->_psr_namespace_maps ) )
 			{
-				return $namespace;
+				return str_replace( '\\\\', '\\', $namespace );
 			}
 			else
 			{
@@ -921,7 +939,7 @@ namespace O2System\Glob
 		{
 			if ( $namespace = array_search( dirname( $path ) . DIRECTORY_SEPARATOR, $this->_psr_namespace_maps ) )
 			{
-				return array( $namespace => dirname( $path ) . DIRECTORY_SEPARATOR );
+				return [ $namespace => dirname( $path ) . DIRECTORY_SEPARATOR ];
 			}
 
 			return $this->_fetchNamespacePath( $path );
@@ -975,7 +993,7 @@ namespace O2System\Glob
 
 
 				$namespace = get_namespace( $class );
-				$class = get_class_name( $class );
+				$class     = get_class_name( $class );
 
 				if ( isset( $this->_psr_namespace_maps[ $namespace ] ) )
 				{
@@ -983,7 +1001,7 @@ namespace O2System\Glob
 				}
 				else
 				{
-					$x_namespace = explode( '\\', $namespace );
+					$x_namespace   = explode( '\\', $namespace );
 					$num_namespace = count( $x_namespace );
 
 					for ( $i = 0; $i < $num_namespace; $i++ )
@@ -1002,15 +1020,15 @@ namespace O2System\Glob
 				{
 					if ( is_string( $path ) )
 					{
-						$path = str_replace( [ '\\', '/' ], DIRECTORY_SEPARATOR, $path );
+						$path     = str_replace( [ '\\', '/' ], DIRECTORY_SEPARATOR, $path );
 						$filename = prepare_filename( $class );
 
-						$filepaths = array(
+						$filepaths = [
 							$path . $filename . '.php',
 							$path . ucfirst( strtolower( $filename ) ) . '.php',
 							$path . strtolower( $filename ) . DIRECTORY_SEPARATOR . $filename . '.php',
 							$path . $filename . DIRECTORY_SEPARATOR . $filename . '.php',
-						);
+						];
 					}
 					elseif ( is_array( $path ) )
 					{
@@ -1019,12 +1037,12 @@ namespace O2System\Glob
 							$sub_path = str_replace( [ '\\', '/' ], DIRECTORY_SEPARATOR, $sub_path );
 							$filename = prepare_filename( $class );
 
-							$filepaths = array(
+							$filepaths = [
 								$sub_path . $filename . '.php',
 								$sub_path . ucfirst( strtolower( $filename ) ) . '.php',
 								$sub_path . strtolower( $filename ) . DIRECTORY_SEPARATOR . $filename . '.php',
 								$sub_path . $filename . DIRECTORY_SEPARATOR . $filename . '.php',
-							);
+							];
 						}
 					}
 
@@ -1059,7 +1077,7 @@ namespace O2System\Glob
 		 * @return mixed
 		 * @throws \Exception
 		 */
-		protected function _initClass( $class, array $params = array() )
+		protected function _initClass( $class, array $params = [ ] )
 		{
 			if ( class_exists( $class ) )
 			{
@@ -1100,7 +1118,7 @@ namespace O2System\Glob
 		 */
 		public function getPackagePaths( $sub_path = NULL, $root_only = FALSE )
 		{
-			$package_paths = array();
+			$package_paths = [ ];
 
 			if ( isset( $sub_path ) )
 			{
@@ -1116,9 +1134,9 @@ namespace O2System\Glob
 							}
 						}
 
-						if ( isset( \O2System::$active ) AND \O2System::$active->offsetExists( 'module' ) )
+						if ( isset( \O2System::$active ) AND $module = \O2System::$active[ 'modules' ]->current() )
 						{
-							$parents = \O2System::$registry->getParents( \O2System::$active[ 'module' ] );
+							$parents = \O2System::$registry->getParents( $module );
 
 							if ( ! empty( $parents ) )
 							{
@@ -1128,7 +1146,7 @@ namespace O2System\Glob
 								}
 							}
 
-							$package_paths[ \O2System::$active[ 'module' ]->namespace . prepare_class_name( $sub_path ) . '\\' ] = ROOTPATH . \O2System::$active[ 'module' ]->realpath . $sub_path . DIRECTORY_SEPARATOR;
+							$package_paths[ $module->namespace . prepare_class_name( $sub_path ) . '\\' ] = ROOTPATH . $module->realpath . $sub_path . DIRECTORY_SEPARATOR;
 						}
 					}
 				}
@@ -1154,9 +1172,9 @@ namespace O2System\Glob
 							}
 						}
 
-						if ( isset( \O2System::$active ) AND \O2System::$active->offsetExists( 'module' ) )
+						if ( isset( \O2System::$active ) AND $module = \O2System::$active[ 'modules' ]->current() )
 						{
-							$parents = \O2System::$registry->getParents( \O2System::$active[ 'module' ] );
+							$parents = \O2System::$registry->getParents( $module );
 
 							if ( ! empty( $parents ) )
 							{
@@ -1166,7 +1184,7 @@ namespace O2System\Glob
 								}
 							}
 
-							$package_paths[ \O2System::$active[ 'module' ]->namespace ] = ROOTPATH . \O2System::$active[ 'module' ]->realpath;
+							$package_paths[ $module->namespace ] = ROOTPATH . $module->realpath;
 						}
 					}
 
@@ -1201,7 +1219,7 @@ namespace O2System\Glob
 		 *
 		 * @type array
 		 */
-		protected $_paths = array();
+		protected $_paths = [ ];
 
 		/**
 		 * List of loaded language files
@@ -1210,7 +1228,7 @@ namespace O2System\Glob
 		 *
 		 * @var array
 		 */
-		protected $_is_loaded = array();
+		protected $_is_loaded = [ ];
 
 		/**
 		 * Language Package Info
@@ -1218,7 +1236,7 @@ namespace O2System\Glob
 		 * @access  public
 		 * @type    array
 		 */
-		protected $_info = array();
+		protected $_info = [ ];
 
 		// ------------------------------------------------------------------------
 
@@ -1315,12 +1333,12 @@ namespace O2System\Glob
 
 				foreach ( $this->_paths as $package_path )
 				{
-					$filepaths = array(
+					$filepaths = [
 						$package_path . $code . DIRECTORY_SEPARATOR . $file . '.ini',
 						$package_path . $file . '_' . $code . '.ini',
 						$package_path . $file . '-' . $code . '.ini',
 						$package_path . $file . '.ini',
-					);
+					];
 
 					foreach ( $filepaths as $filepath )
 					{
@@ -1393,7 +1411,7 @@ namespace O2System\Glob
 	 */
 	class Exceptions extends Exception\ExceptionHandler
 	{
-		protected $_debug_ips   = array();
+		protected $_debug_ips   = [ ];
 		protected $_environment = 'development';
 
 		// ------------------------------------------------------------------------
@@ -1503,10 +1521,201 @@ namespace O2System\Glob
 		 *
 		 * @param array $config
 		 */
-		public function __construct( $config = array() )
+		public function __construct( $config = [ ] )
 		{
 			parent::__construct( $config );
 		}
+	}
+
+	class HttpHeader
+	{
+		protected static $_http_version    = 'HTTP/1.1';
+		protected static $_reserved_fields = [
+			'X-Powered-By',
+		];
+
+		public static function clearPreviousHeader( $force = FALSE )
+		{
+			if ( ! headers_sent() OR $force === TRUE )
+			{
+				foreach ( headers_list() as $header )
+				{
+					if ( strpos( $header, ':' ) !== FALSE )
+					{
+						$header = @reset( explode( ':', $header ) );
+
+						if ( in_array( $header, static::$_reserved_fields ) )
+						{
+							continue;
+						}
+
+						header_remove( $header );
+					}
+				}
+			}
+		}
+
+		public static function remove( $field )
+		{
+			header_remove( $field );
+		}
+
+		public static function setHttpVersion( $version )
+		{
+			static::$_http_version = 'HTTP/' . $version;
+		}
+
+		public static function setReservedHeaders( array $fields )
+		{
+			static::$_reserved_fields = $fields;
+		}
+
+		public static function addReservedHeader( $field )
+		{
+			array_push( static::$_reserved_fields, $field );
+		}
+
+		public static function setHeader( $field, $value = NULL )
+		{
+			if ( isset( $value ) )
+			{
+				if ( is_bool( $value ) )
+				{
+					$value = $value === TRUE ? 'true' : 'false';
+				}
+				elseif ( is_array( $value ) )
+				{
+					$value = implode( ', ', $value );
+				}
+
+				@header( $field . ': ' . $value, TRUE );
+			}
+			else
+			{
+				@header( $field );
+			}
+		}
+
+		public static function __callStatic( $field, array $arguments )
+		{
+			$x_field = explode( '_', underscore( $field ) );
+			$x_field = array_map( 'ucfirst', $x_field );
+
+			$field = implode( '-', $x_field );
+
+			if ( isset( static::$fields ) )
+			{
+				if ( in_array( $field, static::$fields ) )
+				{
+					self::setHeader( $field, @$arguments[ 0 ] );
+				}
+			}
+			else
+			{
+				self::setHeader( $field, @$arguments[ 0 ] );
+			}
+		}
+	}
+
+	class HttpHeaderRequest extends HttpHeader
+	{
+		public static $fields = [
+			'Accept',
+			'Accept-Charset',
+			'Accept-Encoding',
+			'Accept-Language',
+			'Accept-Datetime',
+			'Authorization',
+			'Cache-Control',
+			'Connection',
+			'Cookie',
+			'Content-Length',
+			'Content-MD5',
+			'Content-Type',
+			'Date',
+			'Expect',
+			'Forwarded',
+			'From',
+			'Host',
+			'If-Match',
+			'If-Modified-Since',
+			'If-None-Match',
+			'If-Range',
+			'If-Unmodified-Since',
+			'Max-Forwards',
+			'Origin',
+			'Pragma',
+			'Proxy-Authorization',
+			'Range',
+			'Referer',
+			'TE',
+			'User-Agent',
+			'Upgrade',
+			'Via',
+			'Warning',
+		];
+
+		public static $x_fields = [
+			'X-Requested-With',
+			'DNT',
+			'X-Forwarded-For',
+			'X-Forwarded-Host',
+			'X-Forwarded-Proto',
+			'Front-End-Https',
+			'X-Http-Method-Override',
+			'X-ATT-DeviceId',
+			'X-Wap-Profile',
+			'Proxy-Connection',
+			'X-UIDH',
+			'X-Csrf-Token',
+		];
+	}
+
+	class HttpHeaderResponse extends HttpHeader
+	{
+		public static $fields = [
+			'Access-Control-Allow-Origin',
+			'Accept-Patch',
+			'Accept-Ranges',
+			'Age',
+			'Allow',
+			'Alt-Svc',
+			'Cache-Control',
+			'Connection',
+			'Content-Disposition',
+			'Content-Encoding',
+			'Content-Language',
+			'Content-Length',
+			'Content-Location',
+			'Content-MD5',
+			'Content-Range',
+			'Content-Type',
+			'Date',
+			'ETag',
+			'Expires',
+			'Last-Modified',
+			'Link',
+			'Location',
+			'P3P',
+			'Pragma',
+			'Proxy-Authenticate',
+			'Public-Key-Pins',
+			'Refresh',
+			'Retry-After',
+			'Server',
+			'Set-Cookie',
+			'Status',
+			'Strict-Transport-Security',
+			'Trailer',
+			'Transfer-Encoding',
+			'TSV',
+			'Upgrade',
+			'Vary',
+			'Via',
+			'Warning',
+			'WWW-Authenticate',
+			'X-Frame-Options',
+		];
 	}
 
 	/**
@@ -1514,7 +1723,7 @@ namespace O2System\Glob
 	 *
 	 * @package O2System\Glob
 	 */
-	class HttpStatusCode
+	class HttpHeaderStatus extends HttpHeader
 	{
 		const SWITCHING_PROTOCOLS               = 101;
 		const OK                                = 200;
@@ -1599,7 +1808,10 @@ namespace O2System\Glob
 		public static function setHeader( $code, $description = NULL )
 		{
 			// There is no header at console
-			if ( PHP_SAPI === 'cli' ) return;
+			if ( PHP_SAPI === 'cli' )
+			{
+				return;
+			}
 
 			if ( class_exists( 'O2System', FALSE ) )
 			{
@@ -1613,7 +1825,7 @@ namespace O2System\Glob
 			}
 
 			$lang_description = empty( $lang_description ) ? 'Internal Server Error' : $lang_description;
-			$description = empty( $description ) ? $lang_description : $description;
+			$description      = empty( $description ) ? $lang_description : $description;
 
 			if ( strpos( PHP_SAPI, 'cgi' ) === 0 )
 			{
@@ -1621,7 +1833,7 @@ namespace O2System\Glob
 			}
 			else
 			{
-				$server_protocol = isset( $_SERVER[ 'SERVER_PROTOCOL' ] ) ? $_SERVER[ 'SERVER_PROTOCOL' ] : 'HTTP/1.1';
+				$server_protocol = isset( $_SERVER[ 'SERVER_PROTOCOL' ] ) ? $_SERVER[ 'SERVER_PROTOCOL' ] : static::$_http_version;
 				@header( $server_protocol . ' ' . $code . ' ' . $description, TRUE, $code );
 			}
 		}

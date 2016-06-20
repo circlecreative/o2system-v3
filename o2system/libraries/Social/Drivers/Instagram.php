@@ -57,7 +57,7 @@ class Instagram extends Driver
 {
 	protected $_api_url = 'https://api.instagram.com/';
 
-	public function get_authorize_url( $callback )
+	public function getAuthorizeUrl($callback )
 	{
 		$this->_config[ 'app_callback_url' ] = strpos( $callback, 'http' ) !== FALSE ? $callback : base_url( $callback );
 
@@ -68,12 +68,12 @@ class Instagram extends Driver
 		                ) );
 
 		$controller =& get_instance();
-		$session->set_userdata( $this->_session_name, [ 'app_callback_url' => $this->_config[ 'app_callback_url' ] ] );
+		$session->setUserdata( $this->_session_name, [ 'app_callback_url' => $this->_config[ 'app_callback_url' ] ] );
 
 		return $sdk->getLoginUrl();
 	}
 
-	public function set_connection()
+	public function setConnection()
 	{
 		$controller =& get_instance();
 		$request_token = $session->userdata( $this->_session_name );
@@ -105,7 +105,7 @@ class Instagram extends Driver
 				static::$_session[ 'user' ]->avatar = $access_token->user->profile_picture;
 				static::$_session[ 'user' ]->cover = NULL;
 
-				$session->set_userdata( $this->_session_name, static::$_session );
+				$session->setUserdata( $this->_session_name, static::$_session );
 
 				return TRUE;
 			}
@@ -115,7 +115,7 @@ class Instagram extends Driver
 		return FALSE;
 	}
 
-	public function request_api( $path = NULL, $params = array(), $method = 'get' )
+	public function requestApi($path = NULL, $params = array(), $method = 'get' )
 	{
 		if( $this->is_connected() )
 		{
@@ -140,7 +140,7 @@ class Instagram extends Driver
 		return FALSE;
 	}
 
-	protected function _build_api_guid()
+	protected function _buildApiGuid()
 	{
 		return sprintf( '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
 		                mt_rand( 0, 65535 ),
@@ -153,7 +153,7 @@ class Instagram extends Driver
 		                mt_rand( 0, 65535 ) );
 	}
 
-	protected function _build_user_agent()
+	protected function _buildUserAgent()
 	{
 		$resolutions = array( '720x1280', '320x480', '480x800', '1024x768', '1280x720', '768x1024', '480x320' );
 		$versions = array( 'GT-N7000', 'SM-N9000', 'GT-I9220', 'GT-I9100' );
@@ -166,35 +166,35 @@ class Instagram extends Driver
 		return 'Instagram 4.' . mt_rand( 1, 2 ) . '.' . mt_rand( 0, 2 ) . ' Android (' . mt_rand( 10, 11 ) . '/' . mt_rand( 1, 3 ) . '.' . mt_rand( 3, 5 ) . '.' . mt_rand( 0, 5 ) . '; ' . $dpi . '; ' . $res . '; samsung; ' . $ver . '; ' . $ver . '; smdkc210; en_US)';
 	}
 
-	protected function _build_signature( $data )
+	protected function _buildSignature($data )
 	{
 		return hash_hmac( 'sha256', $data, 'b4a23f5e39b5929e0666ac5de94c89d1618a2916' );
 	}
 
-	public function get_profile()
+	public function getProfile()
 	{
-		return $this->request_api( 'User' );
+		return $this->requestApi( 'User' );
 	}
 
-	public function get_feeds( $page = 1, $count = 10, array $params = array() )
+	public function getFeeds($page = 1, $count = 10, array $params = array() )
 	{
 		$count = $count + 1;
 
-		return $this->request_api( 'UserFeed', [ $count ] );
+		return $this->requestApi( 'UserFeed', [ $count ] );
 	}
 
-	public function post_feed( $feed, array $params = array() )
+	public function postFeed($feed, array $params = array() )
 	{
 		return FALSE;
 	}
 
-	public function post_link( $status, $link )
+	public function postLink($status, $link )
 	{
 		return FALSE;
 	}
 
 
-	public function pull_likes( $count = 5, array $options = array() )
+	public function pullLikes($count = 5, array $options = array() )
 	{
 		if( isset( $this->_is_connected ) )
 		{
@@ -215,7 +215,7 @@ class Instagram extends Driver
 		return FALSE;
 	}
 
-	public function post_media( $media, $options = array() )
+	public function postMedia($media, $options = array() )
 	{
 		if( ! empty( $media ) )
 		{
@@ -226,7 +226,7 @@ class Instagram extends Driver
 
 			if( file_exists( $media ) )
 			{
-				$guid = $this->_build_api_guid();
+				$guid = $this->_buildApiGuid();
 
 				$data = json_encode(
 					array(
@@ -239,7 +239,7 @@ class Instagram extends Driver
 					)
 				);
 
-				$signature = $this->_build_signature( $data );
+				$signature = $this->_buildSignature( $data );
 				$data = 'signed_body=' . $signature . '.' . urlencode( $data ) . '&ig_sig_key_version=4';
 
 				$login = $this->_api_request( 'accounts/login/', 'post', $data );
@@ -305,7 +305,7 @@ class Instagram extends Driver
 												'Content-Type'     => 'application/x-www-form-urlencoded; charset=UTF-8'
 											);
 
-											$signature = $this->_build_signature( $data );
+											$signature = $this->_buildSignature( $data );
 											$post_data = 'signed_body=' . $signature . '.' . urlencode( $data ) . '&ig_sig_key_version=4';
 
 											$configure = $this->_api_request( 'media/configure/', 'post', $post_data, TRUE );

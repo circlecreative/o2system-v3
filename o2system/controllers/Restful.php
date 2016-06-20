@@ -10,11 +10,13 @@ namespace O2System\Controllers;
 
 use O2System\Controller;
 use O2System\Glob\ArrayObject;
-use O2System\Glob\HttpStatusCode;
+use O2System\Glob\HttpHeader;
+use O2System\Glob\HttpHeaderResponse;
+use O2System\Glob\HttpHeaderStatus;
 
 abstract class Restful extends Controller
 {
-	protected $_http_response_codes = array(
+	protected $_http_response_codes = [
 		200 => 'OK',
 		201 => 'Created',
 		400 => 'Bad Request',
@@ -23,21 +25,33 @@ abstract class Restful extends Controller
 		405 => 'Method Not Allowed',
 		409 => 'Conflict',
 		500 => 'Internal Server Error',
-	);
+	];
 
-	protected $_allowed_request_methods = array(
+	protected $_allowed_request_methods = [
 		'GET',
 		'POST',
 		'PUT',
 		'DELETE',
 		'OPTIONS',
-	);
+	];
 
-	protected $_allowed_request_headers = array(
+	protected $_allowed_request_headers = [
+		'API-Token',
+		'Accept',
 		'Authorization',
 		'Content-Type',
+		'Content-Range',
 		'Content-Disposition',
-	);
+		'Content-Description',
+		'X-Request-With',
+		'X-Powered-By',
+		'Cache-Control',
+	];
+
+	protected $_authorize_route_methods = [ ];
+
+	protected $_allow_origin      = '*';
+	protected $_allow_credentials = TRUE;
 
 	protected $_max_age = 86400;
 
@@ -46,17 +60,17 @@ abstract class Restful extends Controller
 		// Load Applications Language
 		\O2System::$language->load( DIR_APPLICATIONS );
 
-		if ( \O2System::$active->offsetExists( 'module' ) )
+		if ( $module = \O2System::$active[ 'modules' ]->current() )
 		{
-			\O2System::$language->load( \O2System::$active[ 'module' ]->parameter );
+			\O2System::$language->load( $module->parameter );
 
 			// Load Module Model
-			if ( ! $this->__get( $module_model_object_name = strtolower( \O2System::$active[ 'module' ]->type ) . '_model' ) )
+			if ( ! $this->__get( $module_model_object_name = strtolower( $module->type ) . '_model' ) )
 			{
-				$model_classes = array(
-					rtrim( \O2System::$active[ 'namespace' ], '\\' ) . '\\' . 'Core\\Model',
-					rtrim( \O2System::$active[ 'namespace' ], '\\' ) . '\\' . 'Models\\' . ucfirst( \O2System::$active[ 'controller' ]->parameter ),
-				);
+				$model_classes = [
+					rtrim( \O2System::$active[ 'namespaces' ]->current(), '\\' ) . '\\' . 'Core\\Model',
+					rtrim( \O2System::$active[ 'namespaces' ]->current(), '\\' ) . '\\' . 'Models\\' . ucfirst( \O2System::$active[ 'controller' ]->parameter ),
+				];
 
 				foreach ( $model_classes as $model_class )
 				{
@@ -75,10 +89,10 @@ abstract class Restful extends Controller
 		// Load Controller Model
 		if ( empty( $this->controller_model ) )
 		{
-			$model_classes = array(
-				rtrim( \O2System::$active[ 'namespace' ], '\\' ) . '\\' . 'Models\\' . prepare_class_name( \O2System::$active[ 'controller' ]->parameter ),
-				rtrim( \O2System::$active[ 'namespace' ], '\\' ) . '\\' . 'Core\\Model',
-			);
+			$model_classes = [
+				rtrim( \O2System::$active[ 'namespaces' ]->current(), '\\' ) . '\\' . 'Models\\' . prepare_class_name( \O2System::$active[ 'controller' ]->parameter ),
+				rtrim( \O2System::$active[ 'namespaces' ]->current(), '\\' ) . '\\' . 'Core\\Model',
+			];
 
 			foreach ( $model_classes as $model_class )
 			{
@@ -91,80 +105,108 @@ abstract class Restful extends Controller
 		}
 	}
 
-	protected function _route( $method, $args = array() )
+	abstract protected function _isAuthorize();
+
+	abstract protected function _isAllowedOrigin();
+
+	protected function _route( $method, $args = [ ] )
 	{
-		if ( method_exists( $this, '_authorize' ) )
+		// Clear Previous Set Headers
+		HttpHeader::clearPreviousHeader( TRUE );
+
+		// Set New Headers
+		HttpHeaderResponse::setHeader( 'Access-Control-Allow-Credentials', $this->_allow_credentials );
+		HttpHeaderResponse::setHeader( 'Access-Control-Allow-Methods', $this->_allowed_request_methods );
+		HttpHeaderResponse::setHeader( 'Access-Control-Allow-Headers', $this->_allowed_request_headers );
+
+		if ( $this->_isAllowedOrigin() === TRUE )
 		{
-			if ( $this->_authorize() === TRUE )
+			HttpHeader::remove( 'Access-Control-Allow-Origin' );
+			HttpHeaderResponse::setHeader( 'Access-Control-Allow-Origin', $this->_allow_origin );
+
+			if ( in_array( ltrim( $method, '_' ), $this->_authorize_route_methods ) )
 			{
-				return $this->__route_call( $method, $args );
+				return $this->__routeCall( $method, $args );
+			}
+			elseif ( $this->_isAuthorize() === TRUE )
+			{
+				return $this->__routeCall( $method, $args );
 			}
 		}
 
-		if ( method_exists( $this, '_isAllowedOrigin' ) )
+		if ( $this->input->server( 'REQUEST_METHOD' ) === 'OPTIONS' )
 		{
-			if ( $this->_isAllowedOrigin() === TRUE )
-			{
-				return $this->__route_call( $method, $args );
-			}
-			else
-			{
-				return $this->_send( array(
-					                     'status' => new ArrayObject( array(
-						                                                  'success'     => FALSE,
-						                                                  'code'        => 401,
-						                                                  'description' => HttpStatusCode::getDescription( 401 ),
-					                                                  ) ),
-				                     ) );
-			}
+			$this->_send(
+				[
+					'status'  => new ArrayObject(
+						[
+							'success'     => TRUE,
+							'code'        => 200,
+							'description' => HttpHeaderStatus::getDescription( 200 ),
+						] ),
+					'methods' => $this->_allowed_request_methods,
+				] );
 		}
-
-		$this->__route_call( $method, $args );
+		else
+		{
+			$this->_send(
+				[
+					'status' => new ArrayObject(
+						[
+							'success'     => FALSE,
+							'code'        => 401,
+							'description' => HttpHeaderStatus::getDescription( 401 ),
+						] ),
+				] );
+		}
 	}
 
-	private function __route_call( $method, $args = array() )
+	private function __routeCall( $method, $args = [ ] )
 	{
-		if ( $request_method = $this->input->server( 'REQUEST_METHOD' ) )
+		if ( in_array( $this->input->server( 'REQUEST_METHOD' ), $this->_allowed_request_methods ) )
 		{
-			if ( $request_method === 'OPTIONS' )
+			if ( $this->input->server( 'REQUEST_METHOD' ) === 'OPTIONS' )
 			{
-				$this->_send( array(
-					              'status'  => new ArrayObject( array(
-						                                            'success'     => TRUE,
-						                                            'code'        => 200,
-						                                            'description' => HttpStatusCode::getDescription( 200 ),
-					                                            ) ),
-					              'methods' => $this->_allowed_request_methods,
-				              ) );
+				$this->_send(
+					[
+						'status'  => new ArrayObject(
+							[
+								'success'     => TRUE,
+								'code'        => 200,
+								'description' => HttpHeaderStatus::getDescription( 200 ),
+							] ),
+						'methods' => $this->_allowed_request_methods,
+					] );
 			}
-			elseif ( in_array( $request_method, $this->_allowed_request_methods ) )
+			elseif ( method_exists( $this, $method ) )
 			{
-				if ( method_exists( $this, $method ) )
-				{
-					return call_user_func_array( array( $this, $method ), $args );
-				}
-				else
-				{
-					$this->_send( array(
-						              'status' => new ArrayObject( array(
-							                                           'success'     => FALSE,
-							                                           'code'        => 405,
-							                                           'description' => HttpStatusCode::getDescription( 405 ),
-						                                           ) ),
-					              ) );
-				}
+				return call_user_func_array( [ $this, $method ], $args );
 			}
 			else
 			{
-				$this->_send( array(
-					              'status' => new ArrayObject( array(
-						                                           'success'     => FALSE,
-						                                           'code'        => 405,
-						                                           'description' => HttpStatusCode::getDescription( 405 ),
-						                                           'message'     => 'Forbidden Request Method',
-					                                           ) ),
-				              ) );
+				$this->_send(
+					[
+						'status' => new ArrayObject(
+							[
+								'success'     => FALSE,
+								'code'        => 405,
+								'description' => HttpHeaderStatus::getDescription( 405 ),
+							] ),
+					] );
 			}
+		}
+		else
+		{
+			$this->_send(
+				[
+					'status' => new ArrayObject(
+						[
+							'success'     => FALSE,
+							'code'        => 405,
+							'description' => HttpHeaderStatus::getDescription( 405 ),
+							'message'     => 'Forbidden Request Method',
+						] ),
+				] );
 		}
 	}
 
@@ -172,11 +214,9 @@ abstract class Restful extends Controller
 	{
 		if ( isset( $response[ 'status' ][ 'code' ] ) AND array_key_exists( $response[ 'status' ][ 'code' ], $this->_http_response_codes ) )
 		{
-			$this->view->output->set_header( 'Access-Control-Allow-Origin', '*' );
-			$this->view->output->set_header( 'Access-Control-Allow-Methods', implode( ', ', $this->_allowed_request_methods ) );
-			$this->view->output->set_header( 'Access-Control-Allow-Headers', implode( ', ', $this->_allowed_request_headers ) );
-			$this->view->output->set_header( 'Access-Control-Max-Age', $this->_max_age );
-			$this->view->output->set_header_status( $response[ 'status' ][ 'code' ] );
+			HttpHeaderResponse::setHeader( 'Access-Control-Max-Age', $this->_max_age );
+
+			HttpHeaderStatus::setHeader( $response[ 'status' ][ 'code' ] );
 
 			$content_type = $this->input->server( 'CONTENT_RESULT' );
 
@@ -187,28 +227,30 @@ abstract class Restful extends Controller
 					$response = $this->_toJson( $response );
 
 					$this->view->output
-						->set_content_type( 'application/json' )
-						->set_content( $response );
+						->setContentType( 'application/json' )
+						->setContent( $response );
 					break;
 
 				case 'application/xml':
 					$response = $this->_toXml( $response, new \SimpleXMLElement( '<response/>' ) );
 
 					$this->view->output
-						->set_content_type( 'application/xml' )
-						->set_content( $response->asXML() );
+						->setContentType( 'application/xml' )
+						->setContent( $response->asXML() );
 					break;
 			}
 		}
 		else
 		{
-			$this->_send( array(
-				              'status' => new ArrayObject( array(
-					                                           'success'     => FALSE,
-					                                           'code'        => 500,
-					                                           'description' => HttpStatusCode::getDescription( 500 ),
-				                                           ) ),
-			              ) );
+			$this->_send(
+				[
+					'status' => new ArrayObject(
+						[
+							'success'     => FALSE,
+							'code'        => 500,
+							'description' => HttpHeaderStatus::getDescription( 500 ),
+						] ),
+				] );
 		}
 	}
 
@@ -223,7 +265,10 @@ abstract class Restful extends Controller
 		{
 			$key = is_numeric( $key ) ? 'data' : $key;
 
-			if ( empty( $value ) ) continue;
+			if ( empty( $value ) )
+			{
+				continue;
+			}
 
 			if ( is_object( $value ) )
 			{

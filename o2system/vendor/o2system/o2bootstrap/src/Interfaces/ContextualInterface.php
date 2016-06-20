@@ -52,51 +52,51 @@ trait ContextualInterface
 
 	protected $_contextual_class_prefix = NULL;
 
-	public function set_contextual_class_prefix( $prefix )
+	public function setContextualClassPrefix($prefix )
 	{
 		$this->_contextual_class_prefix = $prefix;
 
 		return $this;
 	}
 
-	public function is_default()
+	public function isDefault()
 	{
-		$this->add_class( $this->_contextual_class_prefix . '-default' );
+		$this->addClass( $this->_contextual_class_prefix . '-default' );
 
 		return $this;
 	}
 
-	public function is_primary()
+	public function isPrimary()
 	{
-		$this->add_class( $this->_contextual_class_prefix . '-primary' );
+		$this->addClass( $this->_contextual_class_prefix . '-primary' );
 
 		return $this;
 	}
 
-	public function is_success()
+	public function isSuccess()
 	{
-		$this->add_class( $this->_contextual_class_prefix . '-success' );
+		$this->addClass( $this->_contextual_class_prefix . '-success' );
 
 		return $this;
 	}
 
-	public function is_info()
+	public function isInfo()
 	{
-		$this->add_class( $this->_contextual_class_prefix . '-info' );
+		$this->addClass( $this->_contextual_class_prefix . '-info' );
 
 		return $this;
 	}
 
-	public function is_warning()
+	public function isWarning()
 	{
-		$this->add_class( $this->_contextual_class_prefix . '-warning' );
+		$this->addClass( $this->_contextual_class_prefix . '-warning' );
 
 		return $this;
 	}
 
-	public function is_danger()
+	public function isDanger()
 	{
-		$this->add_class( $this->_contextual_class_prefix . '-danger' );
+		$this->addClass( $this->_contextual_class_prefix . '-danger' );
 
 		return $this;
 	}

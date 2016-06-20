@@ -72,74 +72,88 @@ class Login extends DriverInterface
 	{
 		$remember = empty( $remember ) ? FALSE : TRUE;
 
-		if ( \O2System::Session()->has_userdata( '__loginAttempts' ) === FALSE )
+		$username = trim( $username );
+		$password = trim( $password );
+
+		$user = $this->_library->model->getAccount( $username );
+		
+		if ( $user instanceof \ArrayObject )
 		{
-			$attempts = array(
-				'count' => 0,
-				'time'  => now(),
-			);
-
-			\O2System::Session()->set_userdata( '__loginAttempts', $attempts );
-		}
-		else
-		{
-			$attempts = \O2System::Session()->userdata( '__loginAttempts' );
-		}
-
-		if ( $attempts[ 'count' ] < $this->_config[ 'attempts' ] )
-		{
-			$username = trim( $username );
-			$password = trim( $password );
-
-			$user = $this->_library->model->getAccount( $username );
-
-			if ( $user instanceof \ArrayObject )
+			if ( $user->offsetExists( 'salt' ) )
 			{
-				if ( $user->offsetExists( 'salt' ) )
-				{
-					$hash_password = $this->_library->hashPassword( $password, $user->salt );
-				}
-				else
-				{
-					$hash_password = $this->_library->hashPassword( $password );
-				}
+				$hash_password = $this->_library->hashPassword( $password, $user->salt );
+			}
+			else
+			{
+				$hash_password = $this->_library->hashPassword( $password );
+			}
 
-				if ( $user->password === $hash_password )
-				{
-					$this->_library->token->setAccess( $user, $password, $remember );
+			if ( $user->password === $hash_password )
+			{
+				$this->_library->token->setAccess( $user, $password, $remember );
 
-					return TRUE;
-				}
+				return TRUE;
 			}
 		}
 
-		$attempts = \O2System::Session()->userdata( '__loginAttempts' );
-		$attempts[ 'count' ]++;
-		$attempts[ 'time' ] = now();
-
-		\O2System::Session()->set_userdata( '__loginAttempts', $attempts );
+		// Log Attempt Login Access
+		$this->setAttempt();
 
 		return FALSE;
 	}
 
 	// ------------------------------------------------------------------------
 
+	public function setAttempt( $count = 0 )
+	{
+		if ( $this->getMaxAttempts() > 0 )
+		{
+			if ( $attempts = $this->getAttempts() )
+			{
+				$attempts[ 'count' ] = $count > 0 ? $count : $attempts[ 'count' ]++;
+			}
+			else
+			{
+				$attempts = [
+					'count' => $count,
+					'time'  => now(),
+				];
+			}
+
+			\O2System::Session()->setUserdata( 'attempts', $attempts );
+		}
+
+		return $this;
+	}
+
 	public function getAttempts()
 	{
-		$attempts = array(
+		$attempts = [
 			'count' => 0,
 			'time'  => now(),
-		);
+		];
 
-		if ( \O2System::Session()->has_userdata( 'attempts' ) )
+		if ( $this->getMaxAttempts() > 0 )
 		{
-			$attempts = \O2System::Session()->userdata( 'attempts' );
+			if ( \O2System::Session()->hasUserdata( 'attempts' ) === FALSE )
+			{
+				\O2System::Session()->setUserdata( 'attempts', $attempts );
+			}
+			else
+			{
+				$attempts = \O2System::Session()->userdata( 'attempts' );
+			}
 		}
 
 		return $attempts;
 	}
 
 	// ------------------------------------------------------------------------
+
+	public function getMaxAttempts()
+	{
+		return (int) $this->_config[ 'attempts' ];
+	}
 
 	public function fromCredentials( Credentials $credentials )
 	{
@@ -163,9 +177,12 @@ class Login extends DriverInterface
 		{
 			if ( $user = $this->_library->model->getAccount( $credentials[ 'id_user_account' ] ) )
 			{
-				if ( $user instanceof \ArrayObject === FALSE ) return FALSE;
+				if ( $user instanceof \ArrayObject === FALSE )
+				{
+					return FALSE;
+				}
 
-				$this->_library->token->setAccess( $user, $user->password, (bool) empty( get_cookie( 'remember' ) ) );
+				$this->_library->token->setAccess( $user, $user->password, (bool) empty( getCookie( 'remember' ) ) );
 
 				return TRUE;
 			}

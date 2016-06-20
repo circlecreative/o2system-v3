@@ -200,7 +200,7 @@ class Redis extends Driver implements \SessionHandlerInterface
 	 */
 	public function read( $session_id )
 	{
-		if ( isset( $this->_handle ) && $this->_get_lock( $session_id ) )
+		if ( isset( $this->_handle ) && $this->_getLock( $session_id ) )
 		{
 			// Needed by write() to detect session_regenerate_id() calls
 			$this->_session_id = $session_id;
@@ -236,7 +236,7 @@ class Redis extends Driver implements \SessionHandlerInterface
 		// Was the ID regenerated?
 		elseif ( $session_id !== $this->_session_id )
 		{
-			if ( ! $this->_release_lock() OR ! $this->_get_lock( $session_id ) )
+			if ( ! $this->_releaseLock() OR ! $this->_getLock( $session_id ) )
 			{
 				return FALSE;
 			}
@@ -321,7 +321,7 @@ class Redis extends Driver implements \SessionHandlerInterface
 	{
 		if ( isset( $this->_handle, $this->_lock_key ) )
 		{
-			return $this->_cookie_destroy();
+			return $this->_cookieDestroy();
 		}
 
 		return FALSE;
@@ -357,7 +357,7 @@ class Redis extends Driver implements \SessionHandlerInterface
 	 * @access  protected
 	 * @return  bool
 	 */
-	protected function _get_lock( $session_id )
+	protected function _getLock($session_id )
 	{
 		if ( isset( $this->_lock_key ) )
 		{
@@ -405,7 +405,7 @@ class Redis extends Driver implements \SessionHandlerInterface
 	 * @access  protected
 	 * @return  bool
 	 */
-	protected function _release_lock()
+	protected function _releaseLock()
 	{
 		if ( isset( $this->_handle, $this->_lock_key ) && $this->_lock )
 		{

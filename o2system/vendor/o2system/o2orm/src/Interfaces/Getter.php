@@ -24,15 +24,15 @@ trait Getter
 	protected function all( $conditions = array() )
 	{
 		// Sort by record left
-		if ( $this->db->field_exists( 'record_left', $this->table ) )
+		if ( $this->db->fieldExists( 'record_left', $this->table ) )
 		{
-			$this->db->order_by( 'record_left', 'ASC' );
+			$this->db->orderBy( 'record_left', 'ASC' );
 		}
 
 		// Sort by record ordering
-		if ( $this->db->field_exists( 'record_ordering', $this->table ) )
+		if ( $this->db->fieldExists( 'record_ordering', $this->table ) )
 		{
-			$this->db->order_by( 'record_ordering', 'ASC' );
+			$this->db->orderBy( 'record_ordering', 'ASC' );
 		}
 
 		if ( ! empty( $conditions ) )
@@ -42,7 +42,7 @@ trait Getter
 
 		$result = $this->db->get( $this->table );
 
-		if ( $result->num_rows() > 0 )
+		if ( $result->numRows() > 0 )
 		{
 			return $result;
 		}
@@ -83,7 +83,7 @@ trait Getter
 	{
 		$result = $this->db->from( $this->table )->get();
 
-		if ( $result->num_rows() > 0 )
+		if ( $result->numRows() > 0 )
 		{
 			return $result->row();
 		}

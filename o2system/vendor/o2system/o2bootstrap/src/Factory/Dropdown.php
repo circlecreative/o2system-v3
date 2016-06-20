@@ -50,12 +50,20 @@ class Dropdown extends Lists
 
 	protected $_is_dropup = FALSE;
 	protected $_is_split  = FALSE;
-	public    $button     = NULL;
-	public    $caret      = NULL;
+
+	/**
+	 * @type Button
+	 */
+	public    $button;
+
+	/**
+	 * @type Button
+	 */
+	public    $caret;
 
 	public function build()
 	{
-		$this->set_pull_class_prefix( 'dropdown-menu' );
+		$this->setPullClassPrefix( 'dropdown-menu' );
 
 		@list( $button, $attr ) = func_get_args();
 
@@ -67,16 +75,16 @@ class Dropdown extends Lists
 			}
 			else
 			{
-				$this->set_button( $button );
+				$this->setButton( $button );
 			}
 		}
 
 		if ( isset( $attr ) )
 		{
-			$this->add_attributes( $attr );
+			$this->addAttributes( $attr );
 		}
 
-		$this->set_caret( '' );
+		$this->setCaret( '' );
 
 		return $this;
 	}
@@ -112,7 +120,7 @@ class Dropdown extends Lists
 		return $this;
 	}
 
-	public function add_item( $item, $describe = NULL, $attr = array(), $key = NULL )
+	public function addItem($item, $describe = NULL, $attr = array(), $key = NULL )
 	{
 		if ( $describe === self::ITEM_HEADER )
 		{
@@ -133,12 +141,12 @@ class Dropdown extends Lists
 			}
 		}
 
-		parent::add_item( $item, $describe, $attr, $key );
+		parent::addItem( $item, $describe, $attr, $key );
 
 		return $this;
 	}
 
-	public function set_button( $button )
+	public function setButton( $button )
 	{
 		if ( is_string( $button ) )
 		{
@@ -149,13 +157,13 @@ class Dropdown extends Lists
 			$this->button = $button;
 		}
 
-		$this->button->add_class( 'dropdown-toggle' );
-		$this->button->add_attributes( [ 'data-toggle' => 'dropdown', 'aria-haspopup' => TRUE, 'aria-expanded' => TRUE ] );
+		$this->button->addClass( 'dropdown-toggle' );
+		$this->button->addAttributes( [ 'data-toggle' => 'dropdown', 'aria-haspopup' => TRUE, 'aria-expanded' => TRUE ] );
 
 		return $this;
 	}
 
-	public function set_caret( $caret = NULL )
+	public function setCaret( $caret = NULL )
 	{
 		if ( is_bool( $caret ) )
 		{
@@ -176,28 +184,28 @@ class Dropdown extends Lists
 		return $this;
 	}
 
-	public function is_dropup()
+	public function isDropup()
 	{
 		$this->_is_dropup = TRUE;
-		$this->remove_class( 'dropdown' );
-		$this->add_class( 'dropup' );
+		$this->removeClass( 'dropdown' );
+		$this->addClass( 'dropup' );
 
 		return $this;
 	}
 
-	public function is_split()
+	public function isSplit()
 	{
 		$this->_is_split = TRUE;
-		$this->set_size_class_prefix( 'btn-group' );
+		$this->setSizeClassPrefix( 'btn-group' );
 
 		if ( empty( $this->caret ) )
 		{
-			$this->set_caret();
+			$this->setCaret();
 		}
 
-		$this->caret = new Button( $this->caret, $this->button->get_attributes() );
-		$this->button->set_attributes( [ 'class' => $this->button->get_classes() ] );
-		$this->button->remove_class( 'dropdown-toggle' );
+		$this->caret = new Button( $this->caret, $this->button->getAttributes() );
+		$this->button->setAttributes( [ 'class' => $this->button->getClasses() ] );
+		$this->button->removeClass( 'dropdown-toggle' );
 
 		return $this;
 	}
@@ -209,17 +217,17 @@ class Dropdown extends Lists
 			if ( $this->_is_split === TRUE )
 			{
 				$dropdown = new Group( Group::BUTTON_GROUP );
-				$dropdown->set_attributes( $this->_attributes );
-				$dropdown->add_class( 'btn-group' );
+				$dropdown->setAttributes( $this->_attributes );
+				$dropdown->addClass( 'btn-group' );
 
-				$dropdown->add_item( $this->button );
-				$dropdown->add_item( $this->caret );
+				$dropdown->addItem( $this->button );
+				$dropdown->addItem( $this->caret );
 
 				$lists = new Lists();
-				$lists->set_class( 'dropdown-menu' );
-				$lists->add_items( $this->_items );
+				$lists->setClass( 'dropdown-menu' );
+				$lists->addItems( $this->_items );
 
-				$dropdown->add_item( $lists );
+				$dropdown->addItem( $lists );
 
 				return $dropdown->render();
 			}
@@ -227,14 +235,14 @@ class Dropdown extends Lists
 			{
 				if ( $this->caret )
 				{
-					$this->button->append_label( $this->caret );
+					$this->button->appendLabel( $this->caret );
 				}
 
 				$items[] = $this->button;
 
 				$lists = new Lists();
-				$lists->set_class( 'dropdown-menu' );
-				$lists->add_items( $this->_items );
+				$lists->setClass( 'dropdown-menu' );
+				$lists->addItems( $this->_items );
 
 				$items[] = $lists;
 

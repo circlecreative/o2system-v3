@@ -42,9 +42,17 @@ use O2System\Glob\Interfaces\LibraryInterface;
 
 class Social extends LibraryInterface
 {
-	protected $_media = array();
+	protected $_media = [ ];
 
-	public function set_media( array $media = array() )
+	public function initialize()
+	{
+		if ( $config = \O2System::$config->load( 'social', TRUE ) )
+		{
+			$this->_config = $config;
+		}
+	}
+
+	public function setMedia( array $media = [ ] )
 	{
 		foreach ( $media as $driver )
 		{
@@ -55,19 +63,35 @@ class Social extends LibraryInterface
 		}
 	}
 
-	public function get_authorize_urls( $url = 'social', array $drivers = array( 'facebook', 'twitter' ) )
+	public function getShareLinks( $link = NULL )
 	{
-		$urls = array();
+		$link  = isset( $link ) ? $link : current_url();
+		$links = [ ];
 
-		if ( ! empty( $drivers ) )
+		if ( count( $this->_media ) > 0 )
 		{
-			foreach ( $drivers as $driver )
+			foreach ( $this->_media as $media )
 			{
-				$urls[ $driver ] = $this->{$driver}->get_authorize_url( $url . '/' . $driver );
+				$links[ $media ] = $this->{$media}->getShareLink( $link );
 			}
 		}
 
-		return $urls;
+		return $links;
+	}
+
+	public function getAuthorizeLinks( $callback_url )
+	{
+		$links = [ ];
+
+		if ( count( $this->_media ) > 0 )
+		{
+			foreach ( $this->_media as $media )
+			{
+				$links[ $media ] = $this->{$media}->getAuthorizeLink( $callback_url );
+			}
+		}
+
+		return $links;
 	}
 
 	public function post_feed( array $feed )

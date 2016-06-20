@@ -58,7 +58,7 @@ use O2System\Template\ViewException;
  */
 final class View extends DriverInterface
 {
-	public function is_file( $view )
+	public function isFile($view )
 	{
 		if ( is_file( $view ) )
 		{
@@ -72,9 +72,9 @@ final class View extends DriverInterface
 			{
 				if ( class_exists( 'O2System', FALSE ) )
 				{
-					if ( \O2System::$active->offsetExists( 'module' ) )
+					if ( $module = \O2System::$active[ 'modules' ]->current() )
 					{
-						$module_path = $this->_library->theme->active->realpath . strtolower( \O2System::$active[ 'module' ]->type ) . DIRECTORY_SEPARATOR . \O2System::$active[ 'module' ]->parameter . DIRECTORY_SEPARATOR;
+						$module_path = $this->_library->theme->active->realpath . strtolower( $module->type ) . DIRECTORY_SEPARATOR . $module->parameter . DIRECTORY_SEPARATOR;
 
 						if ( is_dir( $module_path ) )
 						{
@@ -106,20 +106,20 @@ final class View extends DriverInterface
 	{
 		$vars = array_merge( $this->_library->_cached_vars, $vars );
 
-		if ( $view_filepath = $this->is_file( $view ) )
+		if ( $view_filepath = $this->isFile( $view ) )
 		{
 			if ( in_array( pathinfo( $view_filepath, PATHINFO_EXTENSION ), [ 'php', 'phtml' ] ) )
 			{
-				$output = $this->_library->parser->parse_php( file_get_contents( $view_filepath ), $vars );
+				$output = $this->_library->parser->parsePhp( file_get_contents( $view_filepath ), $vars );
 			}
 			else
 			{
-				$output = $this->_library->parser->parse_string( file_get_contents( $view_filepath ), $vars );
+				$output = $this->_library->parser->parseString( file_get_contents( $view_filepath ), $vars );
 			}
 
 			if ( $return === FALSE )
 			{
-				return $this->_library->output->append_content( $output );
+				return $this->_library->output->appendContent( $output );
 			}
 
 			return $output;

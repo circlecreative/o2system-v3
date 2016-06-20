@@ -832,7 +832,7 @@ final class Input
 			}
 			else
 			{
-				\O2System::Exception()->set_status_header( 503 );
+				\O2System::Exception()->setStatusHeader( 503 );
 				echo 'Disallowed Key Characters.';
 				exit( 7 ); // EXIT_USER_INPUT
 			}

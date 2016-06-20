@@ -9,31 +9,37 @@ namespace O2System\Libraries\Websocket\Interfaces;
  */
 abstract class Channel
 {
-	protected static $instances = array();
+	protected static $instances    = [ ];
+	protected        $_server_info = NULL;
 
 	/**
 	 * Singleton
 	 */
-	protected function __construct() { }
-
-	final private function __clone() { }
-
-	final public static function getInstance()
+	protected function __construct()
 	{
-		$calledClassName = get_called_class();
-		if ( ! isset( self::$instances[ $calledClassName ] ) )
-		{
-			self::$instances[ $calledClassName ] = new $calledClassName();
-		}
-
-		return self::$instances[ $calledClassName ];
 	}
 
-	abstract public function on_connect( $connection );
+	final private function __clone()
+	{
+	}
 
-	abstract public function on_disconnect( $connection );
+	final public static function instance()
+	{
+		$called_class = get_called_class();
 
-	abstract public function on_data( $data, $client );
+		if ( ! isset( self::$instances[ $called_class ] ) )
+		{
+			self::$instances[ $called_class ] = new $called_class();
+		}
+
+		return self::$instances[ $called_class ];
+	}
+
+	abstract public function onConnect( $connection );
+
+	abstract public function onDisconnect( $connection );
+
+	abstract public function onData( $data, $client );
 
 	// Common methods:
 
@@ -61,21 +67,23 @@ abstract class Channel
 			return FALSE;
 		}
 
-		$payload = array(
+		$payload = [
 			'action' => $action,
 			'data'   => $data,
-		);
+		];
 
 		return json_encode( $payload );
 	}
 
-	public function set_info($serverInfo)
+	public function setServerInfo( $server_info )
 	{
-		if(is_array($serverInfo))
+		if ( is_array( $server_info ) )
 		{
-			$this->_serverInfo = $serverInfo;
-			return true;
+			$this->_server_info = $server_info;
+
+			return TRUE;
 		}
-		return false;
+
+		return FALSE;
 	}
 }

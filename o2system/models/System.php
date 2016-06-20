@@ -62,7 +62,7 @@ class System extends Model
 
 		$result = $this->db->get( 'sys_registries', 1 );
 
-		if ( $result->num_rows() > 0 )
+		if ( $result->numRows() > 0 )
 		{
 			if ( ! is_null( $result->first()->settings ) )
 			{
@@ -102,19 +102,19 @@ class System extends Model
 
 		if ( empty( $conditions ) )
 		{
-			$query = $this->db->order_by( 'record_ordering', 'ASC' )->get_where( 'sys_languages', [ 'record_status' => 2 ] );
+			$query = $this->db->orderBy( 'record_ordering', 'ASC' )->getWhere( 'sys_languages', [ 'record_status' => 2 ] );
 		}
 		else
 		{
 			$this->db->where( $conditions );
-			$query = $this->db->order_by( 'record_ordering', 'ASC' )->get_where( 'sys_languages', [ 'record_status' => 2 ] );
+			$query = $this->db->orderBy( 'record_ordering', 'ASC' )->getWhere( 'sys_languages', [ 'record_status' => 2 ] );
 		}
 
-		if ( $query->num_rows() == 1 )
+		if ( $query->numRows() == 1 )
 		{
 			return $query->first();
 		}
-		elseif ( $query->num_rows() > 1 )
+		elseif ( $query->numRows() > 1 )
 		{
 			return $query->result();
 		}
@@ -134,19 +134,19 @@ class System extends Model
 	{
 		if ( empty( $conditions ) )
 		{
-			$query = $this->db->get_where( 'sys_domains', [ 'record_status' => 2 ] );
+			$query = $this->db->getWhere( 'sys_domains', [ 'record_status' => 2 ] );
 		}
 		else
 		{
 			$this->db->where( $conditions );
-			$query = $this->db->get_where( 'sys_domains', [ 'record_status' => 2 ] );
+			$query = $this->db->getWhere( 'sys_domains', [ 'record_status' => 2 ] );
 		}
 
-		if ( $query->num_rows() == 1 )
+		if ( $query->numRows() == 1 )
 		{
 			return $query->first();
 		}
-		elseif ( $query->num_rows() > 1 )
+		elseif ( $query->numRows() > 1 )
 		{
 			return $query->result();
 		}
@@ -160,7 +160,7 @@ class System extends Model
 		$this->db->where('sys_registries.segments', $rsegment);
 		$result = $this->db->get();
 
-		if ($result->num_rows()>0)
+		if ($result->numRows()>0)
 		{
 			$row = $result->row();
 

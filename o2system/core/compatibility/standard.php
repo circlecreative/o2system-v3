@@ -109,7 +109,7 @@ if( ! function_exists( 'array_column' ) )
      *
      * @return    array
      */
-    function array_column( array $array, $column_key, $index_key = NULL )
+    function arrayColumn(array $array, $column_key, $index_key = NULL )
     {
         if( ! in_array( $type = gettype( $column_key ), array( 'integer', 'string', 'NULL' ), TRUE ) )
         {
@@ -239,7 +239,7 @@ if( is_php( '5.3' ) )
 
 // ------------------------------------------------------------------------
 
-if( ! function_exists( 'array_replace' ) )
+if( ! function_exists('arrayReplace') )
 {
     /**
      * array_replace()
@@ -247,7 +247,7 @@ if( ! function_exists( 'array_replace' ) )
      * @link    http://php.net/array_replace
      * @return    array
      */
-    function array_replace()
+    function arrayReplace()
     {
         $arrays = func_get_args();
 
@@ -305,7 +305,7 @@ if( ! function_exists( 'array_replace_recursive' ) )
      * @link    http://php.net/array_replace_recursive
      * @return    array
      */
-    function array_replace_recursive()
+    function arrayReplaceRecursive()
     {
         $arrays = func_get_args();
 
@@ -346,7 +346,7 @@ if( ! function_exists( 'array_replace_recursive' ) )
             foreach( array_keys( $arrays[ $i ] ) as $key )
             {
                 $array[ $key ] = ( is_array( $arrays[ $i ][ $key ] ) && isset( $array[ $key ] ) && is_array( $array[ $key ] ) )
-                    ? array_replace_recursive( $array[ $key ], $arrays[ $i ][ $key ] )
+                    ? arrayReplaceRecursive( $array[ $key ], $arrays[ $i ][ $key ] )
                     : $arrays[ $i ][ $key ];
             }
         }
@@ -368,7 +368,7 @@ if( ! function_exists( 'quoted_printable_encode' ) )
      *
      * @return    string
      */
-    function quoted_printable_encode( $str )
+    function quotedPrintableEncode( $str )
     {
         if( strlen( $str ) === 0 )
         {
@@ -397,7 +397,7 @@ if( ! function_exists( 'quoted_printable_encode' ) )
         $output = '';
         $hex = '0123456789ABCDEF';
         $length = ( extension_loaded( 'mbstring' ) && ini_get( 'mbstring.func_overload' ) )
-            ? mb_strlen( $str, '8bit' )
+            ? mbStrlen( $str, '8bit' )
             : strlen( $str );
 
         while( $length-- )

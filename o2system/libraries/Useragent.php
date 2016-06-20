@@ -103,7 +103,7 @@ class Useragent
 	 *
 	 * @var string
 	 */
-	public $agent = NULL;
+	public $string = NULL;
 
 	/**
 	 * Flag for if the user-agent belongs to a browser
@@ -131,42 +131,42 @@ class Useragent
 	 *
 	 * @var array
 	 */
-	public $languages = array();
+	public $languages = [ ];
 
 	/**
 	 * Character sets accepted by the current user agent
 	 *
 	 * @var array
 	 */
-	public $charsets = array();
+	public $charsets = [ ];
 
 	/**
 	 * List of platforms to compare against current user agent
 	 *
 	 * @var array
 	 */
-	public $platforms = array();
+	public $platforms = [ ];
 
 	/**
 	 * List of browsers to compare against current user agent
 	 *
 	 * @var array
 	 */
-	public $browsers = array();
+	public $browsers = [ ];
 
 	/**
 	 * List of mobile browsers to compare against current user agent
 	 *
 	 * @var array
 	 */
-	public $mobiles = array();
+	public $mobiles = [ ];
 
 	/**
 	 * List of robots to compare against current user agent
 	 *
 	 * @var array
 	 */
-	public $robots = array();
+	public $robots = [ ];
 
 	/**
 	 * Current user-agent platform
@@ -197,6 +197,13 @@ class Useragent
 	public $mobile = '';
 
 	/**
+	 * Current user-agent device type
+	 *
+	 * @type string
+	 */
+	public $device = '';
+
+	/**
 	 * Current user-agent robot name
 	 *
 	 * @var string
@@ -223,12 +230,12 @@ class Useragent
 	{
 		if ( isset( $_SERVER[ 'HTTP_USER_AGENT' ] ) )
 		{
-			$this->agent = trim( $_SERVER[ 'HTTP_USER_AGENT' ] );
+			$this->string = trim( $_SERVER[ 'HTTP_USER_AGENT' ] );
 		}
 
-		if ( $this->agent !== NULL && $this->_load_agent_file() )
+		if ( $this->string !== NULL && $this->_loadAgentFile() )
 		{
-			$this->_compile_data();
+			$this->_compileData();
 		}
 
 		\O2System::Log( 'info', 'User Agent Class Initialized' );
@@ -241,7 +248,7 @@ class Useragent
 	 *
 	 * @return    bool
 	 */
-	protected function _load_agent_file()
+	protected function _loadAgentFile()
 	{
 		if ( ( $found = is_file( SYSTEMPATH . 'config/user_agents.php' ) ) )
 		{
@@ -299,11 +306,11 @@ class Useragent
 	 *
 	 * @return    bool
 	 */
-	protected function _compile_data()
+	protected function _compileData()
 	{
-		$this->_set_platform();
+		$this->_setPlatform();
 
-		foreach ( array( '_set_robot', '_set_browser', '_set_mobile' ) as $function )
+		foreach ( [ '_setRobot', '_setBrowser', '_setMobile' ] as $function )
 		{
 			if ( $this->$function() === TRUE )
 			{
@@ -319,13 +326,13 @@ class Useragent
 	 *
 	 * @return    bool
 	 */
-	protected function _set_platform()
+	protected function _setPlatform()
 	{
 		if ( is_array( $this->platforms ) && count( $this->platforms ) > 0 )
 		{
 			foreach ( $this->platforms as $key => $val )
 			{
-				if ( preg_match( '|' . preg_quote( $key ) . '|i', $this->agent ) )
+				if ( preg_match( '|' . preg_quote( $key ) . '|i', $this->string ) )
 				{
 					$this->platform = $val;
 
@@ -346,18 +353,18 @@ class Useragent
 	 *
 	 * @return    bool
 	 */
-	protected function _set_browser()
+	protected function _setBrowser()
 	{
 		if ( is_array( $this->browsers ) && count( $this->browsers ) > 0 )
 		{
 			foreach ( $this->browsers as $key => $val )
 			{
-				if ( preg_match( '|' . $key . '.*?([0-9\.]+)|i', $this->agent, $match ) )
+				if ( preg_match( '|' . $key . '.*?([0-9\.]+)|i', $this->string, $match ) )
 				{
 					$this->is_browser = TRUE;
-					$this->version = $match[ 1 ];
-					$this->browser = $val;
-					$this->_set_mobile();
+					$this->version    = $match[ 1 ];
+					$this->browser    = $val;
+					$this->_setMobile();
 
 					return TRUE;
 				}
@@ -374,17 +381,17 @@ class Useragent
 	 *
 	 * @return    bool
 	 */
-	protected function _set_robot()
+	protected function _setRobot()
 	{
 		if ( is_array( $this->robots ) && count( $this->robots ) > 0 )
 		{
 			foreach ( $this->robots as $key => $val )
 			{
-				if ( preg_match( '|' . preg_quote( $key ) . '|i', $this->agent ) )
+				if ( preg_match( '|' . preg_quote( $key ) . '|i', $this->string ) )
 				{
 					$this->is_robot = TRUE;
-					$this->robot = $val;
-					$this->_set_mobile();
+					$this->robot    = $val;
+					$this->_setMobile();
 
 					return TRUE;
 				}
@@ -401,16 +408,16 @@ class Useragent
 	 *
 	 * @return    bool
 	 */
-	protected function _set_mobile()
+	protected function _setMobile()
 	{
 		if ( is_array( $this->mobiles ) && count( $this->mobiles ) > 0 )
 		{
 			foreach ( $this->mobiles as $key => $val )
 			{
-				if ( FALSE !== ( stripos( $this->agent, $key ) ) )
+				if ( FALSE !== ( stripos( $this->string, $key ) ) )
 				{
 					$this->is_mobile = TRUE;
-					$this->mobile = $val;
+					$this->mobile    = $val;
 
 					return TRUE;
 				}
@@ -427,7 +434,7 @@ class Useragent
 	 *
 	 * @return    void
 	 */
-	protected function _set_languages()
+	protected function _setLanguages()
 	{
 		if ( ( count( $this->languages ) === 0 ) && ! empty( $_SERVER[ 'HTTP_ACCEPT_LANGUAGE' ] ) )
 		{
@@ -436,7 +443,7 @@ class Useragent
 
 		if ( count( $this->languages ) === 0 )
 		{
-			$this->languages = array( 'Undefined' );
+			$this->languages = [ 'Undefined' ];
 		}
 	}
 
@@ -447,7 +454,7 @@ class Useragent
 	 *
 	 * @return    void
 	 */
-	protected function _set_charsets()
+	protected function _setCharsets()
 	{
 		if ( ( count( $this->charsets ) === 0 ) && ! empty( $_SERVER[ 'HTTP_ACCEPT_CHARSET' ] ) )
 		{
@@ -456,7 +463,7 @@ class Useragent
 
 		if ( count( $this->charsets ) === 0 )
 		{
-			$this->charsets = array( 'Undefined' );
+			$this->charsets = [ 'Undefined' ];
 		}
 	}
 
@@ -469,7 +476,7 @@ class Useragent
 	 *
 	 * @return    bool
 	 */
-	public function is_browser( $key = NULL )
+	public function isBrowser( $key = NULL )
 	{
 		if ( ! $this->is_browser )
 		{
@@ -495,7 +502,7 @@ class Useragent
 	 *
 	 * @return    bool
 	 */
-	public function is_robot( $key = NULL )
+	public function isRobot( $key = NULL )
 	{
 		if ( ! $this->is_robot )
 		{
@@ -521,7 +528,7 @@ class Useragent
 	 *
 	 * @return    bool
 	 */
-	public function is_mobile( $key = NULL )
+	public function isMobile( $key = NULL )
 	{
 		if ( ! $this->is_mobile )
 		{
@@ -545,7 +552,7 @@ class Useragent
 	 *
 	 * @return    bool
 	 */
-	public function is_referral()
+	public function isReferral()
 	{
 		if ( ! isset( $this->referer ) )
 		{
@@ -556,7 +563,7 @@ class Useragent
 			else
 			{
 				$referer_host = @parse_url( $_SERVER[ 'HTTP_REFERER' ], PHP_URL_HOST );
-				$own_host = parse_url( config_item( 'base_url' ), PHP_URL_HOST );
+				$own_host     = parse_url( \O2System::$config->base_url(), PHP_URL_HOST );
 
 				$this->referer = ( $referer_host && $referer_host !== $own_host );
 			}
@@ -572,9 +579,9 @@ class Useragent
 	 *
 	 * @return    string
 	 */
-	public function agent_string()
+	public function agentString()
 	{
-		return $this->agent;
+		return $this->string;
 	}
 
 	// --------------------------------------------------------------------
@@ -659,7 +666,7 @@ class Useragent
 	{
 		if ( count( $this->languages ) === 0 )
 		{
-			$this->_set_languages();
+			$this->_setLanguages();
 		}
 
 		return $this->languages;
@@ -676,7 +683,7 @@ class Useragent
 	{
 		if ( count( $this->charsets ) === 0 )
 		{
-			$this->_set_charsets();
+			$this->_setCharsets();
 		}
 
 		return $this->charsets;
@@ -691,7 +698,7 @@ class Useragent
 	 *
 	 * @return    bool
 	 */
-	public function accept_lang( $lang = 'en' )
+	public function acceptLang( $lang = 'en' )
 	{
 		return in_array( strtolower( $lang ), $this->languages(), TRUE );
 	}
@@ -705,7 +712,7 @@ class Useragent
 	 *
 	 * @return    bool
 	 */
-	public function accept_charset( $charset = 'utf-8' )
+	public function acceptCharset( $charset = 'utf-8' )
 	{
 		return in_array( strtolower( $charset ), $this->charsets(), TRUE );
 	}
@@ -723,19 +730,19 @@ class Useragent
 	{
 		// Reset values
 		$this->is_browser = FALSE;
-		$this->is_robot = FALSE;
-		$this->is_mobile = FALSE;
-		$this->browser = '';
-		$this->version = '';
-		$this->mobile = '';
-		$this->robot = '';
+		$this->is_robot   = FALSE;
+		$this->is_mobile  = FALSE;
+		$this->browser    = '';
+		$this->version    = '';
+		$this->mobile     = '';
+		$this->robot      = '';
 
 		// Set the new user-agent string and parse it, unless empty
-		$this->agent = $string;
+		$this->string = $string;
 
 		if ( ! empty( $string ) )
 		{
-			$this->_compile_data();
+			$this->_compileData();
 		}
 	}
 

@@ -51,7 +51,7 @@ class Pagination extends Lists
 
 	public function build()
 	{
-		$this->set_size_class_prefix( 'pagination' );
+		$this->setSizeClassPrefix( 'pagination' );
 
 		@list( $pages, $display, $attr ) = func_get_args();
 
@@ -59,7 +59,7 @@ class Pagination extends Lists
 		{
 			if ( is_numeric( $pages ) )
 			{
-				$this->set_num_pages( $pages );
+				$this->setNumPages( $pages );
 			}
 			elseif ( is_array( $pages ) )
 			{
@@ -71,7 +71,7 @@ class Pagination extends Lists
 		{
 			if ( is_numeric( $display ) )
 			{
-				$this->set_num_display( $display );
+				$this->setNumDisplay( $display );
 			}
 			elseif ( is_array( $display ) )
 			{
@@ -81,13 +81,13 @@ class Pagination extends Lists
 
 		if ( isset( $attr ) )
 		{
-			$this->add_attributes( $attr );
+			$this->addAttributes( $attr );
 		}
 
 		return $this;
 	}
 
-	public function set_num_pages( $pages )
+	public function setNumPages($pages )
 	{
 		if ( is_numeric( $pages ) )
 		{
@@ -97,7 +97,7 @@ class Pagination extends Lists
 		return $this;
 	}
 
-	public function set_num_active( $active )
+	public function setNumActive($active )
 	{
 		if ( is_numeric( $active ) )
 		{
@@ -107,7 +107,7 @@ class Pagination extends Lists
 		return $this;
 	}
 
-	public function set_num_display( $display )
+	public function setNumDisplay($display )
 	{
 		if ( is_numeric( $display ) )
 		{
@@ -117,7 +117,7 @@ class Pagination extends Lists
 		return $this;
 	}
 
-	public function set_link( $link )
+	public function setLink($link )
 	{
 		$this->_link = $link;
 
@@ -177,11 +177,11 @@ class Pagination extends Lists
 
 		if ( $num_previous > 1 )
 		{
-			$this->add_item( new Link( new Tag( 'span', '&laquo;', [ 'aria-hidden' => TRUE ] ), $link . $num_previous ) );
+			$this->addItem( new Link( new Tag( 'span', '&laquo;', [ 'aria-hidden' => TRUE ] ), $link . $num_previous ) );
 		}
 		else
 		{
-			$this->add_item( new Link( new Tag( 'span', '&laquo;', [ 'aria-hidden' => TRUE ] ), '#' ), Lists::ITEM_DISABLED );
+			$this->addItem( new Link( new Tag( 'span', '&laquo;', [ 'aria-hidden' => TRUE ] ), '#' ), Lists::ITEM_DISABLED );
 		}
 
 		$total_pages = ( $this->_num_active + $this->_num_display );
@@ -208,11 +208,11 @@ class Pagination extends Lists
 			{
 				if ( $page == $this->_num_active )
 				{
-					$this->add_item( new Link( $page, $link . $page ), Lists::ITEM_ACTIVE );
+					$this->addItem( new Link( $page, $link . $page ), Lists::ITEM_ACTIVE );
 				}
 				else
 				{
-					$this->add_item( new Link( $page, $link . $page ) );
+					$this->addItem( new Link( $page, $link . $page ) );
 				}
 			}
 		}
@@ -221,11 +221,11 @@ class Pagination extends Lists
 
 		if ( $num_next < $this->_num_pages )
 		{
-			$this->add_item( new Link( new Tag( 'span', '&raquo;', [ 'aria-hidden' => TRUE ] ), $link . $num_next ) );
+			$this->addItem( new Link( new Tag( 'span', '&raquo;', [ 'aria-hidden' => TRUE ] ), $link . $num_next ) );
 		}
 		else
 		{
-			$this->add_item( new Link( new Tag( 'span', '&raquo;', [ 'aria-hidden' => TRUE ] ), '#' ), Lists::ITEM_DISABLED );
+			$this->addItem( new Link( new Tag( 'span', '&raquo;', [ 'aria-hidden' => TRUE ] ), '#' ), Lists::ITEM_DISABLED );
 		}
 
 		if ( ! empty( $this->_items ) )

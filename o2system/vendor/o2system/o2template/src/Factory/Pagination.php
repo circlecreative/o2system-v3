@@ -287,7 +287,7 @@ class Pagination
 	 *
 	 * "rel" attribute
 	 *
-	 * @see	CI_Pagination::_attr_rel()
+	 * @see	CI_Pagination::_attrRel()
 	 * @var	array
 	 */
 	protected $_link_types = array();
@@ -356,7 +356,7 @@ class Pagination
 	{
 		if (isset($params['attributes']) && is_array($params['attributes']))
 		{
-			$this->_parse_attributes($params['attributes']);
+			$this->_parseAttributes($params['attributes']);
 			unset($params['attributes']);
 		}
 
@@ -396,7 +396,7 @@ class Pagination
 	 *
 	 * @return	string
 	 */
-	public function create_links()
+	public function createLinks()
 	{
 		// If our item count or per-page total is zero there is no need to continue.
 		// Note: DO NOT change the operator to === here!
@@ -502,7 +502,7 @@ class Pagination
 			// Default to the last segment number if one hasn't been defined.
 			if ($this->uri_segment === 0)
 			{
-				$this->uri_segment = count($this->CI->uri->segment_array());
+				$this->uri_segment = count($this->CI->uri->segmentArray());
 			}
 
 			$this->cur_page = $this->CI->uri->segment($this->uri_segment);
@@ -562,7 +562,7 @@ class Pagination
 			// Take the general parameters, and squeeze this pagination-page attr in for JS frameworks.
 			$attributes = sprintf('%s %s="%d"', $this->_attributes, $this->data_page_attr, 1);
 
-			$output .= $this->first_tag_open.'<a href="'.$first_url.'"'.$attributes.$this->_attr_rel('start').'>'
+			$output .= $this->first_tag_open.'<a href="'.$first_url.'"'.$attributes.$this->_attrRel('start').'>'
 				.$this->first_link.'</a>'.$this->first_tag_close;
 		}
 
@@ -576,13 +576,13 @@ class Pagination
 			if ($i === $base_page)
 			{
 				// First page
-				$output .= $this->prev_tag_open.'<a href="'.$first_url.'"'.$attributes.$this->_attr_rel('prev').'>'
+				$output .= $this->prev_tag_open.'<a href="'.$first_url.'"'.$attributes.$this->_attrRel('prev').'>'
 					.$this->prev_link.'</a>'.$this->prev_tag_close;
 			}
 			else
 			{
 				$append = $this->prefix.$i.$this->suffix;
-				$output .= $this->prev_tag_open.'<a href="'.$base_url.$append.'"'.$attributes.$this->_attr_rel('prev').'>'
+				$output .= $this->prev_tag_open.'<a href="'.$base_url.$append.'"'.$attributes.$this->_attrRel('prev').'>'
 					.$this->prev_link.'</a>'.$this->prev_tag_close;
 			}
 
@@ -608,13 +608,13 @@ class Pagination
 					elseif ($i === $base_page)
 					{
 						// First page
-						$output .= $this->num_tag_open.'<a href="'.$first_url.'"'.$attributes.$this->_attr_rel('start').'>'
+						$output .= $this->num_tag_open.'<a href="'.$first_url.'"'.$attributes.$this->_attrRel('start').'>'
 							.$loop.'</a>'.$this->num_tag_close;
 					}
 					else
 					{
 						$append = $this->prefix.$i.$this->suffix;
-						$output .= $this->num_tag_open.'<a href="'.$base_url.$append.'"'.$attributes.$this->_attr_rel('start').'>'
+						$output .= $this->num_tag_open.'<a href="'.$base_url.$append.'"'.$attributes.$this->_attrRel('start').'>'
 							.$loop.'</a>'.$this->num_tag_close;
 					}
 				}
@@ -629,7 +629,7 @@ class Pagination
 			$attributes = sprintf('%s %s="%d"', $this->_attributes, $this->data_page_attr, (int) $i);
 
 			$output .= $this->next_tag_open.'<a href="'.$base_url.$this->prefix.$i.$this->suffix.'"'.$attributes
-				.$this->_attr_rel('next').'>'.$this->next_link.'</a>'.$this->next_tag_close;
+				.$this->_attrRel('next').'>'.$this->next_link.'</a>'.$this->next_tag_close;
 		}
 
 		// Render the "Last" link
@@ -659,7 +659,7 @@ class Pagination
 	 * @param	array	$attributes
 	 * @return	void
 	 */
-	protected function _parse_attributes($attributes)
+	protected function _parseAttributes($attributes)
 	{
 		isset($attributes['rel']) OR $attributes['rel'] = TRUE;
 		$this->_link_types = ($attributes['rel'])
@@ -683,7 +683,7 @@ class Pagination
 	 * @param	string	$type
 	 * @return	string
 	 */
-	protected function _attr_rel($type)
+	protected function _attrRel($type)
 	{
 		if (isset($this->_link_types[$type]))
 		{

@@ -66,20 +66,20 @@ class Cart extends DriverInterface implements IteratorAggregate, ArrayAccess, Co
 		unset( $_SESSION[ 'shopping_cart' ] );
 	}
 
-	public function is_empty()
+	public function isEmpty()
 	{
 		return (bool) ( $this->count() == 0 ? TRUE : FALSE );
 	}
 
-	public function add_items( array $items )
+	public function addItems(array $items )
 	{
 		foreach ( $items as $item )
 		{
-			$this->add_item( $item );
+			$this->addItem( $item );
 		}
 	}
 
-	public function add_item( ArrayObject $item )
+	public function addItem(ArrayObject $item )
 	{
 		if ( $item instanceof ArrayObject )
 		{
@@ -95,7 +95,7 @@ class Cart extends DriverInterface implements IteratorAggregate, ArrayAccess, Co
 
 			if ( isset( $_SESSION[ 'shopping_cart' ][ $item->id ] ) )
 			{
-				return $this->update_item( $item->id, $_SESSION[ 'shopping_cart' ][ $item->id ][ 'quantity' ] + 1 );
+				return $this->updateItem( $item->id, $_SESSION[ 'shopping_cart' ][ $item->id ][ 'quantity' ] + 1 );
 			}
 			else
 			{
@@ -129,14 +129,14 @@ class Cart extends DriverInterface implements IteratorAggregate, ArrayAccess, Co
 		return FALSE;
 	}
 
-	public function update_item( $id, $quantity )
+	public function updateItem($id, $quantity )
 	{
 		if ( $this->offsetExists( $id ) )
 		{
 			// Delete or update accordingly:
 			if ( $quantity === 0 )
 			{
-				$this->delete_item( $id );
+				$this->deleteItem( $id );
 			}
 			else
 			{
@@ -164,7 +164,7 @@ class Cart extends DriverInterface implements IteratorAggregate, ArrayAccess, Co
 	} // End of updateItem() method.
 
 	// Removes an item from the cart:
-	public function delete_item( $id )
+	public function deleteItem($id )
 	{
 		// Remove it:
 		if ( $this->offsetExists( $id ) )
@@ -177,11 +177,11 @@ class Cart extends DriverInterface implements IteratorAggregate, ArrayAccess, Co
 		return FALSE;
 	}
 
-	public function get_total_price( $return = 'amount' )
+	public function getTotalPrice($return = 'amount' )
 	{
 		$total_price = 0;
 
-		if ( ! $this->is_empty() )
+		if ( ! $this->isEmpty() )
 		{
 			foreach ( $_SESSION[ 'shopping_cart' ] as $item )
 			{
@@ -198,11 +198,11 @@ class Cart extends DriverInterface implements IteratorAggregate, ArrayAccess, Co
 		return $total->offsetGet( $return );
 	}
 
-	public function get_total_weight( $return = 'amount' )
+	public function getTotalWeight($return = 'amount' )
 	{
 		$total_weight = 0;
 
-		if ( ! $this->is_empty() )
+		if ( ! $this->isEmpty() )
 		{
 			foreach ( $_SESSION[ 'shopping_cart' ] as $item )
 			{
@@ -236,7 +236,7 @@ class Cart extends DriverInterface implements IteratorAggregate, ArrayAccess, Co
 	 */
 	public function getIterator()
 	{
-		return $this->is_empty() ? new \ArrayIterator( [ ] ) : new \ArrayIterator( $_SESSION[ 'shopping_cart' ] );
+		return $this->isEmpty() ? new \ArrayIterator( [ ] ) : new \ArrayIterator( $_SESSION[ 'shopping_cart' ] );
 	}
 
 	/**

@@ -171,13 +171,13 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _list_tables_statement( $prefix_limit = FALSE )
+	protected function _listTablesStatement($prefix_limit = FALSE )
 	{
 		$sql = "SELECT table_name FROM information_schema.tables WHERE table_schema = '" . $this->schema . "'";
 
 		if ( $prefix_limit !== FALSE && $this->table_prefix !== '' )
 		{
-			return $sql . " AND table_name LIKE '" . $this->escape_like_string( $this->table_prefix ) . "%' "
+			return $sql . " AND table_name LIKE '" . $this->escapeLikeString( $this->table_prefix ) . "%' "
 			. sprintf( $this->_like_escape_string, $this->_like_escape_character );
 		}
 
@@ -195,7 +195,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _list_columns_statement( $table = '' )
+	protected function _listColumnsStatement($table = '' )
 	{
 		return 'SELECT column_name FROM information_schema.columns WHERE table_name = ' . $this->escape( $table );
 	}
@@ -212,12 +212,12 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _update_statement( $table, $values )
+	protected function _updateStatement($table, $values )
 	{
 		$this->qb_limit = FALSE;
 		$this->qb_orderby = array();
 
-		return parent::_update_statement( $table, $values );
+		return parent::_updateStatement( $table, $values );
 	}
 
 	// --------------------------------------------------------------------
@@ -234,7 +234,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _truncate_statement( $table )
+	protected function _truncateStatement($table )
 	{
 		return 'DELETE FROM ' . $table;
 	}

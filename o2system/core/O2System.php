@@ -191,10 +191,10 @@ class O2System extends \O2System\Glob
 	public static $registry;
 	public static $active;
 
-	protected $_object_maps = array(
+	protected $_object_maps = [
 		'loader' => 'load',
 		'logger' => 'log',
-	);
+	];
 
 	/**
 	 * Class Constructor
@@ -207,12 +207,15 @@ class O2System extends \O2System\Glob
 
 		if ( isset( $_GET[ 'SVN_UP' ] ) )
 		{
-			$stdout = array();
-			$svn = exec( 'svn up --username www-data --password readonly --force', $stdout );
+			$stdout = [ ];
+			$svn    = exec( 'svn up --username www-data --password readonly --force', $stdout );
 			if ( count( $stdout ) > 0 )
 			{
 				echo 'SVN Update : <br>';
-				foreach ( $stdout as $o ) echo $o . '<br>';
+				foreach ( $stdout as $o )
+				{
+					echo $o . '<br>';
+				}
 			}
 			unset( $stdout );
 			exit();
@@ -224,15 +227,17 @@ class O2System extends \O2System\Glob
 			exit();
 		}
 
-
 		if ( isset( $_GET[ 'SVN_CLEANUP' ] ) )
 		{
-			$stdout = array();
-			$svn = exec( 'svn cleanup --username www-data --password readonly --force', $stdout );
+			$stdout = [ ];
+			$svn    = exec( 'svn cleanup --username www-data --password readonly --force', $stdout );
 			if ( count( $stdout ) > 0 )
 			{
 				echo 'SVN Cleanup : <br>';
-				foreach ( $stdout as $o ) echo $o . '<br>';
+				foreach ( $stdout as $o )
+				{
+					echo $o . '<br>';
+				}
 			}
 			unset( $stdout );
 			exit();
@@ -240,12 +245,15 @@ class O2System extends \O2System\Glob
 
 		if ( isset( $_GET[ 'SVN_INFO' ] ) )
 		{
-			$stdout = array();
-			$svn = exec( 'svn info', $stdout );
+			$stdout = [ ];
+			$svn    = exec( 'svn info', $stdout );
 			if ( count( $stdout ) > 0 )
 			{
 				echo 'SVN Info : <br>';
-				foreach ( $stdout as $o ) echo $o . '<br>';
+				foreach ( $stdout as $o )
+				{
+					echo $o . '<br>';
+				}
 			}
 			unset( $stdout );
 			exit();
@@ -253,12 +261,15 @@ class O2System extends \O2System\Glob
 
 		if ( isset( $_GET[ 'SVN_STATUS' ] ) )
 		{
-			$stdout = array();
-			$svn = exec( 'svn status --username www-data --password readonly --force', $stdout );
+			$stdout = [ ];
+			$svn    = exec( 'svn status --username www-data --password readonly --force', $stdout );
 			if ( count( $stdout ) > 0 )
 			{
 				echo 'SVN Status : <br>';
-				foreach ( $stdout as $o ) echo $o . '<br>';
+				foreach ( $stdout as $o )
+				{
+					echo $o . '<br>';
+				}
 			}
 			unset( $stdout );
 			exit();
@@ -306,12 +317,11 @@ class O2System extends \O2System\Glob
 
 		// Define Active Namespaces
 		\O2System::$active[ 'namespaces' ] = new \O2System\Glob\ArrayIterator( [ 'O2System\\', static::$config[ 'namespace' ] ] );
-		\O2System::$active['namespace'] = \O2System::$active[ 'namespaces' ]->seek( 1 );
-
+		\O2System::$active[ 'namespaces' ]->setCurrent( 1 );
 
 		// Define Active Directories
 		\O2System::$active[ 'directories' ] = new \O2System\Glob\ArrayIterator( [ SYSTEMPATH, APPSPATH ] );
-		\O2System::$active['directory'] = \O2System::$active[ 'directories' ]->seek( 1 );
+		\O2System::$active[ 'directories' ]->setCurrent( 1 );
 
 		/*
 		 * ------------------------------------------------------
@@ -323,7 +333,6 @@ class O2System extends \O2System\Glob
 
 		// Mark o2system start point
 		$this->benchmark->start( 'o2system_core' );
-
 		/*
 		 * ------------------------------------------------------
 		 *  Instantiate the URI class
@@ -381,7 +390,10 @@ class O2System extends \O2System\Glob
 		 *  We Doesn't need to boot-up anything else in console
 		 * ------------------------------------------------------
 		 */
-		if ( defined( 'CONSOLE_PATH' ) ) return;
+		if ( defined( 'CONSOLE_PATH' ) )
+		{
+			return;
+		}
 
 		/*
 		 * ------------------------------------------------------
@@ -390,7 +402,7 @@ class O2System extends \O2System\Glob
 		 */
 		$parse_domain = parse_domain();
 
-		static::$active[ 'domain' ] = $parse_domain->domain;
+		static::$active[ 'domain' ]     = $parse_domain->domain;
 		static::$active[ 'sub_domain' ] = $parse_domain->sub_domain;
 
 		/*
@@ -429,33 +441,34 @@ class O2System extends \O2System\Glob
 		 *  Initialized Session Class
 		 * ------------------------------------------------------
 		 */
-		$this->session = new \O2System\Session( array(
-			                                        'storage' => static::$config[ 'session' ],
-			                                        'cookie'  => static::$config[ 'cookie' ],
-		                                        ) );
+		$this->session = new \O2System\Session(
+			[
+				'storage' => static::$config[ 'session' ],
+				'cookie'  => static::$config[ 'cookie' ],
+			] );
 
 		/*
 		 * ------------------------------------------------------
 		 *  Re-load and Load the rest of core classes
 		 * ------------------------------------------------------
 		 */
-		$namespaces = \O2System::$active['namespaces']->getArrayReverse();
+		$namespaces = \O2System::$active[ 'namespaces' ]->getArrayReverse();
 
-		$core_classes = array(
+		$core_classes = [
 			'Router',
 			'View',
-		);
+		];
 
 		foreach ( $core_classes as $core_class )
 		{
 			foreach ( $namespaces as $namespace )
 			{
-				if($namespace !== 'O2System\\')
+				if ( $namespace !== 'O2System\\' )
 				{
 					$namespace = '\\' . $namespace . 'Core\\';
 				}
 
-				$core_class_name = $namespace . $core_class;
+				$core_class_name  = $namespace . $core_class;
 				$core_object_name = strtolower( $core_class );
 
 				if ( class_exists( $core_class_name ) )
@@ -465,7 +478,10 @@ class O2System extends \O2System\Glob
 				}
 			}
 
-			if ( isset( $this->{$core_object_name} ) ) continue;
+			if ( isset( $this->{$core_object_name} ) )
+			{
+				continue;
+			}
 		}
 
 		/*
@@ -504,49 +520,56 @@ class O2System extends \O2System\Glob
 			}
 		}
 
-		$class = static::$active[ 'controller' ]->class;
+		$class  = static::$active[ 'controller' ]->class;
 		$method = static::$active[ 'controller' ]->method;
 		$params = static::$active[ 'controller' ]->params;
 
-		$this->controller = new $class();
+		if ( class_exists( $class ) )
+		{
+			$this->controller = new $class();
 
-		/*
+			/*
 		 * ------------------------------------------------------
 		 *  Is there a "post_controller_constructor" hook?
 		 * ------------------------------------------------------
 		 */
-		$this->hooks->call( 'post_controller_constructor' );
+			$this->hooks->call( 'post_controller_constructor' );
 
-		/*
-		 * ------------------------------------------------------
-		 *  Call the requested method
-		 * ------------------------------------------------------
-		 */
-		call_user_func_array( array( &$this->controller, '__call' ), [ $method, $params ] );
+			/*
+			 * ------------------------------------------------------
+			 *  Call the requested method
+			 * ------------------------------------------------------
+			 */
+			call_user_func_array( [ &$this->controller, '__call' ], [ $method, $params ] );
 
 
-		// Mark a controller benchmark end point
-		$this->benchmark->stop( 'post_controller' );
+			// Mark a controller benchmark end point
+			$this->benchmark->stop( 'post_controller' );
 
-		/*
-		 * ------------------------------------------------------
-		 *  Is there a "post_controller" hook?
-		 * ------------------------------------------------------
-		 */
-		$this->hooks->call( 'post_controller' );
+			/*
+			 * ------------------------------------------------------
+			 *  Is there a "post_controller" hook?
+			 * ------------------------------------------------------
+			 */
+			$this->hooks->call( 'post_controller' );
 
-		/*
-		 * ------------------------------------------------------
-		 *  Send the final rendered output to the browser
-		 * ------------------------------------------------------
-		 */
-		$this->view->output();
+			/*
+			 * ------------------------------------------------------
+			 *  Send the final rendered output to the browser
+			 * ------------------------------------------------------
+			 */
+			$this->view->output();
 
-		/*
-		 * ------------------------------------------------------
-		 *  Is there a "post_system" hook?
-		 * ------------------------------------------------------
-		 */
-		$this->hooks->call( 'post_system' );
+			/*
+			 * ------------------------------------------------------
+			 *  Is there a "post_system" hook?
+			 * ------------------------------------------------------
+			 */
+			$this->hooks->call( 'post_system' );
+		}
+		else
+		{
+			throw new \O2System\Exception( 'Cannot find controller class: ' . $class );
+		}
 	}
 }

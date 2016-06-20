@@ -88,8 +88,8 @@ class Button extends FactoryInterface
 
 	public function build()
 	{
-		$this->set_contextual_class_prefix( 'btn' );
-		$this->set_size_class_prefix( 'btn' );
+		$this->setContextualClassPrefix( 'btn' );
+		$this->setSizeClassPrefix( 'btn' );
 
 		@list( $label, $type, $attr ) = func_get_args();
 
@@ -108,7 +108,7 @@ class Button extends FactoryInterface
 			{
 				if ( in_array( $type, $this->_types ) )
 				{
-					$this->add_class( 'btn-' . $type );
+					$this->addClass( 'btn-' . $type );
 				}
 			}
 			elseif ( is_array( $type ) )
@@ -119,17 +119,17 @@ class Button extends FactoryInterface
 
 		if ( isset( $attr ) )
 		{
-			$this->add_attributes( $attr );
+			$this->addAttributes( $attr );
 		}
 
 		return $this;
 	}
 
-	public function set_tag( $tag )
+	public function setTag($tag )
 	{
 		if ( $tag !== 'button' )
 		{
-			$this->remove_attribute( 'type' );
+			$this->removeAttribute( 'type' );
 		}
 
 		$this->_tag = $tag;
@@ -142,9 +142,9 @@ class Button extends FactoryInterface
 	 *
 	 * @return object
 	 */
-	public function is_block()
+	public function isBlock()
 	{
-		$this->add_class( 'btn-block' );
+		$this->addClass( 'btn-block' );
 
 		return $this;
 	}
@@ -156,9 +156,9 @@ class Button extends FactoryInterface
 	 *
 	 * @return object
 	 */
-	public function is_active()
+	public function isActive()
 	{
-		$this->add_class( 'active' );
+		$this->addClass( 'active' );
 
 		return $this;
 	}
@@ -170,23 +170,23 @@ class Button extends FactoryInterface
 	 *
 	 * @return object
 	 */
-	public function is_disabled()
+	public function isDisabled()
 	{
-		$this->add_class( 'disabled' );
+		$this->addClass( 'disabled' );
 
 		return $this;
 	}
 
 	// ------------------------------------------------------------------------
 
-	public function is_submit()
+	public function isSubmit()
 	{
 		$this->_attributes[ 'type' ] = 'submit';
 
 		return $this;
 	}
 
-	public function is_reset()
+	public function isReset()
 	{
 		$this->_attributes[ 'type' ] = 'reset';
 
@@ -206,12 +206,12 @@ class Button extends FactoryInterface
 		{
 			if ( isset( $this->icon ) )
 			{
-				$this->prepend_label( $this->icon->render() );
+				$this->prependLabel( $this->icon->render() );
 			}
 
 			if ( empty( $this->_attributes[ 'class' ] ) )
 			{
-				$this->add_class( 'btn-default' );
+				$this->addClass( 'btn-default' );
 			}
 
 			return ( new Tag( $this->_tag, implode( PHP_EOL, $this->_label ), $this->_attributes ) )->render();

@@ -70,7 +70,7 @@ class Cookie extends DriverInterface
 		$domain = '.' . ( empty( $domain ) ? parse_domain()->domain : ltrim( $domain, '.' ) );
 		$lifetime = time() + $this->_library->getConfig( 'remember', 'lifetime' );
 
-		delete_cookie( 'remember' );
+		deleteCookie( 'remember' );
 
 		set_cookie(
 			'remember',
@@ -95,7 +95,7 @@ class Cookie extends DriverInterface
 		$domain = '.' . ( empty( $domain ) ? parse_domain()->domain : ltrim( $domain, '.' ) );
 		$lifetime = time() + $this->_library->getConfig( 'sso', 'lifetime' );
 
-		delete_cookie( 'sso' );
+		deleteCookie( 'sso' );
 
 		set_cookie(
 			'sso',
@@ -117,7 +117,7 @@ class Cookie extends DriverInterface
 
 	public function getSso()
 	{
-		$sso = get_cookie( 'sso' );
+		$sso = getCookie( 'sso' );
 
 		if ( ! empty( $sso ) )
 		{
@@ -136,14 +136,14 @@ class Cookie extends DriverInterface
 			}
 		}
 
-		delete_cookie( 'sso' );
+		deleteCookie( 'sso' );
 
 		return FALSE;
 	}
 
 	public function getRemember()
 	{
-		$remember = get_cookie( 'remember' );
+		$remember = getCookie( 'remember' );
 
 		if ( ! empty( $remember ) )
 		{
@@ -162,7 +162,7 @@ class Cookie extends DriverInterface
 			}
 		}
 
-		delete_cookie( 'remember' );
+		deleteCookie( 'remember' );
 
 		return FALSE;
 	}
@@ -170,7 +170,7 @@ class Cookie extends DriverInterface
 	public function destroy()
 	{
 		// Try to get remember cookie
-		$remember = get_cookie( 'remember' );
+		$remember = getCookie( 'remember' );
 
 		if ( ! empty( $remember ) )
 		{
@@ -180,12 +180,12 @@ class Cookie extends DriverInterface
 			if ( isset( $remember[ 'signature' ] ) )
 			{
 				\O2System::Cache()->delete( 'remember-' . $remember[ 'signature' ] );
-				delete_cookie( 'remember' );
+				deleteCookie( 'remember' );
 			}
 		}
 
 		// Try to get sso cookie
-		$sso = get_cookie( 'sso' );
+		$sso = getCookie( 'sso' );
 
 		if ( ! empty( $sso ) )
 		{
@@ -195,7 +195,7 @@ class Cookie extends DriverInterface
 			if ( isset( $sso[ 'signature' ] ) )
 			{
 				\O2System::Cache()->delete( 'sso-' . $sso[ 'signature' ] );
-				delete_cookie( 'sso' );
+				deleteCookie( 'sso' );
 			}
 		}
 	}

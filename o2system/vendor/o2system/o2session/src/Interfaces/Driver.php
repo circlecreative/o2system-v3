@@ -118,7 +118,7 @@ abstract class Driver implements \SessionHandlerInterface
      * @access  protected
      * @return  bool
      */
-    protected function _cookie_destroy()
+    protected function _cookieDestroy()
     {
         return setcookie(
             $this->_config[ 'cookie' ][ 'name' ],
@@ -145,7 +145,7 @@ abstract class Driver implements \SessionHandlerInterface
      * @access  protected
      * @return  bool
      */
-    protected function _get_lock( $session_id )
+    protected function _getLock($session_id )
     {
         $this->_lock = TRUE;
 
@@ -160,7 +160,7 @@ abstract class Driver implements \SessionHandlerInterface
      * @access  protected
      * @return  bool
      */
-    protected function _release_lock()
+    protected function _releaseLock()
     {
         if( $this->_lock )
         {

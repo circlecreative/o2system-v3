@@ -66,13 +66,13 @@ namespace O2System
 
 			if ( isset( $this->_config[ 'source' ] ) )
 			{
-				$this->set_source( $this->_config[ 'source' ] );
+				$this->setSource( $this->_config[ 'source' ] );
 			}
 
 			$this->_handle = new \CodeIgniter\Image();
 		}
 
-		protected function _set_cache( $cache )
+		protected function _setCache($cache )
 		{
 			$cache = $this->_source->dirname . DIRECTORY_SEPARATOR . $cache;
 
@@ -97,7 +97,7 @@ namespace O2System
 			throw new Exception( 'Invalid cache image: ' . $cache );
 		}
 
-		public function set_source( $source, $target = NULL )
+		public function setSource($source, $target = NULL )
 		{
 			if ( is_file( $source ) )
 			{
@@ -118,7 +118,7 @@ namespace O2System
 
 				if ( isset( $target ) )
 				{
-					$this->set_target( $target );
+					$this->setTarget( $target );
 				}
 
 				return $this;
@@ -127,7 +127,7 @@ namespace O2System
 			throw new Exception( 'Invalid source image: ' . $source );
 		}
 
-		public function set_target( $target )
+		public function setTarget($target )
 		{
 			$filenames = array(
 				$this->_source->dirname . DIRECTORY_SEPARATOR . pathinfo( $target, PATHINFO_FILENAME ) . '.' . $this->_source->extension,
@@ -159,14 +159,14 @@ namespace O2System
 			return $this;
 		}
 
-		public function set_watermark( array $watermark )
+		public function setWatermark(array $watermark )
 		{
 			$this->_config[ 'watermark' ] = $watermark;
 		}
 
-		public function set_watermark_text( $watermark, $font = NULL, $size = 12, $color = 'ffffff', $shadow_color = '', $shadow_distance = 3 )
+		public function setWatermarkText($watermark, $font = NULL, $size = 12, $color = 'ffffff', $shadow_color = '', $shadow_distance = 3 )
 		{
-			$this->set_watermark( array(
+			$this->setWatermark( array(
 				                      'text' => $watermark,
 				                      'font' => array(
 					                      'path'   => $font,
@@ -180,11 +180,11 @@ namespace O2System
 			                      ) );
 		}
 
-		public function set_watermark_image( $watermark, $opacity = 50, $x_transparency = 4, $y_transparency = 4 )
+		public function setWatermarkImage($watermark, $opacity = 50, $x_transparency = 4, $y_transparency = 4 )
 		{
 			if ( is_file( $watermark ) )
 			{
-				$this->set_watermark( array(
+				$this->setWatermark( array(
 					                      'image'        => $watermark,
 					                      'opacity'      => $opacity,
 					                      'transparency' => [ 'x' => $x_transparency, 'y' => $y_transparency ],
@@ -196,11 +196,11 @@ namespace O2System
 		{
 			if ( strpos( $size, '%' ) )
 			{
-				$this->_config[ 'size' ] = $this->_calculate_size_percent( $size, $dimension );
+				$this->_config[ 'size' ] = $this->_calculateSizePercent( $size, $dimension );
 			}
 			else
 			{
-				$this->_config[ 'size' ] = $this->_calculate_size( $size, $dimension );
+				$this->_config[ 'size' ] = $this->_calculateSize( $size, $dimension );
 			}
 
 			return $this;
@@ -322,18 +322,18 @@ namespace O2System
 		 * @access  protected
 		 * @return  array
 		 */
-		protected function _calculate_size_percent( $percent, $dimension )
+		protected function _calculateSizePercent($percent, $dimension )
 		{
 			$percent = intval( rtrim( $percent, '%' ) );
 
-			return $this->_calculate_size( array(
+			return $this->_calculateSize( array(
 				                               ceil( ( $this->_source->dimension->width * $percent ) / 100 ), // width
 				                               ceil( ( $this->_source->dimension->height * $percent ) / 100 ) // height
 
 			                               ), $dimension );
 		}
 
-		protected function _calculate_size( $size, $dimension )
+		protected function _calculateSize($size, $dimension )
 		{
 			if ( is_array( $size ) )
 			{
@@ -424,12 +424,12 @@ namespace O2System
 				if ( $this->_handle->crop() )
 				{
 					// Set cache
-					$this->_set_cache( $crop_config[ 'new_image' ] );
+					$this->_setCache( $crop_config[ 'new_image' ] );
 					$this->_handle->clear();
 				}
 				else
 				{
-					$this->_errors = $this->_handle->display_errors();
+					$this->_errors = $this->_handle->displayErrors();
 
 					return FALSE;
 				}
@@ -446,12 +446,12 @@ namespace O2System
 				if ( $this->_handle->resize() )
 				{
 					// Set cache
-					$this->_set_cache( $resize_config[ 'new_image' ] );
+					$this->_setCache( $resize_config[ 'new_image' ] );
 					$this->_handle->clear();
 				}
 				else
 				{
-					$this->_errors = $this->_handle->display_errors();
+					$this->_errors = $this->_handle->displayErrors();
 
 					return FALSE;
 				}
@@ -481,7 +481,7 @@ namespace O2System
 				}
 				else
 				{
-					$this->_errors = $this->_handle->display_errors();
+					$this->_errors = $this->_handle->displayErrors();
 
 					return FALSE;
 				}
@@ -531,12 +531,12 @@ namespace O2System
 				if ( $this->_handle->watermark() )
 				{
 					// Set cache
-					$this->_set_cache( $watermark_config[ 'new_image' ] );
+					$this->_setCache( $watermark_config[ 'new_image' ] );
 					$this->_handle->clear();
 				}
 				else
 				{
-					$this->_errors = $this->_handle->display_errors();
+					$this->_errors = $this->_handle->displayErrors();
 
 					return FALSE;
 				}
@@ -567,7 +567,7 @@ namespace O2System
 
 				if ( isset( $this->_cache ) )
 				{
-					$this->set_target( $target );
+					$this->setTarget( $target );
 
 					$image = fopen( $this->_config[ 'target' ], 'w' );
 					fwrite( $image, file_get_contents( $this->_cache->realpath ) );
@@ -635,7 +635,7 @@ namespace O2System
 			throw new Exception( 'Unable to render image from source' . $this->_source->realpath );
 		}
 
-		public function get_errors()
+		public function getErrors()
 		{
 			return $this->_errors;
 		}
@@ -1140,7 +1140,7 @@ namespace CodeIgniter
 			// Is there a source image? If not, there's no reason to continue
 			if ( $this->source_image === '' )
 			{
-				$this->set_error( 'IMAGE_SOURCE_IMAGE_REQUIRED' );
+				$this->setError( 'IMAGE_SOURCE_IMAGE_REQUIRED' );
 
 				return FALSE;
 			}
@@ -1153,7 +1153,7 @@ namespace CodeIgniter
 			 */
 			if ( ! function_exists( 'getimagesize' ) )
 			{
-				$this->set_error( 'IMAGE_GD_REQUIRED_FOR_PROPERTIES' );
+				$this->setError( 'IMAGE_GD_REQUIRED_FOR_PROPERTIES' );
 
 				return FALSE;
 			}
@@ -1180,7 +1180,7 @@ namespace CodeIgniter
 			$this->source_folder = str_replace( $this->source_image, '', $full_source_path );
 
 			// Set the Image Properties
-			if ( ! $this->get_image_properties( $this->source_folder . $this->source_image ) )
+			if ( ! $this->getImageProperties( $this->source_folder . $this->source_image ) )
 			{
 				return FALSE;
 			}
@@ -1241,7 +1241,7 @@ namespace CodeIgniter
 				$this->thumb_marker = '';
 			}
 
-			$xp = $this->explode_name( $this->dest_image );
+			$xp = $this->explodeName( $this->dest_image );
 
 			$filename = $xp[ 'name' ];
 			$file_ext = $xp[ 'ext' ];
@@ -1257,7 +1257,7 @@ namespace CodeIgniter
 			 */
 			if ( $this->maintain_ratio === TRUE && ( $this->width !== 0 OR $this->height !== 0 ) )
 			{
-				$this->image_reproportion();
+				$this->imageReproportion();
 			}
 
 			/* Was a width and height specified?
@@ -1361,7 +1361,7 @@ namespace CodeIgniter
 
 			if ( $this->rotation_angle === '' OR ! in_array( $this->rotation_angle, $degs ) )
 			{
-				$this->set_error( 'IMAGE_ROTATION_ANGLE_REQUIRED' );
+				$this->setError( 'IMAGE_ROTATION_ANGLE_REQUIRED' );
 
 				return FALSE;
 			}
@@ -1387,8 +1387,8 @@ namespace CodeIgniter
 			}
 
 			return ( $this->rotation_angle === 'hor' OR $this->rotation_angle === 'vrt' )
-				? $this->image_mirror_gd()
-				: $this->image_rotate_gd();
+				? $this->imageMirrorGd()
+				: $this->imageRotateGd();
 		}
 
 		// --------------------------------------------------------------------
@@ -1402,7 +1402,7 @@ namespace CodeIgniter
 		 *
 		 * @return    bool
 		 */
-		public function image_process_gd( $action = 'resize' )
+		public function imageProcessGd($action = 'resize' )
 		{
 			$v2_override = FALSE;
 
@@ -1426,9 +1426,9 @@ namespace CodeIgniter
 				$this->orig_height = $this->height;
 
 				// GD 2.0 has a cropping bug so we'll test for it
-				if ( $this->gd_version() !== FALSE )
+				if ( $this->gdVersion() !== FALSE )
 				{
-					$gd_version = str_replace( '0', '', $this->gd_version() );
+					$gd_version = str_replace( '0', '', $this->gdVersion() );
 					$v2_override = ( $gd_version == 2 );
 				}
 			}
@@ -1440,7 +1440,7 @@ namespace CodeIgniter
 			}
 
 			//  Create the image handle
-			if ( ! ( $src_img = $this->image_create_gd() ) )
+			if ( ! ( $src_img = $this->imageCreateGd() ) )
 			{
 				return FALSE;
 			}
@@ -1477,9 +1477,9 @@ namespace CodeIgniter
 			// Show the image
 			if ( $this->dynamic_output === TRUE )
 			{
-				$this->image_display_gd( $dst_img );
+				$this->imageDisplayGd( $dst_img );
 			}
-			elseif ( ! $this->image_save_gd( $dst_img ) ) // Or save it
+			elseif ( ! $this->imageSaveGd( $dst_img ) ) // Or save it
 			{
 				return FALSE;
 			}
@@ -1504,12 +1504,12 @@ namespace CodeIgniter
 		 *
 		 * @return    bool
 		 */
-		public function image_process_imagemagick( $action = 'resize' )
+		public function imageProcessImagemagick($action = 'resize' )
 		{
 			//  Do we have a vaild library path?
 			if ( $this->library_path === '' )
 			{
-				$this->set_error( 'IMAGE_LIBRARY_PATH_INVALID' );
+				$this->setError( 'IMAGE_LIBRARY_PATH_INVALID' );
 
 				return FALSE;
 			}
@@ -1547,7 +1547,7 @@ namespace CodeIgniter
 
 			$retval = 1;
 			// exec() might be disabled
-			if ( function_usable( 'exec' ) )
+			if ( functionUsable( 'exec' ) )
 			{
 				@exec( $cmd, $output, $retval );
 			}
@@ -1555,7 +1555,7 @@ namespace CodeIgniter
 			// Did it work?
 			if ( $retval > 0 )
 			{
-				$this->set_error( 'IMAGE_PROCESS_FAILED' );
+				$this->setError( 'IMAGE_PROCESS_FAILED' );
 
 				return FALSE;
 			}
@@ -1576,11 +1576,11 @@ namespace CodeIgniter
 		 *
 		 * @return    bool
 		 */
-		public function image_process_netpbm( $action = 'resize' )
+		public function imageProcessNetpbm($action = 'resize' )
 		{
 			if ( $this->library_path === '' )
 			{
-				$this->set_error( 'IMAGE_LIBRARY_PATH_INVALID' );
+				$this->setError( 'IMAGE_LIBRARY_PATH_INVALID' );
 
 				return FALSE;
 			}
@@ -1638,7 +1638,7 @@ namespace CodeIgniter
 
 			$retval = 1;
 			// exec() might be disabled
-			if ( function_usable( 'exec' ) )
+			if ( functionUsable( 'exec' ) )
 			{
 				@exec( $cmd, $output, $retval );
 			}
@@ -1646,7 +1646,7 @@ namespace CodeIgniter
 			// Did it work?
 			if ( $retval > 0 )
 			{
-				$this->set_error( 'IMAGE_PROCESS_FAILED' );
+				$this->setError( 'IMAGE_PROCESS_FAILED' );
 
 				return FALSE;
 			}
@@ -1668,10 +1668,10 @@ namespace CodeIgniter
 		 *
 		 * @return    bool
 		 */
-		public function image_rotate_gd()
+		public function imageRotateGd()
 		{
 			// Create the image handle
-			if ( ! ( $src_img = $this->image_create_gd() ) )
+			if ( ! ( $src_img = $this->imageCreateGd() ) )
 			{
 				return FALSE;
 			}
@@ -1689,9 +1689,9 @@ namespace CodeIgniter
 			// Show the image
 			if ( $this->dynamic_output === TRUE )
 			{
-				$this->image_display_gd( $dst_img );
+				$this->imageDisplayGd( $dst_img );
 			}
-			elseif ( ! $this->image_save_gd( $dst_img ) ) // ... or save it
+			elseif ( ! $this->imageSaveGd( $dst_img ) ) // ... or save it
 			{
 				return FALSE;
 			}
@@ -1714,9 +1714,9 @@ namespace CodeIgniter
 		 *
 		 * @return    bool
 		 */
-		public function image_mirror_gd()
+		public function imageMirrorGd()
 		{
-			if ( ! $src_img = $this->image_create_gd() )
+			if ( ! $src_img = $this->imageCreateGd() )
 			{
 				return FALSE;
 			}
@@ -1762,9 +1762,9 @@ namespace CodeIgniter
 			// Show the image
 			if ( $this->dynamic_output === TRUE )
 			{
-				$this->image_display_gd( $src_img );
+				$this->imageDisplayGd( $src_img );
 			}
-			elseif ( ! $this->image_save_gd( $src_img ) ) // ... or save it
+			elseif ( ! $this->imageSaveGd( $src_img ) ) // ... or save it
 			{
 				return FALSE;
 			}
@@ -1789,7 +1789,7 @@ namespace CodeIgniter
 		 */
 		public function watermark()
 		{
-			return ( $this->wm_type === 'overlay' ) ? $this->overlay_watermark() : $this->text_watermark();
+			return ( $this->wm_type === 'overlay' ) ? $this->overlayWatermark() : $this->textWatermark();
 		}
 
 		// --------------------------------------------------------------------
@@ -1799,27 +1799,27 @@ namespace CodeIgniter
 		 *
 		 * @return    bool
 		 */
-		public function overlay_watermark()
+		public function overlayWatermark()
 		{
 			if ( ! function_exists( 'imagecolortransparent' ) )
 			{
-				$this->set_error( 'IMAGE_GD_REQUIRED' );
+				$this->setError( 'IMAGE_GD_REQUIRED' );
 
 				return FALSE;
 			}
 
 			// Fetch source image properties
-			$this->get_image_properties();
+			$this->getImageProperties();
 
 			// Fetch watermark image properties
-			$props = $this->get_image_properties( $this->wm_overlay_path, TRUE );
+			$props = $this->getImageProperties( $this->wm_overlay_path, TRUE );
 			$wm_img_type = $props[ 'image_type' ];
 			$wm_width = $props[ 'width' ];
 			$wm_height = $props[ 'height' ];
 
 			// Create two image resources
-			$wm_img = $this->image_create_gd( $this->wm_overlay_path, $wm_img_type );
-			$src_img = $this->image_create_gd( $this->full_src_path );
+			$wm_img = $this->imageCreateGd( $this->wm_overlay_path, $wm_img_type );
+			$src_img = $this->imageCreateGd( $this->full_src_path );
 
 			// Reverse the offset if necessary
 			// When the image is positioned at the bottom
@@ -1898,9 +1898,9 @@ namespace CodeIgniter
 			// Output the image
 			if ( $this->dynamic_output === TRUE )
 			{
-				$this->image_display_gd( $src_img );
+				$this->imageDisplayGd( $src_img );
 			}
-			elseif ( ! $this->image_save_gd( $src_img ) ) // ... or save it
+			elseif ( ! $this->imageSaveGd( $src_img ) ) // ... or save it
 			{
 				return FALSE;
 			}
@@ -1918,22 +1918,22 @@ namespace CodeIgniter
 		 *
 		 * @return    bool
 		 */
-		public function text_watermark()
+		public function textWatermark()
 		{
-			if ( ! ( $src_img = $this->image_create_gd() ) )
+			if ( ! ( $src_img = $this->imageCreateGd() ) )
 			{
 				return FALSE;
 			}
 
 			if ( $this->wm_use_truetype === TRUE && ! is_file( $this->wm_font_path ) )
 			{
-				$this->set_error( 'IMAGE_MISSING_FONT' );
+				$this->setError( 'IMAGE_MISSING_FONT' );
 
 				return FALSE;
 			}
 
 			// Fetch source image properties
-			$this->get_image_properties();
+			$this->getImageProperties();
 
 			// Reverse the vertical offset
 			// When the image is positioned at the bottom
@@ -2070,11 +2070,11 @@ namespace CodeIgniter
 			// Output the final image
 			if ( $this->dynamic_output === TRUE )
 			{
-				$this->image_display_gd( $src_img );
+				$this->imageDisplayGd( $src_img );
 			}
 			else
 			{
-				$this->image_save_gd( $src_img );
+				$this->imageSaveGd( $src_img );
 			}
 
 			imagedestroy( $src_img );
@@ -2095,7 +2095,7 @@ namespace CodeIgniter
 		 *
 		 * @return    resource
 		 */
-		public function image_create_gd( $path = '', $image_type = '' )
+		public function imageCreateGd($path = '', $image_type = '' )
 		{
 			if ( $path === '' )
 			{
@@ -2112,7 +2112,7 @@ namespace CodeIgniter
 				case 1 :
 					if ( ! function_exists( 'imagecreatefromgif' ) )
 					{
-						$this->set_error( array( 'IMAGE_UNSUPPORTED_IMAGECREATE', 'IMAGE_GIF_NOT_SUPPORTED' ) );
+						$this->setError( array( 'IMAGE_UNSUPPORTED_IMAGECREATE', 'IMAGE_GIF_NOT_SUPPORTED' ) );
 
 						return FALSE;
 					}
@@ -2121,7 +2121,7 @@ namespace CodeIgniter
 				case 2 :
 					if ( ! function_exists( 'imagecreatefromjpeg' ) )
 					{
-						$this->set_error( array( 'IMAGE_UNSUPPORTED_IMAGECREATE', 'IMAGE_JPG_NOT_SUPPORTED' ) );
+						$this->setError( array( 'IMAGE_UNSUPPORTED_IMAGECREATE', 'IMAGE_JPG_NOT_SUPPORTED' ) );
 
 						return FALSE;
 					}
@@ -2130,14 +2130,14 @@ namespace CodeIgniter
 				case 3 :
 					if ( ! function_exists( 'imagecreatefrompng' ) )
 					{
-						$this->set_error( array( 'IMAGE_UNSUPPORTED_IMAGECREATE', 'IMAGE_PNG_NOT_SUPPORTED' ) );
+						$this->setError( array( 'IMAGE_UNSUPPORTED_IMAGECREATE', 'IMAGE_PNG_NOT_SUPPORTED' ) );
 
 						return FALSE;
 					}
 
 					return imagecreatefrompng( $path );
 				default:
-					$this->set_error( array( 'IMAGE_UNSUPPORTED_IMAGECREATE' ) );
+					$this->setError( array( 'IMAGE_UNSUPPORTED_IMAGECREATE' ) );
 
 					return FALSE;
 			}
@@ -2155,21 +2155,21 @@ namespace CodeIgniter
 		 *
 		 * @return    bool
 		 */
-		public function image_save_gd( $resource )
+		public function imageSaveGd($resource )
 		{
 			switch ( $this->image_type )
 			{
 				case 1:
 					if ( ! function_exists( 'imagegif' ) )
 					{
-						$this->set_error( array( 'IMAGE_UNSUPPORTED_IMAGECREATE', 'IMAGE_GIF_NOT_SUPPORTED' ) );
+						$this->setError( array( 'IMAGE_UNSUPPORTED_IMAGECREATE', 'IMAGE_GIF_NOT_SUPPORTED' ) );
 
 						return FALSE;
 					}
 
 					if ( ! @imagegif( $resource, $this->full_dst_path ) )
 					{
-						$this->set_error( 'IMAGE_SAVE_FAILED' );
+						$this->setError( 'IMAGE_SAVE_FAILED' );
 
 						return FALSE;
 					}
@@ -2177,14 +2177,14 @@ namespace CodeIgniter
 				case 2:
 					if ( ! function_exists( 'imagejpeg' ) )
 					{
-						$this->set_error( array( 'IMAGE_UNSUPPORTED_IMAGECREATE', 'IMAGE_JPG_NOT_SUPPORTED' ) );
+						$this->setError( array( 'IMAGE_UNSUPPORTED_IMAGECREATE', 'IMAGE_JPG_NOT_SUPPORTED' ) );
 
 						return FALSE;
 					}
 
 					if ( ! @imagejpeg( $resource, $this->full_dst_path, $this->quality ) )
 					{
-						$this->set_error( 'IMAGE_SAVE_FAILED' );
+						$this->setError( 'IMAGE_SAVE_FAILED' );
 
 						return FALSE;
 					}
@@ -2192,20 +2192,20 @@ namespace CodeIgniter
 				case 3:
 					if ( ! function_exists( 'imagepng' ) )
 					{
-						$this->set_error( array( 'IMAGE_UNSUPPORTED_IMAGECREATE', 'IMAGE_PNG_NOT_SUPPORTED' ) );
+						$this->setError( array( 'IMAGE_UNSUPPORTED_IMAGECREATE', 'IMAGE_PNG_NOT_SUPPORTED' ) );
 
 						return FALSE;
 					}
 
 					if ( ! @imagepng( $resource, $this->full_dst_path ) )
 					{
-						$this->set_error( 'IMAGE_SAVE_FAILED' );
+						$this->setError( 'IMAGE_SAVE_FAILED' );
 
 						return FALSE;
 					}
 					break;
 				default:
-					$this->set_error( array( 'IMAGE_UNSUPPORTED_IMAGECREATE' ) );
+					$this->setError( array( 'IMAGE_UNSUPPORTED_IMAGECREATE' ) );
 
 					return FALSE;
 					break;
@@ -2223,7 +2223,7 @@ namespace CodeIgniter
 		 *
 		 * @return    void
 		 */
-		public function image_display_gd( $resource )
+		public function imageDisplayGd($resource )
 		{
 			header( 'Content-Disposition: filename=' . $this->source_image . ';' );
 			header( 'Content-Type: ' . $this->mime_type );
@@ -2261,7 +2261,7 @@ namespace CodeIgniter
 		 *
 		 * @return    void
 		 */
-		public function image_reproportion()
+		public function imageReproportion()
 		{
 			if ( ( $this->width === 0 && $this->height === 0 ) OR $this->orig_width === 0 OR $this->orig_height === 0
 				OR ( ! ctype_digit( (string) $this->width ) && ! ctype_digit( (string) $this->height ) )
@@ -2316,7 +2316,7 @@ namespace CodeIgniter
 		 *
 		 * @return    mixed
 		 */
-		public function get_image_properties( $path = '', $return = FALSE )
+		public function getImageProperties($path = '', $return = FALSE )
 		{
 			// For now we require GD but we should
 			// find a way to determine this using IM or NetPBM
@@ -2328,7 +2328,7 @@ namespace CodeIgniter
 
 			if ( ! is_file( $path ) )
 			{
-				$this->set_error( 'IMAGE_INVALID_PATH' );
+				$this->setError( 'IMAGE_INVALID_PATH' );
 
 				return FALSE;
 			}
@@ -2377,7 +2377,7 @@ namespace CodeIgniter
 		 *
 		 * @return    array
 		 */
-		public function size_calculator( $vals )
+		public function sizeCalculator($vals )
 		{
 			if ( ! is_array( $vals ) )
 			{
@@ -2427,7 +2427,7 @@ namespace CodeIgniter
 		 *
 		 * @return    array
 		 */
-		public function explode_name( $source_image )
+		public function explodeName($source_image )
 		{
 			$ext = strrchr( $source_image, '.' );
 			$name = ( $ext === FALSE ) ? $source_image : substr( $source_image, 0, -strlen( $ext ) );
@@ -2442,7 +2442,7 @@ namespace CodeIgniter
 		 *
 		 * @return    bool
 		 */
-		public function gd_loaded()
+		public function gdLoaded()
 		{
 			if ( ! extension_loaded( 'gd' ) )
 			{
@@ -2462,7 +2462,7 @@ namespace CodeIgniter
 		 *
 		 * @return    mixed
 		 */
-		public function gd_version()
+		public function gdVersion()
 		{
 			if ( function_exists( 'gd_info' ) )
 			{
@@ -2483,7 +2483,7 @@ namespace CodeIgniter
 		 *
 		 * @return    void
 		 */
-		public function set_error( $errors )
+		public function setError($errors )
 		{
 			if ( class_exists( 'O2System', FALSE ) )
 			{
@@ -2548,7 +2548,7 @@ namespace CodeIgniter
 		 *
 		 * @return    string
 		 */
-		public function display_errors()
+		public function displayErrors()
 		{
 			return $this->error_msg;
 		}

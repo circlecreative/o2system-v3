@@ -15,14 +15,15 @@ class URI extends ArrayObject
 {
 	public function __construct()
 	{
-		parent::__construct( array(
-			                     'segments'  => array(),
-			                     'string'    => NULL,
-			                     'rsegments' => array(),
-			                     'rstring'   => NULL,
-			                     'isegments' => array(),
-			                     'istring'   => NULL,
-		                     ) );
+		parent::__construct(
+			[
+				'segments'  => [ ],
+				'string'    => NULL,
+				'rsegments' => [ ],
+				'rstring'   => NULL,
+				'isegments' => [ ],
+				'istring'   => NULL,
+			] );
 	}
 
 	public function setSegments( $segments, $which = 'segments' )
@@ -77,7 +78,7 @@ class URI extends ArrayObject
 	 */
 	public function segment( $n, $no_result = NULL, $which = 'segments' )
 	{
-		$no_result = in_array( $no_result, [ 'segments', 'rsegments' ] ) ? NULL : $no_result;
+		$no_result = in_array( $no_result, [ 'segments', 'rsegments', [ 'isegments' ] ] ) ? NULL : $no_result;
 
 		return isset( \O2System::$active[ 'URI' ]->{$which}[ $n ] ) ? \O2System::$active[ 'URI' ]->{$which}[ $n ] : $no_result;
 	}
@@ -92,8 +93,12 @@ class URI extends ArrayObject
 	public function reindexSegments( $which = 'segments' )
 	{
 		$segments = \O2System::$active[ 'URI' ]->{$which};
-		array_unshift( $segments, NULL );
-		unset( $segments[ 0 ] );
+
+		if ( key( $segments ) == 0 )
+		{
+			array_unshift( $segments, NULL );
+			unset( $segments[ 0 ] );
+		}
 
 		\O2System::$active[ 'URI' ]->{$which} = $segments;
 	}
@@ -124,7 +129,7 @@ class URI extends ArrayObject
 	 */
 	public function slashSegment( $n, $where = 'trailing', $which = 'segments' )
 	{
-		if ( in_array( $where, [ 'segments', 'rsegments' ] ) )
+		if ( in_array( $where, [ 'segments', 'rsegments', 'isegments' ] ) )
 		{
 			$which = $where;
 			$where = 'trailing';

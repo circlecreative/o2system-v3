@@ -42,7 +42,7 @@ trait AlignmentInterface
 {
 	protected $_pull_class_prefix = 'pull';
 
-	public function set_pull_class_prefix( $prefix )
+	public function setPullClassPrefix($prefix )
 	{
 		$this->_pull_class_prefix = $prefix;
 	}
@@ -52,9 +52,9 @@ trait AlignmentInterface
 	 *
 	 * @return object
 	 */
-	public function pull_left()
+	public function pullLeft()
 	{
-		$this->add_class( $this->_pull_class_prefix . '-left' );
+		$this->addClass( $this->_pull_class_prefix . '-left' );
 
 		return $this;
 	}
@@ -66,9 +66,9 @@ trait AlignmentInterface
 	 *
 	 * @return object
 	 */
-	public function pull_right()
+	public function pullRight()
 	{
-		$this->add_class( $this->_pull_class_prefix . '-right' );
+		$this->addClass( $this->_pull_class_prefix . '-right' );
 
 		return $this;
 	}
@@ -78,9 +78,9 @@ trait AlignmentInterface
 	 *
 	 * @return object
 	 */
-	public function align_left()
+	public function alignLeft()
 	{
-		$this->add_class( 'align-left' );
+		$this->addClass( 'align-left' );
 
 		return $this;
 	}
@@ -92,37 +92,37 @@ trait AlignmentInterface
 	 *
 	 * @return object
 	 */
-	public function align_right()
+	public function alignRight()
 	{
-		$this->add_class( 'align-right' );
+		$this->addClass( 'align-right' );
 
 		return $this;
 	}
 
-	public function text_left()
+	public function textLeft()
 	{
-		$this->add_class( 'text-left' );
+		$this->addClass( 'text-left' );
 
 		return $this;
 	}
 
-	public function text_right()
+	public function textRight()
 	{
-		$this->add_class( 'text-right' );
+		$this->addClass( 'text-right' );
 
 		return $this;
 	}
 
-	public function text_justify()
+	public function textJustify()
 	{
-		$this->add_class( 'text-justify' );
+		$this->addClass( 'text-justify' );
 
 		return $this;
 	}
 
-	public function text_center()
+	public function textCenter()
 	{
-		$this->add_class( 'text-center' );
+		$this->addClass( 'text-center' );
 
 		return $this;
 	}

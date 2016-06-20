@@ -84,8 +84,8 @@ function smarty_modifier_debug_print_var($var, $max = 10, $length = 40, $depth =
         case 'string' :
             $results = strtr($var, $_replace);
             if (Smarty::$_MBSTRING) {
-                if (mb_strlen($var, Smarty::$_CHARSET) > $length) {
-                    $results = mb_substr($var, 0, $length - 3, Smarty::$_CHARSET) . '...';
+                if (mbStrlen($var, Smarty::$_CHARSET) > $length) {
+                    $results = mbSubstr($var, 0, $length - 3, Smarty::$_CHARSET) . '...';
                 }
             } else {
                 if (isset($var[$length])) {
@@ -100,8 +100,8 @@ function smarty_modifier_debug_print_var($var, $max = 10, $length = 40, $depth =
         default :
             $results = strtr((string) $var, $_replace);
             if (Smarty::$_MBSTRING) {
-                if (mb_strlen($results, Smarty::$_CHARSET) > $length) {
-                    $results = mb_substr($results, 0, $length - 3, Smarty::$_CHARSET) . '...';
+                if (mbStrlen($results, Smarty::$_CHARSET) > $length) {
+                    $results = mbSubstr($results, 0, $length - 3, Smarty::$_CHARSET) . '...';
                 }
             } else {
                 if (strlen($results) > $length) {

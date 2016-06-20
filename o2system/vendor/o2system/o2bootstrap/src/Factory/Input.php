@@ -75,7 +75,7 @@ class Input extends FactoryInterface
 
 		if ( is_string( $type ) )
 		{
-			$this->set_type( $type );
+			$this->setType( $type );
 		}
 		elseif ( is_array( $type ) )
 		{
@@ -84,7 +84,7 @@ class Input extends FactoryInterface
 
 		if ( isset( $attr ) )
 		{
-			$this->add_attributes( $attr );
+			$this->addAttributes( $attr );
 		}
 
 		return $this;
@@ -95,7 +95,7 @@ class Input extends FactoryInterface
 		return $this;
 	}
 
-	public function set_label( $label, $attr = array() )
+	public function setLabel($label, $attr = array() )
 	{
 		if ( $label instanceof Tag )
 		{
@@ -104,20 +104,20 @@ class Input extends FactoryInterface
 		else
 		{
 			$this->label = new Label( $label, $attr );
-			$this->label->set_tag( 'label' );
+			$this->label->setTag( 'label' );
 		}
 
 		return $this;
 	}
 
-	public function set_type( $type )
+	public function setType($type )
 	{
 		$this->_type = $type;
 
 		return $this;
 	}
 
-	public function set_value( $value, $post_get = TRUE )
+	public function setValue($value, $post_get = TRUE )
 	{
 		if ( empty( $value ) )
 		{
@@ -139,14 +139,14 @@ class Input extends FactoryInterface
 		return $this;
 	}
 
-	public function set_options( array $options )
+	public function setOptions(array $options )
 	{
 		$this->_options = $options;
 
 		return $this;
 	}
 
-	public function set_help( $help, $attr = array() )
+	public function setHelp($help, $attr = array() )
 	{
 		if ( $help instanceof Tag )
 		{
@@ -157,19 +157,19 @@ class Input extends FactoryInterface
 			$this->help = new Tag( 'span', $help, $attr );
 		}
 
-		$this->help->add_classes( [ 'help-block', 'help-control' ] );
+		$this->help->addClasses( [ 'help-block', 'help-control' ] );
 
 		return $this;
 	}
 
-	public function set_properties( array $properties )
+	public function setProperties(array $properties )
 	{
 		$this->_properties = $properties;
 
 		return $this;
 	}
 
-	public function is_readonly()
+	public function isReadonly()
 	{
 		$this->_attributes[ 'readonly' ] = 'readonly';
 
@@ -316,10 +316,10 @@ class Input extends FactoryInterface
 									}
 								}
 
-								$group->append_content( new Tag( 'option', $label, $attr ) );
+								$group->appendContent( new Tag( 'option', $label, $attr ) );
 							}
 
-							$field->append_content( $group );
+							$field->appendContent( $group );
 						}
 						elseif ( is_string( $option ) OR is_numeric( $option ) )
 						{
@@ -333,7 +333,7 @@ class Input extends FactoryInterface
 								}
 							}
 
-							$field->append_content( new Tag( 'option', $option, $attr ) );
+							$field->appendContent( new Tag( 'option', $option, $attr ) );
 						}
 					}
 				}
@@ -368,24 +368,24 @@ class Input extends FactoryInterface
 
 				if ( ! empty( $this->_value ) )
 				{
-					$image_holder->add_class( 'hidden' );
+					$image_holder->addClass( 'hidden' );
 
 					$image_preview = new Tag( 'img', array(
 						'src'       => $this->_value,
 						'data-role' => 'image-preview',
 					) );
 
-					$field->append_content( $image_preview );
+					$field->appendContent( $image_preview );
 				}
 
-				$field->append_content( $image_holder );
+				$field->appendContent( $image_holder );
 
 				$this->_attributes[ 'type' ] = 'file';
 				$this->_attributes[ 'data-role' ] = 'image-input';
 				$this->_attributes[ 'accept' ] = 'image/*';
 
 				$input_group = new Group( Group::INPUT_GROUP );
-				$input_group->add_item( new Tag(
+				$input_group->addItem( new Tag(
 					                        'span',
 					                        new Tag( 'span', '<i class="fa fa-camera"></i>' . new Tag( 'input', $this->_attributes ), array(
 							                        'class' => 'btn btn-file',
@@ -395,7 +395,7 @@ class Input extends FactoryInterface
 					                        ) ),
 					                        [ 'class' => 'input-group-btn' ] ) );
 
-				$field->append_content( $input_group );
+				$field->appendContent( $input_group );
 
 				break;
 
@@ -413,18 +413,18 @@ class Input extends FactoryInterface
 				break;
 		}
 
-		$field->add_class( 'form-control' );
+		$field->addClass( 'form-control' );
 
 		if( isset( $this->label ) )
 		{
 			$group = new Group( Group::FORM_GROUP );
-			$group->add_item( $this->label );
+			$group->addItem( $this->label );
 
-			$group->add_item( $field );
+			$group->addItem( $field );
 
 			if( isset ($this->help ) )
 			{
-				$group->add_item( $this->help );
+				$group->addItem( $this->help );
 			}
 
 			return $group->render();

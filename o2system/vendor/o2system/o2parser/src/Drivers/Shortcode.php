@@ -81,7 +81,7 @@ class Shortcode extends Driver
      *
      * @return string The shortcode search regular expression
      */
-    protected function _set_regex()
+    protected function _setRegex()
     {
         $tag_codes = array_keys( $this->_codes );
         $tag_regex = join( '|', array_map( 'preg_quote', $tag_codes ) );
@@ -116,14 +116,14 @@ class Shortcode extends Driver
      * @access  public
      * @return  string  Parse Output Result
      */
-    public function parse_string( $string, $vars = array() )
+    public function parseString($string, $vars = array() )
     {
         if( FALSE === strpos( $string, '[shortcode:' ) )
         {
             return FALSE;
         }
 
-        preg_match_all( '/' . $this->_set_regex() . '/s', $string, $matches, PREG_SET_ORDER );
+        preg_match_all( '/' . $this->_setRegex() . '/s', $string, $matches, PREG_SET_ORDER );
         if( empty( $matches ) )
         {
             return FALSE;
@@ -132,7 +132,7 @@ class Shortcode extends Driver
         foreach( $matches as $shortcode )
         {
             $this->_calls[ $shortcode[ 0 ] ] = array(
-                'tag' => trim( $shortcode[ 3 ] ), 'params' => $this->_parse_params( $shortcode[ 4 ] )
+                'tag' => trim( $shortcode[ 3 ] ), 'params' => $this->_parseParams( $shortcode[ 4 ] )
             );
         }
 
@@ -146,7 +146,7 @@ class Shortcode extends Driver
      *
      * @access  public
      */
-    public function register_plugin()
+    public function registerPlugin()
     {
         list( $tag, $function ) = func_get_args();
 

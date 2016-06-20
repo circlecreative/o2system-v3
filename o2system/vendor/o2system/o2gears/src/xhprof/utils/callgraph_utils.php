@@ -39,15 +39,15 @@ $xhprof_legal_image_types = array(
  * @param string  HTTP header value, like 'http://www.example.com/'
  *
  */
-function xhprof_http_header($name, $value) {
+function xhprofHttpHeader($name, $value) {
 
 	if (!$name) {
-		xhprof_error('http_header usage');
+		xhprofError('http_header usage');
 		return null;
 	}
 
 	if (!is_string($value)) {
-		xhprof_error('http_header value not a string');
+		xhprofError('http_header value not a string');
 	}
 
 	header($name.': '.$value, true);
@@ -58,7 +58,7 @@ function xhprof_http_header($name, $value) {
  *
  * @author cjiang
  */
-function xhprof_generate_mime_header($type, $length) {
+function xhprofGenerateMimeHeader($type, $length) {
 	switch ($type) {
 		case 'jpg':
 			$mime = 'image/jpeg';
@@ -79,8 +79,8 @@ function xhprof_generate_mime_header($type, $length) {
 	}
 
 	if ($mime) {
-		xhprof_http_header('Content-type', $mime);
-		xhprof_http_header('Content-length', (string)$length);
+		xhprofHttpHeader('Content-type', $mime);
+		xhprofHttpHeader('Content-length', (string)$length);
 	}
 }
 
@@ -97,7 +97,7 @@ function xhprof_generate_mime_header($type, $length) {
  *
  * @author cjiang
  */
-function xhprof_generate_image_by_dot($dot_script, $type) {
+function xhprofGenerateImageByDot($dot_script, $type) {
 	$descriptorspec = array(
 		// stdin is a pipe that the child will read from
 		0 => array("pipe", "r"),
@@ -134,10 +134,10 @@ function xhprof_generate_image_by_dot($dot_script, $type) {
 /*
  * Get the children list of all nodes.
  */
-function xhprof_get_children_table($raw_data) {
+function xhprofGetChildrenTable($raw_data) {
 	$children_table = array();
 	foreach ($raw_data as $parent_child => $info) {
-		list($parent, $child) = xhprof_parse_parent_child($parent_child);
+		list($parent, $child) = xhprofParseParentChild($parent_child);
 		if (!isset($children_table[$parent])) {
 			$children_table[$parent] = array($child);
 		} else {
@@ -164,9 +164,9 @@ function xhprof_get_children_table($raw_data) {
  *
  * @author cjiang
  */
-function xhprof_generate_dot_script($raw_data, $threshold, $source, $page,
-	$func, $critical_path, $right=null,
-	$left=null) {
+function xhprofGenerateDotScript($raw_data, $threshold, $source, $page,
+								 $func, $critical_path, $right=null,
+								 $left=null) {
 
 	$max_width = 5;
 	$max_height = 3.5;
@@ -178,10 +178,10 @@ function xhprof_generate_dot_script($raw_data, $threshold, $source, $page,
 	if ($left === null) {
 		// init_metrics($raw_data, null, null);
 	}
-	$sym_table = xhprof_compute_flat_info($raw_data, $totals);
+	$sym_table = xhprofComputeFlatInfo($raw_data, $totals);
 
 	if ($critical_path) {
-		$children_table = xhprof_get_children_table($raw_data);
+		$children_table = xhprofGetChildrenTable($raw_data);
 		$node = "main()";
 		$path = array();
 		$path_edges = array();
@@ -196,16 +196,16 @@ function xhprof_generate_dot_script($raw_data, $threshold, $source, $page,
 						continue;
 					}
 					if ($max_child === null ||
-						abs($raw_data[xhprof_build_parent_child_key($node,
+						abs($raw_data[xhprofBuildParentChildKey($node,
 						                                            $child)]["wt"]) >
-						abs($raw_data[xhprof_build_parent_child_key($node,
+						abs($raw_data[xhprofBuildParentChildKey($node,
 						                                            $max_child)]["wt"])) {
 						$max_child = $child;
 					}
 				}
 				if ($max_child !== null) {
 					$path[$max_child] = true;
-					$path_edges[xhprof_build_parent_child_key($node, $max_child)] = true;
+					$path_edges[xhprofBuildParentChildKey($node, $max_child)] = true;
 				}
 				$node = $max_child;
 			} else {
@@ -234,7 +234,7 @@ function xhprof_generate_dot_script($raw_data, $threshold, $source, $page,
 	if (!empty($func)) {
 		$interested_funcs = array();
 		foreach ($raw_data as $parent_child => $info) {
-			list($parent, $child) = xhprof_parse_parent_child($parent_child);
+			list($parent, $child) = xhprofParseParentChild($parent_child);
 			if ($parent == $func || $child == $func) {
 				$interested_funcs[$parent] = 1;
 				$interested_funcs[$child] = 1;
@@ -349,7 +349,7 @@ function xhprof_generate_dot_script($raw_data, $threshold, $source, $page,
 
 	// Generate all the edges' information.
 	foreach ($raw_data as $parent_child => $info) {
-		list($parent, $child) = xhprof_parse_parent_child($parent_child);
+		list($parent, $child) = xhprofParseParentChild($parent_child);
 
 		if (isset($sym_table[$parent]) && isset($sym_table[$child]) &&
 			(empty($func) ||
@@ -372,7 +372,7 @@ function xhprof_generate_dot_script($raw_data, $threshold, $source, $page,
 			$arrow_size = 1;
 
 			if ($critical_path &&
-				isset($path_edges[xhprof_build_parent_child_key($parent, $child)])) {
+				isset($path_edges[xhprofBuildParentChildKey($parent, $child)])) {
 				$linewidth = 10; $arrow_size = 2;
 			}
 
@@ -391,26 +391,26 @@ function xhprof_generate_dot_script($raw_data, $threshold, $source, $page,
 	return $result;
 }
 
-function  xhprof_render_diff_image($xhprof_runs_impl, $run1, $run2,
-	$type, $threshold, $source) {
+function  xhprofRenderDiffImage($xhprof_runs_impl, $run1, $run2,
+								$type, $threshold, $source) {
 	$total1;
 	$total2;
 
-	$raw_data1 = $xhprof_runs_impl->get_run($run1, $source, $desc_unused);
-	$raw_data2 = $xhprof_runs_impl->get_run($run2, $source, $desc_unused);
+	$raw_data1 = $xhprof_runs_impl->getRun($run1, $source, $desc_unused);
+	$raw_data2 = $xhprof_runs_impl->getRun($run2, $source, $desc_unused);
 
 	// init_metrics($raw_data1, null, null);
-	$children_table1 = xhprof_get_children_table($raw_data1);
-	$children_table2 = xhprof_get_children_table($raw_data2);
-	$symbol_tab1 = xhprof_compute_flat_info($raw_data1, $total1);
-	$symbol_tab2 = xhprof_compute_flat_info($raw_data2, $total2);
-	$run_delta = xhprof_compute_diff($raw_data1, $raw_data2);
-	$script = xhprof_generate_dot_script($run_delta, $threshold, $source,
+	$children_table1 = xhprofGetChildrenTable($raw_data1);
+	$children_table2 = xhprofGetChildrenTable($raw_data2);
+	$symbol_tab1 = xhprofComputeFlatInfo($raw_data1, $total1);
+	$symbol_tab2 = xhprofComputeFlatInfo($raw_data2, $total2);
+	$run_delta = xhprofComputeDiff($raw_data1, $raw_data2);
+	$script = xhprofGenerateDotScript($run_delta, $threshold, $source,
 	                                     null, null, true,
 	                                     $symbol_tab1, $symbol_tab2);
-	$content = xhprof_generate_image_by_dot($script, $type);
+	$content = xhprofGenerateImageByDot($script, $type);
 
-	xhprof_generate_mime_header($type, strlen($content));
+	xhprofGenerateMimeHeader($type, strlen($content));
 	echo $content;
 }
 
@@ -432,22 +432,22 @@ function  xhprof_render_diff_image($xhprof_runs_impl, $run1, $run2,
  *
  * @author cjiang
  */
-function xhprof_get_content_by_run($xhprof_runs_impl, $run_id, $type,
-	$threshold, $func, $source,
-	$critical_path) {
+function xhprofGetContentByRun($xhprof_runs_impl, $run_id, $type,
+							   $threshold, $func, $source,
+							   $critical_path) {
 	if (!$run_id)
 		return "";
 
-	$raw_data = $xhprof_runs_impl->get_run($run_id, $source, $description);
+	$raw_data = $xhprof_runs_impl->getRun($run_id, $source, $description);
 	if (!$raw_data) {
-		xhprof_error("Raw data is empty");
+		xhprofError("Raw data is empty");
 		return "";
 	}
 
-	$script = xhprof_generate_dot_script($raw_data, $threshold, $source,
+	$script = xhprofGenerateDotScript($raw_data, $threshold, $source,
 	                                     $description, $func, $critical_path);
 
-	$content = xhprof_generate_image_by_dot($script, $type);
+	$content = xhprofGenerateImageByDot($script, $type);
 	return $content;
 }
 
@@ -468,10 +468,10 @@ function xhprof_get_content_by_run($xhprof_runs_impl, $run_id, $type,
  * @param bool, does this run correspond to a PHProfLive run or a dev run?
  * @author cjiang
  */
-function xhprof_render_image($xhprof_runs_impl, $run_id, $type, $threshold,
-	$func, $source, $critical_path) {
+function xhprofRenderImage($xhprof_runs_impl, $run_id, $type, $threshold,
+						   $func, $source, $critical_path) {
 
-	$content = xhprof_get_content_by_run($xhprof_runs_impl, $run_id, $type,
+	$content = xhprofGetContentByRun($xhprof_runs_impl, $run_id, $type,
 	                                     $threshold,
 	                                     $func, $source, $critical_path);
 	if (!$content) {
@@ -481,6 +481,6 @@ function xhprof_render_image($xhprof_runs_impl, $run_id, $type, $threshold,
 		exit();
 	}
 
-	xhprof_generate_mime_header($type, strlen($content));
+	xhprofGenerateMimeHeader($type, strlen($content));
 	echo $content;
 }

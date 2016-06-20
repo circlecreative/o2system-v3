@@ -90,18 +90,18 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    string|string[]
 	 */
-	protected function _alter_table( $alter_type, $table, $field )
+	protected function _alterTable($alter_type, $table, $field )
 	{
 		if ( in_array( $alter_type, array( 'ADD', 'DROP' ), TRUE ) )
 		{
-			return parent::_alter_table( $alter_type, $table, $field );
+			return parent::_alterTable( $alter_type, $table, $field );
 		}
 
-		$sql = 'ALTER TABLE ' . $this->_driver->escape_identifiers( $table ) . ' ALTER COLUMN ';
+		$sql = 'ALTER TABLE ' . $this->_driver->escapeIdentifiers( $table ) . ' ALTER COLUMN ';
 		$sqls = array();
 		for ( $i = 0, $c = count( $field ); $i < $c; $i++ )
 		{
-			$sqls[] = $sql . $this->_process_column( $field[ $i ] );
+			$sqls[] = $sql . $this->_processColumn( $field[ $i ] );
 		}
 
 		return $sqls;
@@ -118,7 +118,7 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    void
 	 */
-	protected function _attr_type( &$attributes )
+	protected function _attrType(&$attributes )
 	{
 		switch ( strtoupper( $attributes[ 'TYPE' ] ) )
 		{
@@ -146,7 +146,7 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    void
 	 */
-	protected function _attr_auto_increment( &$attributes, &$field )
+	protected function _attrAutoIncrement(&$attributes, &$field )
 	{
 		if ( ! empty( $attributes[ 'AUTO_INCREMENT' ] ) && $attributes[ 'AUTO_INCREMENT' ] === TRUE && stripos( $field[ 'type' ], 'int' ) !== FALSE )
 		{

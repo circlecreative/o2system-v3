@@ -32,16 +32,16 @@ function smarty_modifier_truncate($string, $length = 80, $etc = '...', $break_wo
     }
 
     if (Smarty::$_MBSTRING) {
-        if (mb_strlen($string, Smarty::$_CHARSET) > $length) {
-            $length -= min($length, mb_strlen($etc, Smarty::$_CHARSET));
+        if (mbStrlen($string, Smarty::$_CHARSET) > $length) {
+            $length -= min($length, mbStrlen($etc, Smarty::$_CHARSET));
             if (!$break_words && !$middle) {
-                $string = preg_replace('/\s+?(\S+)?$/' . Smarty::$_UTF8_MODIFIER, '', mb_substr($string, 0, $length + 1, Smarty::$_CHARSET));
+                $string = preg_replace('/\s+?(\S+)?$/' . Smarty::$_UTF8_MODIFIER, '', mbSubstr($string, 0, $length + 1, Smarty::$_CHARSET));
             }
             if (!$middle) {
-                return mb_substr($string, 0, $length, Smarty::$_CHARSET) . $etc;
+                return mbSubstr($string, 0, $length, Smarty::$_CHARSET) . $etc;
             }
 
-            return mb_substr($string, 0, $length / 2, Smarty::$_CHARSET) . $etc . mb_substr($string, - $length / 2, $length, Smarty::$_CHARSET);
+            return mbSubstr($string, 0, $length / 2, Smarty::$_CHARSET) . $etc . mbSubstr($string, - $length / 2, $length, Smarty::$_CHARSET);
         }
 
         return $string;

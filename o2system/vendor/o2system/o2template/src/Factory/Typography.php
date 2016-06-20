@@ -107,7 +107,7 @@ class Typography
      *
      * @return    string
      */
-    public function auto_typography( $str, $reduce_linebreaks = FALSE )
+    public function autoTypography($str, $reduce_linebreaks = FALSE )
     {
         if( $str === '' )
         {
@@ -142,16 +142,16 @@ class Typography
         // not contain <pre> tags, and it keeps the PCRE patterns below simpler and faster
         if( strpos( $str, '<pre' ) !== FALSE )
         {
-            $str = preg_replace_callback( '#<pre.*?>.*?</pre>#si', array( $this, '_protect_characters' ), $str );
+            $str = preg_replace_callback( '#<pre.*?>.*?</pre>#si', array( $this, '_protectCharacters'), $str );
         }
 
         // Convert quotes within tags to temporary markers.
-        $str = preg_replace_callback( '#<.+?>#si', array( $this, '_protect_characters' ), $str );
+        $str = preg_replace_callback( '#<.+?>#si', array( $this, '_protectCharacters'), $str );
 
         // Do the same with braces if necessary
         if( $this->protect_braced_quotes === TRUE )
         {
-            $str = preg_replace_callback( '#\{.+?\}#si', array( $this, '_protect_characters' ), $str );
+            $str = preg_replace_callback( '#\{.+?\}#si', array( $this, '_protectCharacters'), $str );
         }
 
         // Convert "ignore" tags to temporary marker.  The parser splits out the string at every tag
@@ -208,7 +208,7 @@ class Typography
             }
 
             //  Convert Newlines into <p> and <br /> tags
-            $str .= $this->_format_newlines( $chunks[ $i ] );
+            $str .= $this->_formatNewlines( $chunks[ $i ] );
         }
 
         // No opening block level tag? Add it if needed.
@@ -218,7 +218,7 @@ class Typography
         }
 
         // Convert quotes, elipsis, em-dashes, non-breaking spaces, and ampersands
-        $str = $this->format_characters( $str );
+        $str = $this->formatCharacters( $str );
 
         // restore HTML comments
         for( $i = 0, $total = count( $html_comments ); $i < $total; $i++ )
@@ -293,7 +293,7 @@ class Typography
      *
      * @return    string
      */
-    public function format_characters( $str )
+    public function formatCharacters($str )
     {
         static $table;
 
@@ -357,7 +357,7 @@ class Typography
      *
      * @return    string
      */
-    protected function _format_newlines( $str )
+    protected function _formatNewlines($str )
     {
         if( $str === '' OR ( strpos( $str, "\n" ) === FALSE && ! in_array( $this->last_block_element, $this->inner_block_required ) ) )
         {
@@ -398,7 +398,7 @@ class Typography
      *
      * @return    string
      */
-    protected function _protect_characters( $match )
+    protected function _protectCharacters($match )
     {
         return str_replace( array( "'", '"', '--', '  ' ), array( '{@SQ}', '{@DQ}', '{@DD}', '{@NBS}' ), $match[ 0 ] );
     }
@@ -412,7 +412,7 @@ class Typography
      *
      * @return    string
      */
-    public function nl2br_except_pre( $str )
+    public function nl2brExceptPre($str )
     {
         $newstr = '';
         for( $ex = explode( 'pre>', $str ), $ct = count( $ex ), $i = 0; $i < $ct; $i++ )

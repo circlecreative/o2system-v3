@@ -92,18 +92,18 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    string|string[]
 	 */
-	protected function _alter_table( $alter_type, $table, $field )
+	protected function _alterTable($alter_type, $table, $field )
 	{
 		if ( $alter_type === 'DROP' )
 		{
-			return parent::_alter_table( $alter_type, $table, $field );
+			return parent::_alterTable( $alter_type, $table, $field );
 		}
 		elseif ( $alter_type === 'CHANGE' )
 		{
 			$alter_type = 'MODIFY';
 		}
 
-		$sql = 'ALTER TABLE ' . $this->_driver->escape_identifiers( $table );
+		$sql = 'ALTER TABLE ' . $this->_driver->escapeIdentifiers( $table );
 		$sqls = array();
 		for ( $i = 0, $c = count( $field ); $i < $c; $i++ )
 		{
@@ -113,19 +113,19 @@ class Forge extends ForgeInterface
 			}
 			else
 			{
-				$field[ $i ][ '_literal' ] = "\n\t" . $this->_process_column( $field[ $i ] );
+				$field[ $i ][ '_literal' ] = "\n\t" . $this->_processColumn( $field[ $i ] );
 
 				if ( ! empty( $field[ $i ][ 'comment' ] ) )
 				{
 					$sqls[] = 'COMMENT ON COLUMN '
-						. $this->_driver->escape_identifiers( $table ) . '.' . $this->_driver->escape_identifiers( $field[ $i ][ 'name' ] )
+						. $this->_driver->escapeIdentifiers( $table ) . '.' . $this->_driver->escapeIdentifiers( $field[ $i ][ 'name' ] )
 						. ' IS ' . $field[ $i ][ 'comment' ];
 				}
 
 				if ( $alter_type === 'MODIFY' && ! empty( $field[ $i ][ 'new_name' ] ) )
 				{
-					$sqls[] = $sql . ' RENAME COLUMN ' . $this->_driver->escape_identifiers( $field[ $i ][ 'name' ] )
-						. ' ' . $this->_driver->escape_identifiers( $field[ $i ][ 'new_name' ] );
+					$sqls[] = $sql . ' RENAME COLUMN ' . $this->_driver->escapeIdentifiers( $field[ $i ][ 'name' ] )
+						. ' ' . $this->_driver->escapeIdentifiers( $field[ $i ][ 'new_name' ] );
 				}
 			}
 		}
@@ -151,7 +151,7 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    void
 	 */
-	protected function _attr_auto_increment( &$attributes, &$field )
+	protected function _attrAutoIncrement(&$attributes, &$field )
 	{
 		// Not supported - sequences and triggers must be used instead
 	}

@@ -75,13 +75,13 @@ class Tag extends FactoryInterface
 			}
 			else
 			{
-				$this->set_content( $content );
+				$this->setContent( $content );
 			}
 		}
 
 		if ( ! empty( $attr ) )
 		{
-			$this->add_attributes( $attr );
+			$this->addAttributes( $attr );
 		}
 
 		return $this;
@@ -92,7 +92,7 @@ class Tag extends FactoryInterface
 		$attr = $this->_attributes;
 		unset( $attr[ 'realpath' ] );
 
-		return '<' . $this->_tag . $this->_stringify_attributes( $attr ) . '>';
+		return '<' . $this->_tag . $this->_stringifyAttributes( $attr ) . '>';
 	}
 
 	public function close()
@@ -126,7 +126,7 @@ class Tag extends FactoryInterface
 			$attr = $this->_attributes;
 			unset( $attr[ 'realpath' ] );
 
-			return '<' . $this->_tag . $this->_stringify_attributes( $attr ) . ' />';
+			return '<' . $this->_tag . $this->_stringifyAttributes( $attr ) . ' />';
 		}
 		else
 		{

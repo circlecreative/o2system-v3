@@ -23,20 +23,20 @@ class Download
 	{
 		if(isset($filename))
 		{
-			$this->set_file($filename);
+			$this->setFile($filename);
 		}
 	}
 
 	// ------------------------------------------------------------------------
 
-	public function set_file($filename)
+	public function setFile($filename)
 	{
 		$this->_filename = $filename;
 	}
 
 	// ------------------------------------------------------------------------
 
-	public function set_data($data)
+	public function setData($data)
 	{
 		$this->_data = $data;
 	}
@@ -50,14 +50,14 @@ class Download
 
 	// ------------------------------------------------------------------------
 
-	public function set_mime($mime)
+	public function setMime($mime)
 	{
 
 	}
 
 	// ------------------------------------------------------------------------
 
-	public function set_speed($speed)
+	public function setSpeed($speed)
 	{
 
 	}

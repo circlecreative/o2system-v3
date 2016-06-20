@@ -202,7 +202,7 @@ namespace O2System\Template\Collections\Navigations
 
 					if($navigation instanceof FactoryInterface)
 					{
-						$nav->add_item( $navigation );
+						$nav->addItem( $navigation );
 					}
 					elseif ( empty( $navigation->childs ) )
 					{
@@ -213,16 +213,16 @@ namespace O2System\Template\Collections\Navigations
 
 						if ( ! empty( $navigation->icon ) )
 						{
-							$link->add_icon( $navigation->icon );
+							$link->addIcon( $navigation->icon );
 						}
 
 						if ( $navigation->url === current_url() )
 						{
-							$nav->add_item( $link, Nav::ITEM_ACTIVE );
+							$nav->addItem( $link, Nav::ITEM_ACTIVE );
 						}
 						else
 						{
-							$nav->add_item( $link );
+							$nav->addItem( $link );
 						}
 					}
 					else
@@ -234,7 +234,7 @@ namespace O2System\Template\Collections\Navigations
 
 						if ( ! empty( $navigation->icon ) )
 						{
-							$links->add_icon( $navigation->icon );
+							$links->addIcon( $navigation->icon );
 						}
 
 						foreach ( $navigation->childs as $child )
@@ -244,16 +244,16 @@ namespace O2System\Template\Collections\Navigations
 							$attr = $child->offsetGet( 'attr' )->__toArray();
 							$attr[ 'title' ] = $child->offsetGet( 'title' )->page;
 
-							$links->add_item( new \O2System\Bootstrap\Factory\Link( $child->label, $child->url, $attr ) );
+							$links->addItem( new \O2System\Bootstrap\Factory\Link( $child->label, $child->url, $attr ) );
 						}
 
 						if ( $navigation->url === current_url() )
 						{
-							$nav->add_item( $links, Nav::ITEM_ACTIVE );
+							$nav->addItem( $links, Nav::ITEM_ACTIVE );
 						}
 						else
 						{
-							$nav->add_item( $links );
+							$nav->addItem( $links );
 						}
 					}
 				}

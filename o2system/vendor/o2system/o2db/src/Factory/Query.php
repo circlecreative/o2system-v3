@@ -264,11 +264,11 @@ class Query
      * @access  public
      * @return  string|Result
      */
-    public function get_string()
+    public function getString()
     {
         if( empty( $this->_string ) )
         {
-            $this->_prepare_string();
+            $this->_prepareString();
         }
 
         return $this->_string;
@@ -276,7 +276,7 @@ class Query
 
     // ------------------------------------------------------------------------
 
-    public function get_params()
+    public function getParams()
     {
         return $this->_params;
     }
@@ -289,7 +289,7 @@ class Query
      * @access  public
      * @return  mixed
      */
-    public function last_query()
+    public function lastQuery()
     {
         return end( $this->_queries );
     }
@@ -304,7 +304,7 @@ class Query
      * @access  protected
      * @return  null|string
      */
-    protected function _prepare_string()
+    protected function _prepareString()
     {
         //print_code( $this );
         $statement = array();
@@ -329,7 +329,7 @@ class Query
      * @access  protected
      * @return  string
      */
-    protected function _prepare_select_statement()
+    protected function _prepareSelectStatement()
     {
         if( empty( $this->_statements[ 'SELECT' ] ) )
         {
@@ -351,7 +351,7 @@ class Query
      * @access  protected
      * @return  string
      */
-    protected function _prepare_from_statement()
+    protected function _prepareFromStatement()
     {
         if( ! empty( $this->_table ) )
         {
@@ -390,7 +390,7 @@ class Query
      * @access  protected
      * @return  string
      */
-    protected function _prepare_join_statement()
+    protected function _prepareJoinStatement()
     {
         return empty( $this->_statements[ 'JOIN' ] ) ? NULL : implode( $this->_new_line, $this->_statements[ 'JOIN' ] );
     }
@@ -403,7 +403,7 @@ class Query
      * @access  protected
      * @return  string
      */
-    protected function _prepare_where_statement()
+    protected function _prepareWhereStatement()
     {
         $statement = array();
         if( ! empty( $this->_statements[ 'WHERE' ] ) )
@@ -431,7 +431,7 @@ class Query
      * @access  protected
      * @return  string
      */
-    protected function _prepare_having_statement()
+    protected function _prepareHavingStatement()
     {
         if( ! empty( $this->_statements[ 'HAVING' ] ) )
         {
@@ -454,7 +454,7 @@ class Query
      * @access  protected
      * @return  string
      */
-    protected function _prepare_group_by_statement()
+    protected function _prepareGroupByStatement()
     {
         return empty( $this->_statements[ 'GROUP_BY' ] ) ? NULL : 'GROUP BY ' . implode( ', ', $this->_statements[ 'GROUP_BY' ] );
     }
@@ -467,7 +467,7 @@ class Query
      * @access  protected
      * @return  string
      */
-    protected function _prepare_order_by_statement()
+    protected function _prepareOrderByStatement()
     {
         return empty( $this->_statements[ 'ORDER_BY' ] ) ? NULL : sprintf( static::$_sql_statements[ 'ORDER_BY' ], implode( ', ', $this->_statements[ 'ORDER_BY' ] ) );
     }
@@ -480,7 +480,7 @@ class Query
      * @access  protected
      * @return  string
      */
-    protected function _prepare_union_statement()
+    protected function _prepareUnionStatement()
     {
         return empty( $this->_statements[ 'UNION' ] ) ? NULL : ( isset( $this->_statements[ 'UNION_ALL' ] ) ? 'UNION ALL' : 'UNION' ) . $this->_new_line . $this->_statements[ 'UNION' ];
     }
@@ -493,7 +493,7 @@ class Query
      * @access  protected
      * @return  string
      */
-    protected function _prepare_limit_statement()
+    protected function _prepareLimitStatement()
     {
         if( ! empty( $this->_statements[ 'LIMIT' ] ) )
         {
@@ -510,7 +510,7 @@ class Query
 
     // ------------------------------------------------------------------------
 
-    protected function _prepare_identifier( $field, $prefix = FALSE, $operator = NULL )
+    protected function _prepareIdentifier($field, $prefix = FALSE, $operator = NULL )
     {
         $x_field = explode( ' ', $field );
 
@@ -551,10 +551,10 @@ class Query
             $x_strings = explode( '.', $field );
             $x_strings[ 0 ] = $prefix === TRUE && ! empty( $this->_driver->prefix ) ? $this->_driver->prefix . $x_strings[ 0 ] : $x_strings[ 0 ];
 
-            $x_strings = array_map( array( $this->_driver, 'escape_identifier' ), $x_strings );
+            $x_strings = array_map( array( $this->_driver, 'escapeIdentifier' ), $x_strings );
 
             // Collects Tables
-            $table = $this->_driver->escape_identifier( $x_strings[ 0 ] );
+            $table = $this->_driver->escapeIdentifier( $x_strings[ 0 ] );
 
             if( isset( $this->_tables[ $table ] ) )
             {
@@ -569,7 +569,7 @@ class Query
         }
         else
         {
-            $field = $prefix === TRUE && ! empty( $this->_driver->prefix ) ? $this->_driver->escape_identifier( $this->_driver->prefix . $field ) : $this->_driver->escape_identifier( $field );
+            $field = $prefix === TRUE && ! empty( $this->_driver->prefix ) ? $this->_driver->escapeIdentifier( $this->_driver->prefix . $field ) : $this->_driver->escapeIdentifier( $field );
         }
 
         if( isset( $aggregate ) )
@@ -631,7 +631,7 @@ class Query
      *
      * @return  object
      */
-    public function get_where( $table = NULL, $conditions = array(), $limit = NULL, $offset = NULL )
+    public function getWhere($table = NULL, $conditions = array(), $limit = NULL, $offset = NULL )
     {
         if( ! empty( $table ) ) $this->from( $table );
 
@@ -696,16 +696,16 @@ class Query
 
                 if( is_string( $field ) )
                 {
-                    $this->_statements[ 'SELECT' ][ ] = $this->_prepare_identifier( $field, TRUE ) . ' AS ' . $this->_prepare_identifier( $alias );
+                    $this->_statements[ 'SELECT' ][ ] = $this->_prepareIdentifier( $field, TRUE ) . ' AS ' . $this->_prepareIdentifier( $alias );
                 }
                 else
                 {
-                    $this->_statements[ 'SELECT' ][ ] = $this->_prepare_identifier( $alias, TRUE );
+                    $this->_statements[ 'SELECT' ][ ] = $this->_prepareIdentifier( $alias, TRUE );
                 }
             }
             elseif( is_string( $field ) )
             {
-                $this->_statements[ 'SELECT' ][ ] = $this->_prepare_identifier( $field, TRUE ) . ' AS ' . $this->_prepare_identifier( $alias );
+                $this->_statements[ 'SELECT' ][ ] = $this->_prepareIdentifier( $field, TRUE ) . ' AS ' . $this->_prepareIdentifier( $alias );
             }
         }
 
@@ -725,11 +725,11 @@ class Query
      */
     public function from( $table, $alias = NULL )
     {
-        $this->_table = $this->_prepare_identifier( $table, TRUE );
+        $this->_table = $this->_prepareIdentifier( $table, TRUE );
 
         if( isset( $alias ) )
         {
-            $alias = $this->_driver->escape_identifier( $alias );
+            $alias = $this->_driver->escapeIdentifier( $alias );
         }
 
         // Collect Tables
@@ -802,7 +802,7 @@ class Query
             if( ! isset( $statement ) )
             {
                 $statement = static::$_join_statements[ strtoupper( $type ) ];
-                $table = $this->_prepare_identifier( $table, TRUE );
+                $table = $this->_prepareIdentifier( $table, TRUE );
             }
 
             if( is_string( $condition ) )
@@ -815,7 +815,7 @@ class Query
                 $condition = array_merge( array_keys( $condition ), array_values( $condition ) );
             }
 
-            $this->_statements[ 'JOIN' ][ ] = sprintf( $statement, $table, $this->_prepare_identifier( $condition[ 0 ], TRUE ), $this->_prepare_identifier( $condition[ 1 ], TRUE ) );
+            $this->_statements[ 'JOIN' ][ ] = sprintf( $statement, $table, $this->_prepareIdentifier( $condition[ 0 ], TRUE ), $this->_prepareIdentifier( $condition[ 1 ], TRUE ) );
 
             return $this;
         }
@@ -830,9 +830,9 @@ class Query
      *
      * @return    O2ORM Database::Query
      */
-    public function group_by( $by )
+    public function groupBy($by )
     {
-        $this->_statements[ 'GROUP_BY' ][ ] = $this->_prepare_identifier( $by, TRUE );
+        $this->_statements[ 'GROUP_BY' ][ ] = $this->_prepareIdentifier( $by, TRUE );
 
         return $this;
     }
@@ -852,7 +852,7 @@ class Query
      */
     public function where( $fields, $value = NULL )
     {
-        return $this->_prepare_condition( $fields, $value, 'WHERE' );
+        return $this->_prepareCondition( $fields, $value, 'WHERE' );
     }
 
     // ------------------------------------------------------------------------
@@ -868,9 +868,9 @@ class Query
      *
      * @return  object
      */
-    public function or_where( $fields, $value = NULL )
+    public function orWhere($fields, $value = NULL )
     {
-        return $this->_prepare_condition( $fields, $value, 'OR' );
+        return $this->_prepareCondition( $fields, $value, 'OR' );
 
         return $this;
     }
@@ -888,9 +888,9 @@ class Query
      *
      * @return  object
      */
-    public function where_in( $fields, array $values = array() )
+    public function whereIn($fields, array $values = array() )
     {
-        return $this->_prepare_condition( $fields, $values, 'IN' );
+        return $this->_prepareCondition( $fields, $values, 'IN' );
     }
 
     // ------------------------------------------------------------------------
@@ -906,9 +906,9 @@ class Query
      *
      * @return  object
      */
-    public function or_where_in( $fields, array $values = array() )
+    public function orWhereIn($fields, array $values = array() )
     {
-        return $this->_prepare_condition( $fields, $values, 'OR_IN' );
+        return $this->_prepareCondition( $fields, $values, 'OR_IN' );
     }
 
     // ------------------------------------------------------------------------
@@ -924,9 +924,9 @@ class Query
      *
      * @return  object
      */
-    public function where_not_in( $fields, array $values = array() )
+    public function whereNotIn($fields, array $values = array() )
     {
-        return $this->_prepare_condition( $fields, $values, 'NOT_IN' );
+        return $this->_prepareCondition( $fields, $values, 'NOT_IN' );
     }
 
     // ------------------------------------------------------------------------
@@ -942,41 +942,41 @@ class Query
      *
      * @return  object
      */
-    public function or_where_not_in( $fields, array $values = array() )
+    public function orWhereNotIn($fields, array $values = array() )
     {
-        return $this->_prepare_condition( $fields, $values, 'OR_NOT_IN' );
+        return $this->_prepareCondition( $fields, $values, 'OR_NOT_IN' );
     }
 
     // ------------------------------------------------------------------------
 
-    public function where_between( $fields, array $values = array() )
+    public function whereBetween($fields, array $values = array() )
     {
         $values = array_map( [ $this, 'quote_string' ], $values );
 
-        return $this->_prepare_condition( $fields, implode( ' AND ', $values ), 'BETWEEN' );
+        return $this->_prepareCondition( $fields, implode( ' AND ', $values ), 'BETWEEN' );
     }
 
     // ------------------------------------------------------------------------
 
-    public function or_where_between( $fields, array $values = array() )
+    public function orWhereBetween($fields, array $values = array() )
     {
         $values = array_map( [ $this, 'quote_string' ], $values );
 
-        return $this->_prepare_condition( $fields, implode( ' AND ', $values ), 'OR_BETWEEN' );
+        return $this->_prepareCondition( $fields, implode( ' AND ', $values ), 'OR_BETWEEN' );
     }
 
     // ------------------------------------------------------------------------
 
-    public function where_not_between( $fields, array $values = array() )
+    public function whereNotBetween($fields, array $values = array() )
     {
-        return $this->_prepare_condition( $fields, $values, 'NOT_BETWEEN' );
+        return $this->_prepareCondition( $fields, $values, 'NOT_BETWEEN' );
     }
 
     // ------------------------------------------------------------------------
 
-    public function or_where_not_between( $fields, array $values = array() )
+    public function orWhereNotBetween($fields, array $values = array() )
     {
-        return $this->_prepare_condition( $fields, $values, 'OR_NOT_BETWEEN' );
+        return $this->_prepareCondition( $fields, $values, 'OR_NOT_BETWEEN' );
     }
 
     // ------------------------------------------------------------------------
@@ -984,7 +984,7 @@ class Query
 
     public function like( $fields, $match = '', $wildcard = 'none' )
     {
-        return $this->_prepare_like( $fields, $match, $wildcard, 'LIKE' );
+        return $this->_prepareLike( $fields, $match, $wildcard, 'LIKE' );
     }
 
     /**
@@ -998,9 +998,9 @@ class Query
      *
      * @return  object
      */
-    public function or_like( $field, $match = '', $wildcard = 'none' )
+    public function orLike($field, $match = '', $wildcard = 'none' )
     {
-        $this->_prepare_like( $field, $match, $wildcard, 'OR_LIKE' );
+        $this->_prepareLike( $field, $match, $wildcard, 'OR_LIKE' );
 
         return $this;
     }
@@ -1018,9 +1018,9 @@ class Query
      *
      * @return  object
      */
-    public function not_like( $field, $match = '', $wildcard = 'none' )
+    public function notLike($field, $match = '', $wildcard = 'none' )
     {
-        $this->_prepare_like( $field, $match, $wildcard, 'NOT_LIKE' );
+        $this->_prepareLike( $field, $match, $wildcard, 'NOT_LIKE' );
 
         return $this;
     }
@@ -1038,16 +1038,16 @@ class Query
      *
      * @return  object
      */
-    public function or_not_like( $field, $match = '', $wildcard = 'both' )
+    public function orNotLike($field, $match = '', $wildcard = 'both' )
     {
-        $$this->_prepare_like( $field, $match, $wildcard, 'OR_NOT_LIKE' );
+        $$this->_prepareLike( $field, $match, $wildcard, 'OR_NOT_LIKE' );
 
         return $this;
     }
 
     // ------------------------------------------------------------------------
 
-    protected function _prepare_like( $fields, $match = '', $wildcard = 'none', $clause = 'LIKE' )
+    protected function _prepareLike($fields, $match = '', $wildcard = 'none', $clause = 'LIKE' )
     {
         if( is_array( $fields ) )
         {
@@ -1077,7 +1077,7 @@ class Query
                     break;
             }
 
-            $this->_prepare_condition( $fields, $match, $clause );
+            $this->_prepareCondition( $fields, $match, $clause );
 
             return $this;
         }
@@ -1097,7 +1097,7 @@ class Query
      */
     public function having( $fields, $value = NULL )
     {
-        return $this->_prepare_condition( $fields, $value, 'HAVING' );
+        return $this->_prepareCondition( $fields, $value, 'HAVING' );
     }
 
     // ------------------------------------------------------------------------
@@ -1112,7 +1112,7 @@ class Query
      *
      * @return  Query
      */
-    public function or_having( $field, $value = '' )
+    public function orHaving($field, $value = '' )
     {
         $this->having( $field, $value, 'OR_HAVING' );
 
@@ -1131,13 +1131,13 @@ class Query
      * @access  public
      * @return  Query
      */
-    public function _prepare_condition( $field, $value = NULL, $clause = 'WHERE' )
+    public function _prepareCondition($field, $value = NULL, $clause = 'WHERE' )
     {
         if( is_array( $field ) )
         {
             foreach( $field as $key => $value )
             {
-                $this->_prepare_condition( $key, $value, $clause );
+                $this->_prepareCondition( $key, $value, $clause );
             }
         }
         else
@@ -1146,17 +1146,17 @@ class Query
             {
                 if( in_array( $clause, array( 'WHERE', 'OR' ) ) )
                 {
-                    $field = $this->_prepare_identifier( $field, TRUE, '=' );
+                    $field = $this->_prepareIdentifier( $field, TRUE, '=' );
                 }
                 else
                 {
-                    $field = $this->_prepare_identifier( $field, TRUE, FALSE );
+                    $field = $this->_prepareIdentifier( $field, TRUE, FALSE );
                 }
 
                 $parameter = strtolower( $clause ) . '_' . str_replace( '.', '_', $field );
                 $parameter = ':' . preg_replace( "/[^A-Za-z0-9_]/", '', $parameter );
 
-                $value = is_array( $value ) ? $this->_driver->escape_array( $value ) : $value;
+                $value = is_array( $value ) ? $this->_driver->escapeArray( $value ) : $value;
 
                 $this->_params[ $parameter ] = $value;
 
@@ -1200,9 +1200,9 @@ class Query
      *
      * @return    Query
      */
-    public function order_by( $table, $sort = 'ASC' )
+    public function orderBy($table, $sort = 'ASC' )
     {
-        $this->_statements[ 'ORDER_BY' ][ ] = $this->_prepare_identifier( $table, TRUE ) . ' ' . strtoupper( $sort );
+        $this->_statements[ 'ORDER_BY' ][ ] = $this->_prepareIdentifier( $table, TRUE ) . ' ' . strtoupper( $sort );
 
         return $this;
     }
@@ -1220,7 +1220,7 @@ class Query
      */
     public function insert( $table, array $data = array(), $return_string = FALSE )
     {
-        $fields = $this->_driver->list_fields( $table );
+        $fields = $this->_driver->listFields( $table );
 
         foreach( $data as $field => $value )
         {
@@ -1243,7 +1243,7 @@ class Query
                 {
                     $parameter = ':insert_' . $field;
 
-                    $insert_fields[ ] = $this->_prepare_identifier( $field );
+                    $insert_fields[ ] = $this->_prepareIdentifier( $field );
                     $insert_values[ ] = $parameter;
                     $this->_params[ $parameter ] = $value;
                 }
@@ -1252,14 +1252,14 @@ class Query
             {
                 $parameter = ':insert_' . $field;
 
-                $insert_fields[ ] = $this->_prepare_identifier( $field );
+                $insert_fields[ ] = $this->_prepareIdentifier( $field );
                 $insert_values[ ] = $parameter;
-                $this->_params[ $parameter ] = $this->_driver->escape_string( $value );
+                $this->_params[ $parameter ] = $this->_driver->escapeString( $value );
             }
         }
 
         $insert_string = static::$_sql_statements[ 'INSERT' ];
-        $insert_string = sprintf( $insert_string, $this->_prepare_identifier( $table ), implode( ', ', $insert_fields ), implode( ', ', $insert_values ) );
+        $insert_string = sprintf( $insert_string, $this->_prepareIdentifier( $table ), implode( ', ', $insert_fields ), implode( ', ', $insert_values ) );
 
         if( $return_string === TRUE )
         {
@@ -1269,14 +1269,14 @@ class Query
         {
             $this->_driver->execute( $insert_string, $this->_params );
 
-            $last_insert_id = $this->_driver->last_insert_id();
+            $lastInsertId = $this->_driver->lastInsertId();
 
-            if( $last_insert_id == 0 )
+            if( $lastInsertId == 0 )
             {
                 return FALSE;
             }
 
-            return $last_insert_id;
+            return $lastInsertId;
         }
     }
 
@@ -1292,11 +1292,11 @@ class Query
      */
     public function update( $table, array $data = array(), array $conditions = array(), $return_string = FALSE )
     {
-        $fields = $this->_driver->list_fields( $table );
+        $fields = $this->_driver->listFields( $table );
 
         if( ! empty( $conditions ) )
         {
-            $this->_prepare_condition( $conditions );
+            $this->_prepareCondition( $conditions );
         }
 
         foreach( $data as $field => $value )
@@ -1321,7 +1321,7 @@ class Query
                     $parameter = ':update_' . $field;
                     $this->_params[ $parameter ] = $value;
 
-                    $sets[ ] = $this->_prepare_identifier( $field ) . ' = ' . $parameter;
+                    $sets[ ] = $this->_prepareIdentifier( $field ) . ' = ' . $parameter;
                 }
             }
             else
@@ -1329,12 +1329,12 @@ class Query
                 $parameter = ':update_' . $field;
                 $this->_params[ $parameter ] = $value;
 
-                $sets[ ] = $this->_prepare_identifier( $field ) . ' = ' . $parameter;
+                $sets[ ] = $this->_prepareIdentifier( $field ) . ' = ' . $parameter;
             }
         }
 
         $update_string = static::$_sql_statements[ 'UPDATE' ];
-        $update_string = sprintf( $update_string, $this->_prepare_identifier( $table ), implode( ', ', $sets ), str_replace( 'WHERE ', '', $this->_prepare_where_statement() ) );
+        $update_string = sprintf( $update_string, $this->_prepareIdentifier( $table ), implode( ', ', $sets ), str_replace( 'WHERE ', '', $this->_prepareWhereStatement() ) );
 
         if( $return_string === TRUE )
         {
@@ -1343,14 +1343,14 @@ class Query
         else
         {
             $this->_driver->execute( $update_string, $this->_params );
-            $affected_rows = $this->_driver->affected_rows();
+            $affectedRows = $this->_driver->affectedRows();
 
-            if( $affected_rows == 0 )
+            if( $affectedRows == 0 )
             {
                 return FALSE;
             }
 
-            return (int)$affected_rows;
+            return (int)$affectedRows;
         }
     }
 
@@ -1370,22 +1370,22 @@ class Query
 
         if( ! empty( $conditions ) )
         {
-            $this->_prepare_condition( $conditions );
+            $this->_prepareCondition( $conditions );
         }
 
         $sql = static::$_sql_statements[ 'DELETE' ];
-        $sql = sprintf( $sql, $this->_prepare_identifier( $table ), str_replace( 'WHERE ', '', $this->_prepare_where_statement() ) );
+        $sql = sprintf( $sql, $this->_prepareIdentifier( $table ), str_replace( 'WHERE ', '', $this->_prepareWhereStatement() ) );
 
         $this->_driver->execute( $sql );
 
-        $affected_rows = $this->_driver->affected_rows();
+        $affectedRows = $this->_driver->affectedRows();
 
-        if( $affected_rows == 0 )
+        if( $affectedRows == 0 )
         {
             return FALSE;
         }
 
-        return (int)$affected_rows;
+        return (int)$affectedRows;
     }
 
     // ------------------------------------------------------------------------

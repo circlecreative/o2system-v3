@@ -47,48 +47,39 @@ use O2System\Registry;
 
 class Controller extends ArrayObject
 {
-	public function __construct( $controller = array() )
+	public function __construct( $controller = [ ] )
 	{
-		$std_objects = array(
+		$std_objects = [
 			'parameter'         => NULL,
 			'class'             => NULL,
 			'namespace'         => NULL,
 			'realpath'          => NULL,
 			'module'            => NULL,
 			'reflection'        => NULL,
-			'public_methods'    => array(),
-			'protected_methods' => array(),
-			'params'            => array(),
+			'public_methods'    => [ ],
+			'protected_methods' => [ ],
+			'params'            => [ ],
 			'method'            => 'index',
-		);
+		];
 
 		if ( is_string( $controller ) AND file_exists( $controller ) )
 		{
-			$path_info = pathinfo( $controller );
+			$path_info  = pathinfo( $controller );
 			$class_name = prepare_class_name( $path_info[ 'filename' ] );
 
 			$class_namespace = \O2System::Load()->getNamespace( $path_info[ 'dirname' ] );
-			$directory = \O2System::Load()->getNamespacePath( $class_namespace, $path_info[ 'dirname' ] );
+			$directory       = \O2System::Load()->getNamespacePath( $class_namespace, $path_info[ 'dirname' ] );
 
-			$x_class_namespace = explode( '\\', $class_namespace );
-			$x_class_namespace = array_filter( $x_class_namespace );
-
-			if ( end( $x_class_namespace ) === $class_name )
-			{
-				array_pop( $x_class_namespace );
-				$class_namespace = implode( '\\', $x_class_namespace ) . '\\';
-			}
-
-			$controller = array(
+			$controller = [
 				'parameter' => strtolower( $path_info[ 'filename' ] ),
 				'class'     => $class_namespace . $class_name,
 				'namespace' => $class_namespace,
 				'realpath'  => $directory . $path_info[ 'filename' ] . '.php',
-			);
+			];
 
 			if ( $module_directory = \O2System::Load()->getNamespacePath( str_replace( 'Controllers\\', '', $class_namespace ) ) )
 			{
-				$module_directory = str_replace( [ ROOTPATH, 'core' ], '', $module_directory );
+				$module_directory   = str_replace( [ ROOTPATH, 'core' ], '', $module_directory );
 				$x_module_directory = explode( DIRECTORY_SEPARATOR, $module_directory );
 				$x_module_directory = array_diff( $x_module_directory, array_values( Registry::$package_types ) );
 				$x_module_directory = array_filter( $x_module_directory );
@@ -118,7 +109,10 @@ class Controller extends ArrayObject
 
 			foreach ( $this->reflection->getMethods( \ReflectionMethod::IS_PUBLIC ) as $public_method )
 			{
-				if ( preg_match( '[^_]', $public_method->name ) OR $public_method->name === 'instance' ) continue;
+				if ( preg_match( '[^_]', $public_method->name ) OR $public_method->name === 'instance' )
+				{
+					continue;
+				}
 
 				$this->public_methods[ $public_method->name ] = $public_method;
 
@@ -136,7 +130,7 @@ class Controller extends ArrayObject
 				{
 					if ( isset( $this->method ) )
 					{
-						$this->params[] = $this->method;
+						$this->params[ 0 ] = $this->isPublicMethod( $this->method ) ? $this->method : '_' . $this->method;
 					}
 
 					$this->method = '_route';
@@ -147,7 +141,7 @@ class Controller extends ArrayObject
 
 	public function isPublicMethod( $method )
 	{
-		//$method = camelcase( $method );
+		$method = camelcase( $method );
 
 		if ( array_key_exists( $method, $this->public_methods ) )
 		{
@@ -159,8 +153,7 @@ class Controller extends ArrayObject
 
 	public function isProtectedMethod( $method )
 	{
-		$method = '_' . ltrim( $method, '_' );
-		//$method = camelcase( $method );
+		$method = '_' . camelcase( ltrim( $method, '_' ) );
 
 		if ( array_key_exists( $method, $this->protected_methods ) )
 		{

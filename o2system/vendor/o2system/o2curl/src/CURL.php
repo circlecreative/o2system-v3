@@ -159,7 +159,7 @@ namespace O2System
 		 *
 		 * @param $timeout
 		 */
-		public function set_timeout( $timeout )
+		public function setTimeout($timeout )
 		{
 			$this->_timeout = (int) $timeout;
 
@@ -177,7 +177,7 @@ namespace O2System
 		 *
 		 * @return $this
 		 */
-		public function set_verify( $peer = TRUE, $host = 2, $cainfo = NULL )
+		public function setVerify($peer = TRUE, $host = 2, $cainfo = NULL )
 		{
 			$this->_verifypeer = $peer;
 			$this->_verifyhost = $host;
@@ -217,7 +217,7 @@ namespace O2System
 		 *
 		 * @return \O2System\CURL
 		 */
-		public function set_auth( $username = '', $password = '', $method = CURLAUTH_BASIC )
+		public function setAuth($username = '', $password = '', $method = CURLAUTH_BASIC )
 		{
 			$this->_auth[ 'user' ] = $username;
 			$this->_auth[ 'pass' ] = $password;
@@ -240,7 +240,7 @@ namespace O2System
 		 *
 		 * @return Curl
 		 */
-		public function set_proxy( $address, $port = 1080, $type = CURLPROXY_HTTP, $tunnel = FALSE )
+		public function setProxy($address, $port = 1080, $type = CURLPROXY_HTTP, $tunnel = FALSE )
 		{
 			$this->_proxy[ 'type' ] = $type;
 			$this->_proxy[ 'port' ] = $port;
@@ -259,7 +259,7 @@ namespace O2System
 		 *
 		 * @return  \O2System\CURL
 		 */
-		public function set_headers( array $headers = array() )
+		public function setHeaders(array $headers = array() )
 		{
 			$this->_headers = array_merge( $this->_headers, $headers );
 
@@ -276,7 +276,7 @@ namespace O2System
 		 *
 		 * @return \O2System\CURL
 		 */
-		public function set_header( $key, $value )
+		public function setHeader($key, $value )
 		{
 			$this->_headers[ $key ] = $value;
 
@@ -285,7 +285,7 @@ namespace O2System
 
 		// ------------------------------------------------------------------------
 
-		public function set_useragent( $useragent )
+		public function setUseragent($useragent )
 		{
 			$this->_useragent = $useragent;
 
@@ -305,7 +305,7 @@ namespace O2System
 		 * @return Response
 		 * @throws \Exception
 		 */
-		public function set_cookie( array $cookie )
+		public function setCookie(array $cookie )
 		{
 			foreach ( $cookie as $key => $value )
 			{
@@ -325,7 +325,7 @@ namespace O2System
 		 * @access  public
 		 * @return \O2System\CURL
 		 */
-		public function reset_headers()
+		public function resetHeaders()
 		{
 			$this->_headers = array();
 
@@ -343,7 +343,7 @@ namespace O2System
 		 *
 		 * @return \CURLFile|string
 		 */
-		public function add_file( $filename, $mimetype = '', $postname = '' )
+		public function addFile($filename, $mimetype = '', $postname = '' )
 		{
 			if ( function_exists( 'curl_file_create' ) )
 			{
@@ -370,11 +370,11 @@ namespace O2System
 		 */
 		public function get( $url, $path = '', array $params = array(), array $headers = array() )
 		{
-			$url = $this->parse_url( $url, $path, $params );
+			$url = $this->parseUrl( $url, $path, $params );
 
 			if ( ! empty( $headers ) )
 			{
-				$this->set_headers( $headers );
+				$this->setHeaders( $headers );
 			}
 
 			return $this->_request( $url, Method::GET );
@@ -395,11 +395,11 @@ namespace O2System
 		 */
 		public function post( $url, $path = '', array $params = array(), array $headers = array() )
 		{
-			$url = $this->parse_url( $url, $path );
+			$url = $this->parseUrl( $url, $path );
 
 			if ( ! empty( $headers ) )
 			{
-				$this->set_headers( $headers );
+				$this->setHeaders( $headers );
 			}
 
 			return $this->_request( $url, Method::POST, $params );
@@ -420,11 +420,11 @@ namespace O2System
 		 */
 		public function head( $url, $path = '', array $params = array(), array $headers = array() )
 		{
-			$url = $this->parse_url( $url, $path );
+			$url = $this->parseUrl( $url, $path );
 
 			if ( ! empty( $headers ) )
 			{
-				$this->set_headers( $headers );
+				$this->setHeaders( $headers );
 			}
 
 			return $this->_request( $url, Method::HEAD, $params );
@@ -445,11 +445,11 @@ namespace O2System
 		 */
 		public function connect( $url, $path = '', array $params = array(), array $headers = array() )
 		{
-			$url = $this->parse_url( $url, $path );
+			$url = $this->parseUrl( $url, $path );
 
 			if ( ! empty( $headers ) )
 			{
-				$this->set_headers( $headers );
+				$this->setHeaders( $headers );
 			}
 
 			return $this->_request( $url, Method::CONNECT, $params );
@@ -470,11 +470,11 @@ namespace O2System
 		 */
 		public function put( $url, $path = '', array $params = array(), array $headers = array() )
 		{
-			$url = $this->parse_url( $url, $path );
+			$url = $this->parseUrl( $url, $path );
 
 			if ( ! empty( $headers ) )
 			{
-				$this->set_headers( $headers );
+				$this->setHeaders( $headers );
 			}
 
 			return $this->_request( $url, Method::PUT, $params );
@@ -495,11 +495,11 @@ namespace O2System
 		 */
 		public function patch( $url, $path = '', array $params = array(), array $headers = array() )
 		{
-			$url = $this->parse_url( $url, $path );
+			$url = $this->parseUrl( $url, $path );
 
 			if ( ! empty( $headers ) )
 			{
-				$this->set_headers( $headers );
+				$this->setHeaders( $headers );
 			}
 
 			return $this->_request( $url, Method::PATCH, $params );
@@ -520,11 +520,11 @@ namespace O2System
 		 */
 		public function trace( $url, $path = '', array $params = array(), array $headers = array() )
 		{
-			$url = $this->parse_url( $url, $path );
+			$url = $this->parseUrl( $url, $path );
 
 			if ( ! empty( $headers ) )
 			{
-				$this->set_headers( $headers );
+				$this->setHeaders( $headers );
 			}
 
 			return $this->_request( $url, Method::TRACE, $params );
@@ -565,7 +565,7 @@ namespace O2System
 			if ( ! empty( $this->_headers ) )
 			{
 				$options[ CURLOPT_HEADER ] = TRUE;
-				$options[ CURLOPT_HTTPHEADER ] = $this->_build_headers( $this->_headers );
+				$options[ CURLOPT_HTTPHEADER ] = $this->_buildHeaders( $this->_headers );
 			}
 
 			if ( ! empty( $this->_auth[ 'user' ] ) )
@@ -595,7 +595,7 @@ namespace O2System
 					break;
 				case 'POST':
 					$options[ CURLOPT_POST ] = TRUE;
-					$options[ CURLOPT_POSTFIELDS ] = $this->_build_query( $post_params );
+					$options[ CURLOPT_POSTFIELDS ] = $this->_buildQuery( $post_params );
 					break;
 				case 'DELETE':
 					$options[ CURLOPT_CUSTOMREQUEST ] = 'DELETE';
@@ -607,7 +607,7 @@ namespace O2System
 
 			if ( in_array( $method, [ 'GET', 'PUT', 'DELETE' ] ) AND ! empty( $post_params ) )
 			{
-				$options[ CURLOPT_URL ] .= '?' . $this->_build_query( $post_params );
+				$options[ CURLOPT_URL ] .= '?' . $this->_buildQuery( $post_params );
 			}
 
 			$this->_handle = curl_init();
@@ -658,7 +658,7 @@ namespace O2System
 		 *
 		 * @return string
 		 */
-		public function parse_url( $url, $path = '', array $params = array() )
+		public function parseUrl($url, $path = '', array $params = array() )
 		{
 			if ( $path )
 			{
@@ -684,7 +684,7 @@ namespace O2System
 				}
 
 				// it needs to be PHP_QUERY_RFC3986. We want to have %20 between scopes
-				$url .= $this->_build_query( $params );
+				$url .= $this->_buildQuery( $params );
 			}
 
 			return $url;
@@ -699,7 +699,7 @@ namespace O2System
 		 *
 		 * @return string
 		 */
-		protected function _build_query( array $params = array() )
+		protected function _buildQuery(array $params = array() )
 		{
 			return http_build_query( $params, NULL, '&', PHP_QUERY_RFC3986 );
 		}
@@ -713,7 +713,7 @@ namespace O2System
 		 *
 		 * @return array
 		 */
-		protected function _build_headers( array $headers = array() )
+		protected function _buildHeaders(array $headers = array() )
 		{
 			$formatted_headers = array();
 

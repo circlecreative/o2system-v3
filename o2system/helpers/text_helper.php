@@ -264,7 +264,7 @@ if( ! function_exists( 'character_limiter' ) )
      */
     function character_limiter( $str, $n = 500, $end_char = '&#8230;' )
     {
-        if( mb_strlen( $str ) < $n )
+        if( mbStrlen( $str ) < $n )
         {
             return $str;
         }
@@ -272,7 +272,7 @@ if( ! function_exists( 'character_limiter' ) )
         // a bit complicated, but faster than preg_replace with \s+
         $str = preg_replace( '/ {2,}/', ' ', str_replace( array( "\r", "\n", "\t", "\x0B", "\x0C" ), ' ', $str ) );
 
-        if( mb_strlen( $str ) <= $n )
+        if( mbStrlen( $str ) <= $n )
         {
             return $str;
         }
@@ -282,11 +282,11 @@ if( ! function_exists( 'character_limiter' ) )
         {
             $out .= $val . ' ';
 
-            if( mb_strlen( $out ) >= $n )
+            if( mbStrlen( $out ) >= $n )
             {
                 $out = trim( $out );
 
-                return ( mb_strlen( $out ) === mb_strlen( $str ) ) ? $out : $out . $end_char;
+                return ( mbStrlen( $out ) === mbStrlen( $str ) ) ? $out : $out . $end_char;
             }
         }
     }
@@ -440,7 +440,7 @@ if( ! function_exists( 'word_censor' ) )
         $str = ' ' . $str . ' ';
 
         // \w, \b and a few others do not match on a unicode character
-        // set for performance reasons. As a result words like über
+        // set for performance reasons. As a result words like ï¿½ber
         // will not match on a word boundary. Instead, we'll assume that
         // a bad word will be bookeneded by any of these characters.
         $delim = '[-_\'\"`(){}<>\[\]|!?@#%&,.:;^~*+=\/ 0-9\n\r\t]';
@@ -637,14 +637,14 @@ if( ! function_exists( 'word_wrap' ) )
         {
             // Is the line within the allowed character count?
             // If so we'll join it to the output and continue
-            if( mb_strlen( $line ) <= $charlim )
+            if( mbStrlen( $line ) <= $charlim )
             {
                 $output .= $line . "\n";
                 continue;
             }
 
             $temp = '';
-            while( mb_strlen( $line ) > $charlim )
+            while( mbStrlen( $line ) > $charlim )
             {
                 // If the over-length word is a URL we won't wrap it
                 if( preg_match( '!\[url.+\]|://|www\.!', $line ) )
@@ -653,8 +653,8 @@ if( ! function_exists( 'word_wrap' ) )
                 }
 
                 // Trim the word down
-                $temp .= mb_substr( $line, 0, $charlim - 1 );
-                $line = mb_substr( $line, $charlim - 1 );
+                $temp .= mbSubstr( $line, 0, $charlim - 1 );
+                $line = mbSubstr( $line, $charlim - 1 );
             }
 
             // If $temp contains data it means we had to split up an over-length
@@ -704,21 +704,21 @@ if( ! function_exists( 'ellipsize' ) )
         $str = trim( strip_tags( $str ) );
 
         // Is the string long enough to ellipsize?
-        if( mb_strlen( $str ) <= $max_length )
+        if( mbStrlen( $str ) <= $max_length )
         {
             return $str;
         }
 
-        $beg = mb_substr( $str, 0, floor( $max_length * $position ) );
+        $beg = mbSubstr( $str, 0, floor( $max_length * $position ) );
         $position = ( $position > 1 ) ? 1 : $position;
 
         if( $position === 1 )
         {
-            $end = mb_substr( $str, 0, -( $max_length - mb_strlen( $beg ) ) );
+            $end = mbSubstr( $str, 0, -( $max_length - mbStrlen( $beg ) ) );
         }
         else
         {
-            $end = mb_substr( $str, -( $max_length - mb_strlen( $beg ) ) );
+            $end = mbSubstr( $str, -( $max_length - mbStrlen( $beg ) ) );
         }
 
         return $beg . $ellipsis . $end;

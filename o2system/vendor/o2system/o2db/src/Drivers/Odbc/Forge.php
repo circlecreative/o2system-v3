@@ -70,7 +70,7 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    void
 	 */
-	protected function _attr_auto_increment( &$attributes, &$field )
+	protected function _attrAutoIncrement(&$attributes, &$field )
 	{
 		// Not supported (in most databases at least)
 	}

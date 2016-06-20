@@ -101,7 +101,7 @@ class Form
      * @access  public
      * @return  object
      */
-    public function set_fields( array $fields = array() )
+    public function setFields(array $fields = array() )
     {
         $this->_fieldsets[ 'blank' ] = $fields;
 
@@ -116,7 +116,7 @@ class Form
      * @access  public
      * @return  $this
      */
-    public function set_hiddens( array $hiddens = array() )
+    public function setHiddens(array $hiddens = array() )
     {
         $this->_hiddens = $hiddens;
 
@@ -133,7 +133,7 @@ class Form
      *
      * @return $this Instance of O2System\Libraries\Form
      */
-    public function set_buttons( array $buttons = array() )
+    public function setButtons(array $buttons = array() )
     {
         $this->_buttons = $buttons;
 
@@ -206,8 +206,8 @@ class Form
                     'attr' => array(
                         'aria-hidden' => 'true',
                         'class'       => 'input-redirect hidden',
-                        'name'        => $security->get_csrf_token_name(),
-                        'value'       => $security->get_csrf_hash(),
+                        'name'        => $security->getCsrfTokenName(),
+                        'value'       => $security->getCsrfHash(),
                     )
                 )
             );
@@ -262,7 +262,7 @@ class Form
             {
                 $parser = &Loader::driver( 'parser' );
 
-                return $parser->parse_source_code( $this->_config[ 'html' ], $output );
+                return $parser->parseSourceCode( $this->_config[ 'html' ], $output );
             }
             else
             {
@@ -274,7 +274,7 @@ class Form
 
                     if( is_file( $filepath ) )
                     {
-                        return $parser->parse_view( $filepath, $output );
+                        return $parser->parseView( $filepath, $output );
                         break;
                     }
                 }

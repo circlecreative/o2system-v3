@@ -78,7 +78,7 @@ class Navbar extends FactoryInterface
 	 */
 	public function build()
 	{
-		$this->set_pull_class_prefix( 'navbar' );
+		$this->setPullClassPrefix( 'navbar' );
 
 		@list( $target, $type, $attr ) = func_get_args();
 
@@ -88,11 +88,11 @@ class Navbar extends FactoryInterface
 			{
 				if ( in_array( $target, [ self::NAVBAR_DEFAULT, self::NAVBAR_INVERSE ] ) )
 				{
-					$this->set_type( $target );
+					$this->setType( $target );
 				}
 				else
 				{
-					$this->set_target( $target );
+					$this->setTarget( $target );
 				}
 			}
 			elseif ( is_array( $target ) )
@@ -107,7 +107,7 @@ class Navbar extends FactoryInterface
 			{
 				if ( in_array( $type, [ self::NAVBAR_DEFAULT, self::NAVBAR_INVERSE ] ) )
 				{
-					$this->set_type( $type );
+					$this->setType( $type );
 				}
 			}
 			elseif ( is_array( $type ) )
@@ -118,15 +118,15 @@ class Navbar extends FactoryInterface
 
 		if ( isset( $attr ) )
 		{
-			$this->add_attributes( $attr );
+			$this->addAttributes( $attr );
 		}
 
 		// Initialize Left & Right Menu
 		$this->left = new Nav();
-		$this->left->add_class( 'navbar-nav' );
+		$this->left->addClass( 'navbar-nav' );
 
 		$this->right = new Nav();
-		$this->right->add_classes( [ 'navbar-nav', 'navbar-right' ] );
+		$this->right->addClasses( [ 'navbar-nav', 'navbar-right' ] );
 
 		//$this->form = new Form();
 
@@ -146,14 +146,14 @@ class Navbar extends FactoryInterface
 		return $this;
 	}
 
-	public function set_target( $target )
+	public function setTarget($target )
 	{
 		$this->_target = str_replace( [ '_', '.', '#' ], [ '-', '', '' ], $target );
 
 		return $this;
 	}
 
-	public function set_type( $type )
+	public function setType($type )
 	{
 		$types = array(
 			self::NAVBAR_DEFAULT => 'navbar-default',
@@ -162,13 +162,13 @@ class Navbar extends FactoryInterface
 
 		if ( array_key_exists( $type, $types ) )
 		{
-			$this->add_class( $types[ $type ] );
+			$this->addClass( $types[ $type ] );
 		}
 
 		return $this;
 	}
 
-	public function set_brand( $brand, $href = '#' )
+	public function setBrand($brand, $href = '#' )
 	{
 		// Brand Logo
 		if ( function_exists( 'base_url' ) AND $href === '#' )
@@ -201,7 +201,7 @@ class Navbar extends FactoryInterface
 		return $this;
 	}
 
-	public function set_finder(array $param)
+	public function setFinder(array $param)
 	{
 		$this->form = '
 				            <form action="'.$param['action'].'" method="'.$param['method'].'" class="navbar-form '.$param['position'].'" role="form">
@@ -216,31 +216,31 @@ class Navbar extends FactoryInterface
 		return $this;
 	}
 
-	public function add_items( array $items, $position = self::NAV_LEFT )
+	public function addItems(array $items, $position = self::NAV_LEFT )
 	{
 		foreach ( $items as $item )
 		{
-			$this->add_item( $item, $position );
+			$this->addItem( $item, $position );
 		}
 	}
 
-	public function add_item( $item, $position = self::NAV_LEFT, $describe = NULL )
+	public function addItem($item, $position = self::NAV_LEFT, $describe = NULL )
 	{
 		if ( $item instanceof Nav )
 		{
-			$item->add_class( 'navbar-nav' );
+			$item->addClass( 'navbar-nav' );
 		}
 		elseif ( $item instanceof Form )
 		{
-			$item->add_class( 'navbar-form' );
+			$item->addClass( 'navbar-form' );
 		}
 		elseif ( $item instanceof Button )
 		{
-			$item->add_class( 'navbar-button' );
+			$item->addClass( 'navbar-button' );
 		}
 		elseif ( $item instanceof Link )
 		{
-			$item->add_class( 'navbar-link' );
+			$item->addClass( 'navbar-link' );
 		}
 		elseif ( is_string( $item ) )
 		{
@@ -252,13 +252,13 @@ class Navbar extends FactoryInterface
 			default:
 			case self::NAV_LEFT:
 
-				$this->left->add_item( $item, $describe );
+				$this->left->addItem( $item, $describe );
 
 				break;
 
 			case self::NAV_RIGHT:
 
-				$this->right->add_item( $item, $describe );
+				$this->right->addItem( $item, $describe );
 
 				break;
 		}
@@ -271,9 +271,9 @@ class Navbar extends FactoryInterface
 	 *
 	 * @return object
 	 */
-	public function is_fixed_top()
+	public function isFixedTop()
 	{
-		$this->add_class( 'navbar-fixed-top' );
+		$this->addClass( 'navbar-fixed-top' );
 
 		return $this;
 	}
@@ -283,9 +283,9 @@ class Navbar extends FactoryInterface
 	 *
 	 * @return type
 	 */
-	public function is_fixed_bottom()
+	public function isFixedBottom()
 	{
-		$this->add_class( 'navbar-fixed-bottom' );
+		$this->addClass( 'navbar-fixed-bottom' );
 
 		return $this;
 	}
@@ -295,21 +295,21 @@ class Navbar extends FactoryInterface
 	 *
 	 * @return object
 	 */
-	public function is_static_top()
+	public function isStaticTop()
 	{
-		$this->add_class( 'navbar-static-top' );
+		$this->addClass( 'navbar-static-top' );
 
 		return $this;
 	}
 
-	public function is_fluid()
+	public function isFluid()
 	{
 		$this->_is_fluid = TRUE;
 
 		return $this;
 	}
 
-	public function is_full_width()
+	public function isFullWidth()
 	{
 		$this->_is_full_width = TRUE;
 	}
@@ -329,13 +329,13 @@ class Navbar extends FactoryInterface
 			}
 
 			$toggle = new Button();
-			$toggle->append_label( new Tag( 'span', 'Toggle Navigation', [ 'class' => 'sr-only' ] ) );
+			$toggle->appendLabel( new Tag( 'span', 'Toggle Navigation', [ 'class' => 'sr-only' ] ) );
 			$icons[] = new Tag( 'span', [ 'class' => 'icon-bar' ] );
 			$icons[] = new Tag( 'span', [ 'class' => 'icon-bar' ] );
 			$icons[] = new Tag( 'span', [ 'class' => 'icon-bar' ] );
-			$toggle->append_label( implode( PHP_EOL, $icons ) );
+			$toggle->appendLabel( implode( PHP_EOL, $icons ) );
 
-			$toggle->add_attributes( array(
+			$toggle->addAttributes( array(
 				                         'class'       => 'navbar-toggle',
 				                         'data-toggle' => 'collapse',
 				                         'data-target' => '#' . $this->_target,
@@ -346,9 +346,9 @@ class Navbar extends FactoryInterface
 
 		$output[ 'collapse' ] = new Tag( 'div', [ 'id' => $this->_target, 'class' => 'collapse navbar-collapse' ] );
 
-		$output[ 'collapse' ]->append_content( $this->left );
-		$output[ 'collapse' ]->append_content( $this->form );
-		$output[ 'collapse' ]->append_content( $this->right );
+		$output[ 'collapse' ]->appendContent( $this->left );
+		$output[ 'collapse' ]->appendContent( $this->form );
+		$output[ 'collapse' ]->appendContent( $this->right );
 
 		$container = new Tag( 'div', implode( PHP_EOL, $output ) );
 
@@ -356,16 +356,16 @@ class Navbar extends FactoryInterface
 		{
 			if ( $this->_is_fluid === TRUE )
 			{
-				$container->add_class( 'container-fluid' );
+				$container->addClass( 'container-fluid' );
 			}
 			else
 			{
-				$container->add_class( 'container' );
+				$container->addClass( 'container' );
 			}
 		}
 		else
 		{
-			$container->add_class( 'container-full-width' );
+			$container->addClass( 'container-full-width' );
 		}
 
 		return ( new Tag( $this->_tag, $container, $this->_attributes ) )->render();

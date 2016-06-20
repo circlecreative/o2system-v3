@@ -76,11 +76,11 @@ class Belongs_To_Many extends Relations
         }
         else
         {
-            $query = $this->_reference_model->db->get_where( $this->_related_table, array(
+            $query = $this->_reference_model->db->getWhere( $this->_related_table, array(
                 $this->_related_field => $this->_reference_model->{ $this->_reference_field }
             ) );
 
-            if($query->num_rows() > 0)
+            if($query->numRows() > 0)
             {
                 return $query->result();
             }

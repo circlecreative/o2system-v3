@@ -110,13 +110,13 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _list_tables_statement( $prefix_limit = FALSE )
+	protected function _listTablesStatement($prefix_limit = FALSE )
 	{
 		$sql = 'SHOW TABLES';
 
 		if ( $prefix_limit === TRUE && $this->table_prefix !== '' )
 		{
-			return $sql . " LIKE '" . $this->escape_like_string( $this->table_prefix ) . "%'";
+			return $sql . " LIKE '" . $this->escapeLikeString( $this->table_prefix ) . "%'";
 		}
 
 		return $sql;
@@ -133,9 +133,9 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _list_columns_statement( $table = '' )
+	protected function _listColumnsStatement($table = '' )
 	{
-		return 'SHOW COLUMNS FROM ' . $this->protect_identifiers( $table, TRUE, NULL, FALSE );
+		return 'SHOW COLUMNS FROM ' . $this->protectIdentifiers( $table, TRUE, NULL, FALSE );
 	}
 
 	// --------------------------------------------------------------------
@@ -147,13 +147,13 @@ class Driver extends DriverInterface
 	 *
 	 * @return    array
 	 */
-	public function field_data( $table )
+	public function fieldData($table )
 	{
-		if ( ( $query = $this->query( 'SHOW COLUMNS FROM ' . $this->protect_identifiers( $table, TRUE, NULL, FALSE ) ) ) === FALSE )
+		if ( ( $query = $this->query( 'SHOW COLUMNS FROM ' . $this->protectIdentifiers( $table, TRUE, NULL, FALSE ) ) ) === FALSE )
 		{
 			return FALSE;
 		}
-		$query = $query->result_object();
+		$query = $query->resultObject();
 
 		$result = array();
 		for ( $i = 0, $c = count( $query ); $i < $c; $i++ )
@@ -186,7 +186,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _update_batch_statement( $table, $values, $index )
+	protected function _updateBatchStatement($table, $values, $index )
 	{
 		$ids = array();
 		foreach ( $values as $key => $value )
@@ -212,7 +212,7 @@ class Driver extends DriverInterface
 
 		$this->where( $index . ' IN(' . implode( ',', $ids ) . ')', NULL, FALSE );
 
-		return 'UPDATE ' . $table . ' SET ' . substr( $cases, 0, -2 ) . $this->_compile_where_having( 'qb_where' );
+		return 'UPDATE ' . $table . ' SET ' . substr( $cases, 0, -2 ) . $this->_compileWhereHaving( 'qb_where' );
 	}
 
 	// --------------------------------------------------------------------
@@ -229,7 +229,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _truncate_statement( $table )
+	protected function _truncateStatement($table )
 	{
 		return 'TRUNCATE ' . $table;
 	}
@@ -244,7 +244,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _from_tables()
+	protected function _fromTables()
 	{
 		if ( ! empty( $this->qb_join ) && count( $this->qb_from ) > 1 )
 		{

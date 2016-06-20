@@ -53,11 +53,11 @@ class Assets extends ArrayObject
 
 								foreach ( $asset as $file )
 								{
-									if ( $realpath = $file->get_attribute( 'realpath' ) )
+									if ( $realpath = $file->getAttribute( 'realpath' ) )
 									{
 										$minify->add( $realpath );
 									}
-									elseif ( $href = $file->get_attribute( 'href' ) )
+									elseif ( $href = $file->getAttribute( 'href' ) )
 									{
 										$data = file_get_contents( $href );
 
@@ -112,11 +112,11 @@ class Assets extends ArrayObject
 
 								foreach ( $asset as $file )
 								{
-									if ( $realpath = $file->get_attribute( 'realpath' ) )
+									if ( $realpath = $file->getAttribute( 'realpath' ) )
 									{
 										$minify->add( $realpath );
 									}
-									elseif ( $src = $file->get_attribute( 'src' ) )
+									elseif ( $src = $file->getAttribute( 'src' ) )
 									{
 										$data = file_get_contents( $src );
 

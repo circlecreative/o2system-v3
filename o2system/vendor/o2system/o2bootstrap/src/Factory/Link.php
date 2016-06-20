@@ -63,8 +63,8 @@ class Link extends Button
 	 */
 	public function build()
 	{
-		$this->set_contextual_class_prefix( 'btn' );
-		$this->set_size_class_prefix( 'btn' );
+		$this->setContextualClassPrefix( 'btn' );
+		$this->setSizeClassPrefix( 'btn' );
 
 		@list( $label, $href, $type, $attr ) = func_get_args();
 
@@ -77,28 +77,28 @@ class Link extends Button
 			$this->_label[] = $label;
 		}
 
+
 		if ( is_array( $href ) )
 		{
-			$this->add_attributes( $href );
+			$this->addAttributes( $href );
 		}
 		else
 		{
-			$this->add_attribute( 'href', $href );
+			$this->addAttribute( 'href', $href );
 		}
 
 		if ( isset( $type ) )
 		{
 			if ( is_array( $type ) )
 			{
-				$this->add_attributes( $type );
+				$this->addAttributes( $type );
 			}
 			elseif ( is_string( $type ) )
 			{
 				if ( in_array( $type, $this->_contextual_classes ) )
 				{
-					$this->add_class( 'btn' );
-
-					$this->{'is_' . $type}();
+					$this->addClass( 'btn' );
+					$this->{'is' . studlycapcase($type)}();
 				}
 			}
 		}
@@ -107,15 +107,14 @@ class Link extends Button
 		{
 			if ( is_array( $attr ) )
 			{
-				$this->add_attributes( $attr );
+				$this->addAttributes( $attr );
 			}
 			elseif ( is_string( $attr ) )
 			{
 				if ( in_array( $attr, $this->_contextual_classes ) )
 				{
-					$this->add_class( 'btn' );
-
-					$this->{'is_' . $attr}();
+					$this->addClass( 'btn' );
+					$this->{'is' . studlycapcase($attr)}();
 				}
 			}
 		}
@@ -136,7 +135,7 @@ class Link extends Button
 		{
 			if ( isset( $this->icon ) )
 			{
-				$this->prepend_label( $this->icon );
+				$this->prependLabel( $this->icon );
 			}
 
 			return ( new Tag( $this->_tag, implode( PHP_EOL, $this->_label ), $this->_attributes ) )->render();

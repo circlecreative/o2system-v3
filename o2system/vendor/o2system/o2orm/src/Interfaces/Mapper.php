@@ -26,12 +26,12 @@ trait Mapper
 	 *
 	 * @return mixed
 	 */
-	final protected function belongs_to( $relation, $reference_key = NULL )
+	final protected function belongsTo($relation, $reference_key = NULL )
 	{
 		$belongs_to = new Relations\Belongs_To( $this );
 
-		$belongs_to->set_relation( $relation );
-		$belongs_to->set_reference_field( $reference_key );
+		$belongs_to->setRelation( $relation );
+		$belongs_to->setReferenceField( $reference_key );
 
 		return $belongs_to->result();
 	}
@@ -48,12 +48,12 @@ trait Mapper
 	 *
 	 * @return array
 	 */
-	final protected function belongs_to_many( $relation, $reference_key = NULL )
+	final protected function belongsToMany($relation, $reference_key = NULL )
 	{
 		$belongs_to_many = new Relations\Belongs_To_Many( $this );
 
-		$belongs_to_many->set_relation( $relation );
-		$belongs_to_many->set_reference_field( $reference_key );
+		$belongs_to_many->setRelation( $relation );
+		$belongs_to_many->setReferenceField( $reference_key );
 
 		return $belongs_to_many->result();
 	}
@@ -74,12 +74,12 @@ trait Mapper
 	 *
 	 * @return mixed
 	 */
-	final protected function has_one( $relation, $reference_key = NULL )
+	final protected function hasOne($relation, $reference_key = NULL )
 	{
 		$has_one = new Relations\Has_One( $this );
 
-		$has_one->set_relation( $relation );
-		$has_one->set_reference_field( $reference_key );
+		$has_one->setRelation( $relation );
+		$has_one->setReferenceField( $reference_key );
 
 		return $has_one->result();
 	}
@@ -100,12 +100,12 @@ trait Mapper
 	 *
 	 * @return mixed
 	 */
-	final protected function has_many( $relation, $reference_key = NULL )
+	final protected function hasMany($relation, $reference_key = NULL )
 	{
 		$has_many = new Relations\Has_Many( $this );
 
-		$has_many->set_relation( $relation );
-		$has_many->set_reference_field( $reference_key );
+		$has_many->setRelation( $relation );
+		$has_many->setReferenceField( $reference_key );
 
 		return $has_many->result();
 	}
@@ -123,7 +123,7 @@ trait Mapper
 	final protected function has()
 	{
 		$has = new Relations\Has( $this );
-		$has->set_relationships( func_get_args() );
+		$has->setRelationships( func_get_args() );
 		$has->result();
 
 		return $this;
@@ -145,7 +145,7 @@ trait Mapper
 	final protected function with()
 	{
 		$with = new Relations\With( $this );
-		$with->set_relationships( func_get_args() );
+		$with->setRelationships( func_get_args() );
 
 		return $this;
 	}

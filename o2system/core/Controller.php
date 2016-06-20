@@ -42,6 +42,7 @@ defined( 'ROOTPATH' ) OR exit( 'No direct script access allowed' );
 
 // ------------------------------------------------------------------------
 
+use O2System\Glob\ArrayObject;
 use O2System\Glob\Interfaces\ControllerInterface;
 
 /**
@@ -65,26 +66,28 @@ abstract class Controller extends ControllerInterface
 		parent::__construct();
 
 		// Powered By Vars
-		$powered = new \stdClass();
-		$powered->system_name = SYSTEM_NAME;
-		$powered->system_version = SYSTEM_VERSION;
-		$powered->proudly = 'Proudly powered by ' . SYSTEM_NAME . ' ' . SYSTEM_VERSION . ' &#8212; Open Source PHP Framework';
-		$powered->line = SYSTEM_NAME . ' ' . SYSTEM_VERSION . ' &#8212; Open Source PHP Framework';
-		$powered->url = 'http://www.o2system.in';
+		$powered = new ArrayObject(
+			[
+				'system_name'    => SYSTEM_NAME,
+				'system_version' => SYSTEM_VERSION,
+				'proudly'        => 'Proudly powered by ' . SYSTEM_NAME . ' ' . SYSTEM_VERSION . ' &#8212; Open Source PHP Framework',
+				'line'           => SYSTEM_NAME . ' ' . SYSTEM_VERSION . ' &#8212; Open Source PHP Framework',
+				'url'            => 'https://www.o2system.io',
+			] );
 
-		$this->view->add_var( 'powered', $powered );
+		$this->view->addVar( 'powered', $powered );
 
 		// Set Default Template Metadata
-		$this->view->metadata->add_meta( 'generator', $powered->line );
+		$this->view->metadata->addMeta( 'generator', $powered->line );
 
 		// Load Applications Language
 		\O2System::$language->load( DIR_APPLICATIONS );
 
-		if ( \O2System::$active->offsetExists( 'module' ) )
+		if ( $module = \O2System::$active[ 'modules' ]->current() )
 		{
-			\O2System::$language->load( \O2System::$active[ 'module' ]->parameter );
+			\O2System::$language->load( $module->parameter );
 
-			if ( is_file( $setting_filepath = \O2System::$active[ 'module' ]->realpath . strtolower( \O2System::$active[ 'module' ]->type ) . '.settings' ) )
+			if ( is_file( $setting_filepath = $module->realpath . strtolower( $module->type ) . '.settings' ) )
 			{
 				$settings = json_decode( file_get_contents( $setting_filepath ), TRUE );
 
@@ -92,33 +95,33 @@ abstract class Controller extends ControllerInterface
 				{
 					if ( isset( $settings[ 'metadata' ] ) )
 					{
-						$this->view->metadata->add_meta( $settings[ 'metadata' ] );
+						$this->view->metadata->addMeta( $settings[ 'metadata' ] );
 					}
 
 					if ( isset( $settings[ 'assets' ] ) )
 					{
-						$this->view->assets->add_assets( $settings[ 'assets' ], 'plugin' );
+						$this->view->assets->addAssets( $settings[ 'assets' ], 'plugin' );
 					}
 				}
 			}
 
 			// Load Application Assets
-			$this->view->assets->add_asset( 'applications' );
+			$this->view->assets->addAsset( 'applications' );
 
 			// Load Module Assets
-			foreach ( \O2System::$active['modules'] as $module )
+			foreach ( \O2System::$active[ 'modules' ] as $module )
 			{
 				$assets_files[] = $module->parameter;
 			}
 
-			$assets_files[] = \O2System::$active[ 'module' ]->parameter;
+			$assets_files[] = $module->parameter;
 
 			// Load Controller Assets
-			if ( \O2System::$active[ 'module' ]->parameter === \O2System::$active[ 'controller' ]->parameter )
+			if ( $module->parameter === \O2System::$active[ 'controller' ]->parameter )
 			{
 				if ( \O2System::$active[ 'controller' ]->method === '_route' )
 				{
-					$method = empty( $params ) ? NULL : '-' . reset( $params );
+					$method         = empty( $params ) ? NULL : '-' . reset( $params );
 					$assets_files[] = \O2System::$active[ 'controller' ]->parameter . $method;
 				}
 				else
@@ -128,16 +131,16 @@ abstract class Controller extends ControllerInterface
 			}
 			else
 			{
-				$assets_files[] = \O2System::$active[ 'module' ]->parameter . '-' . \O2System::$active[ 'controller' ]->parameter;
+				$assets_files[] = $module->parameter . '-' . \O2System::$active[ 'controller' ]->parameter;
 
 				if ( \O2System::$active[ 'controller' ]->method === '_route' )
 				{
-					$method = empty( $params ) ? NULL : '-' . reset( $params );
-					$assets_files[] = \O2System::$active[ 'module' ]->parameter . '-' . \O2System::$active[ 'controller' ]->parameter . $method;
+					$method         = empty( $params ) ? NULL : '-' . reset( $params );
+					$assets_files[] = $module->parameter . '-' . \O2System::$active[ 'controller' ]->parameter . $method;
 				}
 				else
 				{
-					$assets_files[] = \O2System::$active[ 'module' ]->parameter . '-' . \O2System::$active[ 'controller' ]->parameter . '-' . \O2System::$active[ 'controller' ]->method;
+					$assets_files[] = $module->parameter . '-' . \O2System::$active[ 'controller' ]->parameter . '-' . \O2System::$active[ 'controller' ]->method;
 				}
 			}
 
@@ -147,15 +150,15 @@ abstract class Controller extends ControllerInterface
 					return str_replace( '_', '-', $filename );
 				}, array_unique( $assets_files ) );
 
-			$this->view->assets->add_assets( $files, 'custom' );
+			$this->view->assets->addAssets( $files, 'custom' );
 
 			// Load Module Model
-			if ( ! $this->__get( $module_model_object_name = strtolower( \O2System::$active[ 'module' ]->type ) . '_model' ) )
+			if ( empty( $this->{$module_model_object_name = strtolower( $module->type ) . '_model'} ) )
 			{
-				$model_classes = array(
-					rtrim( \O2System::$active[ 'namespace' ], '\\' ) . '\\' . 'Core\\Model',
-					rtrim( \O2System::$active[ 'namespace' ], '\\' ) . '\\' . 'Models\\' . ucfirst( \O2System::$active[ 'controller' ]->parameter ),
-				);
+				$model_classes = [
+					rtrim( \O2System::$active[ 'namespaces' ]->current(), '\\' ) . '\\' . 'Core\\Model',
+					rtrim( \O2System::$active[ 'namespaces' ]->current(), '\\' ) . '\\' . 'Models\\' . prepare_class_name( $module->parameter ),
+				];
 
 				foreach ( $model_classes as $model_class )
 				{
@@ -173,12 +176,12 @@ abstract class Controller extends ControllerInterface
 				function ( $filename )
 				{
 					return str_replace( '_', '-', $filename );
-				}, array(
+				}, [
 					   \O2System::$active[ 'controller' ]->parameter,
 					   \O2System::$active[ 'controller' ]->parameter . '-' . trim( \O2System::$active[ 'controller' ]->method, '_' ),
-				   ) );
+				   ] );
 
-			$this->view->assets->add_assets( $files, 'custom' );
+			$this->view->assets->addAssets( $files, 'custom' );
 		}
 
 		// Load Controller Language
@@ -187,10 +190,10 @@ abstract class Controller extends ControllerInterface
 		// Load Controller Model
 		if ( empty( $this->controller_model ) )
 		{
-			$model_classes = array(
-				rtrim( \O2System::$active[ 'namespace' ], '\\' ) . '\\' . 'Models\\' . prepare_class_name( \O2System::$active[ 'controller' ]->parameter ),
-				rtrim( \O2System::$active[ 'namespace' ], '\\' ) . '\\' . 'Core\\Model',
-			);
+			$model_classes = [
+				rtrim( \O2System::$active[ 'namespaces' ]->current(), '\\' ) . '\\' . 'Models\\' . prepare_class_name( \O2System::$active[ 'controller' ]->parameter ),
+				rtrim( \O2System::$active[ 'namespaces' ]->current(), '\\' ) . '\\' . 'Core\\Model',
+			];
 
 			foreach ( $model_classes as $model_class )
 			{
@@ -203,9 +206,9 @@ abstract class Controller extends ControllerInterface
 		}
 
 		// Load Controller Variables
-		if ( method_exists( $this, '_build_vars' ) )
+		if ( method_exists( $this, '_buildVars' ) )
 		{
-			$this->_build_vars();
+			$this->_buildVars();
 		}
 	}
 }

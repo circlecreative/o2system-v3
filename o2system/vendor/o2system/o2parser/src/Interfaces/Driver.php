@@ -70,7 +70,7 @@ abstract class Driver extends DriverInterface
      * @access  public
      * @return  string  Parse Output Result
      */
-    abstract public function parse_string( $string, $vars = array() );
+    abstract public function parseString($string, $vars = array() );
 
     /**
      * Register Plugin
@@ -79,5 +79,5 @@ abstract class Driver extends DriverInterface
      *
      * @access  public
      */
-    abstract public function register_plugin();
+    abstract public function registerPlugin();
 }

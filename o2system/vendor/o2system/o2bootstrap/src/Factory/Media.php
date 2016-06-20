@@ -64,7 +64,7 @@ class Media extends FactoryInterface
 
 		if ( is_string( $media ) )
 		{
-			$this->set_media( $media );
+			$this->setMedia( $media );
 		}
 		elseif ( $media instanceof Image )
 		{
@@ -77,7 +77,7 @@ class Media extends FactoryInterface
 
 		if ( isset( $attr ) )
 		{
-			$this->add_attributes( $attr );
+			$this->addAttributes( $attr );
 		}
 
 		return $this;
@@ -101,12 +101,12 @@ class Media extends FactoryInterface
 		return $this;
 	}
 
-	public function set_media( $media )
+	public function setMedia($media )
 	{
-		return $this->set_left_media( $media );
+		return $this->setLeftMedia( $media );
 	}
 
-	public function set_left_media( $media )
+	public function setLeftMedia($media )
 	{
 		if ( $media instanceof Image )
 		{
@@ -119,20 +119,20 @@ class Media extends FactoryInterface
 		else
 		{
 			$this->left_media = new Image();
-			$this->left_media->set_source( $media );
+			$this->left_media->setSource( $media );
 		}
 
-		$this->left_media->add_class( 'media-object' );
+		$this->left_media->addClass( 'media-object' );
 
 		return $this;
 	}
 
-	public function set_alt_media( $media, $link = NULL )
+	public function setAltMedia($media, $link = NULL )
 	{
-		return $this->set_right_media( $media, $link );
+		return $this->setRightMedia( $media, $link );
 	}
 
-	public function set_right_media( $media, $link = NULL )
+	public function setRightMedia($media, $link = NULL )
 	{
 		if ( $media instanceof Image )
 		{
@@ -145,10 +145,10 @@ class Media extends FactoryInterface
 		else
 		{
 			$this->right_media = new Image();
-			$this->right_media->set_source( $media );
+			$this->right_media->setSource( $media );
 		}
 
-		$this->right_media->add_class( 'media-object' );
+		$this->right_media->addClass( 'media-object' );
 
 		if ( isset( $link ) )
 		{
@@ -157,7 +157,7 @@ class Media extends FactoryInterface
 				if ( $link instanceof Link )
 				{
 					$link = clone $link;
-					$link->set_label( $this->right_media );
+					$link->setLabel( $this->right_media );
 					$this->right_media = $link;
 				}
 				else
@@ -167,14 +167,14 @@ class Media extends FactoryInterface
 			}
 			else
 			{
-				$this->set_link( $link );
+				$this->setLink( $link );
 			}
 		}
 
 		return $this;
 	}
 
-	public function set_heading( $heading, $tag = 'h4', $attr = array() )
+	public function setHeading($heading, $tag = 'h4', $attr = array() )
 	{
 		if ( is_array( $tag ) )
 		{
@@ -191,12 +191,12 @@ class Media extends FactoryInterface
 			$this->heading = new Tag( $tag, $heading, $attr );
 		}
 
-		$this->heading->add_class( 'media-caption' );
+		$this->heading->addClass( 'media-caption' );
 
 		return $this;
 	}
 
-	public function set_description( $description, $tag = 'p', $attr = array() )
+	public function setDescription($description, $tag = 'p', $attr = array() )
 	{
 		if ( is_array( $tag ) )
 		{
@@ -213,7 +213,7 @@ class Media extends FactoryInterface
 			$this->description = new Tag( $tag, $description, $attr );
 		}
 
-		$this->description->add_class( 'media-description' );
+		$this->description->addClass( 'media-description' );
 
 		return $this;
 	}
@@ -227,7 +227,7 @@ class Media extends FactoryInterface
 	 *
 	 * @return object
 	 */
-	public function set_link( $link, $attr = array() )
+	public function setLink($link, $attr = array() )
 	{
 		if ( $link instanceof Link )
 		{
@@ -241,21 +241,21 @@ class Media extends FactoryInterface
 		return $this;
 	}
 
-	public function align_bottom()
+	public function alignBottom()
 	{
 		$this->_is_align_bottom = TRUE;
 
 		return $this;
 	}
 
-	public function align_middle()
+	public function alignMiddle()
 	{
 		$this->_is_align_middle = TRUE;
 
 		return $this;
 	}
 
-	public function add_child( Media $child )
+	public function addChild(Media $child )
 	{
 		$this->childs[] = $child;
 
@@ -271,7 +271,7 @@ class Media extends FactoryInterface
 				if ( isset( $this->link ) )
 				{
 					$media = clone $this->link;
-					$media->set_label( $this->left_media );
+					$media->setLabel( $this->left_media );
 				}
 				else
 				{
@@ -297,26 +297,26 @@ class Media extends FactoryInterface
 			if ( isset( $this->link ) )
 			{
 				$heading = clone $this->link;
-				$heading->set_label( $this->heading );
+				$heading->setLabel( $this->heading );
 			}
 			else
 			{
 				$heading = $this->heading;
 			}
 
-			$body->append_content( $heading );
+			$body->appendContent( $heading );
 
 
 			if ( isset( $this->description ) )
 			{
-				$body->append_content( $this->description );
+				$body->appendContent( $this->description );
 			}
 
 			if ( ! empty( $this->childs ) )
 			{
 				foreach ( $this->childs as $child )
 				{
-					$body->append_content( $child );
+					$body->appendContent( $child );
 				}
 			}
 
@@ -327,7 +327,7 @@ class Media extends FactoryInterface
 				if ( isset( $this->link ) )
 				{
 					$media = clone $this->link;
-					$media->set_label( $this->right_media );
+					$media->setLabel( $this->right_media );
 				}
 				else
 				{

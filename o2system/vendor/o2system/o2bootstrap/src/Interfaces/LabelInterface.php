@@ -42,14 +42,14 @@ trait LabelInterface
 {
 	protected $_label = array();
 
-	public function set_label( $label )
+	public function setLabel($label )
 	{
 		$this->_label = [ $label ];
 
 		return $this;
 	}
 
-	public function reset_label()
+	public function resetLabel()
 	{
 		if ( count( $this->_label ) > 0 )
 		{
@@ -59,7 +59,7 @@ trait LabelInterface
 		return $this;
 	}
 
-	public function prepend_label( $label )
+	public function prependLabel($label )
 	{
 		array_unshift( $this->_label, $label );
 		$this->_label = array_unique( $this->_label );
@@ -67,7 +67,7 @@ trait LabelInterface
 		return $this;
 	}
 
-	public function append_label( $label )
+	public function appendLabel($label )
 	{
 		array_push( $this->_label, $label );
 		$this->_label = array_unique( $this->_label );

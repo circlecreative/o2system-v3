@@ -48,9 +48,9 @@ trait ResponsiveInterface
 	 * @access public
 	 * @return $this
 	 */
-	public function is_xsmall_visible()
+	public function isXsmallVisible()
 	{
-		$this->add_class('visible-xs');
+		$this->addClass('visible-xs');
 		return $this;
 	}
 
@@ -62,9 +62,9 @@ trait ResponsiveInterface
 	 * @access public
 	 * @return $this
 	 */
-	public function is_small_visible()
+	public function isSmallVisible()
 	{
-		$this->add_class('visible-sm');
+		$this->addClass('visible-sm');
 		return $this;
 	}
 
@@ -76,9 +76,9 @@ trait ResponsiveInterface
 	 * @access public
 	 * @return $this
 	 */
-	public function is_medium_visible()
+	public function isMediumVisible()
 	{
-		$this->add_class('visible-md');
+		$this->addClass('visible-md');
 		return $this;
 	}
 
@@ -90,9 +90,9 @@ trait ResponsiveInterface
 	 * @access public
 	 * @return $this
 	 */
-	public function is_large_visible()
+	public function isLargeVisible()
 	{
-		$this->add_class('visible-lg');
+		$this->addClass('visible-lg');
 		return $this;
 	}
 
@@ -104,9 +104,9 @@ trait ResponsiveInterface
 	 * @access public
 	 * @return $this
 	 */
-	public function is_xsmall_hidden()
+	public function isXsmallHidden()
 	{
-		$this->add_class('hidden-xs');
+		$this->addClass('hidden-xs');
 		return $this;
 	}
 
@@ -118,9 +118,9 @@ trait ResponsiveInterface
 	 * @access public
 	 * @return $this
 	 */
-	public function is_small_hidden()
+	public function isSmallHidden()
 	{
-		$this->add_class('hidden-sm');
+		$this->addClass('hidden-sm');
 		return $this;
 	}
 
@@ -132,9 +132,9 @@ trait ResponsiveInterface
 	 * @access public
 	 * @return $this
 	 */
-	public function is_medium_hidden()
+	public function isMediumHidden()
 	{
-		$this->add_class('hidden-md');
+		$this->addClass('hidden-md');
 		return $this;
 	}
 
@@ -146,9 +146,9 @@ trait ResponsiveInterface
 	 * @access public
 	 * @return $this
 	 */
-	public function is_large_hidden()
+	public function isLargeHidden()
 	{
-		$this->add_class('hidden-lg');
+		$this->addClass('hidden-lg');
 		return $this;
 	}
 }

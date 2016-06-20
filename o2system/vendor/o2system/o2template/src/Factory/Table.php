@@ -131,7 +131,7 @@ class Table
 	 * @param	array	$template
 	 * @return	bool
 	 */
-	public function set_template($template)
+	public function setTemplate($template)
 	{
 		if ( ! is_array($template))
 		{
@@ -152,9 +152,9 @@ class Table
 	 * @param	mixed
 	 * @return	CI_Table
 	 */
-	public function set_heading($args = array())
+	public function setHeading($args = array())
 	{
-		$this->heading = $this->_prep_args(func_get_args());
+		$this->heading = $this->_prepArgs(func_get_args());
 		return $this;
 	}
 
@@ -170,7 +170,7 @@ class Table
 	 * @param	int	$col_limit
 	 * @return	array
 	 */
-	public function make_columns($array = array(), $col_limit = 0)
+	public function makeColumns($array = array(), $col_limit = 0)
 	{
 		if ( ! is_array($array) OR count($array) === 0 OR ! is_int($col_limit))
 		{
@@ -216,7 +216,7 @@ class Table
 	 * @param	mixed	$value
 	 * @return	CI_Table
 	 */
-	public function set_empty($value)
+	public function setEmpty($value)
 	{
 		$this->empty_cells = $value;
 		return $this;
@@ -232,9 +232,9 @@ class Table
 	 * @param	mixed
 	 * @return	CI_Table
 	 */
-	public function add_row($args = array())
+	public function addRow($args = array())
 	{
-		$this->rows[] = $this->_prep_args(func_get_args());
+		$this->rows[] = $this->_prepArgs(func_get_args());
 		return $this;
 	}
 
@@ -248,7 +248,7 @@ class Table
 	 * @param	array
 	 * @return	array
 	 */
-	protected function _prep_args($args)
+	protected function _prepArgs($args)
 	{
 		// If there is no $args[0], skip this and treat as an associative array
 		// This can happen if there is only a single key, for example this is passed to table->generate
@@ -274,7 +274,7 @@ class Table
 	 * @param	string	$caption
 	 * @return	CI_Table
 	 */
-	public function set_caption($caption)
+	public function setCaption($caption)
 	{
 		$this->caption = $caption;
 	}
@@ -295,11 +295,11 @@ class Table
 		{
 			if ($table_data instanceof CI_DB_result)
 			{
-				$this->_set_from_db_result($table_data);
+				$this->_setFromDbResult($table_data);
 			}
 			elseif (is_array($table_data))
 			{
-				$this->_set_from_array($table_data);
+				$this->_setFromArray($table_data);
 			}
 		}
 
@@ -310,7 +310,7 @@ class Table
 		}
 
 		// Compile and validate the template date
-		$this->_compile_template();
+		$this->_compileTemplate();
 
 		// Validate a possibly existing custom cell manipulation function
 		if (isset($this->function) && ! is_callable($this->function))
@@ -437,17 +437,17 @@ class Table
 	 * @param	CI_DB_result	$db_result	Database result object
 	 * @return	void
 	 */
-	protected function _set_from_db_result($object)
+	protected function _setFromDbResult($object)
 	{
 		// First generate the headings from the table column names
 		if ($this->auto_heading === TRUE && empty($this->heading))
 		{
-			$this->heading = $this->_prep_args($object->list_fields());
+			$this->heading = $this->_prepArgs($object->listFields());
 		}
 
-		foreach ($object->result_array() as $row)
+		foreach ($object->resutArray() as $row)
 		{
-			$this->rows[] = $this->_prep_args($row);
+			$this->rows[] = $this->_prepArgs($row);
 		}
 	}
 
@@ -459,16 +459,16 @@ class Table
 	 * @param	array	$data
 	 * @return	void
 	 */
-	protected function _set_from_array($data)
+	protected function _setFromArray($data)
 	{
 		if ($this->auto_heading === TRUE && empty($this->heading))
 		{
-			$this->heading = $this->_prep_args(array_shift($data));
+			$this->heading = $this->_prepArgs(array_shift($data));
 		}
 
 		foreach ($data as &$row)
 		{
-			$this->rows[] = $this->_prep_args($row);
+			$this->rows[] = $this->_prepArgs($row);
 		}
 	}
 
@@ -479,15 +479,15 @@ class Table
 	 *
 	 * @return	void
 	 */
-	protected function _compile_template()
+	protected function _compileTemplate()
 	{
 		if ($this->template === NULL)
 		{
-			$this->template = $this->_default_template();
+			$this->template = $this->_defaultTemplate();
 			return;
 		}
 
-		$this->temp = $this->_default_template();
+		$this->temp = $this->_defaultTemplate();
 		foreach (array('table_open', 'thead_open', 'thead_close', 'heading_row_start', 'heading_row_end', 'heading_cell_start', 'heading_cell_end', 'tbody_open', 'tbody_close', 'row_start', 'row_end', 'cell_start', 'cell_end', 'row_alt_start', 'row_alt_end', 'cell_alt_start', 'cell_alt_end', 'table_close') as $val)
 		{
 			if ( ! isset($this->template[$val]))
@@ -504,7 +504,7 @@ class Table
 	 *
 	 * @return	array
 	 */
-	protected function _default_template()
+	protected function _defaultTemplate()
 	{
 		return array(
 			'table_open'		=> '<table border="0" cellpadding="4" cellspacing="0">',

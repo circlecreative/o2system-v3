@@ -68,7 +68,7 @@ class Nav extends Lists
 			{
 				if ( in_array( $type, [ self::NAV_TABS, self::NAV_PILLS ] ) )
 				{
-					$this->set_type( $type );
+					$this->setType( $type );
 				}
 			}
 			elseif ( is_array( $type ) )
@@ -79,7 +79,7 @@ class Nav extends Lists
 
 		if ( isset( $attr ) )
 		{
-			$this->add_attributes( $attr );
+			$this->addAttributes( $attr );
 		}
 
 		return $this;
@@ -87,7 +87,7 @@ class Nav extends Lists
 
 	// ------------------------------------------------------------------------
 
-	public function set_type( $type )
+	public function setType($type )
 	{
 		$types = array(
 			self::NAV_TABS  => 'nav-tabs',
@@ -96,13 +96,13 @@ class Nav extends Lists
 
 		if ( array_key_exists( $type, $types ) )
 		{
-			$this->add_class( $types[ $type ] );
+			$this->addClass( $types[ $type ] );
 		}
 
 		return $this;
 	}
 
-	public function add_item( $item, $describe = NULL, $attr = array(), $key = NULL )
+	public function addItem($item, $describe = NULL, $attr = array(), $key = NULL )
 	{
 		if ( $item instanceof Link )
 		{
@@ -110,33 +110,33 @@ class Nav extends Lists
 
 			if ( class_exists( 'O2System', FALSE ) )
 			{
-				if ( $item->get_attribute( 'href' ) === current_url() )
+				if ( $item->getAttribute( 'href' ) === current_url() )
 				{
 					$describe = Lists::ITEM_ACTIVE;
 				}
 			}
 
-			parent::add_item( $item, $describe, $attr, $key );
+			parent::addItem( $item, $describe, $attr, $key );
 		}
 		elseif ( $item instanceof Dropdown )
 		{
 			$dropdown = clone $item;
-			$dropdown->set_tag( 'li' );
+			$dropdown->setTag( 'li' );
 
 			if ( isset( $dropdown->button ) )
 			{
-				$dropdown->button->set_tag( 'a' )->set_class( 'dropdown-toggle' )->add_attribute( 'href', '#' );
+				$dropdown->button->setTag( 'a' )->setClass( 'dropdown-toggle' )->addAtribute( 'href', '#' );
 			}
 
-			$dropdown->add_attribute( 'role', 'presentation' );
+			$dropdown->addAttribute( 'role', 'presentation' );
 
-			parent::add_item( $dropdown, $describe, $attr, $key );
+			parent::addItem( $dropdown, $describe, $attr, $key );
 		}
 		elseif ( is_string( $item ) )
 		{
 			$item = new Link( $item, '#' );
 
-			parent::add_item( $item, $describe, $attr, $key );
+			parent::addItem( $item, $describe, $attr, $key );
 		}
 
 		return $this;
@@ -147,9 +147,9 @@ class Nav extends Lists
 	 *
 	 * @return object
 	 */
-	public function is_stacked()
+	public function isStacked()
 	{
-		$this->add_class( 'nav-stacked' );
+		$this->addClass( 'nav-stacked' );
 
 		return $this;
 	}
@@ -161,9 +161,9 @@ class Nav extends Lists
 	 *
 	 * @return object
 	 */
-	public function is_justified()
+	public function isJustified()
 	{
-		$this->add_class( 'nav-justified' );
+		$this->addClass( 'nav-justified' );
 
 		return $this;
 	}

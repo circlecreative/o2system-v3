@@ -34,7 +34,7 @@ class Pager extends Lists
 			}
 			else
 			{
-				$this->set_previous( $previous );
+				$this->setPrevious( $previous );
 			}
 		}
 
@@ -46,13 +46,13 @@ class Pager extends Lists
 			}
 			else
 			{
-				$this->set_next( $next );
+				$this->setNext( $next );
 			}
 		}
 
 		if ( isset( $attr ) )
 		{
-			$this->add_attributes( $attr );
+			$this->addAttributes( $attr );
 		}
 
 		return $this;
@@ -71,14 +71,14 @@ class Pager extends Lists
 		return $this;
 	}
 
-	public function is_aligned()
+	public function isAligned()
 	{
 		$this->_is_aligned = TRUE;
 
 		return $this;
 	}
 
-	public function set_previous( $previous, $link, $type = NULL, $attr = array() )
+	public function setPrevious($previous, $link, $type = NULL, $attr = array() )
 	{
 		if ( is_array( $link ) )
 		{
@@ -99,7 +99,7 @@ class Pager extends Lists
 
 			if ( $this->_is_aligned === TRUE )
 			{
-				$this->previous->add_class( 'previous' );
+				$this->previous->addClass( 'previous' );
 			}
 		}
 		else
@@ -126,12 +126,12 @@ class Pager extends Lists
 			$this->previous = new Link( $previous, $link, $attr );
 		}
 
-		parent::add_item( $this->previous, $type, $attr );
+		parent::addItem( $this->previous, $type, $attr );
 
 		return $this;
 	}
 
-	public function set_next( $next, $link, $type = NULL, $attr = array() )
+	public function setNext($next, $link, $type = NULL, $attr = array() )
 	{
 		if ( is_array( $link ) )
 		{
@@ -152,7 +152,7 @@ class Pager extends Lists
 
 			if ( $this->_is_aligned === TRUE )
 			{
-				$this->next->add_class( 'next' );
+				$this->next->addClass( 'next' );
 			}
 		}
 		else
@@ -179,7 +179,7 @@ class Pager extends Lists
 			$this->next = new Link( $next, $link, $attr );
 		}
 
-		parent::add_item( $this->next, $type, $attr );
+		parent::addItem( $this->next, $type, $attr );
 
 		return $this;
 	}

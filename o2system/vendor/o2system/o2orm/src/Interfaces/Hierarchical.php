@@ -22,7 +22,7 @@ trait Hierarchical
 	 *
 	 * @return numeric  rgt column value
 	 */
-	final public function _after_process_rebuild( $id_parent = 0, $left = 0, $depth = 0 )
+	final public function _afterProcessRebuild($id_parent = 0, $left = 0, $depth = 0 )
 	{
 		$table = empty( $table ) ? $this->table : $table;
 
@@ -30,15 +30,15 @@ trait Hierarchical
 		$right = $left + 1;
 
 		/* get all children of this node */
-		$this->db->select( 'id' )->where( 'id_parent', $id_parent )->order_by( 'record_ordering' );
+		$this->db->select( 'id' )->where( 'id_parent', $id_parent )->orderBy( 'record_ordering' );
 		$query = $this->db->get( $table );
 
-		if ( $query->num_rows() > 0 )
+		if ( $query->numRows() > 0 )
 		{
 			foreach ( $query->result() as $row )
 			{
 				/* does this page have children? */
-				$right = $this->rebuild_tree( $table, $row->id, $right, $depth + 1 );
+				$right = $this->rebuildTree( $table, $row->id, $right, $depth + 1 );
 			}
 		}
 
@@ -61,17 +61,17 @@ trait Hierarchical
 	 * @access public
 	 * @return array
 	 */
-	final public function get_parents( $id = 0, &$parents = array() )
+	final public function getParents($id = 0, &$parents = array() )
 	{
-		$query = $this->db->get_where( $this->table, [ 'id' => $id ] );
+		$query = $this->db->getWhere( $this->table, [ 'id' => $id ] );
 
-		if ( $query->num_rows() > 0 )
+		if ( $query->numRows() > 0 )
 		{
-			$parents[] = $query->first_row();
+			$parents[] = $query->firstRow();
 
-			if ( (int) $query->first_row()->id_parent > 0 )
+			if ( (int) $query->firstRow()->id_parent > 0 )
 			{
-				$this->getRow_parents( $query->first_row()->id_parent, $parents );
+				$this->getRowParents( $query->firstRow()->id_parent, $parents );
 			}
 		}
 
@@ -89,26 +89,26 @@ trait Hierarchical
 	 * @access public
 	 * @return array
 	 */
-	public function get_childs( $id_parent = NULL )
+	public function getChilds($id_parent = NULL )
 	{
 		if ( isset( $id_parent ) )
 		{
-			$this->db->where( 'id_parent', $id_parent )->or_where( 'id', $id_parent );
+			$this->db->where( 'id_parent', $id_parent )->orWhere( 'id', $id_parent );
 		}
 
-		if ( $this->db->field_exists( 'record_left', $this->table ) )
+		if ( $this->db->fieldExists( 'record_left', $this->table ) )
 		{
-			$this->db->order_by( 'record_left', 'ASC' );
+			$this->db->orderBy( 'record_left', 'ASC' );
 		}
 
-		if ( $this->db->field_exists( 'record_ordering', $this->table ) )
+		if ( $this->db->fieldExists( 'record_ordering', $this->table ) )
 		{
-			$this->db->order_by( 'record_ordering', 'ASC' );
+			$this->db->orderBy( 'record_ordering', 'ASC' );
 		}
 
 		$query = $this->db->get( $this->table );
 
-		if ( $query->num_rows() > 0 )
+		if ( $query->numRows() > 0 )
 		{
 			return $query->result();
 		}
@@ -127,11 +127,11 @@ trait Hierarchical
 	 * @access public
 	 * @return bool
 	 */
-	final public function has_childs(  $id_parent = 0 )
+	final public function hasChilds($id_parent = 0 )
 	{
 		$query = $this->db->select( 'id' )->where( 'id_parent', $id_parent )->get( $this->table );
 
-		if ( $query->num_rows() > 0 )
+		if ( $query->numRows() > 0 )
 		{
 			return TRUE;
 		}
@@ -150,9 +150,9 @@ trait Hierarchical
 	 * @access public
 	 * @return bool
 	 */
-	final public function count_childs( $id_parent )
+	final public function countChilds($id_parent )
 	{
-		return $this->db->select( 'id' )->get_where( $this->table, [ 'id_parent' => $id_parent ])->num_rows();
+		return $this->db->select( 'id' )->getWhere( $this->table, [ 'id_parent' => $id_parent ])->numRows();
 	}
 	// ------------------------------------------------------------------------
 }

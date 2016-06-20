@@ -40,15 +40,15 @@ namespace O2System\Bootstrap\Interfaces;
 
 trait PrintableInterface
 {
-	public function is_print_visible()
+	public function isPrintVisible()
 	{
-		$this->add_class('visible-print');
+		$this->addClass('visible-print');
 		return $this;
 	}
 
-	public function is_print_hidden()
+	public function isPrintHidden()
 	{
-		$this->add_class('hidden-print');
+		$this->addClass('hidden-print');
 		return $this;
 	}
 }

@@ -37,12 +37,12 @@
  */
 // ------------------------------------------------------------------------
 
-namespace O2System\Libraries\Social;
-defined( 'BASEPATH' ) OR exit( 'No direct script access allowed' );
+namespace O2System\Libraries\Social\Drivers;
+defined( 'ROOTPATH' ) OR exit( 'No direct script access allowed' );
 
 // ------------------------------------------------------------------------
 
-use O2System\Libraries\Social\Factory\Driver;
+use O2System\Glob\Interfaces\DriverInterface;
 use Abraham\TwitterOAuth\TwitterOAuth as SDK;
 
 /**
@@ -53,9 +53,21 @@ use Abraham\TwitterOAuth\TwitterOAuth as SDK;
  * @category      driver class
  * @author        Steeven Andrian Salim
  */
-class Twitter extends Driver
+class Twitter extends DriverInterface
 {
+	protected $_url = [
+		'share' => 'https://twitter.com/intent/tweet?url=%s',
+		'api'   => 'https://api.twitter.com/',
+	];
+
 	protected $_api_url = 'https://api.twitter.com/';
+
+	public function getShareLink( $link = NULL )
+	{
+		$link = isset( $link ) ? $link : current_url();
+
+		return sprintf( $this->_url[ 'share' ], urlencode( $link ) );
+	}
 
 	public function get_authorize_url( $callback )
 	{
@@ -72,7 +84,7 @@ class Twitter extends Driver
 
 		$controller =& get_instance();
 
-		$session->set_userdata( $this->_session_name, $request_token );
+		$session->setUserdata( $this->_session_name, $request_token );
 
 		return $sdk->url( 'oauth/authorize', array(
 			'oauth_token' => $request_token[ 'oauth_token' ]
@@ -117,7 +129,7 @@ class Twitter extends Driver
 			static::$_session[ 'user' ]->avatar = $profile->profile_image_url;
 			static::$_session[ 'user' ]->cover = $profile->profile_banner_url . '/1500x500';
 
-			$session->set_userdata( $this->_session_name, static::$_session );
+			$session->setUserdata( $this->_session_name, static::$_session );
 
 			return TRUE;
 		}

@@ -65,7 +65,7 @@ final class URI
 	 * @access  protected
 	 * @type    array
 	 */
-	protected $_config = array();
+	protected $_config = [ ];
 
 	// --------------------------------------------------------------------
 
@@ -104,7 +104,6 @@ final class URI
 	public function setRequest( $segments )
 	{
 		\O2System::$active[ 'URI' ]->setSegments( $segments, 'rsegments' );
-
 		$this->_validateSegments( \O2System::$active[ 'URI' ]->rsegments );
 	}
 
@@ -216,9 +215,9 @@ final class URI
 			return '';
 		}
 
-		$uri = parse_url( $_SERVER[ 'REQUEST_URI' ] );
+		$uri   = parse_url( $_SERVER[ 'REQUEST_URI' ] );
 		$query = isset( $uri[ 'query' ] ) ? $uri[ 'query' ] : '';
-		$uri = isset( $uri[ 'path' ] ) ? $uri[ 'path' ] : '';
+		$uri   = isset( $uri[ 'path' ] ) ? $uri[ 'path' ] : '';
 
 		if ( isset( $_SERVER[ 'SCRIPT_NAME' ][ 0 ] ) )
 		{
@@ -236,8 +235,8 @@ final class URI
 		// URI is found, and also fixes the QUERY_STRING server var and $_GET array.
 		if ( trim( $uri, '/' ) === '' AND strncmp( $query, '/', 1 ) === 0 )
 		{
-			$query = explode( '?', $query, 2 );
-			$uri = $query[ 0 ];
+			$query                     = explode( '?', $query, 2 );
+			$uri                       = $query[ 0 ];
 			$_SERVER[ 'QUERY_STRING' ] = isset( $query[ 1 ] ) ? $query[ 1 ] : '';
 		}
 		else
@@ -276,9 +275,9 @@ final class URI
 		}
 		elseif ( strncmp( $uri, '/', 1 ) === 0 )
 		{
-			$uri = explode( '?', $uri, 2 );
+			$uri                       = explode( '?', $uri, 2 );
 			$_SERVER[ 'QUERY_STRING' ] = isset( $uri[ 1 ] ) ? $uri[ 1 ] : '';
-			$uri = rawurldecode( $uri[ 0 ] );
+			$uri                       = rawurldecode( $uri[ 0 ] );
 		}
 
 		parse_str( $_SERVER[ 'QUERY_STRING' ], $_GET );
@@ -300,8 +299,8 @@ final class URI
 	 */
 	protected function _removeRelativeDirectory( $uri )
 	{
-		$segments = array();
-		$segment = strtok( $uri, '/' );
+		$segments = [ ];
+		$segment  = strtok( $uri, '/' );
 
 		$base_dirs = explode( '/', str_replace( '\\', '/', ROOTPATH ) );
 
@@ -309,7 +308,8 @@ final class URI
 		{
 			if ( ( ! empty( $segment ) || $segment === '0' ) AND
 				$segment !== '..' AND
-				! in_array( $segment, $base_dirs
+				! in_array(
+					$segment, $base_dirs
 				)
 			)
 			{
@@ -346,9 +346,10 @@ final class URI
 		}
 
 		// Convert programatic characters to entities and return
-		return str_replace( array( '$', '(', ')', '%28', '%29', $this->_config[ 'suffix' ], '.html' ),    // Bad
-		                    array( '&#36;', '&#40;', '&#41;', '&#40;', '&#41;', '' ),    // Good
-		                    $string );
+		return str_replace(
+			[ '$', '(', ')', '%28', '%29', $this->_config[ 'suffix' ], '.html' ],    // Bad
+			[ '&#36;', '&#40;', '&#41;', '&#40;', '&#41;', '' ],    // Good
+			$string );
 	}
 
 	/**
@@ -359,9 +360,10 @@ final class URI
 	 * @access  protected
 	 * @throws \HttpRequestException
 	 */
-	protected function _validateSegments( $segments = array() )
+	protected function _validateSegments( $segments = [ ] )
 	{
 		$segments = empty( $segments ) ? \O2System::$active[ 'URI' ]->segments : $segments;
+
 		\O2System::$active[ 'URI' ]->setSegments( $segments, 'rsegments' );
 		\O2System::$active[ 'URI' ]->setSegments( \O2System::$active[ 'URI' ]->rsegments, 'isegments' );
 
@@ -382,20 +384,27 @@ final class URI
 					{
 						foreach ( $parents as $parent )
 						{
-							\O2System::$active[ 'modules' ][] = $parent;
-							\O2System::$active[ 'namespaces' ][] = $parent->namespace;
-							\O2System::$active[ 'directories' ][] = ROOTPATH . $parent->realpath;
+							if ( ! in_array( $parent->namespace, \O2System::$active[ 'namespaces' ]->getArrayCopy() ) )
+							{
+								\O2System::$active[ 'namespaces' ][]  = $parent->namespace;
+								\O2System::$active[ 'directories' ][] = ROOTPATH . $parent->realpath;
+								\O2System::$active[ 'modules' ][]     = $parent;
+							}
+
 						}
 					}
 
-					\O2System::$active[ 'modules' ][] = $module;
-					\O2System::$active[ 'module' ] = \O2System::$active[ 'modules' ]->seek( \O2System::$active[ 'modules' ]->count() - 1 );
+					if ( ! in_array( $module->namespace, \O2System::$active[ 'namespaces' ]->getArrayCopy() ) )
+					{
+						\O2System::$active[ 'namespaces' ][] = $module->namespace;
+						\O2System::$active[ 'namespaces' ]->setCurrent( \O2System::$active[ 'namespaces' ]->count() - 1 );
 
-					\O2System::$active[ 'namespaces' ][] = $module->namespace;
-					\O2System::$active[ 'namespace' ] = \O2System::$active[ 'namespaces' ]->seek( \O2System::$active[ 'namespaces' ]->count() - 1 );
+						\O2System::$active[ 'directories' ][] = ROOTPATH . $module->realpath;
+						\O2System::$active[ 'directories' ]->setCurrent( \O2System::$active[ 'directories' ]->count() - 1 );
 
-					\O2System::$active[ 'directories' ][] = ROOTPATH . $module->realpath;
-					\O2System::$active[ 'directory' ] = \O2System::$active[ 'directories' ]->seek( \O2System::$active[ 'directories' ]->count() - 1 );
+						\O2System::$active[ 'modules' ][] = $module;
+						\O2System::$active[ 'modules' ]->setCurrent( \O2System::$active[ 'modules' ]->count() - 1 );
+					}
 
 					// Reload Module Config
 					\O2System::$config->load( 'config' );
@@ -407,7 +416,7 @@ final class URI
 
 		if ( count( \O2System::$active[ 'URI' ]->isegments ) > 0 )
 		{
-			$page_directories = array();
+			$page_directories = [ ];
 
 			foreach ( \O2System::$active[ 'directories' ] as $directory )
 			{
@@ -426,9 +435,9 @@ final class URI
 				}
 			}
 
-			if ( \O2System::$active->offsetExists( 'module' ) )
+			if ( $module = \O2System::$active[ 'modules' ]->current() )
 			{
-				if ( is_dir( $page_directory = ROOTPATH . \O2System::$active[ 'module' ]->realpath . 'pages' . DIRECTORY_SEPARATOR ) )
+				if ( is_dir( $page_directory = ROOTPATH . $module->realpath . 'pages' . DIRECTORY_SEPARATOR ) )
 				{
 					$page_directories[] = $page_directory;
 
@@ -450,26 +459,26 @@ final class URI
 					\O2System::$active[ 'page' ] = new Page( $page_filepath );
 
 					// Find Modular Pages Controller
-					if ( is_file( $controller_filepath = ROOTPATH . \O2System::$active[ 'module' ]->realpath . 'controllers' . DIRECTORY_SEPARATOR . 'Pages.php' ) )
+					if ( isset( $module ) AND is_file( $controller_filepath = ROOTPATH . $module->realpath . 'controllers' . DIRECTORY_SEPARATOR . 'Pages.php' ) )
 					{
-						\O2System::$active[ 'controller' ] = new Controller( $controller_filepath );
-						\O2System::$active[ 'URI' ]->rsegments = [ \O2System::$active[ 'module' ]->parameter, 'pages', 'index' ];
+						\O2System::$active[ 'controller' ]     = new Controller( $controller_filepath );
+						\O2System::$active[ 'URI' ]->rsegments = [ $module->parameter, 'pages', 'index' ];
 					}
 					elseif ( is_file( $controller_filepath = APPSPATH . 'controllers' . DIRECTORY_SEPARATOR . 'Pages.php' ) )
 					{
-						\O2System::$active[ 'controller' ] = new Controller( $controller_filepath );
+						\O2System::$active[ 'controller' ]     = new Controller( $controller_filepath );
 						\O2System::$active[ 'URI' ]->rsegments = [ 'pages', 'index' ];
 					}
 					elseif ( is_file( $controller_filepath = SYSTEMPATH . 'controllers' . DIRECTORY_SEPARATOR . 'Pages.php' ) )
 					{
-						\O2System::$active[ 'controller' ] = new Controller( $controller_filepath );
+						\O2System::$active[ 'controller' ]     = new Controller( $controller_filepath );
 						\O2System::$active[ 'URI' ]->rsegments = [ 'pages', 'index' ];
 					}
 
-					\O2System::$active[ 'controller' ]->params = array(
+					\O2System::$active[ 'controller' ]->params = [
 						\O2System::$active[ 'page' ]->realpath,
 						\O2System::$active[ 'page' ]->vars,
-					);
+					];
 
 					// We didn't have to find the module because is definitely a page
 					// The router will be set the active controller into pages controller

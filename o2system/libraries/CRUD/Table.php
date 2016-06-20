@@ -253,40 +253,40 @@ class Table
 
 	public function __construct()
 	{
-		\O2System::View()->assets->add_asset( 'crud-table' );
+		\O2System::View()->assets->addAsset( 'crud-table' );
 	}
 
-	public function set_title( $title )
+	public function setTitle($title )
 	{
 		$this->_title = $title;
 	}
 
-	public function set_attributes( array $attributes )
+	public function setAttributes(array $attributes )
 	{
 		$this->_attributes = $attributes;
 	}
 
-	public function set_config( array $config )
+	public function setConfig(array $config )
 	{
 		$this->_config = array_merge( $this->_config, $config );
 	}
 
-	public function set_show_entries( $entries )
+	public function setShowEntries($entries )
 	{
 		$this->_show_entries = (int) $entries;
 	}
 
-	public function set_toolbar( array $toolbar )
+	public function setToolbar(array $toolbar )
 	{
 		$this->_toolbar = array_merge( $this->_toolbar, $toolbar );
 	}
 
-	public function set_actions( array $actions )
+	public function setActions(array $actions )
 	{
 		$this->_actions = array_merge( $this->_actions, $actions );
 	}
 
-	public function set_columns( array $columns )
+	public function setColumns(array $columns )
 	{
 		$this->_columns = new ArrayObject();
 
@@ -328,7 +328,7 @@ class Table
 		{
 			if ( $column_config[ 'type' ] === 'actions' )
 			{
-				$column_config[ 'label' ] = ( new Button( 'Show Filter', [ 'data-action' => 'table-filter-toggle' ] ) )->is_tiny()->is_block();
+				$column_config[ 'label' ] = ( new Button( 'Show Filter', [ 'data-action' => 'table-filter-toggle' ] ) )->isTiny()->isBlock();
 			}
 			elseif ( isset( $column_config[ 'label' ] ) )
 			{
@@ -355,12 +355,12 @@ class Table
 		}
 	}
 
-	public function set_rows( array $rows )
+	public function setRows(array $rows )
 	{
 		$this->_rows = $rows;
 	}
 
-	public function set_results( ArrayObject $results )
+	public function setResults(ArrayObject $results )
 	{
 		$this->_results = $results;
 	}
@@ -368,31 +368,31 @@ class Table
 	public function render()
 	{
 		$panel = new Panel( Panel::DEFAULT_PANEL );
-		$panel->set_title( $this->_title );
-		$panel->add_attribute( 'data-role', 'table-list-panel' );
+		$panel->setTitle( $this->_title );
+		$panel->addAttribute( 'data-role', 'table-list-panel' );
 
 		if ( $this->_config[ 'show_labels' ] === TRUE )
 		{
 			$toolbar_actions = array(
-				'add-new'   => ( new Button( lang( 'BTN_ADDNEW' ), [ 'data-action' => 'toolbar-add-new' ] ) )->is_medium()->set_icon( 'fa fa-file' ),
-				'edit'      => ( new Button( lang( 'BTN_EDIT' ), [ 'data-action' => 'toolbar-edit' ] ) )->is_medium()->set_icon( 'fa fa-edit' ),
-				'publish'   => ( new Button( lang( 'BTN_SELECTED_PUBLISH' ), [ 'data-action' => 'toolbar-publish' ] ) )->is_medium()->set_icon( 'fa fa-eye' ),
-				'unpublish' => ( new Button( lang( 'BTN_SELECTED_UNPUBLISH' ), [ 'data-action' => 'toolbar-unpublish' ] ) )->is_medium()->set_icon( 'fa fa-eye-slash' ),
-				'delete'    => ( new Button( lang( 'BTN_SELECTED_DELETE' ), [ 'data-action' => 'toolbar-delete' ] ) )->is_medium()->set_icon( 'fa fa-trash' ),
-				'archive'   => ( new Button( lang( 'BTN_ARCHIVE' ), [ 'data-action' => 'toolbar-archive' ] ) )->is_medium()->set_icon( 'fa fa-archive' ),
-				'help'      => ( new Button( lang( 'BTN_HELP' ), [ 'data-action' => 'toolbar-help' ] ) )->is_medium()->set_icon( 'fa fa-question-circle' ),
+				'add-new'   => ( new Button( lang( 'BTN_ADDNEW' ), [ 'data-action' => 'toolbar-add-new' ] ) )->isMedium()->setIcon( 'fa fa-file' ),
+				'edit'      => ( new Button( lang( 'BTN_EDIT' ), [ 'data-action' => 'toolbar-edit' ] ) )->isMedium()->setIcon( 'fa fa-edit' ),
+				'publish'   => ( new Button( lang( 'BTN_SELECTED_PUBLISH' ), [ 'data-action' => 'toolbar-publish' ] ) )->isMedium()->setIcon( 'fa fa-eye' ),
+				'unpublish' => ( new Button( lang( 'BTN_SELECTED_UNPUBLISH' ), [ 'data-action' => 'toolbar-unpublish' ] ) )->isMedium()->setIcon( 'fa fa-eye-slash' ),
+				'delete'    => ( new Button( lang( 'BTN_SELECTED_DELETE' ), [ 'data-action' => 'toolbar-delete' ] ) )->isMedium()->setIcon( 'fa fa-trash' ),
+				'archive'   => ( new Button( lang( 'BTN_ARCHIVE' ), [ 'data-action' => 'toolbar-archive' ] ) )->isMedium()->setIcon( 'fa fa-archive' ),
+				'help'      => ( new Button( lang( 'BTN_HELP' ), [ 'data-action' => 'toolbar-help' ] ) )->isMedium()->setIcon( 'fa fa-question-circle' ),
 			);
 		}
 		else
 		{
 			$toolbar_actions = array(
-				'add-new'   => ( new Button( [ 'data-action' => 'toolbar-add-new' ] ) )->is_medium()->set_icon( 'fa fa-file' ),
-				'edit'      => ( new Button( [ 'data-action' => 'toolbar-edit' ] ) )->is_medium()->set_icon( 'fa fa-edit' ),
-				'publish'   => ( new Button( [ 'data-action' => 'toolbar-publish' ] ) )->is_medium()->set_icon( 'fa fa-eye' ),
-				'unpublish' => ( new Button( [ 'data-action' => 'toolbar-unpublish' ] ) )->is_medium()->set_icon( 'fa fa-eye-slash' ),
-				'delete'    => ( new Button( [ 'data-action' => 'toolbar-delete' ] ) )->is_medium()->set_icon( 'fa fa-trash' ),
-				'archive'   => ( new Button( [ 'data-action' => 'toolbar-archive' ] ) )->is_medium()->set_icon( 'fa fa-archive' ),
-				'help'      => ( new Button( [ 'data-action' => 'toolbar-help' ] ) )->is_medium()->set_icon( 'fa fa-question-circle' ),
+				'add-new'   => ( new Button( [ 'data-action' => 'toolbar-add-new' ] ) )->isMedium()->setIcon( 'fa fa-file' ),
+				'edit'      => ( new Button( [ 'data-action' => 'toolbar-edit' ] ) )->isMedium()->setIcon( 'fa fa-edit' ),
+				'publish'   => ( new Button( [ 'data-action' => 'toolbar-publish' ] ) )->isMedium()->setIcon( 'fa fa-eye' ),
+				'unpublish' => ( new Button( [ 'data-action' => 'toolbar-unpublish' ] ) )->isMedium()->setIcon( 'fa fa-eye-slash' ),
+				'delete'    => ( new Button( [ 'data-action' => 'toolbar-delete' ] ) )->isMedium()->setIcon( 'fa fa-trash' ),
+				'archive'   => ( new Button( [ 'data-action' => 'toolbar-archive' ] ) )->isMedium()->setIcon( 'fa fa-archive' ),
+				'help'      => ( new Button( [ 'data-action' => 'toolbar-help' ] ) )->isMedium()->setIcon( 'fa fa-question-circle' ),
 			);
 		}
 
@@ -402,43 +402,43 @@ class Table
 		{
 			if ( $toolbar_button === TRUE )
 			{
-				$toolbar_buttons->add_item( $toolbar_actions[ $toolbar_action ] );
+				$toolbar_buttons->addItem( $toolbar_actions[ $toolbar_action ] );
 			}
 		}
 
-		$panel->set_options( $toolbar_buttons );
+		$panel->setOptions( $toolbar_buttons );
 
 
 		$table = new Tag( 'table', $this->_attributes );
-		$table->add_attribute( 'data-role', 'table-list' );
-		$table->append_content( $this->_render_thead() );
-		$table->append_content( $this->_render_tbody() );
+		$table->addAttribute( 'data-role', 'table-list' );
+		$table->appendContent( $this->_renderThead() );
+		$table->appendContent( $this->_renderTbody() );
 
 		$grid_entries = new Grid();
-		$grid_entries->set_num_per_rows( 2 );
+		$grid_entries->setNumPerRows( 2 );
 
 		foreach ( range( $this->_show_entries, 100, 10 ) as $entries )
 		{
 			$entries_options[ $entries ] = $entries;
 		}
 
-		$grid_entries->add_item( implode( PHP_EOL, array(
+		$grid_entries->addItem( implode( PHP_EOL, array(
 			( new Input( 'select' ) )
-				->set_attributes( array(
+				->setAttributes( array(
 					                  'data-action' => 'table-filter-entries',
 					                  'name'        => 'entries',
 					                  'class'       => 'select input-sm',
 				                  ) )
-				->set_label( 'Entries: ' )
-				->set_options( $entries_options ),
+				->setLabel( 'Entries: ' )
+				->setOptions( $entries_options ),
 			( new Input( 'select' ) )
-				->set_attributes( array(
+				->setAttributes( array(
 					                  'data-action' => 'table-filter-status',
 					                  'name'        => 'status',
 					                  'class'       => 'select input-sm',
 				                  ) )
-				->set_label( 'Status: ' )
-				->set_options( array(
+				->setLabel( 'Status: ' )
+				->setOptions( array(
 					               'PUBLISH'   => lang( 'PUBLISH' ),
 					               'UNPUBLISH' => lang( 'UNPUBLISH' ),
 					               'DRAFT'     => lang( 'DRAFT' ),
@@ -447,13 +447,13 @@ class Table
 				               ) ),
 		) ) );
 
-		$panel->set_body( $grid_entries );
+		$panel->setBody( $grid_entries );
 
-		$panel->set_table( new Tag( 'div', $table, [ 'class' => 'table-responsive' ] ) );
+		$panel->setTable( new Tag( 'div', $table, [ 'class' => 'table-responsive' ] ) );
 
-		$panel->set_footer( ( new Pagination( $this->_results->total->pages ) )
-			                    ->set_link( current_url() )
-			                    ->add_attribute( 'data-role', 'table-list-pagination' )
+		$panel->setFooter( ( new Pagination( $this->_results->total->pages ) )
+			                    ->setLink( current_url() )
+			                    ->addAttribute( 'data-role', 'table-list-pagination' )
 		);
 
 		return ( new Tag( 'form', $panel, array(
@@ -464,15 +464,15 @@ class Table
 		) ) )->render();
 	}
 
-	protected function _render_thead()
+	protected function _renderThead()
 	{
 		$thead = new Tag( 'thead' );
 
 		$tr_label = new Tag( 'tr' );
 
 		$tr_filter = new Tag( 'tr' );
-		$tr_filter->add_class( 'hidden' );
-		$tr_filter->add_attribute( 'data-role', 'table-filter' );
+		$tr_filter->addClass( 'hidden' );
+		$tr_filter->addAttribute( 'data-role', 'table-filter' );
 
 		foreach ( $this->_columns as $column_key => $column_config )
 		{
@@ -484,7 +484,7 @@ class Table
 			}
 
 			$th_label = new Tag( 'th', $attr );
-			$th_label->append_content( $column_config->label );
+			$th_label->appendContent( $column_config->label );
 
 			$attr[ 'id' ] = 'col-filter-' . $column_key;
 
@@ -493,7 +493,7 @@ class Table
 			if ( $column_config->filtering !== FALSE )
 			{
 				$column_config->key = $column_key;
-				$th_filter->append_content( $this->_render_th_filter( $column_config ) );
+				$th_filter->appendContent( $this->_renderThFilter( $column_config ) );
 			}
 
 			if ( isset( $column_config->show ) )
@@ -505,25 +505,25 @@ class Table
 						continue;
 					}
 
-					$th_label->add_class( 'hidden-' . $class_prefix );
-					$th_filter->add_class( 'hidden-' . $class_prefix );
+					$th_label->addClass( 'hidden-' . $class_prefix );
+					$th_filter->addClass( 'hidden-' . $class_prefix );
 				}
 			}
 
-			$th_label->add_class( 'col-thead-' . $column_key );
-			$th_filter->add_class( 'col-tfilter-' . $column_key );
+			$th_label->addClass( 'col-thead-' . $column_key );
+			$th_filter->addClass( 'col-tfilter-' . $column_key );
 
-			$tr_label->append_content( $th_label );
-			$tr_filter->append_content( $th_filter );
+			$tr_label->appendContent( $th_label );
+			$tr_filter->appendContent( $th_filter );
 		}
 
-		$thead->append_content( $tr_label );
-		$thead->append_content( $tr_filter );
+		$thead->appendContent( $tr_label );
+		$thead->appendContent( $tr_filter );
 
 		return $thead;
 	}
 
-	protected function _render_th_filter( $config )
+	protected function _renderThFilter($config )
 	{
 		switch ( $config->type )
 		{
@@ -584,15 +584,15 @@ class Table
 
 				if($this->_config['show_labels'] === TRUE)
 				{
-					$buttons->add_item( ( new Button( lang( 'BTN_SUBMIT' ), [ 'data-action' => 'table-filter-submit' ] ) )->set_icon( 'fa fa-search' )->is_submit()->is_small() );
-					$buttons->add_item( ( new Button( lang( 'BTN_RESET' ), [ 'data-action' => 'table-filter-reset' ] ) )->set_icon( 'fa fa-repeat' )->is_reset()->is_small() );
-					$buttons->add_item( ( new Button( lang( 'BTN_RELOAD' ), [ 'data-action' => 'table-filter-reload' ] ) )->set_icon( 'fa fa-refresh' )->is_reset()->is_small() );
+					$buttons->addItem( ( new Button( lang( 'BTN_SUBMIT' ), [ 'data-action' => 'table-filter-submit' ] ) )->setIcon( 'fa fa-search' )->isSubmit()->isSmall() );
+					$buttons->addItem( ( new Button( lang( 'BTN_RESET' ), [ 'data-action' => 'table-filter-reset' ] ) )->setIcon( 'fa fa-repeat' )->isReset()->isSmall() );
+					$buttons->addItem( ( new Button( lang( 'BTN_RELOAD' ), [ 'data-action' => 'table-filter-reload' ] ) )->setIcon( 'fa fa-refresh' )->isReset()->isSmall() );
 				}
 				else
 				{
-					$buttons->add_item( ( new Button( [ 'data-action' => 'table-filter-submit' ] ) )->set_icon( 'fa fa-search' )->is_submit()->is_small() );
-					$buttons->add_item( ( new Button( [ 'data-action' => 'table-filter-reset' ] ) )->set_icon( 'fa fa-repeat' )->is_reset()->is_small() );
-					$buttons->add_item( ( new Button( [ 'data-action' => 'table-filter-reload' ] ) )->set_icon( 'fa fa-refresh' )->is_reset()->is_small() );
+					$buttons->addItem( ( new Button( [ 'data-action' => 'table-filter-submit' ] ) )->setIcon( 'fa fa-search' )->isSubmit()->isSmall() );
+					$buttons->addItem( ( new Button( [ 'data-action' => 'table-filter-reset' ] ) )->setIcon( 'fa fa-repeat' )->isReset()->isSmall() );
+					$buttons->addItem( ( new Button( [ 'data-action' => 'table-filter-reload' ] ) )->setIcon( 'fa fa-refresh' )->isReset()->isSmall() );
 				}
 
 				return $buttons;
@@ -601,7 +601,7 @@ class Table
 		}
 	}
 
-	protected function _render_tbody()
+	protected function _renderTbody()
 	{
 		$tbody = new Tag( 'tbody' );
 
@@ -611,21 +611,21 @@ class Table
 
 			if ( empty( $_GET ) )
 			{
-				$tr->add_class( 'info' );
+				$tr->addClass( 'info' );
 				$message = 'Empty data';
 			}
 			else
 			{
-				$tr->add_class( 'danger' );
+				$tr->addClass( 'danger' );
 				$message = 'Result not found';
 			}
 
 			$td = new Tag( 'td', $message );
-			$td->add_class( 'text-center' );
-			$td->add_attribute( 'colspan', count( $this->_columns ) );
+			$td->addClass( 'text-center' );
+			$td->addAttribute( 'colspan', count( $this->_columns ) );
 
-			$tr->append_content( $td );
-			$tbody->append_content( $tr );
+			$tr->appendContent( $td );
+			$tbody->appendContent( $tr );
 		}
 		else
 		{
@@ -642,7 +642,7 @@ class Table
 			foreach ( $this->_rows as $row )
 			{
 				$tr = new Tag( 'tr' );
-				$tr->add_attribute( 'data-id', $row->id );
+				$tr->addAttribute( 'data-id', $row->id );
 
 				foreach ( $this->_columns as $column_key => $column_config )
 				{
@@ -678,7 +678,7 @@ class Table
 					}
 
 					$td = new Tag( 'td', $column_config->attr );
-					$td->append_content( $this->_render_td( $column_content, $column_config->type ) );
+					$td->appendContent( $this->_renderTd( $column_content, $column_config->type ) );
 
 					if ( isset( $column_config->show ) )
 					{
@@ -689,23 +689,23 @@ class Table
 								continue;
 							}
 
-							$td->add_class( 'hidden-' . $class_prefix );
+							$td->addClass( 'hidden-' . $class_prefix );
 						}
 					}
 
-					$td->add_class( 'col-tbody-' . $column_key );
+					$td->addClass( 'col-tbody-' . $column_key );
 
-					$tr->append_content( $td );
+					$tr->appendContent( $td );
 				}
 
-				$tbody->append_content( $tr );
+				$tbody->appendContent( $tr );
 			}
 		}
 
 		return $tbody;
 	}
 
-	protected function _render_td( $content, $type )
+	protected function _renderTd($content, $type )
 	{
 		switch ( $type )
 		{
@@ -728,7 +728,7 @@ class Table
 
 				if ( $content instanceof Image )
 				{
-					return $content->add_attributes( [ 'width' => 25, 'height' => 25 ] );
+					return $content->addAttributes( [ 'width' => 25, 'height' => 25 ] );
 				}
 
 				return new Image( $content, Image::THUMBNAIL_IMAGE, [ 'width' => 25, 'height' => 25 ] );
@@ -766,11 +766,11 @@ class Table
 
 				if ( $content === 'PUBLISH' )
 				{
-					return ( new Button( [ 'data-action' => 'item-publish' ] ) )->is_small()->set_icon( 'fa fa-eye' );
+					return ( new Button( [ 'data-action' => 'item-publish' ] ) )->isSmall()->setIcon( 'fa fa-eye' );
 				}
 				else
 				{
-					return ( new Button( [ 'data-action' => 'item-unpublish' ] ) )->is_small()->set_icon( 'fa fa-eye-slash' );
+					return ( new Button( [ 'data-action' => 'item-unpublish' ] ) )->isSmall()->setIcon( 'fa fa-eye-slash' );
 				}
 
 				break;
@@ -780,25 +780,25 @@ class Table
 				if ( $this->_config[ 'show_labels' ] === TRUE )
 				{
 					$actions = array(
-							'views'   => ( new Button( lang( 'BTN_VIEW' ), [ 'data-action' => 'item-view' ] ) )->is_small()->set_icon( 'fa fa-eye' ),
-							'copy'    => ( new Button( lang( 'BTN_COPY' ), [ 'data-action' => 'item-copy' ] ) )->is_small()->set_icon( 'fa fa-clone' ),
-							'edit'    => ( new Button( lang( 'BTN_EDIT' ), [ 'data-action' => 'item-edit' ] ) )->is_small()->set_icon( 'fa fa-edit' ),
-							'delete'  => ( new Button( lang( 'BTN_DELETE' ), [ 'data-action' => 'item-delete', 'data-confirm' => 'Are you sure?' ] ) )->is_small()->set_icon( 'fa fa-trash' ),
-							'archive' => ( new Button( lang( 'BTN_ARCHIVE' ), [ 'data-action' => 'item-archive' ] ) )->is_small()->set_icon( 'fa fa-achive' ),
-							'export'  => ( new Button( lang( 'BTN_EXPORT' ), [ 'data-action' => 'item-export' ] ) )->is_small()->set_icon( 'fa fa-mail-forward' ),
-							'import'  => ( new Button( lang( 'BTN_IMPORT' ), [ 'data-action' => 'item-import' ] ) )->is_small()->set_icon( 'fa fa-mail-reply' ),
+							'views'   => ( new Button( lang( 'BTN_VIEW' ), [ 'data-action' => 'item-view' ] ) )->isSmall()->setIcon( 'fa fa-eye' ),
+							'copy'    => ( new Button( lang( 'BTN_COPY' ), [ 'data-action' => 'item-copy' ] ) )->isSmall()->setIcon( 'fa fa-clone' ),
+							'edit'    => ( new Button( lang( 'BTN_EDIT' ), [ 'data-action' => 'item-edit' ] ) )->isSmall()->setIcon( 'fa fa-edit' ),
+							'delete'  => ( new Button( lang( 'BTN_DELETE' ), [ 'data-action' => 'item-delete', 'data-confirm' => 'Are you sure?' ] ) )->isSmall()->setIcon( 'fa fa-trash' ),
+							'archive' => ( new Button( lang( 'BTN_ARCHIVE' ), [ 'data-action' => 'item-archive' ] ) )->isSmall()->setIcon( 'fa fa-achive' ),
+							'export'  => ( new Button( lang( 'BTN_EXPORT' ), [ 'data-action' => 'item-export' ] ) )->isSmall()->setIcon( 'fa fa-mail-forward' ),
+							'import'  => ( new Button( lang( 'BTN_IMPORT' ), [ 'data-action' => 'item-import' ] ) )->isSmall()->setIcon( 'fa fa-mail-reply' ),
 					);
 				}
 				else
 				{
 					$actions = array(
-							'views'   => ( new Button( [ 'data-action' => 'item-view' ] ) )->is_small()->set_icon( 'fa fa-eye' ),
-							'copy'    => ( new Button( [ 'data-action' => 'item-copy' ] ) )->is_small()->set_icon( 'fa fa-clone' ),
-							'edit'    => ( new Button( [ 'data-action' => 'item-edit' ] ) )->is_small()->set_icon( 'fa fa-edit' ),
-							'delete'  => ( new Button( [ 'data-action' => 'item-delete', 'data-confirm' => 'Are you sure?' ] ) )->is_small()->set_icon( 'fa fa-trash' ),
-							'archive' => ( new Button( [ 'data-action' => 'item-archive' ] ) )->is_small()->set_icon( 'fa fa-achive' ),
-							'export'  => ( new Button(  [ 'data-action' => 'item-export' ] ) )->is_small()->set_icon( 'fa fa-mail-forward' ),
-							'import'  => ( new Button( [ 'data-action' => 'item-import' ] ) )->is_small()->set_icon( 'fa fa-mail-reply' ),
+							'views'   => ( new Button( [ 'data-action' => 'item-view' ] ) )->isSmall()->setIcon( 'fa fa-eye' ),
+							'copy'    => ( new Button( [ 'data-action' => 'item-copy' ] ) )->isSmall()->setIcon( 'fa fa-clone' ),
+							'edit'    => ( new Button( [ 'data-action' => 'item-edit' ] ) )->isSmall()->setIcon( 'fa fa-edit' ),
+							'delete'  => ( new Button( [ 'data-action' => 'item-delete', 'data-confirm' => 'Are you sure?' ] ) )->isSmall()->setIcon( 'fa fa-trash' ),
+							'archive' => ( new Button( [ 'data-action' => 'item-archive' ] ) )->isSmall()->setIcon( 'fa fa-achive' ),
+							'export'  => ( new Button(  [ 'data-action' => 'item-export' ] ) )->isSmall()->setIcon( 'fa fa-mail-forward' ),
+							'import'  => ( new Button( [ 'data-action' => 'item-import' ] ) )->isSmall()->setIcon( 'fa fa-mail-reply' ),
 					);
 				}
 
@@ -808,7 +808,7 @@ class Table
 				{
 					if ( $button === TRUE )
 					{
-						$buttons->add_item( $actions[ $action ] );
+						$buttons->addItem( $actions[ $action ] );
 					}
 				}
 

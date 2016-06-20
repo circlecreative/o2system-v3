@@ -58,11 +58,11 @@ class Embed extends FactoryInterface
 		{
 			if ( in_array( $src, [ '16:9', '4:3' ] ) )
 			{
-				$this->set_aspect_ratio( $src );
+				$this->setAspectRatio( $src );
 			}
 			else
 			{
-				$this->set_source( $src );
+				$this->setSource( $src );
 			}
 		}
 		elseif ( is_array( $src ) )
@@ -77,11 +77,11 @@ class Embed extends FactoryInterface
 
 		if ( isset( $attr ) )
 		{
-			$this->add_attributes( $attr );
+			$this->addAttributes( $attr );
 		}
 	}
 
-	public function set_aspect_ratio( $aspect_ratio )
+	public function setAspectRatio($aspect_ratio )
 	{
 		if ( in_array( $aspect_ratio, [ '16:9', '4:3' ] ) )
 		{
@@ -91,7 +91,7 @@ class Embed extends FactoryInterface
 		return $this;
 	}
 
-	public function set_source( $source, $tag = 'iframe', $attr = array() )
+	public function setSource($source, $tag = 'iframe', $attr = array() )
 	{
 		if ( is_array( $tag ) )
 		{
@@ -146,13 +146,13 @@ class Embed extends FactoryInterface
 			{
 				case '4:3':
 					
-					$this->add_class( 'embed-responsive-4by3' );
+					$this->addClass( 'embed-responsive-4by3' );
 
 					break;
 				
 				default:
 					
-					$this->add_class( 'embed-responsive-16by9' );
+					$this->addClass( 'embed-responsive-16by9' );
 
 					break;
 			}

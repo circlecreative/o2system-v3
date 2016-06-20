@@ -85,7 +85,7 @@ namespace O2System
 		{
 			if ( array_key_exists( $factory, $this->_valid_factories ) )
 			{
-				return $this->_load_factory( $factory );
+				return $this->_loadFactory( $factory );
 			}
 		}
 
@@ -103,7 +103,7 @@ namespace O2System
 		{
 			if ( array_key_exists( $factory, $this->_valid_factories ) )
 			{
-				$factory =& $this->_load_factory( $factory );
+				$factory =& $this->_loadFactory( $factory );
 
 				return call_user_func_array( array( $factory, 'build' ), $args );
 			}
@@ -120,7 +120,7 @@ namespace O2System
 		 *
 		 * @return    object    Driver class
 		 */
-		protected function &_load_factory( $factory )
+		protected function &_loadFactory($factory )
 		{
 			if ( empty( $this->{$factory} ) )
 			{

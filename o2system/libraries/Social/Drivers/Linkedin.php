@@ -49,7 +49,7 @@ class Linkedin extends Driver
 {
 	protected $_api_url = 'https://api.linkedin.com/';
 
-	public function get_authorize_url( $callback )
+	public function getAuthorizeUrl($callback )
 	{
 		$this->_config[ 'app_callback_url' ] = strpos( $callback, 'http' ) !== FALSE ? $callback : base_url( $callback );
 
@@ -62,12 +62,12 @@ class Linkedin extends Driver
 		);
 
 		$controller =& get_instance();
-		$session->set_userdata( $this->_session_name, [ 'app_callback_url' => $this->_config[ 'app_callback_url' ] ] );
+		$session->setUserdata( $this->_session_name, [ 'app_callback_url' => $this->_config[ 'app_callback_url' ] ] );
 
 		return CURL::generate_url( 'https://www.linkedin.com/', 'uas/oauth2/authorization', $params );
 	}
 
-	public function set_connection()
+	public function setConnection()
 	{
 		$controller =& get_instance();
 		$request_token = $session->userdata( $this->_session_name );
@@ -90,7 +90,7 @@ class Linkedin extends Driver
 				static::$_session[ 'access' ] = new \stdClass();
 				static::$_session[ 'access' ]->oauth_token = $request->body->access_token;
 
-				$profile = $this->get_profile();
+				$profile = $this->getProfile();
 
 				// Set Session User Data
 				static::$_session[ 'user' ] = new \stdClass();
@@ -101,7 +101,7 @@ class Linkedin extends Driver
 				static::$_session[ 'user' ]->avatar = $profile->pictureUrl;
 				static::$_session[ 'user' ]->cover = NULL;
 
-				$session->set_userdata( $this->_session_name, static::$_session );
+				$session->setUserdata( $this->_session_name, static::$_session );
 
 				return TRUE;
 			}
@@ -114,7 +114,7 @@ class Linkedin extends Driver
 		return FALSE;
 	}
 
-	public function request_api( $path = NULL, $params = array(), $method = 'get' )
+	public function requestApi($path = NULL, $params = array(), $method = 'get' )
 	{
 		if( $this->is_connected() )
 		{
@@ -145,27 +145,27 @@ class Linkedin extends Driver
 		return FALSE;
 	}
 
-	public function get_profile()
+	public function getProfile()
 	{
-		return $this->request_api( 'people/~:(id,first-name,last-name,headline,picture-url,email-address)', [ 'format' => 'json' ] );
+		return $this->requestApi( 'people/~:(id,first-name,last-name,headline,picture-url,email-address)', [ 'format' => 'json' ] );
 	}
 
-	public function get_feeds( $page = 1, $count = 10, array $params = array() )
+	public function getFeeds($page = 1, $count = 10, array $params = array() )
 	{
-		return $this->request_api( 'people/~/network/updates' );
+		return $this->requestApi( 'people/~/network/updates' );
 	}
 
-	public function post_feed( $feed, array $params = array() )
-	{
-		return FALSE;
-	}
-
-	public function post_link( $status, $link )
+	public function postFeed($feed, array $params = array() )
 	{
 		return FALSE;
 	}
 
-	public function post_media( $status, $media )
+	public function postLink($status, $link )
+	{
+		return FALSE;
+	}
+
+	public function postMedia($status, $media )
 	{
 		return FALSE;
 	}

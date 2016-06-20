@@ -38,11 +38,18 @@
 // ------------------------------------------------------------------------
 
 namespace O2System\Libraries\Social\Drivers;
-defined( 'BASEPATH' ) OR exit( 'No direct script access allowed' );
+defined( 'ROOTPATH' ) OR exit( 'No direct script access allowed' );
 
 // ------------------------------------------------------------------------
 
+use Api\Metadata\Member\Socialmedia\Account;
+use O2System\CURL\Interfaces\Method;
+use O2System\Exception;
+use O2System\Glob\ArrayObject;
 use O2System\Glob\Interfaces\DriverInterface;
+use O2System\Libraries\Social\Metadata\Access;
+use O2System\Libraries\Social\Metadata\Connection;
+use O2System\Libraries\Social\Metadata\Profile;
 
 /**
  * Facebook Driver
@@ -54,42 +61,55 @@ use O2System\Glob\Interfaces\DriverInterface;
  */
 class Facebook extends DriverInterface
 {
-	protected $_url = array(
+	protected $_url = [
 		'share' => 'https://www.facebook.com/sharer/sharer.php?u=%s',
-		'api' => 'https://graph.facebook.com/?id=%s',
-	);
+		'api'   => 'https://graph.facebook.com/?id=%s',
+	];
 
-	public function share()
+	/**
+	 * @type Connection
+	 */
+	protected $_connection;
+
+	public function __construct()
 	{
-
+		if ( ! class_exists( '\Facebook\Facebook' ) )
+		{
+			throw new Exception( 'Required Facebook PHP SDK' );
+		}
 	}
 
-	public function get_authorize_url( $callback )
+	public function getShareLink( $link = NULL )
 	{
-		$this->_config[ 'app_callback_url' ] = strpos( $callback, 'http' ) !== FALSE ? $callback : base_url( $callback );
+		$link = isset( $link ) ? $link : current_url();
 
-		$controller =& get_instance();
+		return sprintf( $this->_url[ 'share' ], urlencode( $link ) );
+	}
 
-		$sdk = new SDK( [
-			                'app_id'                => $this->_config[ 'app_id' ],
-			                'app_secret'            => $this->_config[ 'app_secret' ],
-			                'default_graph_version' => $this->_config[ 'api_version' ],
-		                ] );
+	public function getAuthorizeLink( $callback_url )
+	{
+		$this->_config[ 'app_callback_url' ] = strpos( $callback_url, 'http' ) !== FALSE ? $callback_url : base_url( $callback_url );
+
+		$sdk = new \Facebook\Facebook(
+			[
+				'app_id'                => $this->_config[ 'app_id' ],
+				'app_secret'            => $this->_config[ 'app_secret' ],
+				'default_graph_version' => $this->_config[ 'api_version' ],
+			] );
 
 		$helper = $sdk->getRedirectLoginHelper();
 
 		return $helper->getLoginUrl( $this->_config[ 'app_callback_url' ], $this->_config[ 'app_permissions' ] );
 	}
 
-	public function set_connection()
+	public function connect()
 	{
-		$controller =& get_instance();
-
-		$sdk = new SDK( [
-			                'app_id'                => $this->_config[ 'app_id' ],
-			                'app_secret'            => $this->_config[ 'app_secret' ],
-			                'default_graph_version' => $this->_config[ 'api_version' ],
-		                ] );
+		$sdk = new \Facebook\Facebook(
+			[
+				'app_id'                => $this->_config[ 'app_id' ],
+				'app_secret'            => $this->_config[ 'app_secret' ],
+				'default_graph_version' => $this->_config[ 'api_version' ],
+			] );
 
 		$helper = $sdk->getRedirectLoginHelper();
 
@@ -98,52 +118,56 @@ class Facebook extends DriverInterface
 		{
 			$access_token = $helper->getAccessToken();
 
-			if( ! empty( $access_token ) )
+			if ( ! empty( $access_token ) )
 			{
-				// Set Session Access Data
-				static::$_session[ 'access' ] = new \stdClass();
-				static::$_session[ 'access' ]->oauth_token = (string)$access_token;
+				$connection = new Connection(
+					[
+						'access'  => new Access(
+							[
+								'token' => (string) $access_token,
+							] ),
+						'profile' => new Profile(),
+					] );
 
 				$profile = $this->getProfile();
 
 				// Set Session User Data
-				static::$_session[ 'user' ] = new \stdClass();
-				static::$_session[ 'user' ]->id_user = $profile->id;
-				static::$_session[ 'user' ]->username = $profile->email;
+				$connection[ 'profile' ]->id_user_account = $profile->id;
+				$connection[ 'profile' ]->username        = $profile->email;
 
+				$connection[ 'profile' ]->name        = new ArrayObject( explode( ' ', $profile->name ) );
+				$connection[ 'profile' ]->name->full  = $profile->name;
+				$connection[ 'profile' ]->description = $profile->bio;
+				$connection[ 'profile' ]->avatar      = $profile->picture[ 'data' ][ 'url' ];
+				$connection[ 'profile' ]->cover       = $profile->cover[ 'source' ];
 
-				static::$_session[ 'user' ]->name_full = $profile->name;
-				static::$_session[ 'user' ]->description = $profile->bio;
-				static::$_session[ 'user' ]->avatar = $profile->picture[ 'data' ][ 'url' ];
-				static::$_session[ 'user' ]->cover = $profile->cover[ 'source' ];
-
-				$session->set_userdata( $this->_session_name, static::$_session );
+				\O2System::Session()->setUserdata( 'social_facebook_connection', $connection );
 
 				return TRUE;
 			}
 		}
-		catch( \Facebook\Exceptions\FacebookResponseException $e )
+		catch ( \Facebook\Exceptions\FacebookResponseException $e )
 		{
-			throw new \Exception( 'Graph returned an error: ' . $e->getMessage() );
+			throw new Exception( 'Social Facebook Graph returned an error: ' . $e->getMessage() );
 		}
-		catch( Facebook\Exceptions\FacebookSDKException $e )
+		catch ( \Facebook\Exceptions\FacebookSDKException $e )
 		{
-			throw new \Exceptions( 'Facebook SDK returned an error: ' . $e->getMessage() );
+			throw new Exception( 'Social Facebook SDK returned an error: ' . $e->getMessage() );
 		}
 
 		return FALSE;
 	}
 
-	public function request_api( $path = NULL, $params = array(), $method = 'get' )
+	public function apiRequest( $path = NULL, $params = [ ], $method = Method::GET )
 	{
-		if( $this->is_connected() )
+		if ( $this->isConnected() )
 		{
-			$sdk = new SDK( [
-				                'app_id'                => $this->_config[ 'app_id' ],
-				                'app_secret'            => $this->_config[ 'app_secret' ],
-				                'default_graph_version' => $this->_config[ 'api_version' ],
-			                ] );
-
+			$sdk = new \Facebook\Facebook(
+				[
+					'app_id'                => $this->_config[ 'app_id' ],
+					'app_secret'            => $this->_config[ 'app_secret' ],
+					'default_graph_version' => $this->_config[ 'api_version' ],
+				] );
 
 			$method = strtolower( $method );
 
@@ -151,16 +175,16 @@ class Facebook extends DriverInterface
 			{
 				$result = $sdk->{$method}( $path, static::$_session[ 'access' ]->oauth_token );
 
-				if( $result->getDecodedBody() )
+				if ( $result->getDecodedBody() )
 				{
 					return $result->getDecodedBody();
 				}
 			}
-			catch( \Facebook\Exceptions\FacebookResponseException $e )
+			catch ( \Facebook\Exceptions\FacebookResponseException $e )
 			{
 				throw new \Exceptions( 'Graph returned an error: ' . $e->getMessage() );
 			}
-			catch( Facebook\Exceptions\FacebookSDKException $e )
+			catch ( Facebook\Exceptions\FacebookSDKException $e )
 			{
 				throw new \Exceptions( 'Facebook SDK returned an error: ' . $e->getMessage() );
 			}
@@ -169,31 +193,31 @@ class Facebook extends DriverInterface
 		return FALSE;
 	}
 
-	protected function _build_field_options( $options = array() )
+	protected function _build_field_options( $options = [ ] )
 	{
-		foreach( $options as $key => $value )
+		foreach ( $options as $key => $value )
 		{
-			$query[ ] = $key . '(' . $value . ')';
+			$query[] = $key . '(' . $value . ')';
 		}
 
 		return implode( '.', $query );
 	}
 
-	protected function _build_fields( $fields = array() )
+	protected function _build_fields( $fields = [ ] )
 	{
 		return implode( ',', $fields );
 	}
 
-	protected function _build_post( $data = array() )
+	protected function _build_post( $data = [ ] )
 	{
-		foreach( $data as $key => $value )
+		foreach ( $data as $key => $value )
 		{
 			$fields[ $key ] = urlencode( $value );
 		}
 
 		$fields_string = '';
 
-		foreach( $fields as $key => $value )
+		foreach ( $fields as $key => $value )
 		{
 			$fields_string .= $key . '=' . $value . '&';
 		}
@@ -203,39 +227,39 @@ class Facebook extends DriverInterface
 
 	public function get_profile()
 	{
-		return (object)$this->request_api( '/me?fields=id,gender,hometown,first_name,middle_name,last_name,name,email,birthday,cover,picture,bio,address' );
+		return (object) $this->apiRequest( '/me?fields=id,gender,hometown,first_name,middle_name,last_name,name,email,birthday,cover,picture,bio,address' );
 	}
 
-	public function get_feeds( $page = 1, $count = 10, array $params = array() )
+	public function get_feeds( $page = 1, $count = 10, array $params = [ ] )
 	{
 		$controller =& get_instance();
 
-		$result = $this->request_api( '/me/feed?limit=' . $count );
+		$result = $this->apiRequest( '/me/feed?limit=' . $count );
 
-		if( isset( $result[ 'data' ] ) )
+		if ( isset( $result[ 'data' ] ) )
 		{
 			parse_str( parse_url( $result[ 'paging' ][ 'previous' ], PHP_URL_QUERY ), $previous );
 			parse_str( parse_url( $result[ 'paging' ][ 'next' ], PHP_URL_QUERY ), $next );
 
-			static::$_session[ 'feeds_paging' ][ $page - 1 ] = (object)array(
+			static::$_session[ 'feeds_paging' ][ $page - 1 ] = (object) [
 				'page_num'   => $page - 1,
 				'page_token' => $previous[ '__paging_token' ],
 				'page_since' => $previous[ 'since' ],
-			);
+			];
 
-			static::$_session[ 'feeds_paging' ][ $page ] = (object)array(
+			static::$_session[ 'feeds_paging' ][ $page ] = (object) [
 				'page_num'   => $page,
 				'page_token' => $previous[ '__paging_token' ],
 				'page_since' => $previous[ 'since' ],
-			);
+			];
 
-			static::$_session[ 'feeds_paging' ][ $page + 1 ] = (object)array(
+			static::$_session[ 'feeds_paging' ][ $page + 1 ] = (object) [
 				'page_num'   => $page + 1,
 				'page_token' => $next[ '__paging_token' ],
 				'page_until' => $next[ 'until' ],
-			);
+			];
 
-			$session->set_userdata( $this->_session_name, static::$_session );
+			$session->setUserdata( $this->_session_name, static::$_session );
 
 			return $result[ 'data' ];
 		}
@@ -243,23 +267,23 @@ class Facebook extends DriverInterface
 		return FALSE;
 	}
 
-	public function pull_albums( $count = 5, array $options = array() )
+	public function pull_albums( $count = 5, array $options = [ ] )
 	{
-		if( isset( $this->is_connected ) )
+		if ( isset( $this->is_connected ) )
 		{
-			if( ! empty( $options ) )
+			if ( ! empty( $options ) )
 			{
 				$parameters = array_change_key_case( $options, CASE_LOWER );
 			}
 
-			$uri = '/' . $this->_config[ 'api_version' ] . '/me/albums?';
+			$uri                          = '/' . $this->_config[ 'api_version' ] . '/me/albums?';
 			$parameters[ 'access_token' ] = $this->_session->access_token;
 
-			$parameters[ 'limit' ] = $count;
+			$parameters[ 'limit' ]  = $count;
 			$parameters[ 'format' ] = 'json';
 			$parameters[ 'method' ] = 'get';
 
-			$result = $this->_api_request( $uri . http_build_query( $parameters ) );
+			$result = $this->apiRequest( $uri . http_build_query( $parameters ) );
 
 			return $result->data;
 		}
@@ -267,23 +291,23 @@ class Facebook extends DriverInterface
 		return FALSE;
 	}
 
-	public function pull_album( $album_id, $count = 5, array $options = array() )
+	public function pull_album( $album_id, $count = 5, array $options = [ ] )
 	{
-		if( isset( $this->is_connected ) )
+		if ( isset( $this->is_connected ) )
 		{
-			if( ! empty( $options ) )
+			if ( ! empty( $options ) )
 			{
 				$parameters = array_change_key_case( $options, CASE_LOWER );
 			}
 
-			$uri = '/' . $this->_config[ 'api_version' ] . '/' . $album_id . '/photos?';
+			$uri                          = '/' . $this->_config[ 'api_version' ] . '/' . $album_id . '/photos?';
 			$parameters[ 'access_token' ] = $this->_session->access_token;
 
-			$parameters[ 'limit' ] = $count;
+			$parameters[ 'limit' ]  = $count;
 			$parameters[ 'format' ] = 'json';
 			$parameters[ 'method' ] = 'get';
 
-			$result = $this->_api_request( $uri . http_build_query( $parameters ) );
+			$result = $this->apiRequest( $uri . http_build_query( $parameters ) );
 
 			return $result->data;
 		}
@@ -291,23 +315,23 @@ class Facebook extends DriverInterface
 		return FALSE;
 	}
 
-	public function pull_photos( $count = 5, array $options = array() )
+	public function pull_photos( $count = 5, array $options = [ ] )
 	{
-		if( isset( $this->is_connected ) )
+		if ( isset( $this->is_connected ) )
 		{
-			if( ! empty( $options ) )
+			if ( ! empty( $options ) )
 			{
 				$parameters = array_change_key_case( $options, CASE_LOWER );
 			}
 
-			$uri = '/' . $this->_config[ 'api_version' ] . '/me/photos?';
+			$uri                          = '/' . $this->_config[ 'api_version' ] . '/me/photos?';
 			$parameters[ 'access_token' ] = $this->_session->access_token;
 
-			$parameters[ 'limit' ] = $count;
+			$parameters[ 'limit' ]  = $count;
 			$parameters[ 'format' ] = 'json';
 			$parameters[ 'method' ] = 'get';
 
-			$result = $this->_api_request( $uri . http_build_query( $parameters ) );
+			$result = $this->apiRequest( $uri . http_build_query( $parameters ) );
 
 			return $result->data;
 		}
@@ -316,45 +340,45 @@ class Facebook extends DriverInterface
 	}
 
 
-	public function pull_likes( $count = 5, array $options = array() )
+	public function pull_likes( $count = 5, array $options = [ ] )
 	{
 
 	}
 
-	public function post_feed( $feed, array $params = array() )
+	public function post_feed( $feed, array $params = [ ] )
 	{
-		if( ! empty( $post ) )
+		if ( ! empty( $post ) )
 		{
-			if( isset( $this->is_connected ) )
+			if ( isset( $this->is_connected ) )
 			{
-				$uri = '/' . $this->_config[ 'api_version' ] . '/me/feed';
+				$uri                    = '/' . $this->_config[ 'api_version' ] . '/me/feed';
 				$post[ 'access_token' ] = $this->_session->access_token;
 
-				if( isset( $post[ 'actions' ] ) )
+				if ( isset( $post[ 'actions' ] ) )
 				{
-					if( ! is_object( $post[ 'actions' ] ) )
+					if ( ! is_object( $post[ 'actions' ] ) )
 					{
 						show_error( 'Facebook Feed Actions Variable Type Must Be an Object' );
 					}
 				}
 
-				if( isset( $post[ 'privacy' ] ) )
+				if ( isset( $post[ 'privacy' ] ) )
 				{
-					if( ! is_object( $post[ 'privacy' ] ) )
+					if ( ! is_object( $post[ 'privacy' ] ) )
 					{
 						show_error( 'Facebook Feed Privacy Variable Type Must Be an Object' );
 					}
 				}
 
-				if( isset( $post[ 'targeting' ] ) )
+				if ( isset( $post[ 'targeting' ] ) )
 				{
-					if( ! is_object( $post[ 'targeting' ] ) )
+					if ( ! is_object( $post[ 'targeting' ] ) )
 					{
 						show_error( 'Facebook Feed Targeting Variable Type Must Be an Object' );
 					}
 				}
 
-				$result = $this->_api_request( $uri, $post );
+				$result = $this->apiRequest( $uri, $post );
 
 				return $result;
 			}
@@ -365,9 +389,9 @@ class Facebook extends DriverInterface
 
 	public function post_message( $message )
 	{
-		if( ! empty( $message ) )
+		if ( ! empty( $message ) )
 		{
-			if( isset( $this->is_connected ) )
+			if ( isset( $this->is_connected ) )
 			{
 				return $this->post_feed( [ 'message' => $message ] );
 			}
@@ -378,11 +402,11 @@ class Facebook extends DriverInterface
 
 	public function post_link( $status, $link )
 	{
-		if( ! empty( $link ) )
+		if ( ! empty( $link ) )
 		{
-			if( isset( $this->is_connected ) )
+			if ( isset( $this->is_connected ) )
 			{
-				if( ! isset( $link[ 'link' ] ) )
+				if ( ! isset( $link[ 'link' ] ) )
 				{
 					show_error( 'Facebook link post doesn\'t have valid Link URL' );
 				}
@@ -396,11 +420,11 @@ class Facebook extends DriverInterface
 
 	public function post_media( $status, $media )
 	{
-		if( ! empty( $photo ) )
+		if ( ! empty( $photo ) )
 		{
-			if( isset( $this->is_connected ) )
+			if ( isset( $this->is_connected ) )
 			{
-				if( empty( $album ) )
+				if ( empty( $album ) )
 				{
 					$uri = '/' . $this->_config[ 'api_version' ] . '/me/photos?';
 				}
@@ -409,7 +433,7 @@ class Facebook extends DriverInterface
 					$uri = '/' . $this->_config[ 'api_version' ] . '/me/' . $album_id . '/photos?';
 				}
 
-				if( is_string( $photo ) )
+				if ( is_string( $photo ) )
 				{
 					$picture = $photo;
 					unset( $photo );
@@ -418,7 +442,7 @@ class Facebook extends DriverInterface
 
 				//print_out($photo);
 
-				if( ! isset( $photo[ 'picture' ] ) )
+				if ( ! isset( $photo[ 'picture' ] ) )
 				{
 					show_error( 'Facebook photo post doesn\'t have valid image file path' );
 				}
@@ -428,14 +452,14 @@ class Facebook extends DriverInterface
 
 				$picture = realpath( $picture );
 
-				if( file_exists( $picture ) )
+				if ( file_exists( $picture ) )
 				{
 					$photo[ 'image' ] = $picture;
 				}
 
 				$parameters[ 'access_token' ] = $this->_session->access_token;
 
-				$result = $this->_api_request( $uri . http_build_query( $parameters ), $photo, TRUE );
+				$result = $this->apiRequest( $uri . http_build_query( $parameters ), $photo, TRUE );
 
 				return $result;
 			}
@@ -446,13 +470,13 @@ class Facebook extends DriverInterface
 
 	public function post_video( $video )
 	{
-		if( ! empty( $video ) )
+		if ( ! empty( $video ) )
 		{
-			if( isset( $this->is_connected ) )
+			if ( isset( $this->is_connected ) )
 			{
 				$uri = '/' . $this->_config[ 'api_version' ] . '/me/photos?';
 
-				if( ! isset( $video[ 'video' ] ) )
+				if ( ! isset( $video[ 'video' ] ) )
 				{
 					show_error( 'Facebook video post doesn\'t have valid video file path' );
 				}
@@ -462,14 +486,14 @@ class Facebook extends DriverInterface
 
 				$file = realpath( $file );
 
-				if( file_exists( $file ) )
+				if ( file_exists( $file ) )
 				{
 					$video[ 'file' ] = '@' . $file;
 				}
 
 				$parameters[ 'access_token' ] = $this->_session->access_token;
 
-				$result = $this->_api_request( $uri . http_build_query( $parameters ), $video, TRUE );
+				$result = $this->apiRequest( $uri . http_build_query( $parameters ), $video, TRUE );
 
 				return $result;
 			}
@@ -478,16 +502,16 @@ class Facebook extends DriverInterface
 
 	public function delete_post( $post_id )
 	{
-		if( ! empty( $post_id ) )
+		if ( ! empty( $post_id ) )
 		{
-			if( isset( $this->is_connected ) )
+			if ( isset( $this->is_connected ) )
 			{
 				$uri = '/' . $this->_config[ 'api_version' ] . '/' . $post_id;
 
 				$post[ 'access_token' ] = $this->_session->access_token;
-				$post[ 'method' ] = 'delete';
+				$post[ 'method' ]       = 'delete';
 
-				$result = $this->_api_request( $uri, $post );
+				$result = $this->apiRequest( $uri, $post );
 
 				return $result;
 			}
@@ -498,16 +522,16 @@ class Facebook extends DriverInterface
 
 	public function disconnect()
 	{
-		if( ! empty( $post_id ) )
+		if ( ! empty( $post_id ) )
 		{
-			if( isset( $this->is_connected ) )
+			if ( isset( $this->is_connected ) )
 			{
 				$uri = '/' . $this->_config[ 'api_version' ] . '/permissions?';
 
 				$post[ 'access_token' ] = $this->_session->access_token;
-				$post[ 'method' ] = 'delete';
+				$post[ 'method' ]       = 'delete';
 
-				$result = $this->_api_request( $uri, $post );
+				$result = $this->apiRequest( $uri, $post );
 
 				return $result;
 			}

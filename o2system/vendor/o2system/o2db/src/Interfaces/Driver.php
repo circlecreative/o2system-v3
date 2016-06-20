@@ -316,8 +316,8 @@ abstract class Driver extends Query
 	/**
 	 * COUNT string
 	 *
-	 * @used-by    Driver::count_all()
-	 * @used-by    Query::count_all_results()
+	 * @used-by    Driver::countAll()
+	 * @used-by    Query::countAllResults()
 	 *
 	 * @access     protected
 	 * @type    string
@@ -487,7 +487,7 @@ abstract class Driver extends Query
 
 	// --------------------------------------------------------------------
 
-	public function is_connected()
+	public function isConnected()
 	{
 		if ( $this->pdo_conn instanceof \PDO )
 		{
@@ -536,7 +536,7 @@ abstract class Driver extends Query
 
 	// --------------------------------------------------------------------
 
-	public function set_row_class( $class_name, $args = NULL )
+	public function setRowClass($class_name, $args = NULL )
 	{
 		$this->row_class_name = $class_name;
 
@@ -569,7 +569,7 @@ abstract class Driver extends Query
 		}
 		elseif ( ! is_bool( $return_object ) )
 		{
-			$return_object = ! $this->is_write_type( $sql );
+			$return_object = ! $this->isWriteType( $sql );
 		}
 
 		// Verify table prefix and replace if necessary
@@ -584,7 +584,7 @@ abstract class Driver extends Query
 		// Compile binds if needed
 		if ( $binds !== FALSE )
 		{
-			$sql = $this->compile_binds( $sql, $binds );
+			$sql = $this->compileBinds( $sql, $binds );
 		}
 
 		// Is query caching enabled? If the query is a "read type"
@@ -679,7 +679,7 @@ abstract class Driver extends Query
 	 *
 	 * @return    void
 	 */
-	public function trans_off()
+	public function transOff()
 	{
 		$this->trans_enabled = FALSE;
 	}
@@ -696,7 +696,7 @@ abstract class Driver extends Query
 	 *
 	 * @return    void
 	 */
-	public function trans_strict( $mode = TRUE )
+	public function transStrict($mode = TRUE )
 	{
 		$this->trans_strict = is_bool( $mode ) ? $mode : TRUE;
 	}
@@ -709,7 +709,7 @@ abstract class Driver extends Query
 	 *
 	 * @return    void
 	 */
-	public function trans_start( $test_mode = FALSE )
+	public function transStart($test_mode = FALSE )
 	{
 		if ( ! $this->trans_enabled )
 		{
@@ -724,7 +724,7 @@ abstract class Driver extends Query
 			return;
 		}
 
-		$this->trans_begin( $test_mode );
+		$this->transBegin( $test_mode );
 		$this->_trans_depth += 1;
 	}
 	// --------------------------------------------------------------------
@@ -736,7 +736,7 @@ abstract class Driver extends Query
 	 *
 	 * @return    bool
 	 */
-	public function trans_begin( $test_mode = FALSE )
+	public function transBegin($test_mode = FALSE )
 	{
 		// When transactions are nested we only begin/commit/rollback the outermost ones
 		if ( ! $this->trans_enabled OR $this->_trans_depth > 0 )
@@ -759,7 +759,7 @@ abstract class Driver extends Query
 	 *
 	 * @return    bool
 	 */
-	public function trans_complete()
+	public function transComplete()
 	{
 		if ( ! $this->trans_enabled )
 		{
@@ -779,7 +779,7 @@ abstract class Driver extends Query
 		// The query() function will set this flag to FALSE in the event that a query failed
 		if ( $this->_trans_status === FALSE OR $this->_trans_failure === TRUE )
 		{
-			$this->trans_rollback();
+			$this->transRollback();
 
 			// If we are NOT running in strict mode, we will reset
 			// the _trans_status flag so that subsequent groups of transactions
@@ -806,7 +806,7 @@ abstract class Driver extends Query
 	 *
 	 * @return    bool
 	 */
-	public function trans_status()
+	public function transStatus()
 	{
 		return $this->_trans_status;
 	}
@@ -817,7 +817,7 @@ abstract class Driver extends Query
 	 *
 	 * @return    bool
 	 */
-	public function trans_commit()
+	public function transCommit()
 	{
 		// When transactions are nested we only begin/commit/rollback the outermost ones
 		if ( ! $this->trans_enabled OR $this->_trans_depth > 0 )
@@ -835,7 +835,7 @@ abstract class Driver extends Query
 	 *
 	 * @return    bool
 	 */
-	public function trans_rollback()
+	public function transRollback()
 	{
 		// When transactions are nested we only begin/commit/rollback the outermost ones
 		if ( ! $this->trans_enabled OR $this->_trans_depth > 0 )
@@ -856,7 +856,7 @@ abstract class Driver extends Query
 	 *
 	 * @return    string
 	 */
-	public function compile_binds( $sql, $binds )
+	public function compileBinds($sql, $binds )
 	{
 		if ( empty( $binds ) OR empty( $this->bind_marker ) OR strpos( $sql, $this->bind_marker ) === FALSE )
 		{
@@ -916,7 +916,7 @@ abstract class Driver extends Query
 	 *
 	 * @return    bool
 	 */
-	public function is_write_type( $sql )
+	public function isWriteType($sql )
 	{
 		return (bool) preg_match( '/^\s*"?(SET|INSERT|UPDATE|DELETE|REPLACE|CREATE|DROP|TRUNCATE|LOAD|COPY|ALTER|RENAME|GRANT|REVOKE|LOCK|UNLOCK|REINDEX)\s/i', $sql );
 	}
@@ -929,7 +929,7 @@ abstract class Driver extends Query
 	 *
 	 * @return    string
 	 */
-	public function elapsed_time( $decimals = 6 )
+	public function elapsedTime($decimals = 6 )
 	{
 		return number_format( $this->benchmark, $decimals );
 	}
@@ -940,7 +940,7 @@ abstract class Driver extends Query
 	 *
 	 * @return    int
 	 */
-	public function total_queries()
+	public function totalQueries()
 	{
 		return $this->query_count;
 	}
@@ -951,7 +951,7 @@ abstract class Driver extends Query
 	 *
 	 * @return    string
 	 */
-	public function last_query()
+	public function lastQuery()
 	{
 		return end( $this->queries );
 	}
@@ -976,7 +976,7 @@ abstract class Driver extends Query
 		}
 		elseif ( is_string( $string ) OR ( is_object( $string ) && method_exists( $string, '__toString' ) ) )
 		{
-			return "'" . $this->escape_string( $string ) . "'";
+			return "'" . $this->escapeString( $string ) . "'";
 		}
 		elseif ( is_bool( $string ) )
 		{
@@ -999,18 +999,18 @@ abstract class Driver extends Query
 	 *
 	 * @return    string
 	 */
-	public function escape_string( $string, $like = FALSE )
+	public function escapeString($string, $like = FALSE )
 	{
 		if ( is_array( $string ) )
 		{
 			foreach ( $string as $key => $val )
 			{
-				$string[ $key ] = $this->escape_string( $val, $like );
+				$string[ $key ] = $this->escapeString( $val, $like );
 			}
 
 			return $string;
 		}
-		$string = $this->_escape_string( $string );
+		$string = $this->_escapeString( $string );
 
 		// escape LIKE condition wildcards
 		if ( $like === TRUE )
@@ -1036,9 +1036,9 @@ abstract class Driver extends Query
 	 *
 	 * @return    mixed
 	 */
-	public function escape_like_string( $string )
+	public function escapeLikeString($string )
 	{
-		return $this->escape_string( $string, TRUE );
+		return $this->escapeString( $string, TRUE );
 	}
 	// --------------------------------------------------------------------
 
@@ -1050,7 +1050,7 @@ abstract class Driver extends Query
 	 *
 	 * @return    string
 	 */
-	protected function _escape_string( $string )
+	protected function _escapeString($string )
 	{
 		// Escape the string
 		$string = $this->pdo_conn->quote( $string );
@@ -1073,7 +1073,7 @@ abstract class Driver extends Query
 	 */
 	public function primary( $table )
 	{
-		$fields = $this->list_fields( $table );
+		$fields = $this->listFields( $table );
 
 		return is_array( $fields ) ? current( $fields ) : FALSE;
 	}
@@ -1088,21 +1088,21 @@ abstract class Driver extends Query
 	 *
 	 * @return    int
 	 */
-	public function count_rows( $table = '' )
+	public function countRows($table = '' )
 	{
 		if ( $table === '' )
 		{
 			return 0;
 		}
-		$query = $this->query( $this->_count_string . $this->escape_identifiers( 'numrows' ) . ' FROM ' . $this->protect_identifiers( $table, TRUE, NULL, FALSE ) );
+		$query = $this->query( $this->_count_string . $this->escapeIdentifiers( 'numrows' ) . ' FROM ' . $this->protectIdentifiers( $table, TRUE, NULL, FALSE ) );
 
-		if ( $query->num_rows() === 0 )
+		if ( $query->numRows() === 0 )
 		{
 			return 0;
 		}
 		$query = $query->row();
 
-		$this->_reset_select();
+		$this->_resetSelect();
 
 		return (int) $query->numrows;
 	}
@@ -1114,7 +1114,7 @@ abstract class Driver extends Query
 	 *
 	 * @return    array
 	 */
-	public function list_tables( $constrain_by_prefix = FALSE )
+	public function listTables($constrain_by_prefix = FALSE )
 	{
 		// Is there a cached result?
 		if ( isset( $this->data_cache[ 'table_names' ] ) )
@@ -1122,7 +1122,7 @@ abstract class Driver extends Query
 			return $this->data_cache[ 'table_names' ];
 		}
 
-		if ( FALSE === ( $sql = $this->_list_tables_statement( $constrain_by_prefix ) ) )
+		if ( FALSE === ( $sql = $this->_listTablesStatement( $constrain_by_prefix ) ) )
 		{
 			return FALSE;
 		}
@@ -1131,7 +1131,7 @@ abstract class Driver extends Query
 
 		$results = $this->query( $sql );
 
-		if ( $results->num_rows() > 0 )
+		if ( $results->numRows() > 0 )
 		{
 			foreach ( $results as $row )
 			{
@@ -1153,7 +1153,7 @@ abstract class Driver extends Query
 						 * E_STRICT is on, this would trigger a warning. So we'll have to
 						 * assign it first.
 						 */
-						$key = $row->fields_list();
+						$key = $row->fieldsList();
 						$key = reset( $key );
 					}
 				}
@@ -1174,7 +1174,7 @@ abstract class Driver extends Query
 	 * @access  protected
 	 * @return    string
 	 */
-	abstract protected function _list_tables_statement( $prefix_limit = FALSE );
+	abstract protected function _listTablesStatement($prefix_limit = FALSE );
 
 	/**
 	 * Determine if a particular table exists
@@ -1183,9 +1183,9 @@ abstract class Driver extends Query
 	 *
 	 * @return    bool
 	 */
-	public function table_exists( $table_name )
+	public function tableExists($table_name )
 	{
-		return in_array( $this->protect_identifiers( $table_name, TRUE, FALSE, FALSE ), $this->list_tables() );
+		return in_array( $this->protectIdentifiers( $table_name, TRUE, FALSE, FALSE ), $this->listTables() );
 	}
 	// --------------------------------------------------------------------
 	/**
@@ -1195,7 +1195,7 @@ abstract class Driver extends Query
 	 *
 	 * @return    array
 	 */
-	public function list_fields( $table )
+	public function listFields($table )
 	{
 		// Is there a cached result?
 		if ( isset( $this->data_cache[ 'field_names' ][ $table ] ) )
@@ -1203,7 +1203,7 @@ abstract class Driver extends Query
 			return $this->data_cache[ 'field_names' ][ $table ];
 		}
 
-		if ( FALSE === ( $sql = $this->_list_columns_statement( $table ) ) )
+		if ( FALSE === ( $sql = $this->_listColumnsStatement( $table ) ) )
 		{
 			return FALSE;
 		}
@@ -1250,7 +1250,7 @@ abstract class Driver extends Query
 	 * @access  protected
 	 * @return  string
 	 */
-	abstract protected function _list_columns_statement( $table = '' );
+	abstract protected function _listColumnsStatement($table = '' );
 
 	/**
 	 * Determine if a particular field exists
@@ -1260,9 +1260,9 @@ abstract class Driver extends Query
 	 *
 	 * @return    bool
 	 */
-	public function field_exists( $field_name, $table_name )
+	public function fieldExists($field_name, $table_name )
 	{
-		return in_array( $field_name, $this->list_fields( $table_name ) );
+		return in_array( $field_name, $this->listFields( $table_name ) );
 	}
 	// --------------------------------------------------------------------
 
@@ -1273,11 +1273,11 @@ abstract class Driver extends Query
 	 *
 	 * @return    array
 	 */
-	public function field_data( $table )
+	public function fieldData($table )
 	{
-		$query = $this->query( $this->_field_data_statement( $this->protect_identifiers( $table, TRUE, NULL, FALSE ) ) );
+		$query = $this->query( $this->_fieldDataStatement( $this->protectIdentifiers( $table, TRUE, NULL, FALSE ) ) );
 
-		return ( $query ) ? $query->field_data() : FALSE;
+		return ( $query ) ? $query->fieldData() : FALSE;
 	}
 	// --------------------------------------------------------------------
 
@@ -1290,9 +1290,9 @@ abstract class Driver extends Query
 	 *
 	 * @return    string
 	 */
-	protected function _field_data_statement( $table )
+	protected function _fieldDataStatement($table )
 	{
-		return 'SELECT TOP 1 * FROM ' . $this->protect_identifiers( $table );
+		return 'SELECT TOP 1 * FROM ' . $this->protectIdentifiers( $table );
 	}
 
 	// --------------------------------------------------------------------
@@ -1306,7 +1306,7 @@ abstract class Driver extends Query
 	 *
 	 * @return    mixed
 	 */
-	public function escape_identifiers( $item )
+	public function escapeIdentifiers($item )
 	{
 		if ( $this->_escape_character === '' OR empty( $item ) OR in_array( $item, $this->_reserved_identifiers ) )
 		{
@@ -1316,7 +1316,7 @@ abstract class Driver extends Query
 		{
 			foreach ( $item as $key => $value )
 			{
-				$item[ $key ] = $this->escape_identifiers( $value );
+				$item[ $key ] = $this->escapeIdentifiers( $value );
 			}
 
 			return $item;
@@ -1363,16 +1363,16 @@ abstract class Driver extends Query
 	 *
 	 * @return    string
 	 */
-	public function insert_string( $table, $data )
+	public function insertString($table, $data )
 	{
 		$fields = $values = array();
 		foreach ( $data as $key => $value )
 		{
-			$fields[] = $this->escape_identifiers( $key );
+			$fields[] = $this->escapeIdentifiers( $key );
 			$values[] = $this->escape( $value );
 		}
 
-		return $this->_insert_statement( $this->protect_identifiers( $table, TRUE, NULL, FALSE ), $fields, $values );
+		return $this->_insertStatement( $this->protectIdentifiers( $table, TRUE, NULL, FALSE ), $fields, $values );
 	}
 	// --------------------------------------------------------------------
 
@@ -1387,7 +1387,7 @@ abstract class Driver extends Query
 	 *
 	 * @return    string
 	 */
-	protected function _insert_statement( $table, $keys, $values )
+	protected function _insertStatement($table, $keys, $values )
 	{
 		return 'INSERT INTO ' . $table . ' (' . implode( ', ', $keys ) . ') VALUES (' . implode( ', ', $values ) . ')';
 	}
@@ -1402,7 +1402,7 @@ abstract class Driver extends Query
 	 *
 	 * @return    string
 	 */
-	public function update_string( $table, $data, $where )
+	public function updateString($table, $data, $where )
 	{
 		if ( empty( $where ) )
 		{
@@ -1412,10 +1412,10 @@ abstract class Driver extends Query
 		$fields = array();
 		foreach ( $data as $key => $value )
 		{
-			$fields[ $this->protect_identifiers( $key ) ] = $this->escape( $value );
+			$fields[ $this->protectIdentifiers( $key ) ] = $this->escape( $value );
 		}
-		$sql = $this->_update_statement( $this->protect_identifiers( $table, TRUE, NULL, FALSE ), $fields );
-		$this->_reset_write();
+		$sql = $this->_updateStatement( $this->protectIdentifiers( $table, TRUE, NULL, FALSE ), $fields );
+		$this->_resetWrite();
 
 		return $sql;
 	}
@@ -1431,7 +1431,7 @@ abstract class Driver extends Query
 	 *
 	 * @return    string
 	 */
-	protected function _update_statement( $table, $values )
+	protected function _updateStatement($table, $values )
 	{
 		foreach ( $values as $key => $value )
 		{
@@ -1439,8 +1439,8 @@ abstract class Driver extends Query
 		}
 
 		return 'UPDATE ' . $table . ' SET ' . implode( ', ', $string_values )
-		. $this->_compile_where_having( 'qb_where' )
-		. $this->_compile_order_by()
+		. $this->_compileWhereHaving( 'qb_where' )
+		. $this->_compileOrderBy()
 		. ( $this->qb_limit ? ' LIMIT ' . $this->qb_limit : '' );
 	}
 	// --------------------------------------------------------------------
@@ -1451,7 +1451,7 @@ abstract class Driver extends Query
 	 *
 	 * @return    bool
 	 */
-	protected function _has_operator( $str )
+	protected function _hasOperator($str )
 	{
 		return (bool) preg_match( '/(<|>|!|=|\sIS NULL|\sIS NOT NULL|\sEXISTS|\sBETWEEN|\sLIKE|\sIN\s*\(|\s)/i', trim( $str ) );
 	}
@@ -1464,7 +1464,7 @@ abstract class Driver extends Query
 	 *
 	 * @return    string
 	 */
-	protected function _get_operator( $str )
+	protected function _getOperator($str )
 	{
 		static $_operators;
 		if ( empty( $_operators ) )
@@ -1500,7 +1500,7 @@ abstract class Driver extends Query
 	 *
 	 * @return    mixed
 	 */
-	public function call_function( $function )
+	public function callFunction($function )
 	{
 		$driver = ( $this->platform === 'postgre' ) ? 'pg_' : $this->platform . '_';
 		if ( FALSE === strpos( $driver, $function ) )
@@ -1559,7 +1559,7 @@ abstract class Driver extends Query
 	 *
 	 * @return    string
 	 */
-	public function protect_identifiers( $item, $prefix_single = FALSE, $protect_identifiers = NULL, $field_exists = TRUE )
+	public function protectIdentifiers($item, $prefix_single = FALSE, $protect_identifiers = NULL, $field_exists = TRUE )
 	{
 		if ( ! is_bool( $protect_identifiers ) )
 		{
@@ -1570,7 +1570,7 @@ abstract class Driver extends Query
 			$escaped_array = array();
 			foreach ( $item as $k => $v )
 			{
-				$escaped_array[ $this->protect_identifiers( $k ) ] = $this->protect_identifiers( $v, $prefix_single, $protect_identifiers, $field_exists );
+				$escaped_array[ $this->protectIdentifiers( $k ) ] = $this->protectIdentifiers( $v, $prefix_single, $protect_identifiers, $field_exists );
 			}
 
 			return $escaped_array;
@@ -1593,14 +1593,14 @@ abstract class Driver extends Query
 		if ( $offset = strripos( $item, ' AS ' ) )
 		{
 			$alias = ( $protect_identifiers )
-				? substr( $item, $offset, 4 ) . $this->escape_identifiers( substr( $item, $offset + 4 ) )
+				? substr( $item, $offset, 4 ) . $this->escapeIdentifiers( substr( $item, $offset + 4 ) )
 				: substr( $item, $offset );
 			$item = substr( $item, 0, $offset );
 		}
 		elseif ( $offset = strrpos( $item, ' ' ) )
 		{
 			$alias = ( $protect_identifiers )
-				? ' ' . $this->escape_identifiers( substr( $item, $offset + 1 ) )
+				? ' ' . $this->escapeIdentifiers( substr( $item, $offset + 1 ) )
 				: substr( $item, $offset );
 			$item = substr( $item, 0, $offset );
 		}
@@ -1625,7 +1625,7 @@ abstract class Driver extends Query
 					{
 						if ( ! in_array( $val, $this->_reserved_identifiers ) )
 						{
-							$parts[ $key ] = $this->escape_identifiers( $val );
+							$parts[ $key ] = $this->escapeIdentifiers( $val );
 						}
 					}
 					$item = implode( '.', $parts );
@@ -1676,7 +1676,7 @@ abstract class Driver extends Query
 			}
 			if ( $protect_identifiers === TRUE )
 			{
-				$item = $this->escape_identifiers( $item );
+				$item = $this->escapeIdentifiers( $item );
 			}
 
 			return $item . $alias;
@@ -1697,7 +1697,7 @@ abstract class Driver extends Query
 		}
 		if ( $protect_identifiers === TRUE && ! in_array( $item, $this->_reserved_identifiers ) )
 		{
-			$item = $this->escape_identifiers( $item );
+			$item = $this->escapeIdentifiers( $item );
 		}
 
 		return $item . $alias;
@@ -1709,7 +1709,7 @@ abstract class Driver extends Query
 	 *
 	 * @return    int
 	 */
-	public function affected_rows()
+	public function affectedRows()
 	{
 		return is_object( $this->pdo_statement ) ? $this->pdo_statement->rowCount() : 0;
 	}
@@ -1723,7 +1723,7 @@ abstract class Driver extends Query
 	 *
 	 * @return    int
 	 */
-	public function last_insert_id( $name = NULL )
+	public function lastInsertId($name = NULL )
 	{
 		return $this->pdo_conn->lastInsertId( $name );
 	}
@@ -1771,7 +1771,7 @@ abstract class Driver extends Query
 	 *
 	 * @return    string
 	 */
-	protected function _update_batch_statement( $table, $values, $index )
+	protected function _updateBatchStatement($table, $values, $index )
 	{
 		$ids = array();
 		foreach ( $values as $key => $value )
@@ -1802,7 +1802,7 @@ abstract class Driver extends Query
 
 		$this->where( $index . ' IN(' . implode( ',', $ids ) . ')', NULL, FALSE );
 
-		return 'UPDATE ' . $table . ' SET ' . substr( $cases, 0, -2 ) . $this->_compile_where_having( 'qb_where' );
+		return 'UPDATE ' . $table . ' SET ' . substr( $cases, 0, -2 ) . $this->_compileWhereHaving( 'qb_where' );
 	}
 
 	// --------------------------------------------------------------------
@@ -1819,7 +1819,7 @@ abstract class Driver extends Query
 	 *
 	 * @return    string
 	 */
-	protected function _truncate_statement( $table )
+	protected function _truncateStatement($table )
 	{
 		return 'TRUNCATE TABLE ' . $table;
 	}

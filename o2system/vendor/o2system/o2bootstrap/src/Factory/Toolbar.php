@@ -60,15 +60,15 @@ class Toolbar extends FactoryInterface
 
 		if ( isset( $attr ) )
 		{
-			$this->add_attributes( $attr );
+			$this->addAttributes( $attr );
 		}
 
-		$this->add_attribute( 'role', 'toolbar' );
+		$this->addAttribute( 'role', 'toolbar' );
 
 		return $this;
 	}
 
-	public function add_item( $item )
+	public function addItem($item )
 	{
 		if ( $item instanceof Group )
 		{

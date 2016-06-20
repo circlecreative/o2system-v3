@@ -44,7 +44,7 @@ trait ContentInterface
 {
 	protected $_content = array();
 
-	public function set_content( $content )
+	public function setContent($content )
 	{
 		if ( is_array( $content ) )
 		{
@@ -52,7 +52,7 @@ trait ContentInterface
 
 			foreach ( $content as $list )
 			{
-				$lists->add_item( $list );
+				$lists->addItem( $list );
 			}
 
 			$content = $lists;
@@ -63,7 +63,7 @@ trait ContentInterface
 		return $this;
 	}
 
-	public function reset_content()
+	public function resetContent()
 	{
 		if ( count( $this->_content ) > 0 )
 		{
@@ -73,7 +73,7 @@ trait ContentInterface
 		return $this;
 	}
 
-	public function prepend_content( $content )
+	public function prependContent($content )
 	{
 		if ( is_array( $content ) )
 		{
@@ -81,7 +81,7 @@ trait ContentInterface
 
 			foreach ( $content as $list )
 			{
-				$lists->add_item( $list );
+				$lists->addItem( $list );
 			}
 
 			$content = $lists;
@@ -92,7 +92,7 @@ trait ContentInterface
 		return $this;
 	}
 
-	public function append_content( $content )
+	public function appendContent($content )
 	{
 		if ( is_array( $content ) )
 		{
@@ -100,7 +100,7 @@ trait ContentInterface
 
 			foreach ( $content as $list )
 			{
-				$lists->add_item( $list );
+				$lists->addItem( $list );
 			}
 
 			$content = $lists;

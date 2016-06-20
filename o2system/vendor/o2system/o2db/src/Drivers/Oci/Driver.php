@@ -82,7 +82,7 @@ class Driver extends DriverInterface
 	 * COUNT string
 	 *
 	 * @used-by    O2DB_DB_driver::count_all()
-	 * @used-by    O2DB_DB_query_builder::count_all_results()
+	 * @used-by    O2DB_DB_query_builder::countAllResults()
 	 *
 	 * @type    string
 	 */
@@ -140,13 +140,13 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _list_tables_statement( $prefix_limit = FALSE )
+	protected function _listTablesStatement($prefix_limit = FALSE )
 	{
 		$sql = 'SELECT "TABLE_NAME" FROM "ALL_TABLES"';
 
 		if ( $prefix_limit === TRUE && $this->table_prefix !== '' )
 		{
-			return $sql . ' WHERE "TABLE_NAME" LIKE \'' . $this->escape_like_string( $this->table_prefix ) . "%' "
+			return $sql . ' WHERE "TABLE_NAME" LIKE \'' . $this->escapeLikeString( $this->table_prefix ) . "%' "
 			. sprintf( $this->_like_escape_string, $this->_like_escape_character );
 		}
 
@@ -164,7 +164,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _list_columns_statement( $table = '' )
+	protected function _listColumnsStatement($table = '' )
 	{
 		if ( strpos( $table, '.' ) !== FALSE )
 		{
@@ -189,7 +189,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    array
 	 */
-	public function field_data( $table )
+	public function fieldData($table )
 	{
 		if ( strpos( $table, '.' ) !== FALSE )
 		{
@@ -209,7 +209,7 @@ class Driver extends DriverInterface
 		{
 			return FALSE;
 		}
-		$query = $query->result_object();
+		$query = $query->resultObject();
 
 		$result = array();
 		for ( $i = 0, $c = count( $query ); $i < $c; $i++ )
@@ -248,7 +248,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _insert_batch( $table, $keys, $values )
+	protected function _insertBatch($table, $keys, $values )
 	{
 		$keys = implode( ', ', $keys );
 		$sql = "INSERT ALL\n";

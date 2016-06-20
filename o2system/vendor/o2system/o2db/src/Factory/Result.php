@@ -81,12 +81,12 @@ class Result implements SeekableIterator, Countable, Serializable
 
 		$class = isset( $driver->row_class_name ) ? $driver->row_class_name : NULL;
 		$args = isset( $driver->row_class_args ) ? $driver->row_class_args : NULL;
-		$this->_fetch_rows( $class, $args );
+		$this->_fetchRows( $class, $args );
 	}
 
 	// --------------------------------------------------------------------
 
-	protected function _fetch_rows( $class, $args )
+	protected function _fetchRows($class, $args )
 	{
 		if ( ! class_exists( $class ) )
 		{
@@ -200,7 +200,7 @@ class Result implements SeekableIterator, Countable, Serializable
 	{
 		$results = array();
 
-		if ( $this->num_rows() > 0 )
+		if ( $this->numRows() > 0 )
 		{
 			foreach ( $this->_rows as $row )
 			{
@@ -221,7 +221,7 @@ class Result implements SeekableIterator, Countable, Serializable
 	 *
 	 * @return    int
 	 */
-	public function num_rows( $filtered_num_rows = FALSE )
+	public function numRows($filtered_num_rows = FALSE )
 	{
 		if ( $filtered_num_rows === TRUE )
 		{
@@ -304,7 +304,7 @@ class Result implements SeekableIterator, Countable, Serializable
 	 *
 	 * @return    int
 	 */
-	public function num_fields()
+	public function numFields()
 	{
 		return static::$_statement->columnCount();
 	}
@@ -320,10 +320,10 @@ class Result implements SeekableIterator, Countable, Serializable
 	 *
 	 * @return    array
 	 */
-	public function fields_list()
+	public function fieldsList()
 	{
 		$field_names = array();
-		for ( $i = 0, $c = $this->num_fields(); $i < $c; $i++ )
+		for ($i = 0, $c = $this->numFields(); $i < $c; $i++ )
 		{
 			// Might trigger an E_WARNING due to not all subdrivers
 			// supporting getColumnMeta()
@@ -345,13 +345,13 @@ class Result implements SeekableIterator, Countable, Serializable
 	 *
 	 * @return    array
 	 */
-	public function fields_metadata()
+	public function fieldsMetadata()
 	{
 		try
 		{
 			$result = array();
 
-			for ( $i = 0, $c = $this->num_fields(); $i < $c; $i++ )
+			for ($i = 0, $c = $this->numFields(); $i < $c; $i++ )
 			{
 				$field = static::$_statement->getColumnMeta( $i );
 

@@ -93,7 +93,7 @@ class User extends Model
 	 * @access  public
 	 * @return  bool
 	 */
-	public function get_account( $username = NULL )
+	public function getAccount( $username )
 	{
 		if ( isset( $username ) )
 		{
@@ -112,7 +112,7 @@ class User extends Model
 
 			$result = $this->db->get( $this->table );
 
-			if ( $result->num_rows() > 0 )
+			if ( $result->numRows() > 0 )
 			{
 				$row = $result->first();
 				$result->free();
@@ -133,15 +133,16 @@ class User extends Model
 	 * @access  public
 	 * @return  bool
 	 */
-	public function insert_account( $account )
+	public function insertAccount( array $account )
 	{
-		$this->insert( array(
-			               'username' => strtolower($account->username),
-			               'email'    => strtolower($account->email),
-			               'password' => $account->password,
-		               ) );
+		$this->insert(
+			[
+				'username' => strtolower( $account[ 'username' ] ),
+				'email'    => strtolower( $account[ 'email' ] ),
+				'password' => $account[ 'password' ],
+			] );
 
-		$account->id = $this->db->last_insert_id();
+		$account[ 'id' ] = $this->db->lastInsertId();
 
 		return $account;
 	}
@@ -155,7 +156,7 @@ class User extends Model
 	 * @access  public
 	 * @return  bool
 	 */
-	public function update_account( array $account )
+	public function updateAccount( array $account )
 	{
 		return $this->update( $account );
 	}
@@ -170,7 +171,7 @@ class User extends Model
 	 * @access  public
 	 * @return  bool
 	 */
-	public function delete_account( $id )
+	public function deleteAccount( $id )
 	{
 		return $this->delete( $id );
 	}
@@ -185,7 +186,7 @@ class User extends Model
 	 *
 	 * @return bool
 	 */
-	public function get_sso( $token, $ip_address = NULL )
+	public function getSso( $token, $ip_address = NULL )
 	{
 		if ( isset( $ip_address ) )
 		{
@@ -194,14 +195,14 @@ class User extends Model
 
 		if ( is_int( $token ) )
 		{
-			$query = $this->db->get_where( $this->table_sso, [ 'id_user_account' => intval( $token ) ], 1 );
+			$query = $this->db->getWhere( $this->table_sso, [ 'id_user_account' => intval( $token ) ], 1 );
 		}
 		else
 		{
-			$query = $this->db->get_where( $this->table_sso, [ 'hash' => $token ], 1 );
+			$query = $this->db->getWhere( $this->table_sso, [ 'hash' => $token ], 1 );
 		}
 
-		if ( $query->num_rows() > 0 )
+		if ( $query->numRows() > 0 )
 		{
 			return $query->first();
 		}
@@ -219,7 +220,7 @@ class User extends Model
 	 * @access  public
 	 * @return  bool
 	 */
-	public function insert_sso( $sso )
+	public function insertSso( $sso )
 	{
 		return $this->db->insert( $this->table_sso, $sso );
 	}
@@ -234,7 +235,7 @@ class User extends Model
 	 * @access  public
 	 * @return  bool
 	 */
-	public function delete_sso( $token )
+	public function deleteSso( $token )
 	{
 		return $this->db->where( 'token', $token )->delete( $this->table_sso );
 	}

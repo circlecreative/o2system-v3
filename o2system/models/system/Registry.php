@@ -32,10 +32,10 @@ class Registry
 			unset( $value->namespace );
 		}
 
-		$result = $this->db->select( 'id' )->get_where( 'sys_registries', [ 'key' => $parent_segments ] );
+		$result = $this->db->select( 'id' )->getWhere( 'sys_registries', [ 'key' => $parent_segments ] );
 
 		$id_parent = 0;
-		if ( $result->num_rows() > 0 )
+		if ( $result->numRows() > 0 )
 		{
 			$id_parent = $result->first()->id;
 		}

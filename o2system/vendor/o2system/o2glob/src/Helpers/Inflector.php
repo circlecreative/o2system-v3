@@ -53,7 +53,7 @@ if ( ! function_exists( 'singular' ) )
 	{
 		$result = strval( $string );
 
-		if ( ! is_countable( $result ) )
+		if ( ! isCountable( $result ) )
 		{
 			return $result;
 		}
@@ -289,7 +289,7 @@ if ( ! function_exists( 'is_countable' ) )
 	 * @access  public
 	 * @return  bool
 	 */
-	function is_countable( $string )
+	function isCountable($string )
 	{
 		return ! in_array(
 			strtolower( $string ),

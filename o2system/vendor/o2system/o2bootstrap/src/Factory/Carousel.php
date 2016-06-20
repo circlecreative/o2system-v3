@@ -59,24 +59,24 @@ class Carousel extends FactoryInterface
 		{
 			if ( is_string( $id ) )
 			{
-				$this->set_id( $id );
+				$this->setId( $id );
 			}
 			elseif ( is_array( $id ) )
 			{
 				$attr = $id;
-				$this->set_id( uniqid( 'carousel-' ) );
+				$this->setId( uniqid( 'carousel-' ) );
 			}
 		}
 
 		if ( isset( $attr ) )
 		{
-			$this->add_attribute( $attr );
+			$this->addAttribute( $attr );
 		}
 
 		return $this;
 	}
 
-	public function add_item( $item )
+	public function addItem($item )
 	{
 		if ( $item instanceof Image )
 		{
@@ -93,7 +93,7 @@ class Carousel extends FactoryInterface
 		elseif ( is_string( $item ) )
 		{
 			$image = new Image();
-			$image->set_source( $item );
+			$image->setSource( $item );
 
 			$this->_items[] = $image;
 		}
@@ -106,14 +106,14 @@ class Carousel extends FactoryInterface
 		if ( ! empty( $this->_items ) )
 		{
 			$indicators = new Lists( Lists::LIST_UNSTYLED );
-			$indicators->set_tag( 'ol' );
-			$indicators->add_class( 'carousel-indicators' );
+			$indicators->setTag( 'ol' );
+			$indicators->addClass( 'carousel-indicators' );
 
 			foreach ( $this->_items as $key => $item )
 			{
 				if ( $key == 0 )
 				{
-					$indicators->add_item( '', Lists::ITEM_ACTIVE, array(
+					$indicators->addItem( '', Lists::ITEM_ACTIVE, array(
 						'data-target'   => '#' . $this->_attributes[ 'id' ],
 						'data-slide-to' => $key,
 					) );
@@ -122,7 +122,7 @@ class Carousel extends FactoryInterface
 				}
 				else
 				{
-					$indicators->add_item( '', array(
+					$indicators->addItem( '', array(
 						'data-target'   => '#' . $this->_attributes[ 'id' ],
 						'data-slide-to' => $key,
 					) );

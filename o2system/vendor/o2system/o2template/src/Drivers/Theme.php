@@ -71,7 +71,7 @@ class Theme extends DriverInterface
 		{
 			if ( $this->exists( $theme ) )
 			{
-				$this->_load_package( $theme );
+				$this->_loadPackage( $theme );
 			}
 		}
 		elseif ( is_bool( $theme ) AND $theme === FALSE )
@@ -90,7 +90,7 @@ class Theme extends DriverInterface
 	 * @access  protected
 	 * @return  bool
 	 */
-	protected function _load_package( $theme )
+	protected function _loadPackage($theme )
 	{
 		foreach ( $this->_library->_paths as $path )
 		{
@@ -116,7 +116,7 @@ class Theme extends DriverInterface
 					$this->active[ 'realpath' ] = $theme_path;
 					$this->active[ 'url' ] = path_to_url( $theme_path ) . '/';
 
-					$this->_library->add_path( $theme_path );
+					$this->_library->addPath( $theme_path );
 
 					if ( is_file( $theme_path . 'theme.settings' ) )
 					{
@@ -189,7 +189,7 @@ class Theme extends DriverInterface
 		return FALSE;
 	}
 
-	public function layout_exists( $layout )
+	public function layoutExists($layout )
 	{
 		if ( isset( $this->active->realpath ) )
 		{
@@ -211,11 +211,11 @@ class Theme extends DriverInterface
 	 * @access  public
 	 * @return  bool
 	 */
-	public function set_layout( $layout = NULL )
+	public function setLayout($layout = NULL )
 	{
 		if ( isset( $layout ) )
 		{
-			if ( $this->layout_exists( $layout ) )
+			if ( $this->layoutExists( $layout ) )
 			{
 				$layout_path = $this->active->realpath . 'layouts' . DIRECTORY_SEPARATOR . $layout . DIRECTORY_SEPARATOR;
 
@@ -225,7 +225,7 @@ class Theme extends DriverInterface
 				{
 					$this->active[ 'layout' ] = $layout_path . $layout . '.' . $extension;
 
-					$this->_library->add_path( $layout_path );
+					$this->_library->addPath( $layout_path );
 
 					// Load Layout Settings
 					if ( is_file( $layout_path . $layout . '.settings' ) )

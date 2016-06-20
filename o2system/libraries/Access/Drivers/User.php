@@ -85,7 +85,7 @@ class User extends DriverInterface
 			}
 		}
 
-		\O2System::Session()->unset_userdata( 'account' );
+		\O2System::Session()->unsetUserdata( 'account' );
 
 		return NULL;
 	}
@@ -102,7 +102,7 @@ class User extends DriverInterface
 	 */
 	public function isLogin()
 	{
-		if ( \O2System::Session()->has_userdata( 'account' ) )
+		if ( \O2System::Session()->hasUserdata( 'account' ) )
 		{
 			$account = \O2System::Session()->userdata( 'account' );
 
@@ -116,11 +116,11 @@ class User extends DriverInterface
 				}
 			}
 
-			\O2System::Session()->unset_userdata( 'account' );
+			\O2System::Session()->unsetUserdata( 'account' );
 
 			return $this->isLogin();
 		}
-		elseif ( \O2System::UserAgent()->is_browser() )
+		elseif ( \O2System::UserAgent()->isBrowser() )
 		{
 			if ( $credentials = $this->_library->cookie->getRemember() )
 			{
@@ -160,9 +160,9 @@ class User extends DriverInterface
 	 */
 	public function logout()
 	{
-		$this->destroy_cookies();
+		$this->destroyCookies();
 
-		if ( \O2System::Session()->is_started() )
+		if ( \O2System::Session()->isStarted() )
 		{
 			\O2System::Session()->destroy();
 		}

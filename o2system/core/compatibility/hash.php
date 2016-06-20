@@ -108,7 +108,7 @@ if( ! function_exists( 'hash_equals' ) )
      *
      * @return    bool
      */
-    function hash_equals( $known_string, $user_string )
+    function hashEquals($known_string, $user_string )
     {
         if( ! is_string( $known_string ) )
         {
@@ -146,7 +146,7 @@ if( is_php( '5.5' ) )
 
 // ------------------------------------------------------------------------
 
-if( ! function_exists( 'hash_pbkdf2' ) )
+if( ! function_exists('hashPbkdf2') )
 {
     /**
      * hash_pbkdf2()
@@ -162,7 +162,7 @@ if( ! function_exists( 'hash_pbkdf2' ) )
      *
      * @return    string
      */
-    function hash_pbkdf2( $algo, $password, $salt, $iterations, $length = 0, $raw_output = FALSE )
+    function hashPbkdf2($algo, $password, $salt, $iterations, $length = 0, $raw_output = FALSE )
     {
         if( ! in_array( $algo, hash_algos(), TRUE ) )
         {

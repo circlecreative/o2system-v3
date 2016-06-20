@@ -110,7 +110,7 @@ final class Registry extends ArrayObject
 				static::$package_types = array_merge( static::$package_types, $config[ 'package_types' ] );
 			}
 
-			if ( $this->__load_registries() === FALSE )
+			if ( $this->__loadRegistries() === FALSE )
 			{
 				if ( ! defined( 'CONSOLE_PATH' ) )
 				{
@@ -137,7 +137,7 @@ final class Registry extends ArrayObject
 				}
 			}
 		}
-		elseif ( $cache = $this->_fetch_properties() )
+		elseif ( $cache = $this->_fetchProperties() )
 		{
 			parent::__construct( $cache );
 
@@ -164,7 +164,7 @@ final class Registry extends ArrayObject
 
 	// ------------------------------------------------------------------------
 
-	private function __load_registries()
+	private function __loadRegistries()
 	{
 		if ( $registries = static::$_driver->loadRegistries() )
 		{
@@ -186,7 +186,7 @@ final class Registry extends ArrayObject
 	 */
 	public function fetch()
 	{
-		if ( $cache = $this->_fetch_properties() )
+		if ( $cache = $this->_fetchProperties() )
 		{
 			echo PHP_EOL . '::: [ INFO ] Create registries cache for: ' . ROOTPATH;
 			echo PHP_EOL . '::: [ INFO ] Saving registries cache for: ' . ROOTPATH;
@@ -244,14 +244,14 @@ final class Registry extends ArrayObject
 	 * @return  bool
 	 * @throws  \Exception
 	 */
-	protected function _fetch_properties()
+	protected function _fetchProperties()
 	{
 		$directory = new \RecursiveIteratorIterator(
 			new \RecursiveDirectoryIterator( ROOTPATH ),
 			\RecursiveIteratorIterator::SELF_FIRST
 		);
 
-		$propertiesIterator = new \RegexIterator( $directory, '/^.+\.properties/i', \RecursiveRegexIterator::GET_MATCH );
+		$propertiesIterator = new \RegexIterator( $directory, '/^.+\.properties$/i', \RecursiveRegexIterator::GET_MATCH );
 
 		foreach ( $propertiesIterator as $files )
 		{
@@ -268,17 +268,17 @@ final class Registry extends ArrayObject
 			// Sort the properties by keys
 			ksort( $properties );
 
-			$this->__send_message( 'REGISTRY_INFO_COUNTFETCHINGPROPERTIES', 'INFO', array( count( $properties ) ) );
+			$this->__sendMessage( 'REGISTRY_INFO_COUNTFETCHINGPROPERTIES', 'INFO', array( count( $properties ) ) );
 
 			foreach ( $properties as $property )
 			{
 				$path_info = pathinfo( $property );
 
-				$this->__send_message( 'REGISTRY_INFO_DIRECTORYFETCHINGPROPERTIES', 'INFO', array( str_replace( ROOTPATH, '', $property ) ) );
+				$this->__sendMessage( 'REGISTRY_INFO_DIRECTORYFETCHINGPROPERTIES', 'INFO', array( str_replace( ROOTPATH, '', $property ) ) );
 
 				$metadata = file_get_contents( $property );
 
-				$this->__send_message( 'REGISTRY_INFO_DECODINGPROPERTIES', 'INFO', array( str_replace( ROOTPATH, '', $property ) ) );
+				$this->__sendMessage( 'REGISTRY_INFO_DECODINGPROPERTIES', 'INFO', array( str_replace( ROOTPATH, '', $property ) ) );
 
 				$metadata = json_decode( $metadata, TRUE );
 
@@ -328,19 +328,19 @@ final class Registry extends ArrayObject
 					{
 						if ( array_key_exists( 'namespace', $metadata ) === FALSE )
 						{
-							$this->__send_message( 'REGISTRY_ERROR_FETCHINGUNDEFINEDNAMESPACE', 'ERROR', array( $path_info[ 'filename' ] ) );
+							$this->__sendMessage( 'REGISTRY_ERROR_FETCHINGUNDEFINEDNAMESPACE', 'ERROR', array( $path_info[ 'filename' ] ) );
 						}
 					}
 
-					$this->__send_message( 'REGISTRY_SUCCESS_FETCHINGDECODINGPROPERTIES', 'SUCCESS', array( $path_info[ 'filename' ] ) );
+					$this->__sendMessage( 'REGISTRY_SUCCESS_FETCHINGDECODINGPROPERTIES', 'SUCCESS', array( $path_info[ 'filename' ] ) );
 
 					if ( is_file( $setting_filepath = $path_info[ 'dirname' ] . DIRECTORY_SEPARATOR . $path_info[ 'filename' ] . '.settings' ) )
 					{
-						$this->__send_message( 'REGISTRY_INFO_FETCHINGSETTINGSPROPERTIES', 'INFO', array( str_replace( ROOTPATH, '', $setting_filepath ) ) );
+						$this->__sendMessage( 'REGISTRY_INFO_FETCHINGSETTINGSPROPERTIES', 'INFO', array( str_replace( ROOTPATH, '', $setting_filepath ) ) );
 
 						$settings = file_get_contents( $setting_filepath );
 
-						$this->__send_message( 'REGISTRY_INFO_DECODINGSETTINGSPROPERTIES', 'INFO', array( str_replace( ROOTPATH, '', $setting_filepath ) ) );
+						$this->__sendMessage( 'REGISTRY_INFO_DECODINGSETTINGSPROPERTIES', 'INFO', array( str_replace( ROOTPATH, '', $setting_filepath ) ) );
 
 						$settings = json_decode( $settings, TRUE );
 
@@ -348,11 +348,11 @@ final class Registry extends ArrayObject
 						{
 							$metadata[ 'settings' ] = new \O2System\Metadata\Setting( $settings );
 
-							$this->__send_message( 'REGISTRY_SUCCESS_DECODINGSETTINGSPROPERTIES', 'SUCCESS', array( str_replace( ROOTPATH, '', $setting_filepath ) ) );
+							$this->__sendMessage( 'REGISTRY_SUCCESS_DECODINGSETTINGSPROPERTIES', 'SUCCESS', array( str_replace( ROOTPATH, '', $setting_filepath ) ) );
 						}
 						else
 						{
-							$this->__send_message( 'REGISTRY_WARNING_DECODINGSETTINGSPROPERTIES', 'WARNING', array( str_replace( ROOTPATH, '', $setting_filepath ) ) );
+							$this->__sendMessage( 'REGISTRY_WARNING_DECODINGSETTINGSPROPERTIES', 'WARNING', array( str_replace( ROOTPATH, '', $setting_filepath ) ) );
 						}
 					}
 
@@ -373,11 +373,11 @@ final class Registry extends ArrayObject
 						$cache[ 'modules' ][ $metadata[ 'segments' ] ] = new \O2System\Metadata\Module( $metadata );
 					}
 
-					$this->__send_message( 'REGISTRY_INFO_REGISTERINGMANIFEST', 'INFO', array( str_replace( ROOTPATH, '', $property ) ) );
+					$this->__sendMessage( 'REGISTRY_INFO_REGISTERINGMANIFEST', 'INFO', array( str_replace( ROOTPATH, '', $property ) ) );
 				}
 				else
 				{
-					$this->__send_message( 'REGISTRY_ERROR_DECODINGMANIFEST', 'ERROR', array( str_replace( ROOTPATH, '', $property ) ) );
+					$this->__sendMessage( 'REGISTRY_ERROR_DECODINGMANIFEST', 'ERROR', array( str_replace( ROOTPATH, '', $property ) ) );
 				}
 			}
 
@@ -486,7 +486,7 @@ final class Registry extends ArrayObject
 		return $parents;
 	}
 
-	private function __send_message( $message, $type = 'INFO', $vars = array() )
+	private function __sendMessage($message, $type = 'INFO', $vars = array() )
 	{
 		$message = \O2System::$language->line( $message );
 
@@ -553,9 +553,6 @@ class RegistryActive extends ArrayObject
 			                     'namespaces'  => new ArrayIterator(),
 			                     'directories' => new ArrayIterator(),
 			                     'modules'     => new ArrayIterator(),
-			                     'namespace'   => NULL,
-			                     'directory'   => NULL,
-			                     'module'      => NULL,
 			                     'language'    => NULL,
 			                     'domain'      => NULL,
 			                     'sub_domain'  => NULL,
@@ -582,7 +579,7 @@ class RegistryDatabaseHandler
 	{
 		$result = $this->db->get( 'sys_registries' );
 
-		if ( $result->num_rows() > 0 )
+		if ( $result->numRows() > 0 )
 		{
 			foreach ( $result as $row )
 			{
@@ -659,9 +656,9 @@ class RegistryDatabaseHandler
 						unset( $value->namespace );
 					}
 
-					$result = $this->db->get_where( 'sys_registries', [ 'key' => $key ] );
+					$result = $this->db->getWhere( 'sys_registries', [ 'key' => $key ] );
 
-					if ( $result->num_rows() == 0 )
+					if ( $result->numRows() == 0 )
 					{
 						$return = $this->db->insert( 'sys_registries', array(
 							'key'             => $key,

@@ -110,7 +110,7 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    bool
 	 */
-	public function create_database( $db_name = '' )
+	public function createDatabase($db_name = '' )
 	{
 		// In SQLite, a database is created when you connect to the database.
 		// We'll return TRUE so that an error isn't generated
@@ -126,7 +126,7 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    bool
 	 */
-	public function drop_database( $db_name = '' )
+	public function dropDatabase($db_name = '' )
 	{
 		// In SQLite, a database is dropped when we delete a file
 		if ( is_file( $this->_driver->database ) )
@@ -163,7 +163,7 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    string|string[]
 	 */
-	protected function _alter_table( $alter_type, $table, $field )
+	protected function _alterTable($alter_type, $table, $field )
 	{
 		if ( $alter_type === 'DROP' OR $alter_type === 'CHANGE' )
 		{
@@ -180,7 +180,7 @@ class Forge extends ForgeInterface
 			return FALSE;
 		}
 
-		return parent::_alter_table( $alter_type, $table, $field );
+		return parent::_alterTable( $alter_type, $table, $field );
 	}
 
 	// --------------------------------------------------------------------
@@ -192,9 +192,9 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    string
 	 */
-	protected function _process_column( $field )
+	protected function _processColumn($field )
 	{
-		return $this->_driver->escape_identifiers( $field[ 'name' ] )
+		return $this->_driver->escapeIdentifiers( $field[ 'name' ] )
 		. ' ' . $field[ 'type' ]
 		. $field[ 'auto_increment' ]
 		. $field[ 'null' ]
@@ -213,7 +213,7 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    void
 	 */
-	protected function _attr_type( &$attributes )
+	protected function _attrType(&$attributes )
 	{
 		switch ( strtoupper( $attributes[ 'TYPE' ] ) )
 		{
@@ -237,7 +237,7 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    void
 	 */
-	protected function _attr_auto_increment( &$attributes, &$field )
+	protected function _attrAutoIncrement(&$attributes, &$field )
 	{
 		if ( ! empty( $attributes[ 'AUTO_INCREMENT' ] ) && $attributes[ 'AUTO_INCREMENT' ] === TRUE && stripos( $field[ 'type' ], 'int' ) !== FALSE )
 		{

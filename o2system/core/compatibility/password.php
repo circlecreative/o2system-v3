@@ -101,7 +101,7 @@ defined( 'PASSWORD_DEFAULT' ) || define( 'PASSWORD_DEFAULT', PASSWORD_BCRYPT );
 
 // ------------------------------------------------------------------------
 
-if( ! function_exists( 'password_get_info' ) )
+if( ! function_exists('passwordGetInfo') )
 {
     /**
      * password_get_info()
@@ -112,7 +112,7 @@ if( ! function_exists( 'password_get_info' ) )
      *
      * @return    array
      */
-    function password_get_info( $hash )
+    function passwordGetInfo($hash )
     {
         return ( strlen( $hash ) < 60 || sscanf( $hash, '$2y$%d', $hash ) !== 1 )
             ? array( 'algo' => 0, 'algoName' => 'unknown', 'options' => array() )
@@ -135,7 +135,7 @@ if( ! function_exists( 'password_hash' ) )
      *
      * @return    mixed
      */
-    function password_hash( $password, $algo, array $options = array() )
+    function passwordHash($password, $algo, array $options = array() )
     {
         static $func_override;
         isset( $func_override ) || $func_override = ( extension_loaded( 'mbstring' ) && ini_get( 'mbstring.func_override' ) );
@@ -154,7 +154,7 @@ if( ! function_exists( 'password_hash' ) )
             return NULL;
         }
 
-        if( isset( $options[ 'salt' ] ) && ( $saltlen = ( $func_override ? mb_strlen( $options[ 'salt' ], '8bit' ) : strlen( $options[ 'salt' ] ) ) ) < 22 )
+        if( isset( $options[ 'salt' ] ) && ( $saltlen = ( $func_override ? mbStrlen( $options[ 'salt' ], '8bit' ) : strlen( $options[ 'salt' ] ) ) ) < 22 )
         {
             trigger_error( 'password_hash(): Provided salt is too short: ' . $saltlen . ' expecting 22', E_USER_WARNING );
 
@@ -183,7 +183,7 @@ if( ! function_exists( 'password_hash' ) )
                 is_php( '5.4' ) && stream_set_chunk_size( $fp, 16 );
 
                 $options[ 'salt' ] = '';
-                for( $read = 0; $read < 16; $read = ( $func_override ) ? mb_strlen( $options[ 'salt' ], '8bit' ) : strlen( $options[ 'salt' ] ) )
+                for( $read = 0; $read < 16; $read = ( $func_override ) ? mbStrlen( $options[ 'salt' ], '8bit' ) : strlen( $options[ 'salt' ] ) )
                 {
                     if( ( $read = fread( $fp, 16 - $read ) ) === FALSE )
                     {
@@ -220,7 +220,7 @@ if( ! function_exists( 'password_hash' ) )
 
 // ------------------------------------------------------------------------
 
-if( ! function_exists( 'password_needs_rehash' ) )
+if( ! function_exists('passwordNeedsRehash') )
 {
     /**
      * password_needs_rehash()
@@ -233,9 +233,9 @@ if( ! function_exists( 'password_needs_rehash' ) )
      *
      * @return    bool
      */
-    function password_needs_rehash( $hash, $algo, array $options = array() )
+    function passwordNeedsRehash($hash, $algo, array $options = array() )
     {
-        $info = password_get_info( $hash );
+        $info = passwordGetInfo( $hash );
 
         if( $algo !== $info[ 'algo' ] )
         {
@@ -257,7 +257,7 @@ if( ! function_exists( 'password_needs_rehash' ) )
 
 // ------------------------------------------------------------------------
 
-if( ! function_exists( 'password_verify' ) )
+if( ! function_exists('passwordVerify') )
 {
     /**
      * password_verify()
@@ -269,7 +269,7 @@ if( ! function_exists( 'password_verify' ) )
      *
      * @return    bool
      */
-    function password_verify( $password, $hash )
+    function passwordVerify($password, $hash )
     {
         if( strlen( $hash ) !== 60 || strlen( $password = crypt( $password, $hash ) ) !== 60 )
         {

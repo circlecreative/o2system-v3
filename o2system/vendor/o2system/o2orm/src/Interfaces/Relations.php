@@ -105,17 +105,17 @@ abstract class Relations
 	 *
 	 * @param string|object $relation table name, model name or instance of ORM model
 	 */
-	public function set_relation( $relation )
+	public function setRelation($relation )
 	{
 		// Try to load reference model
-		$relation_model = $this->_load_relation_model( $relation );
+		$relation_model = $this->_loadRelationModel( $relation );
 
 		if ( $relation_model instanceof Model )
 		{
 			$this->_related_model =& $relation_model;
 
-			$this->_set_relation_table( $relation_model->table );
-			$this->_set_relation_field( $relation_model->primary_key );
+			$this->_setRelationTable( $relation_model->table );
+			$this->_setRelationField( $relation_model->primary_key );
 		}
 		else
 		{
@@ -123,20 +123,20 @@ abstract class Relations
 			{
 				$x_reference = explode( '.', $relation );
 
-				$this->_set_relation_table( $x_reference[ 0 ] );
-				$this->_set_relation_field( $x_reference[ 1 ] );
+				$this->_setRelationTable( $x_reference[ 0 ] );
+				$this->_setRelationField( $x_reference[ 1 ] );
 			}
 			else
 			{
-				$this->_set_relation_table( $relation );
-				$this->_set_relation_field();
+				$this->_setRelationTable( $relation );
+				$this->_setRelationField();
 			}
 		}
 	}
 
 	// ------------------------------------------------------------------------
 
-	public function set_reference_field( $reference_field = NULL )
+	public function setReferenceField($reference_field = NULL )
 	{
 		if ( isset( $reference_field ) )
 		{
@@ -172,7 +172,7 @@ abstract class Relations
 	 *
 	 * @param   string  $table
 	 */
-	protected function _set_relation_table( $table = NULL )
+	protected function _setRelationTable($table = NULL )
 	{
 		if ( isset( $table ) )
 		{
@@ -194,7 +194,7 @@ abstract class Relations
 	 *
 	 * @param   string|null $primary_key   working table foreign key
 	 */
-	protected function _set_relation_field( $relation_field = NULL )
+	protected function _setRelationField($relation_field = NULL )
 	{
 		if ( isset( $relation_field ) )
 		{
@@ -219,7 +219,7 @@ abstract class Relations
 			}
 			else
 			{
-				$related_fields = $this->_reference_model->db->list_fields( $this->_related_table );
+				$related_fields = $this->_reference_model->db->listFields( $this->_related_table );
 			}
 
 			if ( in_array( $relation_field, $related_fields ) )
@@ -240,7 +240,7 @@ abstract class Relations
 	 *
 	 * @param   string|object $related model name or instance of ORM model
 	 */
-	protected function _load_relation_model( $relation )
+	protected function _loadRelationModel($relation )
 	{
 		if ( $relation instanceof Model )
 		{
