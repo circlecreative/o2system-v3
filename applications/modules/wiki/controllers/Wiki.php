@@ -44,10 +44,11 @@ class Wiki extends Controller
 
     public function index()
     {
-        $wiki = new \O2System\Template\Factory\Wiki;
-        $wiki->load($this->active['directory'] . 'pages/');
-
-        $this->view->load( 'wiki', [ 'wiki' => $wiki->tocify() ] );
+//        $wiki = new \O2System\Template\Factory\Wiki;
+//        $wiki->load( $this->active->directories->current() . 'pages/');
+//
+//        $this->view->load( 'wiki', [ 'wiki' => $wiki->tocify() ] );
+	    print_out('test');
     }
 
 }

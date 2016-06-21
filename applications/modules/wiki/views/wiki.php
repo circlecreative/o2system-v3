@@ -25,10 +25,10 @@
                     </div>
                 </div>
                 <div class="col-md-9 col-sm-9 toc-content">
-                    {$wiki}
+                    <?php echo $wiki; ?>
                     <br><br>
                     <p class="pull-left" style="margin-right: 25px; padding-top:10px;"><img src="<?php echo base_url('applications/modules/wiki/assets/images/cc-logo-horizontal.png'); ?>" alt="" height="35"></p>
-                    <p class="pull-left">{$powered->line}<br>
+                    <p class="pull-left"><?php echo $powered->line; ?><br>
                     Copyright &copy; 2011 - <?php echo date('Y'); ?> PT. Lingkar Kreasi (Circle Creative)</p>
                     <p class="pull-right">
                         <img src="assets/system/images/bangga_grayscale.png" height="50">
