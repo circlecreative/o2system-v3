@@ -57,103 +57,103 @@ use O2System\File;
  */
 class Ini
 {
-    /**
-     * Read File
-     *
-     * @access public
-     *
-     * @param string $filename Filename with realpath
-     * @param string $return   Type of return array or object
-     *
-     * @return mixed
-     */
-    public static function read( $filename, $return = 'array' )
-    {
-        if( is_file( $filename ) )
-        {
-            $result = parse_ini_file( $filename, TRUE );
+	/**
+	 * Read File
+	 *
+	 * @access public
+	 *
+	 * @param string $filename Filename with realpath
+	 * @param string $return   Type of return array or object
+	 *
+	 * @return mixed
+	 */
+	public static function read( $filename, $return = 'array' )
+	{
+		if ( is_file( $filename ) )
+		{
+			$result = parse_ini_file( $filename, TRUE );
 
-            if( ! empty( $result ) )
-            {
-                if( $return === 'array' )
-                {
-                    return $result;
-                }
-                elseif( $return === 'object' )
-                {
-                    return (object)$result;
-                }
-            }
-        }
+			if ( ! empty( $result ) )
+			{
+				if ( $return === 'array' )
+				{
+					return $result;
+				}
+				elseif ( $return === 'object' )
+				{
+					return (object) $result;
+				}
+			}
+		}
 
-        return NULL;
-    }
+		return NULL;
+	}
 
-    // ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
 
-    /**
-     * Write File
-     *
-     * @access  public
-     *
-     * @param string $filename Filename
-     * @param array  $data     List of data
-     */
-    public static function write( $filename, array $data, $has_sections = FALSE )
-    {
-        if( count( $data ) > 0 )
-        {
-            $content = self::_factory( $data, $has_sections );
+	/**
+	 * Write File
+	 *
+	 * @access  public
+	 *
+	 * @param string $filename Filename
+	 * @param array  $data     List of data
+	 */
+	public static function write( $filename, array $data, $has_sections = FALSE )
+	{
+		if ( count( $data ) > 0 )
+		{
+			$content = self::_factory( $data, $has_sections );
 
-            File::write( $filename, $content );
-        }
-    }
+			File::write( $filename, $content );
+		}
+	}
 
-    // ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
 
-    /**
-     * File writer factory
-     *
-     * @access  protected
-     *
-     * @param   array  $data         List of data
-     * @param   bool   $has_sections Ini file has section
-     * @param   string $content      Content file
-     *
-     * @return string
-     */
-    protected static function _factory( $data, $has_sections, $content = NULL )
-    {
-        foreach( $data as $key => $value )
-        {
-            if( is_array( $value ) )
-            {
-                if( $has_sections )
-                {
-                    $content .= "[$key]\n";
-                    static::_factory( $value, FALSE, $content );
-                }
-                else
-                {
-                    foreach( $value as $value_k => $value_v )
-                    {
-                        if( is_int( $value_k ) )
-                        {
-                            $content .= $key . "[] = $value_v\n";
-                        }
-                        else
-                        {
-                            $content .= $key . "[$value_k] = $value_v\n";
-                        }
-                    }
-                }
-            }
-            else
-            {
-                $content .= "$key = $value\n";
-            }
-        }
+	/**
+	 * File writer factory
+	 *
+	 * @access  protected
+	 *
+	 * @param   array  $data         List of data
+	 * @param   bool   $has_sections Ini file has section
+	 * @param   string $content      Content file
+	 *
+	 * @return string
+	 */
+	protected static function _factory( $data, $has_sections, $content = NULL )
+	{
+		foreach ( $data as $key => $value )
+		{
+			if ( is_array( $value ) )
+			{
+				if ( $has_sections )
+				{
+					$content .= "[$key]\n";
+					static::_factory( $value, FALSE, $content );
+				}
+				else
+				{
+					foreach ( $value as $value_k => $value_v )
+					{
+						if ( is_int( $value_k ) )
+						{
+							$content .= $key . "[] = $value_v\n";
+						}
+						else
+						{
+							$content .= $key . "[$value_k] = $value_v\n";
+						}
+					}
+				}
+			}
+			else
+			{
+				$content .= "$key = $value\n";
+			}
+		}
 
-        return $content;
-    }
+		return $content;
+	}
 }

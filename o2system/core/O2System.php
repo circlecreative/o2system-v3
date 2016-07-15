@@ -397,16 +397,6 @@ class O2System extends \O2System\Glob
 
 		/*
 		 * ------------------------------------------------------
-		 *  Set Active Domain and Sub Domain
-		 * ------------------------------------------------------
-		 */
-		$parse_domain = parse_domain();
-
-		static::$active[ 'domain' ]     = $parse_domain->domain;
-		static::$active[ 'sub_domain' ] = $parse_domain->sub_domain;
-
-		/*
-		 * ------------------------------------------------------
 		 *  Set Active System Language
 		 * ------------------------------------------------------
 		 */

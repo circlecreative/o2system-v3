@@ -38,6 +38,7 @@
 
 namespace O2System
 {
+
 	use O2System\Cache\Exception;
 	use O2System\Glob\Interfaces\DriverInterface;
 	use O2System\Glob\Interfaces\LibraryInterface;
@@ -62,7 +63,7 @@ namespace O2System
 
 		// ------------------------------------------------------------------------
 
-		public function __reconstruct( array $config = array() )
+		public function __reconstruct( array $config = [ ] )
 		{
 			parent::__reconstruct( $config );
 
@@ -79,7 +80,7 @@ namespace O2System
 		 * @return  mixed
 		 * @throws  Exception
 		 */
-		public function initialize( $config = array() )
+		public function initialize( $config = [ ] )
 		{
 			$config = empty( $config ) ? $this->_config : $config;
 
@@ -94,13 +95,13 @@ namespace O2System
 
 					return $driver;
 				}
-				elseif( isset( $config ['storage' ] ) )
+				elseif ( isset( $config [ 'storage' ] ) )
 				{
 					return $this->initialize( $config[ 'storage' ] );
 				}
 				elseif ( isset( $config[ 'driver' ] ) )
 				{
-					if(empty($this->_config))
+					if ( empty( $this->_config ) )
 					{
 						$this->_config = $config;
 					}
@@ -128,11 +129,11 @@ namespace O2System
 
 		// ------------------------------------------------------------------------
 
-		public function __call( $method, $args = array() )
+		public function __call( $method, $args = [ ] )
 		{
 			if ( method_exists( $this->{$this->_driver}, $method ) )
 			{
-				return call_user_func_array( array( $this->{$this->_driver}, $method ), $args );
+				return call_user_func_array( [ $this->{$this->_driver}, $method ], $args );
 			}
 		}
 	}
@@ -140,6 +141,7 @@ namespace O2System
 
 namespace O2System\Cache
 {
+
 	use O2System\Glob\Interfaces\ExceptionInterface;
 
 	/**
@@ -149,11 +151,11 @@ namespace O2System\Cache
 	 */
 	class Exception extends ExceptionInterface
 	{
-		public $library = array(
+		public $library = [
 			'name'        => 'O2System Cache (O2Cache)',
 			'description' => 'Open Source Cache Management Driver Library',
 			'version'     => '1.0',
-		);
+		];
 	}
 
 	// ------------------------------------------------------------------------
@@ -176,7 +178,7 @@ namespace O2System\Cache
 	 */
 	class UnsupportedDriverException extends Exception
 	{
-		public function __construct( $message, $code, $args = array() )
+		public function __construct( $message, $code, $args = [ ] )
 		{
 			$this->_args = $args;
 			parent::__construct( $message, $code );

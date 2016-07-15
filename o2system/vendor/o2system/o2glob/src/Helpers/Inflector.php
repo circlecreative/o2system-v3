@@ -58,7 +58,7 @@ if ( ! function_exists( 'singular' ) )
 			return $result;
 		}
 
-		$singular_rules = array(
+		$singular_rules = [
 			'/(matr)ices$/'                                                   => '\1ix',
 			'/(vert|ind)ices$/'                                               => '\1ex',
 			'/^(ox)en/'                                                       => '\1',
@@ -86,7 +86,7 @@ if ( ! function_exists( 'singular' ) )
 			'/(c)hildren$/'                                                   => '\1\2hild',
 			'/(n)ews$/'                                                       => '\1\2ews',
 			'/([^us])s$/'                                                     => '\1',
-		);
+		];
 
 		foreach ( $singular_rules as $rule => $replacement )
 		{
@@ -123,7 +123,7 @@ if ( ! function_exists( 'plural' ) )
 			return $result;
 		}
 
-		$plural_rules = array(
+		$plural_rules = [
 			'/^(ox)$/'                => '\1\2en',     // ox
 			'/([m|l])ouse$/'          => '\1ice',      // mouse, louse
 			'/(matr|vert|ind)ix|ex$/' => '\1ices',     // matrix, vertex, index
@@ -143,7 +143,7 @@ if ( ! function_exists( 'plural' ) )
 			'/(ax|cris|test)is$/'     => '\1es',       // axis, crisis
 			'/s$/'                    => 's',          // no change (compatibility)
 			'/$/'                     => 's',
-		);
+		];
 
 		foreach ( $plural_rules as $rule => $replacement )
 		{
@@ -171,7 +171,7 @@ if ( ! function_exists( 'studlycapcase' ) )
 	 */
 	function studlycapcase( $string )
 	{
-		$string = ucwords( str_replace( array( '-', '_' ), ' ', $string ) );
+		$string = ucwords( str_replace( [ '-', '_' ], ' ', $string ) );
 
 		return str_replace( ' ', '', $string );
 	}
@@ -289,14 +289,14 @@ if ( ! function_exists( 'is_countable' ) )
 	 * @access  public
 	 * @return  bool
 	 */
-	function isCountable($string )
+	function isCountable( $string )
 	{
 		return ! in_array(
 			strtolower( $string ),
-			array(
+			[
 				'equipment', 'information', 'rice', 'money',
 				'species', 'series', 'fish', 'meta',
-			)
+			]
 		);
 	}
 }

@@ -42,9 +42,9 @@ use O2System\Bootstrap\Factory\Lists;
 
 trait ContentInterface
 {
-	protected $_content = array();
+	protected $_content = [ ];
 
-	public function setContent($content )
+	public function setContent( $content )
 	{
 		if ( is_array( $content ) )
 		{
@@ -73,7 +73,7 @@ trait ContentInterface
 		return $this;
 	}
 
-	public function prependContent($content )
+	public function prependContent( $content )
 	{
 		if ( is_array( $content ) )
 		{
@@ -92,7 +92,7 @@ trait ContentInterface
 		return $this;
 	}
 
-	public function appendContent($content )
+	public function appendContent( $content )
 	{
 		if ( is_array( $content ) )
 		{

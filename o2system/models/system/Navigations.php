@@ -60,7 +60,7 @@ class Navigations extends System
 		$this->load->helpers( [ 'url', 'html' ] );
 	}
 
-	public function getPositions($module = NULL )
+	public function getPositions( $module = NULL )
 	{
 		$this->db->distinct();
 		$this->db->select(
@@ -69,7 +69,7 @@ class Navigations extends System
 		$this->db->from( $this->table );
 		$this->db->join( 'sys_registries', 'sys_registries.code = ' . $this->table . '.code', 'left' );
 
-		if( ! is_bool( $module ) )
+		if ( ! is_bool( $module ) )
 		{
 			if ( empty( $module ) )
 			{
@@ -78,7 +78,7 @@ class Navigations extends System
 					$this->where( 'sys_registries.code', $module->code );
 				}
 			}
-			elseif( $module instanceof Module )
+			elseif ( $module instanceof Module )
 			{
 				$this->where( 'sys_registries.code', $module->code );
 			}
@@ -99,7 +99,7 @@ class Navigations extends System
 			return $results;
 		}
 
-		return array();
+		return [ ];
 	}
 
 	/**
@@ -112,7 +112,7 @@ class Navigations extends System
 	 *
 	 * @return object
 	 */
-	public function getItems($position, $conditions = NULL )
+	public function getItems( $position, $conditions = NULL )
 	{
 		$this->db->from( $this->table );
 
@@ -178,7 +178,7 @@ class Navigations extends System
 					}
 					else
 					{
-						$row->attr = ['class'=>'has-sub'];
+						$row->attr = [ 'class' => 'has-sub' ];
 					}
 
 					$row->sub = $this->getItems( [ 'id_parent', $row->id ] );
@@ -190,6 +190,6 @@ class Navigations extends System
 			return $results;
 		}
 
-		return array();
+		return [ ];
 	}
 }

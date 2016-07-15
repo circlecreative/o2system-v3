@@ -17,7 +17,7 @@ trait Modifier
 	 * Method to input data as well as equipping the data in accordance with the fields
 	 * in the destination database table.
 	 *
-	 * @param   array $row           Insert Row Data
+	 * @param   array $row          Insert Row Data
 	 * @param   bool  $affectedRows Return num of affected rows
 	 *
 	 * @access  protected
@@ -25,7 +25,7 @@ trait Modifier
 	 */
 	protected function insert( $row, $affectedRows = FALSE )
 	{
-		print_out($row);
+		print_out( $row );
 		$return = FALSE;
 
 		if ( $this->db->tableExists( $this->table ) AND ! empty( $row ) )
@@ -79,7 +79,7 @@ trait Modifier
 	 * @access  protected
 	 * @return  mixed
 	 */
-	protected function insertMany(array $rows, $affectedRows = FALSE )
+	protected function insertMany( array $rows, $affectedRows = FALSE )
 	{
 		$return = FALSE;
 
@@ -112,7 +112,7 @@ trait Modifier
 	 * Method to update data as well as equipping the data in accordance with the fields
 	 * in the destination database table.
 	 *
-	 * @param   array $row           Update row data
+	 * @param   array $row          Update row data
 	 * @param   bool  $affectedRows Return num of affected rows
 	 *
 	 * @access  protected
@@ -153,14 +153,14 @@ trait Modifier
 	 * Method to update data as well as equipping the data in accordance with the fields
 	 * in the destination database table.
 	 *
-	 * @param   array $row           Update row data
-	 * @param   array $conditions    Update conditions
+	 * @param   array $row          Update row data
+	 * @param   array $conditions   Update conditions
 	 * @param   bool  $affectedRows Return num of affected rows
 	 *
 	 * @access  protected
 	 * @return  mixed
 	 */
-	protected function updateBy($row, array $conditions, $affectedRows = FALSE )
+	protected function updateBy( $row, array $conditions, $affectedRows = FALSE )
 	{
 		$return = FALSE;
 
@@ -197,7 +197,7 @@ trait Modifier
 	 *
 	 * @return mixed
 	 */
-	protected function updateMany(array $rows, $affectedRows = FALSE )
+	protected function updateMany( array $rows, $affectedRows = FALSE )
 	{
 		$return = FALSE;
 
@@ -229,7 +229,7 @@ trait Modifier
 		return $this->update( [ 'id' => $id, 'record_status' => 'TRASH' ] );
 	}
 
-	protected function trashBy($id, $conditions = array() )
+	protected function trashBy( $id, $conditions = [ ] )
 	{
 		return $this->updateBy( [ 'id' => $id, 'record_status' => 'TRASH' ], $conditions );
 	}
@@ -241,7 +241,7 @@ trait Modifier
 	 *
 	 * @return mixed
 	 */
-	protected function trashMany(array $ids )
+	protected function trashMany( array $ids )
 	{
 		$return = FALSE;
 
@@ -255,7 +255,7 @@ trait Modifier
 
 	// ------------------------------------------------------------------------
 
-	protected function trashManyBy(array $ids, $conditions = array() )
+	protected function trashManyBy( array $ids, $conditions = [ ] )
 	{
 		$return = FALSE;
 
@@ -286,7 +286,7 @@ trait Modifier
 		}
 
 		// Recursive Search File
-		$fields = array( 'file', 'image', 'picture', 'cover', 'avatar', 'photo', 'video' );
+		$fields = [ 'file', 'image', 'picture', 'cover', 'avatar', 'photo', 'video' ];
 
 		foreach ( $fields as $field )
 		{
@@ -299,8 +299,8 @@ trait Modifier
 					if ( ! empty( $query->firstRow()->{$field} ) )
 					{
 						$directory = new \RecursiveDirectoryIterator( APPSPATH );
-						$iterator = new \RecursiveIteratorIterator( $directory );
-						$results = new \RegexIterator( $iterator, '/^.+\.properties/i', \RecursiveRegexIterator::GET_MATCH );
+						$iterator  = new \RecursiveIteratorIterator( $directory );
+						$results   = new \RegexIterator( $iterator, '/^.+\.properties/i', \RecursiveRegexIterator::GET_MATCH );
 
 						foreach ( $results as $file )
 						{
@@ -336,7 +336,7 @@ trait Modifier
 		return $return;
 	}
 
-	protected function deleteBy($id, $conditions = array(), $force = FALSE, $affectedRows = FALSE )
+	protected function deleteBy( $id, $conditions = [ ], $force = FALSE, $affectedRows = FALSE )
 	{
 		$this->db->where( $conditions );
 
@@ -350,7 +350,7 @@ trait Modifier
 	 *
 	 * @return mixed
 	 */
-	protected function deleteMany(array $ids, $force = FALSE, $affectedRows = FALSE )
+	protected function deleteMany( array $ids, $force = FALSE, $affectedRows = FALSE )
 	{
 		$return = FALSE;
 
@@ -375,7 +375,7 @@ trait Modifier
 		return $return;
 	}
 
-	protected function deleteManyBy(array $ids, $conditions = array(), $force = FALSE, $affectedRows = FALSE )
+	protected function deleteManyBy( array $ids, $conditions = [ ], $force = FALSE, $affectedRows = FALSE )
 	{
 		$return = FALSE;
 

@@ -66,9 +66,15 @@ if ( ! function_exists( 'base_url' ) )
 	 *
 	 * @return    string
 	 */
-	function base_url( $uri = NULL, $suffix = TRUE, $protocol = NULL )
+	function base_url( $uri = NULL, $suffix = NULL, $query = [ ] )
 	{
-		return \O2System::$config->baseURL( $uri, $suffix, $protocol );
+		if ( is_array( $suffix ) )
+		{
+			$query  = $suffix;
+			$suffix = NULL;
+		}
+
+		return \O2System::$config->baseUrl( $uri, $suffix, $query );
 	}
 }
 
@@ -88,9 +94,15 @@ if ( ! function_exists( 'route_url' ) )
 	 *
 	 * @return    string
 	 */
-	function route_url( $uri = NULL, $suffix = TRUE, $protocol = NULL )
+	function route_url( $uri = NULL, $suffix = NULL, $query = [ ] )
 	{
-		return \O2System::Router()->baseURL( $uri, $suffix, $protocol );
+		if ( is_array( $suffix ) )
+		{
+			$query  = $suffix;
+			$suffix = NULL;
+		}
+
+		return \O2System::Router()->routeUrl( $uri, $suffix, $query );
 	}
 }
 
@@ -106,9 +118,29 @@ if ( ! function_exists( 'current_url' ) )
 	 *
 	 * @return    string
 	 */
-	function current_url()
+	function current_url( $uri = NULL, $suffix = NULL, $query = [ ] )
 	{
-		return \O2System::$config->baseURL( O2System::$active[ 'URI' ]->string );
+		if ( is_array( $suffix ) )
+		{
+			$query  = $suffix;
+			$suffix = NULL;
+		}
+
+		$uri = is_array( $uri ) ? implode( '/', $uri ) : $uri;
+
+		if ( \O2System::$active[ 'URI' ]->hasExtensionSegment() )
+		{
+			$current_uri_segments = O2System::$active[ 'URI' ]->segments;
+			array_pop( $current_uri_segments );
+
+			$uri = implode( '/', $current_uri_segments ) . $uri;
+		}
+		else
+		{
+			$uri = O2System::$active[ 'URI' ]->string . $uri;
+		}
+
+		return domain_url( $uri, $query );
 	}
 }
 
@@ -117,7 +149,7 @@ if ( ! function_exists( 'current_url' ) )
 if ( ! function_exists( 'domain_url' ) )
 {
 	/**
-	 * Base URL
+	 * Domain URL
 	 *
 	 * Create a local URL based on your basepath.
 	 * Segments can be passed in as a string or an array, same as site_url
@@ -128,46 +160,15 @@ if ( ! function_exists( 'domain_url' ) )
 	 *
 	 * @return    string
 	 */
-	function domain_url( $uri = NULL, $suffix = TRUE, $protocol = NULL )
+	function domain_url( $uri = NULL, $suffix = NULL, $query = [ ] )
 	{
-		if ( empty( $uri ) )
+		if ( is_array( $suffix ) )
 		{
-			$uri = '/';
-		}
-		elseif ( is_array( $uri ) )
-		{
-			$uri = '/' . implode( '/', $uri );
-		}
-		elseif ( is_string( $uri ) )
-		{
-			$uri = '/' . ltrim( $uri, '/' );
+			$query  = $suffix;
+			$suffix = NULL;
 		}
 
-		if ( isset( $suffix ) )
-		{
-			if ( is_bool( $suffix ) )
-			{
-				$URI = \O2System::$config->offsetGet( 'URI' );
-				$suffix = ( empty( $URI[ 'suffix' ] ) ) ? '' : $URI[ 'suffix' ];
-			}
-		}
-
-		if ( ! empty( $uri ) AND $uri !== '/' )
-		{
-			$extension = pathinfo( $uri, PATHINFO_EXTENSION );
-
-			if ( empty( $extension ) )
-			{
-				$uri = $uri . $suffix;
-			}
-		}
-
-		if ( empty( $protocol ) )
-		{
-			$protocol = is_https() ? 'https://' : 'http://';
-		}
-
-		return $protocol . \O2System::$active[ 'domain' ] . $uri;
+		return \O2System::$active[ 'domain' ]->url( $uri, $query );
 	}
 }
 
@@ -190,6 +191,23 @@ if ( ! function_exists( 'uri_string' ) )
 
 // ------------------------------------------------------------------------
 
+if ( ! function_exists( 'url_suffix' ) )
+{
+	/**
+	 * URI Suffix
+	 *
+	 * Returns the URI segments.
+	 *
+	 * @return    string
+	 */
+	function url_suffix()
+	{
+		return O2System::$config[ 'URI' ][ 'suffix' ];
+	}
+}
+
+// ------------------------------------------------------------------------
+
 if ( ! function_exists( 'index_page' ) )
 {
 	/**
@@ -201,7 +219,7 @@ if ( ! function_exists( 'index_page' ) )
 	 */
 	function index_page()
 	{
-		return O2System::$config->item( 'index_page' );
+		return O2System::$config[ 'index_page' ];
 	}
 }
 
@@ -321,7 +339,7 @@ if ( ! function_exists( 'redirect' ) )
 		if ( substr_count( $uri, '.' ) > 1 )
 		{
 			$segments = explode( '/', $uri );
-			$domain = reset( $segments );
+			$domain   = reset( $segments );
 
 			array_shift( $segments );
 
@@ -443,8 +461,8 @@ if ( ! function_exists( 'anchor' ) )
 		$title = (string) $title;
 
 		$site_url = is_array( $uri )
-			? site_url( $uri )
-			: preg_match( '#^(\w+:)?//#i', $uri ) ? $uri : site_url( $uri );
+			? base_url( $uri )
+			: preg_match( '#^(\w+:)?//#i', $uri ) ? $uri : base_url( $uri );
 
 		if ( $title === '' )
 		{
@@ -478,8 +496,8 @@ if ( ! function_exists( 'anchor_popup' ) )
 	 */
 	function anchor_popup( $uri = '', $title = '', $attributes = FALSE )
 	{
-		$title = (string) $title;
-		$site_url = preg_match( '#^(\w+:)?//#i', $uri ) ? $uri : site_url( $uri );
+		$title    = (string) $title;
+		$site_url = preg_match( '#^(\w+:)?//#i', $uri ) ? $uri : base_url( $uri );
 
 		if ( $title === '' )
 		{
@@ -493,7 +511,7 @@ if ( ! function_exists( 'anchor_popup' ) )
 
 		if ( ! is_array( $attributes ) )
 		{
-			$attributes = array( $attributes );
+			$attributes = [ $attributes ];
 
 			// Ref: http://www.w3schools.com/jsref/met_win_open.asp
 			$window_name = '_blank';
@@ -508,7 +526,7 @@ if ( ! function_exists( 'anchor_popup' ) )
 			$window_name = '_blank';
 		}
 
-		foreach ( array( 'width' => '800', 'height' => '600', 'scrollbars' => 'yes', 'menubar' => 'no', 'status' => 'yes', 'resizable' => 'yes', 'screenx' => '0', 'screeny' => '0' ) as $key => $val )
+		foreach ( [ 'width' => '800', 'height' => '600', 'scrollbars' => 'yes', 'menubar' => 'no', 'status' => 'yes', 'resizable' => 'yes', 'screenx' => '0', 'screeny' => '0' ] as $key => $val )
 		{
 			$atts[ $key ] = isset( $attributes[ $key ] ) ? $attributes[ $key ] : $val;
 			unset( $attributes[ $key ] );
@@ -606,7 +624,7 @@ if ( ! function_exists( 'safe_mailto' ) )
 
 		$x[] = '>';
 
-		$temp = array();
+		$temp = [ ];
 		for ( $i = 0, $l = strlen( $title ); $i < $l; $i++ )
 		{
 			$ordinal = ord( $title[ $i ] );
@@ -628,9 +646,9 @@ if ( ! function_exists( 'safe_mailto' ) )
 					$number = ( $count === 3 )
 						? ( ( $temp[ 0 ] % 16 ) * 4096 ) + ( ( $temp[ 1 ] % 64 ) * 64 ) + ( $temp[ 2 ] % 64 )
 						: ( ( $temp[ 0 ] % 32 ) * 64 ) + ( $temp[ 1 ] % 64 );
-					$x[] = '|' . $number;
-					$count = 1;
-					$temp = array();
+					$x[]    = '|' . $number;
+					$count  = 1;
+					$temp   = [ ];
 				}
 			}
 		}
@@ -698,7 +716,7 @@ if ( ! function_exists( 'auto_link' ) )
 				//
 				// With PREG_OFFSET_CAPTURE, both of the above is an array,
 				// where the actual value is held in [0] and its offset at the [1] index.
-				$a = '<a href="' . ( strpos( $match[ 1 ][ 0 ], '/' ) ? '' : 'http://' ) . $match[ 0 ][ 0 ] . '"' . $target . '>' . $match[ 0 ][ 0 ] . '</a>';
+				$a   = '<a href="' . ( strpos( $match[ 1 ][ 0 ], '/' ) ? '' : 'http://' ) . $match[ 0 ][ 0 ] . '"' . $target . '>' . $match[ 0 ][ 0 ] . '</a>';
 				$str = substr_replace( $str, $a, $match[ 0 ][ 1 ], strlen( $match[ 0 ][ 0 ] ) );
 			}
 		}
@@ -783,12 +801,12 @@ if ( ! function_exists( 'url_title' ) )
 
 		$q_separator = preg_quote( $separator, '#' );
 
-		$trans = array(
+		$trans = [
 			'&.+?;'                   => '',
 			'[^a-z0-9 _-]'            => '',
 			'\s+'                     => $separator,
 			'(' . $q_separator . ')+' => $separator,
-		);
+		];
 
 		$str = strip_tags( $str );
 		foreach ( $trans as $key => $val )

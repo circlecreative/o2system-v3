@@ -29,31 +29,31 @@ abstract class Widgets extends Controller
 		redirect( 'error/403' );
 	}
 
-	public function setTitle($title )
+	public function setTitle( $title )
 	{
 		return $this->setHeader( $title );
 	}
 
-	public function setHeader($header )
+	public function setHeader( $header )
 	{
 		$this->header = $header;
 
 		return $this;
 	}
 
-	public function setContent($content )
+	public function setContent( $content )
 	{
 		return $this->setBody( $content );
 	}
 
-	public function setBody($body )
+	public function setBody( $body )
 	{
 		$this->body = $body;
 
 		return $this;
 	}
 
-	public function setFooter($footer )
+	public function setFooter( $footer )
 	{
 		$this->footer = $footer;
 
@@ -116,24 +116,30 @@ abstract class Widgets extends Controller
 	{
 		$this->view->addPath( ROOTPATH . $this->metadata[ 'realpath' ] );
 
-		return $this->view->load( $this->metadata->parameter, array(), TRUE );
+		return $this->view->load( $this->metadata->parameter, [ ], TRUE );
 	}
 
 	public function render()
 	{
 		$content = $this->__get( 'content' );
-		$content = trim($content);
+		$content = trim( $content );
 
-		if($content === '' OR is_null($content)) return '';
+		if ( $content === '' OR is_null( $content ) )
+		{
+			return '';
+		}
 
 		$panel = new Panel( Panel::DEFAULT_PANEL );
-		$panel->setTitle( '<span>'.$this->__get( 'title' ).'</span>', 'h5' );
+		$panel->setTitle( '<span>' . $this->__get( 'title' ) . '</span>', 'h5' );
 		$panel->setContent( $content );
 
 		$footer = $this->__get( 'footer' );
-		$footer = trim($footer);
+		$footer = trim( $footer );
 
-		if($footer !== '' OR ! is_null($footer)) $panel->setFooter( $footer );
+		if ( $footer !== '' OR ! is_null( $footer ) )
+		{
+			$panel->setFooter( $footer );
+		}
 
 		return $panel->render();
 	}

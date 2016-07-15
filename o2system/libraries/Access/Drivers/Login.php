@@ -71,12 +71,11 @@ class Login extends DriverInterface
 	public function set( $username, $password, $remember = FALSE )
 	{
 		$remember = empty( $remember ) ? FALSE : TRUE;
-
 		$username = trim( $username );
 		$password = trim( $password );
 
 		$user = $this->_library->model->getAccount( $username );
-		
+
 		if ( $user instanceof \ArrayObject )
 		{
 			if ( $user->offsetExists( 'salt' ) )
@@ -182,17 +181,12 @@ class Login extends DriverInterface
 					return FALSE;
 				}
 
-				$this->_library->token->setAccess( $user, $user->password, (bool) empty( getCookie( 'remember' ) ) );
+				$this->_library->token->setAccess( $user, $user->password, (bool) empty( get_cookie( 'remember' ) ) );
 
 				return TRUE;
 			}
 		}
 
 		return FALSE;
-	}
-
-	public function destroy()
-	{
-
 	}
 }

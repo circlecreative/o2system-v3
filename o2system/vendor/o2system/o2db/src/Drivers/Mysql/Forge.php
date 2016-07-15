@@ -89,7 +89,7 @@ class Forge extends ForgeInterface
 	 *
 	 * @type    array
 	 */
-	protected $_unsigned = array(
+	protected $_unsigned = [
 		'TINYINT',
 		'SMALLINT',
 		'MEDIUMINT',
@@ -102,7 +102,7 @@ class Forge extends ForgeInterface
 		'FLOAT',
 		'DECIMAL',
 		'NUMERIC',
-	);
+	];
 
 	/**
 	 * NULL value representation in CREATE/ALTER TABLE statements
@@ -120,7 +120,7 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    string
 	 */
-	protected function _createTableAttr($attributes )
+	protected function _createTableAttr( $attributes )
 	{
 		$sql = '';
 
@@ -156,7 +156,7 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    string|string[]
 	 */
-	protected function _alterTable($alter_type, $table, $field )
+	protected function _alterTable( $alter_type, $table, $field )
 	{
 		if ( $alter_type === 'DROP' )
 		{
@@ -185,7 +185,7 @@ class Forge extends ForgeInterface
 			}
 		}
 
-		return array( $sql . implode( ',', $field ) );
+		return [ $sql . implode( ',', $field ) ];
 	}
 
 	// --------------------------------------------------------------------
@@ -197,7 +197,7 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    string
 	 */
-	protected function _processColumn($field )
+	protected function _processColumn( $field )
 	{
 		$extra_clause = isset( $field[ 'after' ] ) ? ' AFTER ' . $this->_driver->escapeIdentifiers( $field[ 'after' ] ) : '';
 
@@ -218,7 +218,7 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    string
 	 */
-	protected function _processIndexes($table )
+	protected function _processIndexes( $table )
 	{
 		$sql = '';
 
@@ -241,12 +241,12 @@ class Forge extends ForgeInterface
 				continue;
 			}
 
-			is_array( $this->keys[ $i ] ) OR $this->keys[ $i ] = array( $this->keys[ $i ] );
+			is_array( $this->keys[ $i ] ) OR $this->keys[ $i ] = [ $this->keys[ $i ] ];
 
 			$sql .= ",\n\tKEY " . $this->_driver->escapeIdentifiers( implode( '_', $this->keys[ $i ] ) ) . ' (' . implode( ', ', $this->_driver->escapeIdentifiers( $this->keys[ $i ] ) ) . ')';
 		}
 
-		$this->keys = array();
+		$this->keys = [ ];
 
 		return $sql;
 	}

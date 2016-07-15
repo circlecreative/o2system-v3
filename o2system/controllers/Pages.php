@@ -26,13 +26,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  *
- * @package		O2System
- * @author		Circle Creative Dev Team
- * @copyright	Copyright (c) 2005 - 2015, .
- * @license		http://circle-creative.com/products/o2system-codeigniter/license.html
- * @license	    http://opensource.org/licenses/MIT	MIT License
- * @link		http://circle-creative.com/products/o2system-codeigniter.html
- * @since		Version 2.0
+ * @package        O2System
+ * @author         Circle Creative Dev Team
+ * @copyright      Copyright (c) 2005 - 2015, .
+ * @license        http://circle-creative.com/products/o2system-codeigniter/license.html
+ * @license        http://opensource.org/licenses/MIT	MIT License
+ * @link           http://circle-creative.com/products/o2system-codeigniter.html
+ * @since          Version 2.0
  * @filesource
  */
 // ------------------------------------------------------------------------
@@ -49,34 +49,34 @@ use O2System\Controller;
  *
  * O2System Pages Default Controller
  *
- * @package		O2System
- * @subpackage	controllers
- * @category	Controller Class
- * @author		Steeven Andrian Salim
- * @link		http://circle-creative.com/products/o2system-codeigniter/user-guide/controllers/pages.html
+ * @package        O2System
+ * @subpackage     controllers
+ * @category       Controller Class
+ * @author         Steeven Andrian Salim
+ * @link           http://circle-creative.com/products/o2system-codeigniter/user-guide/controllers/pages.html
  */
 class Pages extends Controller
 {
-    /**
-     * Controller Class Constructor
-     *
-     * @access  public
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
-    // ------------------------------------------------------------------------
+	/**
+	 * Controller Class Constructor
+	 *
+	 * @access  public
+	 */
+	public function __construct()
+	{
+		parent::__construct();
+	}
+	// ------------------------------------------------------------------------
 
-    /**
-     * Index Method
-     *
-     * @param   string  $page   Page Filename
-     *
-     * @access  public
-     */
-    public function index()
-    {
-        $this->load->page( $this->active->page );
-    }
+	/**
+	 * Index Method
+	 *
+	 * @param   string $page Page Filename
+	 *
+	 * @access  public
+	 */
+	public function index()
+	{
+		$this->load->page( $this->active->page );
+	}
 }

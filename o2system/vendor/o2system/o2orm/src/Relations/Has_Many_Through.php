@@ -56,18 +56,18 @@ use O2System\ORM\Factory\Query;
  * @author          Circle Creative Dev Team
  * @link            http://o2system.center/wiki/#ORMBelongsTo
  */
-class Has_many_through  extends Relation
+class Has_many_through extends Relation
 {
 
-    /**
-     * Result
-     *
-     * Abstract: extended class of Relation must implements result method
-     *
-     * @return mixed
-     */
-    public function result()
-    {
-        // TODO: Implement result() method.
-    }
+	/**
+	 * Result
+	 *
+	 * Abstract: extended class of Relation must implements result method
+	 *
+	 * @return mixed
+	 */
+	public function result()
+	{
+		// TODO: Implement result() method.
+	}
 }

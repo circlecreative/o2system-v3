@@ -134,15 +134,15 @@ final class UTF8
 		)
 		{
 			@define( 'UTF8_ENABLED', TRUE );
-			\O2System::Log('debug', 'UTF-8 Support Enabled');
+			\O2System::Log( 'debug', 'UTF-8 Support Enabled' );
 		}
 		else
 		{
 			@define( 'UTF8_ENABLED', FALSE );
-			\O2System::Log('debug', 'UTF-8 Support Disabled');
+			\O2System::Log( 'debug', 'UTF-8 Support Disabled' );
 		}
 
-		\O2System::Log('info', 'UTF8 Class Initialized');
+		\O2System::Log( 'info', 'UTF8 Class Initialized' );
 	}
 
 	// --------------------------------------------------------------------

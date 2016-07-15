@@ -67,7 +67,7 @@ class Driver extends DriverInterface
 	 *
 	 * @type    array
 	 */
-	protected $_random_keywords = array( 'RAND()', 'RAND()' );
+	protected $_random_keywords = [ 'RAND()', 'RAND()' ];
 
 	// --------------------------------------------------------------------
 
@@ -117,7 +117,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _listTablesStatement($prefix_limit = FALSE )
+	protected function _listTablesStatement( $prefix_limit = FALSE )
 	{
 		$sql = 'SELECT "RDB$RELATION_NAME" FROM "RDB$RELATIONS" WHERE "RDB$RELATION_NAME" NOT LIKE \'RDB$%\' AND "RDB$RELATION_NAME" NOT LIKE \'MON$%\'';
 
@@ -141,7 +141,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _listColumnsStatement($table = '' )
+	protected function _listColumnsStatement( $table = '' )
 	{
 		return 'SELECT "RDB$FIELD_NAME" FROM "RDB$RELATION_FIELDS" WHERE "RDB$RELATION_NAME" = ' . $this->escape( $table );
 	}
@@ -155,7 +155,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    array
 	 */
-	public function fieldData($table )
+	public function fieldData( $table )
 	{
 		$sql = 'SELECT "rfields"."RDB$FIELD_NAME" AS "name",
 				CASE "fields"."RDB$FIELD_TYPE"
@@ -199,7 +199,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _updateStatement($table, $values )
+	protected function _updateStatement( $table, $values )
 	{
 		$this->qb_limit = FALSE;
 
@@ -220,7 +220,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _truncateStatement($table )
+	protected function _truncateStatement( $table )
 	{
 		return 'DELETE FROM ' . $table;
 	}

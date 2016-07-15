@@ -17,7 +17,7 @@ use Traversable;
 
 class Partials extends DriverInterface implements IteratorAggregate, Countable, ArrayAccess
 {
-	private $storage = array();
+	private $storage = [ ];
 
 	public function __set( $index, $content )
 	{
@@ -29,12 +29,12 @@ class Partials extends DriverInterface implements IteratorAggregate, Countable, 
 		return $this->offsetGet( $offset );
 	}
 
-	public function setPartials(array $partials )
+	public function setPartials( array $partials )
 	{
 		$this->storage = $partials;
 	}
 
-	public function addPartials(array $partials )
+	public function addPartials( array $partials )
 	{
 		foreach ( $partials as $partial => $content )
 		{
@@ -42,9 +42,9 @@ class Partials extends DriverInterface implements IteratorAggregate, Countable, 
 		}
 	}
 
-	public function addPartial($index, $content )
+	public function addPartial( $index, $content )
 	{
-		$vars = $this->_library->_cached_vars;
+		$vars               = $this->_library->_cached_vars;
 		$vars[ 'partials' ] = $this;
 
 		$content = $this->_library->view->load( $content, $vars, TRUE );

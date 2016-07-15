@@ -12,9 +12,9 @@ namespace O2System\Template\Collections
 
 	class Navigations implements IteratorAggregate, Countable, ArrayAccess
 	{
-		private $storage = array();
+		private $storage = [ ];
 
-		public function __construct( array $navigations = array() )
+		public function __construct( array $navigations = [ ] )
 		{
 			foreach ( $navigations as $position => $navigation )
 			{
@@ -42,7 +42,7 @@ namespace O2System\Template\Collections
 			}
 		}
 
-		public function __call( $position, $args = array() )
+		public function __call( $position, $args = [ ] )
 		{
 			if ( $this->offsetExists( $position ) )
 			{
@@ -181,14 +181,14 @@ namespace O2System\Template\Collections\Navigations
 		{
 			foreach ( $links as $key => $link )
 			{
-				$key = isset( $link[ 'parameter' ] ) ? strtolower( $link[ 'parameter' ] ) : $key;
+				$key                = isset( $link[ 'parameter' ] ) ? strtolower( $link[ 'parameter' ] ) : $key;
 				$navigation[ $key ] = new Link( $link );
 			}
 
 			parent::__construct( $navigation );
 		}
 
-		public function __call( $method, $args = array() )
+		public function __call( $method, $args = [ ] )
 		{
 			static $nav = NULL;
 
@@ -200,13 +200,13 @@ namespace O2System\Template\Collections\Navigations
 				{
 					$navigation->url = isset( $navigation->url ) ? $navigation->url : '#';
 
-					if($navigation instanceof FactoryInterface)
+					if ( $navigation instanceof FactoryInterface )
 					{
 						$nav->addItem( $navigation );
 					}
 					elseif ( empty( $navigation->childs ) )
 					{
-						$attr = $navigation->offsetGet( 'attr' )->__toArray();
+						$attr            = $navigation->offsetGet( 'attr' )->__toArray();
 						$attr[ 'title' ] = $navigation->offsetGet( 'title' )->page;
 
 						$link = new \O2System\Bootstrap\Factory\Link( $navigation->label, $navigation->url, $attr );
@@ -227,7 +227,7 @@ namespace O2System\Template\Collections\Navigations
 					}
 					else
 					{
-						$attr = $navigation->offsetGet( 'attr' )->__toArray();
+						$attr            = $navigation->offsetGet( 'attr' )->__toArray();
 						$attr[ 'title' ] = $navigation->offsetGet( 'title' )->page;
 
 						$links = new \O2System\Bootstrap\Factory\Links( $navigation->label, $attr );
@@ -241,7 +241,7 @@ namespace O2System\Template\Collections\Navigations
 						{
 							$child->url = isset( $child->url ) ? $child->url : '#';
 
-							$attr = $child->offsetGet( 'attr' )->__toArray();
+							$attr            = $child->offsetGet( 'attr' )->__toArray();
 							$attr[ 'title' ] = $child->offsetGet( 'title' )->page;
 
 							$links->addItem( new \O2System\Bootstrap\Factory\Link( $child->label, $child->url, $attr ) );
@@ -261,7 +261,7 @@ namespace O2System\Template\Collections\Navigations
 
 			if ( method_exists( $nav, $method ) )
 			{
-				return call_user_func_array( array( $nav, $method ), $args );
+				return call_user_func_array( [ $nav, $method ], $args );
 			}
 
 			return $nav;
@@ -325,7 +325,7 @@ namespace O2System\Template\Collections\Navigations
 
 		public function __toString()
 		{
-			$attr = $this->offsetGet( 'attr' )->__toArray();
+			$attr            = $this->offsetGet( 'attr' )->__toArray();
 			$attr[ 'title' ] = $this->offsetGet( 'title' )->page;
 
 			return ( new Link( $this->offsetGet( 'label', $this->offsetGet( 'url' ), $attr ) ) )->render();

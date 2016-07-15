@@ -50,7 +50,8 @@ trait ResponsiveInterface
 	 */
 	public function isXsmallVisible()
 	{
-		$this->addClass('visible-xs');
+		$this->addClass( 'visible-xs' );
+
 		return $this;
 	}
 
@@ -64,7 +65,8 @@ trait ResponsiveInterface
 	 */
 	public function isSmallVisible()
 	{
-		$this->addClass('visible-sm');
+		$this->addClass( 'visible-sm' );
+
 		return $this;
 	}
 
@@ -78,7 +80,8 @@ trait ResponsiveInterface
 	 */
 	public function isMediumVisible()
 	{
-		$this->addClass('visible-md');
+		$this->addClass( 'visible-md' );
+
 		return $this;
 	}
 
@@ -92,7 +95,8 @@ trait ResponsiveInterface
 	 */
 	public function isLargeVisible()
 	{
-		$this->addClass('visible-lg');
+		$this->addClass( 'visible-lg' );
+
 		return $this;
 	}
 
@@ -106,7 +110,8 @@ trait ResponsiveInterface
 	 */
 	public function isXsmallHidden()
 	{
-		$this->addClass('hidden-xs');
+		$this->addClass( 'hidden-xs' );
+
 		return $this;
 	}
 
@@ -120,7 +125,8 @@ trait ResponsiveInterface
 	 */
 	public function isSmallHidden()
 	{
-		$this->addClass('hidden-sm');
+		$this->addClass( 'hidden-sm' );
+
 		return $this;
 	}
 
@@ -134,7 +140,8 @@ trait ResponsiveInterface
 	 */
 	public function isMediumHidden()
 	{
-		$this->addClass('hidden-md');
+		$this->addClass( 'hidden-md' );
+
 		return $this;
 	}
 
@@ -148,7 +155,8 @@ trait ResponsiveInterface
 	 */
 	public function isLargeHidden()
 	{
-		$this->addClass('hidden-lg');
+		$this->addClass( 'hidden-lg' );
+
 		return $this;
 	}
 }

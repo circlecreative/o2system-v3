@@ -72,7 +72,7 @@ class Driver extends DriverInterface
 	 *
 	 * @type array
 	 */
-	protected $_random_keywords = array( 'RANDOM()', 'RANDOM(%d)' );
+	protected $_random_keywords = [ 'RANDOM()', 'RANDOM(%d)' ];
 
 	// --------------------------------------------------------------------
 
@@ -110,7 +110,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _listTablesStatement($prefix_limit = FALSE )
+	protected function _listTablesStatement( $prefix_limit = FALSE )
 	{
 		$sql = 'SHOW TABLES';
 
@@ -133,7 +133,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _listColumnsStatement($table = '' )
+	protected function _listColumnsStatement( $table = '' )
 	{
 		return 'SHOW COLUMNS FROM ' . $this->protectIdentifiers( $table, TRUE, NULL, FALSE );
 	}
@@ -147,7 +147,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    array
 	 */
-	public function fieldData($table )
+	public function fieldData( $table )
 	{
 		if ( ( $query = $this->query( 'SHOW COLUMNS FROM ' . $this->protectIdentifiers( $table, TRUE, NULL, FALSE ) ) ) === FALSE )
 		{
@@ -155,18 +155,19 @@ class Driver extends DriverInterface
 		}
 		$query = $query->resultObject();
 
-		$result = array();
+		$result = [ ];
 		for ( $i = 0, $c = count( $query ); $i < $c; $i++ )
 		{
-			$result[ $i ] = new \stdClass();
+			$result[ $i ]       = new \stdClass();
 			$result[ $i ]->name = $query[ $i ]->Field;
 
-			sscanf( $query[ $i ]->Type, '%[a-z](%d)',
-			        $result[ $i ]->type,
-			        $result[ $i ]->max_length
+			sscanf(
+				$query[ $i ]->Type, '%[a-z](%d)',
+				$result[ $i ]->type,
+				$result[ $i ]->max_length
 			);
 
-			$result[ $i ]->default = $query[ $i ]->Default;
+			$result[ $i ]->default     = $query[ $i ]->Default;
 			$result[ $i ]->primary_key = (int) ( $query[ $i ]->Key === 'PRI' );
 		}
 
@@ -186,9 +187,9 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _updateBatchStatement($table, $values, $index )
+	protected function _updateBatchStatement( $table, $values, $index )
 	{
-		$ids = array();
+		$ids = [ ];
 		foreach ( $values as $key => $value )
 		{
 			$ids[] = $value[ $index ];
@@ -229,7 +230,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _truncateStatement($table )
+	protected function _truncateStatement( $table )
 	{
 		return 'TRUNCATE ' . $table;
 	}

@@ -54,7 +54,7 @@ defined( 'ROOTPATH' ) || exit( 'No direct script access allowed' );
 final class Security
 {
 
-	protected $_config = array();
+	protected $_config = [ ];
 
 	/**
 	 * XSS Hash
@@ -109,17 +109,17 @@ final class Security
 
 		if ( (bool) ini_get( 'register_globals' ) )
 		{
-			$_protected = array(
+			$_protected = [
 				'_SERVER', '_GET', '_POST', '_FILES', '_REQUEST', '_SESSION', '_ENV', '_COOKIE', 'GLOBALS',
 				'HTTP_RAW_POST_DATA', 'system_path', 'application_folder', 'view_folder', '_protected',
 				'_registered',
-			);
+			];
 
 			$_registered = ini_get( 'variables_order' );
 
-			foreach ( array(
+			foreach ( [
 				          'E' => '_ENV', 'P' => '_POST', 'C' => '_COOKIE', 'S' => '_SERVER',
-			          ) as $key => $superglobal )
+			          ] as $key => $superglobal )
 			{
 				if ( strpos( $_registered, $key ) === FALSE )
 				{
@@ -138,7 +138,7 @@ final class Security
 
 		\O2System::Load()->helper( 'security' );
 
-		\O2System::Log('info', 'Security Class Initialized');
+		\O2System::Log( 'info', 'Security Class Initialized' );
 	}
 
 	// ----------------------------------------------------------------
@@ -334,9 +334,9 @@ final class Security
 		 * We only convert entities that are within tags since
 		 * these are the ones that will pose security problems.
 		 */
-		$string = preg_replace_callback( "/[^a-z0-9>]+[a-z0-9]+=([\'\"]).*?\\1/si", array( $this, '_convertAttribute' ), $string );
+		$string = preg_replace_callback( "/[^a-z0-9>]+[a-z0-9]+=([\'\"]).*?\\1/si", [ $this, '_convertAttribute' ], $string );
 
-		$string = preg_replace_callback( '/<\w+.*/si', array( $this, '_decodeEntity' ), $string );
+		$string = preg_replace_callback( '/<\w+.*/si', [ $this, '_decodeEntity' ], $string );
 
 		// Remove Invisible Characters Again!
 		$string = remove_invisible_characters( $string );
@@ -375,7 +375,7 @@ final class Security
 		}
 		else
 		{
-			$string = str_replace( array( '<?', '?' . '>' ), array( '&lt;?', '?&gt;' ), $string );
+			$string = str_replace( [ '<?', '?' . '>' ], [ '&lt;?', '?&gt;' ], $string );
 		}
 
 		/*
@@ -384,11 +384,11 @@ final class Security
 		 * This corrects words like:  j a v a s c r i p t
 		 * These words are compacted back to their correct state.
 		 */
-		$words = array(
+		$words = [
 			'javascript', 'expression', 'vbscript', 'jscript', 'wscript',
 			'vbs', 'script', 'base64', 'applet', 'alert', 'document',
 			'write', 'cookie', 'window', 'confirm', 'prompt', 'eval',
-		);
+		];
 
 		foreach ( $words as $word )
 		{
@@ -396,7 +396,7 @@ final class Security
 
 			// We only want to do this when it is followed by a non-word character
 			// That way valid stuff like "dealer to" does not become "dealerto"
-			$string = preg_replace_callback( '#(' . substr( $word, 0, -3 ) . ')(\W)#is', array( $this, '_compactExplodedWords' ), $string );
+			$string = preg_replace_callback( '#(' . substr( $word, 0, -3 ) . ')(\W)#is', [ $this, '_compactExplodedWords' ], $string );
 		}
 
 		/*
@@ -416,11 +416,11 @@ final class Security
 			$original = $string;
 			if ( preg_match( '/<a/i', $string ) )
 			{
-				$string = preg_replace_callback( '#<a[^a-z0-9>]+([^>]*?)(?:>|$)#si', array( $this, '_jsLinkRemoval' ), $string );
+				$string = preg_replace_callback( '#<a[^a-z0-9>]+([^>]*?)(?:>|$)#si', [ $this, '_jsLinkRemoval' ], $string );
 			}
 			if ( preg_match( '/<img/i', $string ) )
 			{
-				$string = preg_replace_callback( '#<img[^a-z0-9]+([^>]*?)(?:\s?/?>|$)#si', array( $this, '_jsImgRemoval' ), $string );
+				$string = preg_replace_callback( '#<img[^a-z0-9]+([^>]*?)(?:\s?/?>|$)#si', [ $this, '_jsImgRemoval' ], $string );
 			}
 			if ( preg_match( '/script|xss/i', $string ) )
 			{
@@ -457,7 +457,7 @@ final class Security
 		do
 		{
 			$old_string = $string;
-			$string = preg_replace_callback( $pattern, array( $this, '_sanitizeNaughtyHTML' ), $string );
+			$string     = preg_replace_callback( $pattern, [ $this, '_sanitizeNaughtyHTML' ], $string );
 		}
 		while ( $old_string !== $string );
 
@@ -517,7 +517,7 @@ final class Security
 	{
 		if ( $this->_xss_hash === NULL )
 		{
-			$rand = $this->getRandomBytes( 16 );
+			$rand            = $this->getRandomBytes( 16 );
 			$this->_xss_hash = ( $rand === FALSE )
 				? md5( uniqid( mt_rand(), TRUE ) )
 				: bin2hex( $rand );
@@ -615,7 +615,7 @@ final class Security
 					);
 				}
 
-				$replace = array();
+				$replace = [ ];
 				$matches = array_unique( array_map( 'strtolower', $matches[ 0 ] ) );
 				for ( $i = 0; $i < $c; $i++ )
 				{
@@ -683,9 +683,10 @@ final class Security
 	 */
 	public function stripImageTags( $string )
 	{
-		return preg_replace( array(
-			                     '#<img[\s/]+.*?src\s*=\s*["\'](.+?)["\'].*?\>#', '#<img[\s/]+.*?src\s*=\s*(.+?).*?\>#',
-		                     ), '\\1', $string );
+		return preg_replace(
+			[
+				'#<img[\s/]+.*?src\s*=\s*["\'](.+?)["\'].*?\>#', '#<img[\s/]+.*?src\s*=\s*(.+?).*?\>#',
+			], '\\1', $string );
 	}
 
 	// --------------------------------------------------------------------
@@ -736,7 +737,7 @@ final class Security
 		elseif ( isset( $matches[ 'attributes' ] ) )
 		{
 			// We'll store the already fitlered attributes here
-			$attributes = array();
+			$attributes = [ ];
 
 			// Attribute-catching pattern
 			$attributes_pattern = '#'
@@ -809,12 +810,14 @@ final class Security
 	 */
 	protected function _jsLinkRemoval( $match )
 	{
-		return str_replace( $match[ 1 ],
-		                    preg_replace( '#href=.*?(?:(?:alert|prompt|confirm)(?:\(|&\#40;)|javascript:|livescript:|mocha:|charset=|window\.|document\.|\.cookie|<script|<xss|data\s*:)#si',
-		                                  '',
-		                                  $this->_filterAttributes( str_replace( array( '<', '>' ), '', $match[ 1 ] ) )
-		                    ),
-		                    $match[ 0 ] );
+		return str_replace(
+			$match[ 1 ],
+			preg_replace(
+				'#href=.*?(?:(?:alert|prompt|confirm)(?:\(|&\#40;)|javascript:|livescript:|mocha:|charset=|window\.|document\.|\.cookie|<script|<xss|data\s*:)#si',
+				'',
+				$this->_filterAttributes( str_replace( [ '<', '>' ], '', $match[ 1 ] ) )
+			),
+			$match[ 0 ] );
 	}
 
 	// --------------------------------------------------------------------
@@ -836,12 +839,14 @@ final class Security
 	 */
 	protected function _jsImgRemoval( $match )
 	{
-		return str_replace( $match[ 1 ],
-		                    preg_replace( '#src=.*?(?:(?:alert|prompt|confirm)(?:\(|&\#40;)|javascript:|livescript:|mocha:|charset=|window\.|document\.|\.cookie|<script|<xss|base64\s*,)#si',
-		                                  '',
-		                                  $this->_filterAttributes( str_replace( array( '<', '>' ), '', $match[ 1 ] ) )
-		                    ),
-		                    $match[ 0 ] );
+		return str_replace(
+			$match[ 1 ],
+			preg_replace(
+				'#src=.*?(?:(?:alert|prompt|confirm)(?:\(|&\#40;)|javascript:|livescript:|mocha:|charset=|window\.|document\.|\.cookie|<script|<xss|base64\s*,)#si',
+				'',
+				$this->_filterAttributes( str_replace( [ '<', '>' ], '', $match[ 1 ] ) )
+			),
+			$match[ 0 ] );
 	}
 
 	// --------------------------------------------------------------------
@@ -857,7 +862,7 @@ final class Security
 	 */
 	protected function _convertAttribute( $match )
 	{
-		return str_replace( array( '>', '<', '\\' ), array( '&gt;', '&lt;', '\\\\' ), $match[ 0 ] );
+		return str_replace( [ '>', '<', '\\' ], [ '&gt;', '&lt;', '\\\\' ], $match[ 0 ] );
 	}
 
 	// --------------------------------------------------------------------
@@ -958,7 +963,7 @@ final class Security
 				return $this->_csrf->hash = $_COOKIE[ $this->_csrf->cookie_name ];
 			}
 
-			$rand = $this->getRandomBytes( 16 );
+			$rand              = $this->getRandomBytes( 16 );
 			$this->_csrf->hash = ( $rand === FALSE )
 				? md5( uniqid( mt_rand(), TRUE ) )
 				: bin2hex( $rand );

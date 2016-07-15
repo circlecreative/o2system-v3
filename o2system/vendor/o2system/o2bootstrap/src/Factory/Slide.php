@@ -13,15 +13,15 @@ use O2System\Bootstrap\Interfaces\FactoryInterface;
 class Slide extends FactoryInterface
 {
 	protected $_tag        = 'div';
-	protected $_attributes = array(
+	protected $_attributes = [
 		'class' => [ 'container' ],
-	);
+	];
 
 	public $image       = NULL;
 	public $caption     = NULL;
 	public $description = NULL;
 	public $link        = NULL;
-	public $buttons     = array();
+	public $buttons     = [ ];
 
 	// ------------------------------------------------------------------------
 
@@ -62,7 +62,7 @@ class Slide extends FactoryInterface
 		return $this;
 	}
 
-	public function setImage($image )
+	public function setImage( $image )
 	{
 		if ( $image instanceof Image )
 		{
@@ -85,7 +85,7 @@ class Slide extends FactoryInterface
 	 *
 	 * @return object
 	 */
-	public function setCaption($caption, $tag = 'h1', $attr = array() )
+	public function setCaption( $caption, $tag = 'h1', $attr = [ ] )
 	{
 		if ( is_array( $tag ) )
 		{
@@ -124,12 +124,12 @@ class Slide extends FactoryInterface
 
 	// ------------------------------------------------------------------------
 
-	public function setDescription($description, $tag = 'p', $attr = array() )
+	public function setDescription( $description, $tag = 'p', $attr = [ ] )
 	{
 		if ( is_array( $tag ) )
 		{
 			$attr = $tag;
-			$tag = 'p';
+			$tag  = 'p';
 		}
 
 		if ( $description instanceof Tag )
@@ -153,7 +153,7 @@ class Slide extends FactoryInterface
 	 *
 	 * @return object
 	 */
-	public function setLink($link, $attr = array() )
+	public function setLink( $link, $attr = [ ] )
 	{
 		if ( $link instanceof Link )
 		{
@@ -169,7 +169,7 @@ class Slide extends FactoryInterface
 
 	// ------------------------------------------------------------------------
 
-	public function addButton($label, $attr = array() )
+	public function addButton( $label, $attr = [ ] )
 	{
 		if ( $label instanceof Button )
 		{
@@ -206,7 +206,7 @@ class Slide extends FactoryInterface
 			}
 			else
 			{
-				$image = $this->image;
+				$image   = $this->image;
 				$caption = new Tag( 'div', $this->caption, [ 'class' => 'carousel-caption' ] );
 			}
 

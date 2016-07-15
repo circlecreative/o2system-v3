@@ -41,18 +41,18 @@ namespace O2System\Bootstrap\Interfaces;
 
 trait ContextualInterface
 {
-	protected $_contextual_classes = array(
+	protected $_contextual_classes = [
 		'default',
 		'primary',
 		'success',
 		'info',
 		'warning',
 		'danger',
-	);
+	];
 
 	protected $_contextual_class_prefix = NULL;
 
-	public function setContextualClassPrefix($prefix )
+	public function setContextualClassPrefix( $prefix )
 	{
 		$this->_contextual_class_prefix = $prefix;
 

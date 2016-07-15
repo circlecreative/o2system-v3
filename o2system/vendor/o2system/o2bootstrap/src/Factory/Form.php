@@ -52,17 +52,17 @@ class Form extends FactoryInterface
 	const UPDATE_FORM = 'FORM_UPDATE';
 
 	protected $_tag        = 'form';
-	protected $_attributes = array(
+	protected $_attributes = [
 		'role' => 'form',
-	);
+	];
 
 	protected $_type   = 'FORM_INSERT';
 	protected $_layout = 'standard';
 
-	public $fieldsets = array(
-		'main' => array(),
-		'buttons' => array(),
-	);
+	public $fieldsets = [
+		'main'    => [ ],
+		'buttons' => [ ],
+	];
 
 	/**
 	 * build
@@ -94,20 +94,20 @@ class Form extends FactoryInterface
 	// ------------------------------------------------------------------------
 
 
-	public function addGroup($group )
+	public function addGroup( $group )
 	{
 		if ( ! in_array( $group, array_keys( $this->fieldsets ) ) )
 		{
-			$this->fieldsets[ $group ] = array();
+			$this->fieldsets[ $group ] = [ ];
 		}
 	}
 
-	public function setType($type )
+	public function setType( $type )
 	{
 		$this->_type = $type;
 	}
 
-	public function setAttributes(array $attr )
+	public function setAttributes( array $attr )
 	{
 		if ( class_exists( 'O2System', FALSE ) )
 		{
@@ -122,7 +122,7 @@ class Form extends FactoryInterface
 		return $this;
 	}
 
-	public function setLayout($layout )
+	public function setLayout( $layout )
 	{
 		$this->_layout = $layout;
 
@@ -143,7 +143,7 @@ class Form extends FactoryInterface
 		return $this;
 	}
 
-	public function setFieldsets(array $fieldsets, $group = 'main' )
+	public function setFieldsets( array $fieldsets, $group = 'main' )
 	{
 		if ( array_key_exists( $group, $this->_fieldsets ) )
 		{
@@ -154,7 +154,7 @@ class Form extends FactoryInterface
 		}
 	}
 
-	public function setFieldset(array $fieldset, $legend = '', $group = 'main' )
+	public function setFieldset( array $fieldset, $legend = '', $group = 'main' )
 	{
 		if ( array_key_exists( $group, $this->_fieldsets ) )
 		{
@@ -162,7 +162,7 @@ class Form extends FactoryInterface
 		}
 	}
 
-	public function setButtons(array $buttons )
+	public function setButtons( array $buttons )
 	{
 		$this->_custom_buttons = $buttons;
 	}

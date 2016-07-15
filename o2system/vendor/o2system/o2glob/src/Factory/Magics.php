@@ -105,9 +105,9 @@ trait Magics
 	 *
 	 * @type     array
 	 */
-	protected static $_methods_maps = array(
+	protected static $_methods_maps = [
 		'load' => 'loader',
-	);
+	];
 
 	/**
 	 * List of Public Called Class Properties
@@ -127,10 +127,10 @@ trait Magics
 	 *
 	 * @type     array
 	 */
-	protected static $_properties_maps = array(
+	protected static $_properties_maps = [
 		'registry' => '_registry',
 		'load'     => 'loader',
-	);
+	];
 
 	// ------------------------------------------------------------------------
 
@@ -156,12 +156,12 @@ trait Magics
 
 		static::$_reflection = new \ReflectionClass( $called_class );
 
-		$methods = array(
+		$methods = [
 			'public'    => \ReflectionMethod::IS_PUBLIC,
 			'protected' => \ReflectionMethod::IS_PROTECTED,
 			'private'   => \ReflectionMethod::IS_PRIVATE,
 			'static'    => \ReflectionMethod::IS_STATIC,
-		);
+		];
 
 		foreach ( $methods as $method => $reflect )
 		{
@@ -176,12 +176,12 @@ trait Magics
 			}
 		}
 
-		$properties = array(
+		$properties = [
 			'public'    => \ReflectionProperty::IS_PUBLIC,
 			'protected' => \ReflectionProperty::IS_PROTECTED,
 			'private'   => \ReflectionProperty::IS_PRIVATE,
 			'static'    => \ReflectionProperty::IS_STATIC,
-		);
+		];
 
 		foreach ( $properties as $property => $reflect )
 		{
@@ -235,7 +235,7 @@ trait Magics
 	 * @param   string $name Origin map index name
 	 * @param   mixed  $map  New map index name
 	 */
-	final public function __setMethodMap($name, $map )
+	final public function __setMethodMap( $name, $map )
 	{
 		static::$_methods_maps[ $name ] = $map;
 	}
@@ -252,7 +252,7 @@ trait Magics
 	 * @param   string $name Origin map index name
 	 * @param   mixed  $map  New map index name
 	 */
-	final public function __setPropertyMap($name, $map )
+	final public function __setPropertyMap( $name, $map )
 	{
 		static::$_property_maps[ $name ] = $map;
 	}
@@ -269,7 +269,7 @@ trait Magics
 	 * @param string $name  registry property name
 	 * @param mixed  $value registry property value
 	 */
-	final public function __setRegistry($name, $value )
+	final public function __setRegistry( $name, $value )
 	{
 		static::$_registry[ $name ] = $value;
 	}
@@ -339,7 +339,7 @@ trait Magics
 	 *
 	 * @return mixed
 	 */
-	final static private function __getProperty( $property, $args = array() )
+	final static private function __getProperty( $property, $args = [ ] )
 	{
 		if ( empty( $args ) )
 		{
@@ -351,7 +351,10 @@ trait Magics
 			@list( $index, $action, $params ) = $args;
 
 			// if the entry is string nothing else to be proceed
-			if ( is_string( $entry ) ) return $entry;
+			if ( is_string( $entry ) )
+			{
+				return $entry;
+			}
 
 			if ( is_array( $entry ) )
 			{
@@ -381,9 +384,12 @@ trait Magics
 			}
 
 			// if the data is string or there is no action nothing to be proceed
-			if ( is_string( $data ) OR empty( $action ) ) return $data;
+			if ( is_string( $data ) OR empty( $action ) )
+			{
+				return $data;
+			}
 
-			if ( in_array( $action, array( 'array', 'object', 'keys' ) ) )
+			if ( in_array( $action, [ 'array', 'object', 'keys' ] ) )
 			{
 				switch ( $action )
 				{
@@ -414,7 +420,7 @@ trait Magics
 						break;
 				}
 			}
-			elseif ( in_array( strtolower( $action ), array( 'json', 'serialize' ) ) )
+			elseif ( in_array( strtolower( $action ), [ 'json', 'serialize' ] ) )
 			{
 				switch ( $action )
 				{
@@ -453,11 +459,11 @@ trait Magics
 	 *
 	 * @return mixed
 	 */
-	public function __call( $method, $args = array() )
+	public function __call( $method, $args = [ ] )
 	{
 		if ( method_exists( $this, $method ) )
 		{
-			return call_user_func_array( array( $this, $method ), $args );
+			return call_user_func_array( [ $this, $method ], $args );
 		}
 		else
 		{
@@ -489,7 +495,7 @@ trait Magics
 	 *
 	 * @return mixed
 	 */
-	final public static function __callStatic( $method, $args = array() )
+	final public static function __callStatic( $method, $args = [ ] )
 	{
 		$method = strtolower( $method );
 		$method = isset( static::$_methods_maps[ $method ] ) ? static::$_methods_maps[ $method ] : $method;
@@ -530,7 +536,7 @@ trait Magics
 		{
 			if ( is_array( $args ) )
 			{
-				return call_user_func_array( array( static::$_instance, $non_static_method ), $args );
+				return call_user_func_array( [ static::$_instance, $non_static_method ], $args );
 			}
 			else
 			{

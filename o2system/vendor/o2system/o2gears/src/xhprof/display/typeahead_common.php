@@ -25,55 +25,65 @@
  */
 
 
-require_once $GLOBALS['XHPROF_LIB_ROOT'].'/utils/xhprof_lib.php';
+require_once $GLOBALS[ 'XHPROF_LIB_ROOT' ] . '/utils/xhprof_lib.php';
 
 // param name, its type, and default value
-$params = array('q'          => array(XHPROF_STRING_PARAM, ''),
-                'run'        => array(XHPROF_STRING_PARAM, ''),
-                'run1'       => array(XHPROF_STRING_PARAM, ''),
-                'run2'       => array(XHPROF_STRING_PARAM, ''),
-                'source'     => array(XHPROF_STRING_PARAM, 'xhprof'),
-);
+$params = [
+	'q'      => [ XHPROF_STRING_PARAM, '' ],
+	'run'    => [ XHPROF_STRING_PARAM, '' ],
+	'run1'   => [ XHPROF_STRING_PARAM, '' ],
+	'run2'   => [ XHPROF_STRING_PARAM, '' ],
+	'source' => [ XHPROF_STRING_PARAM, 'xhprof' ],
+];
 
 // pull values of these params, and create named globals for each param
-xhprofParamInit($params);
+xhprofParamInit( $params );
 
-if (!empty($run)) {
+if ( ! empty( $run ) )
+{
 
 	// single run mode
-	$raw_data = $xhprof_runs_impl->getRun($run, $source, $desc_unused);
-	$functions = xhprofGetMatchingFunctions($q, $raw_data);
+	$raw_data  = $xhprof_runs_impl->getRun( $run, $source, $desc_unused );
+	$functions = xhprofGetMatchingFunctions( $q, $raw_data );
 
-} else if (!empty($run1) && !empty($run2)) {
+}
+else if ( ! empty( $run1 ) && ! empty( $run2 ) )
+{
 
 	// diff mode
-	$raw_data = $xhprof_runs_impl->getRun($run1, $source, $desc_unused);
-	$functions1 = xhprofGetMatchingFunctions($q, $raw_data);
+	$raw_data   = $xhprof_runs_impl->getRun( $run1, $source, $desc_unused );
+	$functions1 = xhprofGetMatchingFunctions( $q, $raw_data );
 
-	$raw_data = $xhprof_runs_impl->getRun($run2, $source, $desc_unused);
-	$functions2 = xhprofGetMatchingFunctions($q, $raw_data);
+	$raw_data   = $xhprof_runs_impl->getRun( $run2, $source, $desc_unused );
+	$functions2 = xhprofGetMatchingFunctions( $q, $raw_data );
 
 
-	$functions = array_unique(array_merge($functions1, $functions2));
-	asort($functions);
-} else {
-	xhprofError("no valid runs specified to typeahead endpoint");
-	$functions = array();
+	$functions = array_unique( array_merge( $functions1, $functions2 ) );
+	asort( $functions );
+}
+else
+{
+	xhprofError( "no valid runs specified to typeahead endpoint" );
+	$functions = [ ];
 }
 
 // If exact match is present move it to the front
-if (in_array($q, $functions)) {
+if ( in_array( $q, $functions ) )
+{
 	$old_functions = $functions;
 
-	$functions = array($q);
-	foreach ($old_functions as $f) {
+	$functions = [ $q ];
+	foreach ( $old_functions as $f )
+	{
 		// exact match case has already been added to the front
-		if ($f != $q) {
+		if ( $f != $q )
+		{
 			$functions[] = $f;
 		}
 	}
 }
 
-foreach ($functions as $f) {
-	echo $f."\n";
+foreach ( $functions as $f )
+{
+	echo $f . "\n";
 }

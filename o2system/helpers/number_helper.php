@@ -52,7 +52,7 @@ defined( 'ROOTPATH' ) OR exit( 'No direct script access allowed' );
  */
 // ------------------------------------------------------------------------
 
-if ( ! function_exists( 'number_price' ) )
+if ( ! function_exists( 'currency_format' ) )
 {
 	/**
 	 * Number Price
@@ -66,7 +66,7 @@ if ( ! function_exists( 'number_price' ) )
 	 *
 	 * @return  string
 	 */
-	function number_price( $price, $currency = NULL, $decimal = 0, $accounting = FALSE )
+	function currency_format( $price, $currency = NULL, $decimal = 0, $accounting = FALSE )
 	{
 		$currency = isset( $currency ) ? $currency : \O2System::$config[ 'currency' ];
 		$currency = trim( $currency );
@@ -74,7 +74,7 @@ if ( ! function_exists( 'number_price' ) )
 		if ( is_bool( $decimal ) )
 		{
 			$accounting = $decimal;
-			$decimal = 0;
+			$decimal    = 0;
 		}
 
 		if ( $accounting == TRUE )
@@ -87,10 +87,10 @@ if ( ! function_exists( 'number_price' ) )
 }
 // ------------------------------------------------------------------------
 
-if ( ! function_exists( 'number_weight' ) )
+if ( ! function_exists( 'unit_format' ) )
 {
 	/**
-	 * Number Price
+	 * Number Unit
 	 *
 	 * Formats a numbers as bytes, based on size, and adds the appropriate suffix
 	 *
@@ -101,49 +101,14 @@ if ( ! function_exists( 'number_weight' ) )
 	 *
 	 * @return  string
 	 */
-	function number_weight( $weight, $unit = NULL, $decimal = 0, $accounting = FALSE )
-	{
-		$unit = isset( $unit ) ? $unit : \O2System::$config[ 'weight' ];
-		$unit = trim( $unit );
-
-		if ( is_bool( $decimal ) )
-		{
-			$accounting = $decimal;
-			$decimal = 0;
-		}
-
-		if ( $accounting == TRUE )
-		{
-			return '<span data-role="weight-amount" class="pull-left" data-amount="' . (int) $weight . '">' . number_format( (int) $weight, (int) $decimal, ',', '.' ) . '</span> <span data-role="weight-unit" class="pull-right">&nbsp;' . $unit . '</span>';
-		}
-
-		return number_format( (int) $weight, (int) $decimal, ',', '.' ) . ' ' . $unit;
-	}
-}
-// ------------------------------------------------------------------------
-
-if ( ! function_exists( 'number_weight' ) )
-{
-	/**
-	 * Number Price
-	 *
-	 * Formats a numbers as bytes, based on size, and adds the appropriate suffix
-	 *
-	 * @param   int    $price      Price Num
-	 * @param   string $currency   Price Currency
-	 * @param   int    $decimal    Num of decimal
-	 * @param   bool   $accounting Is Accounting Mode
-	 *
-	 * @return  string
-	 */
-	function number_unit( $amount, $unit, $decimal = 0, $accounting = FALSE )
+	function unit_format( $amount, $unit, $decimal = 0, $accounting = FALSE )
 	{
 		$unit = trim( $unit );
 
 		if ( is_bool( $decimal ) )
 		{
 			$accounting = $decimal;
-			$decimal = 0;
+			$decimal    = 0;
 		}
 
 		if ( $accounting == TRUE )
@@ -159,9 +124,9 @@ if ( ! function_exists( 'number_weight' ) )
 if ( ! function_exists( 'is_positive' ) )
 {
 	/**
-	 * Is Odd
+	 * Is Positive
 	 *
-	 * Check if an odd number
+	 * Check if an positive number
 	 *
 	 * @param   int $number Number
 	 *
@@ -170,6 +135,29 @@ if ( ! function_exists( 'is_positive' ) )
 	function is_positive( $number )
 	{
 		if ( $number > 0 )
+		{
+			return TRUE;
+		}
+
+		return FALSE;
+	}
+}
+// ------------------------------------------------------------------------
+
+if ( ! function_exists( 'is_negative' ) )
+{
+	/**
+	 * Is Negative
+	 *
+	 * Check if an negative number
+	 *
+	 * @param   int $number Number
+	 *
+	 * @return  bool
+	 */
+	function is_negative( $number )
+	{
+		if ( $number < 0 )
 		{
 			return TRUE;
 		}
@@ -239,40 +227,44 @@ if ( ! function_exists( 'prices_ranges' ) )
 	function prices_ranges( $start_price, $end_price, $multiply = 0 )
 	{
 		$start_price = str_replace( '.', '', $start_price );
-		$end_price = str_replace( '.', '', $end_price );
-		$multiply = str_replace( '.', '', $multiply );
-		$multiplier = $multiply * 20;
-		$e = $end_price / $start_price;
-		$x = $multiplier / $start_price / 100;
-		foreach ( range( 0, $e, $x ) as $y )
+		$end_price   = str_replace( '.', '', $end_price );
+		$multiply    = str_replace( '.', '', $multiply );
+		$multiplier  = $multiply * 20;
+		$num_range   = $end_price / $start_price;
+		$num_step    = $multiplier / $start_price / 100;
+
+		$ranges = [ ];
+		foreach ( range( 0, $num_range, $num_step ) as $num_price )
 		{
-			if ( $y == 0 )
+			if ( $num_price == 0 )
 			{
-				$result[] = $start_price;
+				$ranges[] = $start_price;
 			}
 			else
 			{
-				$result[] = $y * $start_price / 2 * 10;
+				$ranges[] = $num_price * $start_price / 2 * 10;
 			}
 		}
-		for ( $i = 0; $i < count( $result ); $i++ )
+
+		$prices = [ ];
+		for ( $i = 0; $i < count( $ranges ); $i++ )
 		{
-			if ( $result[ $i ] == $end_price )
+			if ( $ranges[ $i ] == $end_price )
 			{
 				break;
 			}
 			else
 			{
-				$price[ $result[ $i ] ] = ( $result[ $i + 1 ] == 0 ) ? $result[ $i ] * 2 : $result[ $i + 1 ];
+				$prices[ $ranges[ $i ] ] = ( $ranges[ $i + 1 ] == 0 ) ? $ranges[ $i ] * 2 : $ranges[ $i + 1 ];
 			}
 		}
 
-		return $price;
+		return $prices;
 	}
 }
 // ------------------------------------------------------------------------
 
-if ( ! function_exists( 'number_to_words' ) )
+if ( ! function_exists( 'words_format' ) )
 {
 	/**
 	 * Number To Words
@@ -284,9 +276,9 @@ if ( ! function_exists( 'number_to_words' ) )
 	 *
 	 * @return  string
 	 */
-	function number_to_words( $number, $decimal = 4 )
+	function words_format( $number, $decimal = 4 )
 	{
-		$stext = array(
+		$stext = [
 			"Nol",
 			"Satu",
 			"Dua",
@@ -299,8 +291,8 @@ if ( ! function_exists( 'number_to_words' ) )
 			"Sembilan",
 			"Sepuluh",
 			"Sebelas",
-		);
-		$say = array(
+		];
+		$say   = [
 			"Ribu",
 			"Juta",
 			"Milyar",
@@ -308,19 +300,19 @@ if ( ! function_exists( 'number_to_words' ) )
 			"Biliun",
 			// remember limitation of float
 			"--apaan---"  ///setelah biliun namanya apa?
-		);
-		$w = "";
+		];
+		$w     = "";
 		if ( $number < 0 )
 		{
 			$w = "Minus ";
 			//make positive
 			$number *= -1;
 		}
-		$snumber = number_format( $number, $decimal, ",", "." );
+		$snumber   = number_format( $number, $decimal, ",", "." );
 		$strnumber = explode( ".", substr( $snumber, 0, strrpos( $snumber, "," ) ) );
 		//parse decimalnya
 		$decimal = substr( $snumber, strrpos( $snumber, "," ) + 1 );
-		$isone = substr( $number, 0, 1 ) == 1;
+		$isone   = substr( $number, 0, 1 ) == 1;
 		if ( count( $strnumber ) == 1 )
 		{
 			$number = $strnumber[ 0 ];
@@ -345,10 +337,10 @@ if ( ! function_exists( 'number_to_words' ) )
 					}
 					break;
 				case 3 :
-					$w .= ( $isone ? "Seratus" : number_to_words( substr( $number, 0, 1 ) ) . " Ratus" ) . " " . ( intval( substr( $number, 1 ) ) == 0 ? "" : number_to_words( substr( $number, 1 ) ) );
+					$w .= ( $isone ? "Seratus" : words_format( substr( $number, 0, 1 ) ) . " Ratus" ) . " " . ( intval( substr( $number, 1 ) ) == 0 ? "" : words_format( substr( $number, 1 ) ) );
 					break;
 				case 4 :
-					$w .= ( $isone ? "Seribu" : number_to_words( substr( $number, 0, 1 ) ) . " Ribu" ) . " " . ( intval( substr( $number, 1 ) ) == 0 ? "" : number_to_words( substr( $number, 1 ) ) );
+					$w .= ( $isone ? "Seribu" : words_format( substr( $number, 0, 1 ) ) . " Ribu" ) . " " . ( intval( substr( $number, 1 ) ) == 0 ? "" : words_format( substr( $number, 1 ) ) );
 					break;
 				default :
 					break;
@@ -357,14 +349,14 @@ if ( ! function_exists( 'number_to_words' ) )
 		else
 		{
 			$text = $say[ count( $strnumber ) - 2 ];
-			$w = ( $isone && strlen( $strnumber[ 0 ] ) == 1 && count( $strnumber ) <= 3 ? "Se" . strtolower( $text ) : number_to_words( $strnumber[ 0 ] ) . ' ' . $text );
+			$w    = ( $isone && strlen( $strnumber[ 0 ] ) == 1 && count( $strnumber ) <= 3 ? "Se" . strtolower( $text ) : words_format( $strnumber[ 0 ] ) . ' ' . $text );
 			array_shift( $strnumber );
 			$i = count( $strnumber ) - 2;
 			foreach ( $strnumber as $k => $v )
 			{
 				if ( intval( $v ) )
 				{
-					$w .= ' ' . number_to_words( $v ) . ' ' . ( $i >= 0 ? $say[ $i ] : "" );
+					$w .= ' ' . words_format( $v ) . ' ' . ( $i >= 0 ? $say[ $i ] : "" );
 				}
 				$i--;
 			}
@@ -372,7 +364,7 @@ if ( ! function_exists( 'number_to_words' ) )
 		$w = trim( $w );
 		if ( $decimal = intval( $decimal ) )
 		{
-			$w .= " Koma " . number_to_words( $decimal );
+			$w .= " Koma " . words_format( $decimal );
 		}
 
 		return trim( $w );
@@ -393,7 +385,7 @@ if ( ! function_exists( 'calculate' ) )
 	 */
 	function calculate( $formula )
 	{
-		static $function_map = array(
+		static $function_map = [
 			'floor'   => 'floor',
 			'ceil'    => 'ceil',
 			'round'   => 'round',
@@ -414,7 +406,7 @@ if ( ! function_exists( 'calculate' ) )
 			'sqrt'    => 'sqrt',
 			'deg2rad' => 'deg2rad',
 			'rad2deg' => 'rad2deg',
-		);
+		];
 
 		// Remove any whitespace
 		$formula = strtolower( preg_replace( '~\s+~', '', $formula ) );
@@ -428,7 +420,8 @@ if ( ! function_exists( 'calculate' ) )
 		}
 
 		// Illegal function
-		$formula = preg_replace_callback( '~\b[a-z]\w*\b~', function ( $match ) use ( $function_map )
+		$formula = preg_replace_callback(
+			'~\b[a-z]\w*\b~', function ( $match ) use ( $function_map )
 		{
 			$function = $match[ 0 ];
 			if ( ! isset( $function_map[ $function ] ) )
@@ -462,7 +455,7 @@ if ( ! function_exists( 'calculate' ) )
 }
 
 // ------------------------------------------------------------------------
-if ( ! function_exists( 'number_to_hertz' ) )
+if ( ! function_exists( 'hertz_format' ) )
 {
 	/**
 	 * Number To Hertz
@@ -474,26 +467,26 @@ if ( ! function_exists( 'number_to_hertz' ) )
 	 *
 	 * @return  string
 	 */
-	function number_to_hertz( $num, $precision = 1 )
+	function hertz_format( $num, $precision = 1 )
 	{
 		if ( $num >= 1000000000000 )
 		{
-			$num = round( $num / 1099511627776, $precision );
+			$num  = round( $num / 1099511627776, $precision );
 			$unit = 'THz';
 		}
 		elseif ( $num >= 1000000000 )
 		{
-			$num = round( $num / 1073741824, $precision );
+			$num  = round( $num / 1073741824, $precision );
 			$unit = 'GHz';
 		}
 		elseif ( $num >= 1000000 )
 		{
-			$num = round( $num / 1048576, $precision );
+			$num  = round( $num / 1048576, $precision );
 			$unit = 'MHz';
 		}
 		elseif ( $num >= 1000 )
 		{
-			$num = round( $num / 1024, $precision );
+			$num  = round( $num / 1024, $precision );
 			$unit = 'KHz';
 		}
 		else
@@ -509,7 +502,7 @@ if ( ! function_exists( 'number_to_hertz' ) )
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists( 'number_to_roman' ) )
+if ( ! function_exists( 'roman_format' ) )
 {
 	/**
 	 * Number to Roman
@@ -520,9 +513,9 @@ if ( ! function_exists( 'number_to_roman' ) )
 	 *
 	 * @return  string
 	 */
-	function number_to_roman( $num )
+	function roman_format( $num )
 	{
-		$romans = array(
+		$romans = [
 			'M'  => 1000,
 			'CM' => 900,
 			'D'  => 500,
@@ -536,7 +529,7 @@ if ( ! function_exists( 'number_to_roman' ) )
 			'V'  => 5,
 			'IV' => 4,
 			'I'  => 1,
-		);
+		];
 
 		$return = '';
 
@@ -557,14 +550,14 @@ if ( ! function_exists( 'number_to_roman' ) )
 	}
 }
 
-if ( ! function_exists( 'number_shorten' ) )
+if ( ! function_exists( 'short_format' ) )
 {
-	function number_shorten( $num, $precision = 0, $divisors = NULL )
+	function short_format( $num, $precision = 0, $divisors = NULL )
 	{
 		// Setup default $divisors if not provided
 		if ( ! isset( $divisors ) )
 		{
-			$divisors = array(
+			$divisors = [
 				pow( 1000, 0 ) => '', // 1000^0 == 1
 				pow( 1000, 1 ) => 'K', // Thousand
 				pow( 1000, 2 ) => 'M', // Million
@@ -572,7 +565,7 @@ if ( ! function_exists( 'number_shorten' ) )
 				pow( 1000, 4 ) => 'T', // Trillion
 				pow( 1000, 5 ) => 'Qa', // Quadrillion
 				pow( 1000, 6 ) => 'Qi', // Quintillion
-			);
+			];
 		}
 
 		// Loop through each $divisor and find the
@@ -589,6 +582,23 @@ if ( ! function_exists( 'number_shorten' ) )
 		// We found our match, or there were no matches.
 		// Either way, use the last defined value for $divisor.
 		return number_format( $num / $divisor, $precision ) . $shorthand;
+	}
+}
+
+if ( ! function_exists( 'ordinal_format' ) )
+{
+	function ordinal_format( $number )
+	{
+		$ends = [ 'th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th' ];
+
+		if ( ( ( $number % 100 ) >= 11 ) && ( ( $number % 100 ) <= 13 ) )
+		{
+			return $number . 'th';
+		}
+		else
+		{
+			return $number . $ends[ $number % 10 ];
+		}
 	}
 }
 
@@ -659,22 +669,22 @@ if ( ! function_exists( 'byte_format' ) )
 
 		if ( $num >= 1000000000000 )
 		{
-			$num = round( $num / 1099511627776, $precision );
+			$num  = round( $num / 1099511627776, $precision );
 			$unit = \O2System::$language->line( 'TERABYTE_ABBR' );
 		}
 		elseif ( $num >= 1000000000 )
 		{
-			$num = round( $num / 1073741824, $precision );
+			$num  = round( $num / 1073741824, $precision );
 			$unit = \O2System::$language->line( 'GIGABYTE_ABBR' );
 		}
 		elseif ( $num >= 1000000 )
 		{
-			$num = round( $num / 1048576, $precision );
+			$num  = round( $num / 1048576, $precision );
 			$unit = \O2System::$language->line( 'MEGABYTE_ABBR' );
 		}
 		elseif ( $num >= 1000 )
 		{
-			$num = round( $num / 1024, $precision );
+			$num  = round( $num / 1024, $precision );
 			$unit = \O2System::$language->line( 'KILOBYTE_ABBR' );
 		}
 		else

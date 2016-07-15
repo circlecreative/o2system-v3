@@ -55,9 +55,9 @@ class Panel extends FactoryInterface
 	const DANGER_PANEL  = 'danger';
 
 	protected $_tag        = 'div';
-	protected $_attributes = array(
-		'class' => array( 'panel' ),
-	);
+	protected $_attributes = [
+		'class' => [ 'panel' ],
+	];
 
 	public $title   = NULL;
 	public $options = NULL;
@@ -81,7 +81,7 @@ class Panel extends FactoryInterface
 			{
 				if ( in_array( $title, $this->_contextual_classes ) )
 				{
-					$this->{'is' . studlycapcase($title)}();
+					$this->{'is' . studlycapcase( $title )}();
 				}
 				else
 				{
@@ -100,7 +100,7 @@ class Panel extends FactoryInterface
 			{
 				if ( in_array( $type, $this->_contextual_classes ) )
 				{
-					$this->{'is' . studlycapcase($type)}();
+					$this->{'is' . studlycapcase( $type )}();
 				}
 			}
 		}
@@ -115,7 +115,7 @@ class Panel extends FactoryInterface
 			{
 				if ( in_array( $attr, $this->_contextual_classes ) )
 				{
-					$this->{'is' . studlycapcase($attr)}();
+					$this->{'is' . studlycapcase( $attr )}();
 				}
 			}
 		}
@@ -144,7 +144,7 @@ class Panel extends FactoryInterface
 	 *
 	 * @return object
 	 */
-	public function setTitle($title, $tag = 'h3', $attr = array() )
+	public function setTitle( $title, $tag = 'h3', $attr = [ ] )
 	{
 		if ( is_array( $tag ) )
 		{
@@ -172,7 +172,7 @@ class Panel extends FactoryInterface
 		return $this;
 	}
 
-	public function setOptions($options )
+	public function setOptions( $options )
 	{
 		if ( $options instanceof FactoryInterface )
 		{
@@ -183,7 +183,7 @@ class Panel extends FactoryInterface
 		return $this;
 	}
 
-	public function setBody($body )
+	public function setBody( $body )
 	{
 		return $this->setContent( $body );
 	}
@@ -193,12 +193,12 @@ class Panel extends FactoryInterface
 		return $this->resetContent();
 	}
 
-	public function prependBody($body )
+	public function prependBody( $body )
 	{
 		return $this->prependContent( $body );
 	}
 
-	public function appendBody($body )
+	public function appendBody( $body )
 	{
 		return $this->appendContent( $body );
 	}
@@ -211,7 +211,7 @@ class Panel extends FactoryInterface
 	 *
 	 * @return object
 	 */
-	public function setFooter($title, $tag = 'div', $attr = array() )
+	public function setFooter( $title, $tag = 'div', $attr = [ ] )
 	{
 		if ( is_array( $tag ) )
 		{
@@ -248,14 +248,14 @@ class Panel extends FactoryInterface
 		return $this;
 	}
 
-	public function setTable(Tag $table )
+	public function setTable( Tag $table )
 	{
 		$this->table = $table;
 
 		return $this;
 	}
 
-	public function setLists(Lists $lists )
+	public function setLists( Lists $lists )
 	{
 		$this->lists = $lists;
 

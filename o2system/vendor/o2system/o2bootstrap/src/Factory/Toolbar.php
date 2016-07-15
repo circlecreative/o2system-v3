@@ -68,7 +68,7 @@ class Toolbar extends FactoryInterface
 		return $this;
 	}
 
-	public function addItem($item )
+	public function addItem( $item )
 	{
 		if ( $item instanceof Group )
 		{

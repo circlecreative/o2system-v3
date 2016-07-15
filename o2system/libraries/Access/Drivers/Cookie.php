@@ -58,7 +58,7 @@ use O2System\Glob\ArrayObject;
  */
 class Cookie extends DriverInterface
 {
-	private $storage = array();
+	private $storage = [ ];
 
 	public function getStorage()
 	{
@@ -67,10 +67,10 @@ class Cookie extends DriverInterface
 
 	public function setRemember( $credentials, $domain = NULL )
 	{
-		$domain = '.' . ( empty( $domain ) ? parse_domain()->domain : ltrim( $domain, '.' ) );
+		$domain   = '.' . ( empty( $domain ) ? parse_domain()->domain : ltrim( $domain, '.' ) );
 		$lifetime = time() + $this->_library->getConfig( 'remember', 'lifetime' );
 
-		deleteCookie( 'remember' );
+		delete_cookie( 'remember' );
 
 		set_cookie(
 			'remember',
@@ -79,23 +79,24 @@ class Cookie extends DriverInterface
 			$domain
 		);
 
-		$this->storage[ 'remember' ] = new ArrayObject( array(
-			                                                'name'     => \O2System::$config[ 'cookie' ][ 'prefix' ] . 'remember',
-			                                                'value'    => $credentials,
-			                                                'expire'   => $lifetime,
-			                                                'domain'   => $domain,
-			                                                'path'     => '/',
-			                                                'secure'   => \O2System::$config[ 'cookie' ][ 'secure' ],
-			                                                'httponly' => \O2System::$config[ 'cookie' ][ 'httponly' ],
-		                                                ) );
+		$this->storage[ 'remember' ] = new ArrayObject(
+			[
+				'name'     => \O2System::$config[ 'cookie' ][ 'prefix' ] . 'remember',
+				'value'    => $credentials,
+				'expire'   => $lifetime,
+				'domain'   => $domain,
+				'path'     => '/',
+				'secure'   => \O2System::$config[ 'cookie' ][ 'secure' ],
+				'httponly' => \O2System::$config[ 'cookie' ][ 'httponly' ],
+			] );
 	}
 
 	public function setSso( $credentials, $domain = NULL )
 	{
-		$domain = '.' . ( empty( $domain ) ? parse_domain()->domain : ltrim( $domain, '.' ) );
+		$domain   = '.' . ( empty( $domain ) ? parse_domain()->domain : ltrim( $domain, '.' ) );
 		$lifetime = time() + $this->_library->getConfig( 'sso', 'lifetime' );
 
-		deleteCookie( 'sso' );
+		delete_cookie( 'sso' );
 
 		set_cookie(
 			'sso',
@@ -104,20 +105,21 @@ class Cookie extends DriverInterface
 			$domain
 		);
 
-		$this->storage[ 'sso' ] = new ArrayObject( array(
-			                                           'name'     => \O2System::$config[ 'cookie' ][ 'prefix' ] . 'sso',
-			                                           'value'    => $credentials,
-			                                           'expire'   => $lifetime,
-			                                           'domain'   => $domain,
-			                                           'path'     => '/',
-			                                           'secure'   => \O2System::$config[ 'cookie' ][ 'secure' ],
-			                                           'httponly' => \O2System::$config[ 'cookie' ][ 'httponly' ],
-		                                           ) );
+		$this->storage[ 'sso' ] = new ArrayObject(
+			[
+				'name'     => \O2System::$config[ 'cookie' ][ 'prefix' ] . 'sso',
+				'value'    => $credentials,
+				'expire'   => $lifetime,
+				'domain'   => $domain,
+				'path'     => '/',
+				'secure'   => \O2System::$config[ 'cookie' ][ 'secure' ],
+				'httponly' => \O2System::$config[ 'cookie' ][ 'httponly' ],
+			] );
 	}
 
 	public function getSso()
 	{
-		$sso = getCookie( 'sso' );
+		$sso = get_cookie( 'sso' );
 
 		if ( ! empty( $sso ) )
 		{
@@ -130,20 +132,22 @@ class Cookie extends DriverInterface
 				{
 					if ( $cache[ 'signature' ] === $sso[ 'signature' ] )
 					{
+						$sso[ 'credentials' ][ 'signature' ] = $sso[ 'signature' ];
+
 						return $this->storage[ 'sso' ] = new Credentials( $sso[ 'credentials' ] );
 					}
 				}
 			}
 		}
 
-		deleteCookie( 'sso' );
+		delete_cookie( 'sso' );
 
 		return FALSE;
 	}
 
 	public function getRemember()
 	{
-		$remember = getCookie( 'remember' );
+		$remember = get_cookie( 'remember' );
 
 		if ( ! empty( $remember ) )
 		{
@@ -156,47 +160,24 @@ class Cookie extends DriverInterface
 				{
 					if ( $cache[ 'signature' ] === $remember[ 'signature' ] )
 					{
+						$remember[ 'credentials' ][ 'signature' ] = $remember[ 'signature' ];
+
 						return $this->storage[ 'remember' ] = new Credentials( $remember[ 'credentials' ] );
 					}
 				}
 			}
 		}
 
-		deleteCookie( 'remember' );
+		delete_cookie( 'remember' );
 
 		return FALSE;
 	}
 
 	public function destroy()
 	{
-		// Try to get remember cookie
-		$remember = getCookie( 'remember' );
-
-		if ( ! empty( $remember ) )
+		foreach ( [ 'remember', 'sso' ] as $cookie_name )
 		{
-			$remember = $this->_library->encryption->decrypt( $remember );
-			$remember = is_serialized( $remember ) ? unserialize( $remember ) : $remember;
-
-			if ( isset( $remember[ 'signature' ] ) )
-			{
-				\O2System::Cache()->delete( 'remember-' . $remember[ 'signature' ] );
-				deleteCookie( 'remember' );
-			}
-		}
-
-		// Try to get sso cookie
-		$sso = getCookie( 'sso' );
-
-		if ( ! empty( $sso ) )
-		{
-			$sso = $this->_library->encryption->decrypt( $sso );
-			$sso = is_serialized( $sso ) ? unserialize( $sso ) : $sso;
-
-			if ( isset( $sso[ 'signature' ] ) )
-			{
-				\O2System::Cache()->delete( 'sso-' . $sso[ 'signature' ] );
-				deleteCookie( 'sso' );
-			}
+			delete_cookie( $cookie_name );
 		}
 	}
 }

@@ -13,9 +13,9 @@ use O2System\Bootstrap\Interfaces\FactoryInterface;
 
 class Pager extends Lists
 {
-	protected $_attributes = array(
+	protected $_attributes = [
 		'class' => [ 'pager' ],
-	);
+	];
 
 	protected $_is_aligned = FALSE;
 
@@ -78,7 +78,7 @@ class Pager extends Lists
 		return $this;
 	}
 
-	public function setPrevious($previous, $link, $type = NULL, $attr = array() )
+	public function setPrevious( $previous, $link, $type = NULL, $attr = [ ] )
 	{
 		if ( is_array( $link ) )
 		{
@@ -131,7 +131,7 @@ class Pager extends Lists
 		return $this;
 	}
 
-	public function setNext($next, $link, $type = NULL, $attr = array() )
+	public function setNext( $next, $link, $type = NULL, $attr = [ ] )
 	{
 		if ( is_array( $link ) )
 		{

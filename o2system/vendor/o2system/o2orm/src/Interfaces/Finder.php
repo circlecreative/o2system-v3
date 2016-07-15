@@ -52,7 +52,7 @@ trait Finder
 	 * @access  protected
 	 * @return  null|object O2System\ORM\Factory\Result
 	 */
-	protected function findBy(array $conditions )
+	protected function findBy( array $conditions )
 	{
 		$result = $this->db->limit( 1 )->where( $conditions )->get( $this->table );
 
@@ -87,7 +87,7 @@ trait Finder
 			return $result;
 		}
 
-		return array();
+		return [ ];
 	}
 	// ------------------------------------------------------------------------
 
@@ -113,7 +113,7 @@ trait Finder
 			return $result;
 		}
 
-		return array();
+		return [ ];
 	}
 	// ------------------------------------------------------------------------
 
@@ -128,7 +128,7 @@ trait Finder
 	 * @access  protected
 	 * @return  array
 	 */
-	protected function findMany($criteria, $field = NULL )
+	protected function findMany( $criteria, $field = NULL )
 	{
 		$field = isset( $field ) ? $field : $this->primary_key;
 
@@ -139,7 +139,7 @@ trait Finder
 			return $result;
 		}
 
-		return array();
+		return [ ];
 	}
 	// ------------------------------------------------------------------------
 
@@ -154,7 +154,7 @@ trait Finder
 	 *
 	 * @return null|object  O2System\ORM\Factory\Result
 	 */
-	protected function findManyBy(array $conditions )
+	protected function findManyBy( array $conditions )
 	{
 		foreach ( $conditions as $field => $in_criteria )
 		{
@@ -175,7 +175,7 @@ trait Finder
 			return $result;
 		}
 
-		return array();
+		return [ ];
 	}
 	// ------------------------------------------------------------------------
 }

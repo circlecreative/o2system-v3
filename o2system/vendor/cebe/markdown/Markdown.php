@@ -1,8 +1,8 @@
 <?php
 /**
  * @copyright Copyright (c) 2014 Carsten Brandt
- * @license https://github.com/cebe/markdown/blob/master/LICENSE
- * @link https://github.com/cebe/markdown#readme
+ * @license   https://github.com/cebe/markdown/blob/master/LICENSE
+ * @link      https://github.com/cebe/markdown#readme
  */
 
 namespace cebe\markdown;
@@ -17,16 +17,19 @@ class Markdown extends Parser
 	// include block element parsing using traits
 	use block\CodeTrait;
 	use block\HeadlineTrait;
-	use block\HtmlTrait {
+	use block\HtmlTrait
+	{
 		parseInlineHtml as private;
 	}
-	use block\ListTrait {
+	use block\ListTrait
+	{
 		// Check Ul List before headline
 		identifyUl as protected identifyBUl;
 		consumeUl as protected consumeBUl;
 	}
 	use block\QuoteTrait;
-	use block\RuleTrait {
+	use block\RuleTrait
+	{
 		// Check Hr before checking lists
 		identifyHr as protected identifyAHr;
 		consumeHr as protected consumeAHr;
@@ -41,7 +44,7 @@ class Markdown extends Parser
 	 * @var boolean whether to format markup according to HTML5 spec.
 	 * Defaults to `false` which means that markup is formatted as HTML4.
 	 */
-	public $html5 = false;
+	public $html5 = FALSE;
 
 	/**
 	 * @var array these are "escapeable" characters. When using one of these prefixed with a
@@ -71,7 +74,7 @@ class Markdown extends Parser
 	protected function prepare()
 	{
 		// reset references
-		$this->references = [];
+		$this->references = [ ];
 	}
 
 	/**
@@ -79,33 +82,40 @@ class Markdown extends Parser
 	 *
 	 * Allow headlines and code to break paragraphs
 	 */
-	protected function consumeParagraph($lines, $current)
+	protected function consumeParagraph( $lines, $current )
 	{
 		// consume until newline
-		$content = [];
-		for ($i = $current, $count = count($lines); $i < $count; $i++) {
-			$line = $lines[$i];
+		$content = [ ];
+		for ( $i = $current, $count = count( $lines ); $i < $count; $i++ )
+		{
+			$line = $lines[ $i ];
 
 			// a list may break a paragraph when it is inside of a list
-			if (isset($this->context[1]) && $this->context[1] === 'list' && !ctype_alpha($line[0]) && (
-				$this->identifyUl($line, $lines, $i) || $this->identifyOl($line, $lines, $i))) {
+			if ( isset( $this->context[ 1 ] ) && $this->context[ 1 ] === 'list' && ! ctype_alpha( $line[ 0 ] ) && (
+					$this->identifyUl( $line, $lines, $i ) || $this->identifyOl( $line, $lines, $i ) )
+			)
+			{
 				break;
 			}
 
-			if ($line !== '' && ltrim($line) !== '' &&
-				!($line[0] === "\t" || $line[0] === " " && strncmp($line, '    ', 4) === 0) &&
-				!$this->identifyHeadline($line, $lines, $i))
+			if ( $line !== '' && ltrim( $line ) !== '' &&
+				! ( $line[ 0 ] === "\t" || $line[ 0 ] === " " && strncmp( $line, '    ', 4 ) === 0 ) &&
+				! $this->identifyHeadline( $line, $lines, $i )
+			)
 			{
 				$content[] = $line;
-			} else {
+			}
+			else
+			{
 				break;
 			}
 		}
 		$block = [
 			'paragraph',
-			'content' => $this->parseInline(implode("\n", $content)),
+			'content' => $this->parseInline( implode( "\n", $content ) ),
 		];
-		return [$block, --$i];
+
+		return [ $block, --$i ];
 	}
 
 
@@ -114,8 +124,8 @@ class Markdown extends Parser
 	 *
 	 * Parses a newline indicated by two spaces on the end of a markdown line.
 	 */
-	protected function renderText($text)
+	protected function renderText( $text )
 	{
-		return str_replace("  \n", $this->html5 ? "<br>\n" : "<br />\n", $text[1]);
+		return str_replace( "  \n", $this->html5 ? "<br>\n" : "<br />\n", $text[ 1 ] );
 	}
 }

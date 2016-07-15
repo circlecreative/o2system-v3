@@ -14,16 +14,16 @@ class Registry
 	public function insert()
 	{
 
-		$settings = isset( $value->settings ) ? json_encode( $value->settings ) : NULL;
-		$checksum = $value->checksum;
-		$code = $value->code;
-		$parameter = $value->parameter;
-		$name = $value->name;
-		$realpath = $value->realpath;
-		$namespace = isset( $value->namespace ) ? $value->namespace : NULL;
-		$segments = $value->segments;
+		$settings        = isset( $value->settings ) ? json_encode( $value->settings ) : NULL;
+		$checksum        = $value->checksum;
+		$code            = $value->code;
+		$parameter       = $value->parameter;
+		$name            = $value->name;
+		$realpath        = $value->realpath;
+		$namespace       = isset( $value->namespace ) ? $value->namespace : NULL;
+		$segments        = $value->segments;
 		$parent_segments = $value->parent_segments;
-		$type = $value->type;
+		$type            = $value->type;
 
 		unset( $value->checksum, $value->code, $value->parameter, $value->name, $value->realpath, $value->segments, $value->parent_segments, $value->type );
 
@@ -40,7 +40,7 @@ class Registry
 			$id_parent = $result->first()->id;
 		}
 
-		$registry = array(
+		$registry = [
 			'id_parent'       => $id_parent,
 			'key'             => $key,
 			'checksum'        => $checksum,
@@ -54,7 +54,7 @@ class Registry
 			'metadata'        => json_encode( $value ),
 			'type'            => $type,
 			'settings'        => $settings,
-		);
+		];
 
 		$registries[] = $registry;
 

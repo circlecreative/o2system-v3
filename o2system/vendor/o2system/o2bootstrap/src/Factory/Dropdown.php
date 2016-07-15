@@ -44,9 +44,9 @@ class Dropdown extends Lists
 	const ITEM_HEADER = 'ITEM_HEADER';
 
 	protected $_tag        = 'div';
-	protected $_attributes = array(
+	protected $_attributes = [
 		'class' => [ 'dropdown' ],
-	);
+	];
 
 	protected $_is_dropup = FALSE;
 	protected $_is_split  = FALSE;
@@ -54,12 +54,12 @@ class Dropdown extends Lists
 	/**
 	 * @type Button
 	 */
-	public    $button;
+	public $button;
 
 	/**
 	 * @type Button
 	 */
-	public    $caret;
+	public $caret;
 
 	public function build()
 	{
@@ -102,25 +102,25 @@ class Dropdown extends Lists
 		return $this;
 	}
 
-	public function __call( $method, $args = array() )
+	public function __call( $method, $args = [ ] )
 	{
 		if ( method_exists( $this, $method ) )
 		{
-			return call_user_func_array( array( $this, $method ), $args );
+			return call_user_func_array( [ $this, $method ], $args );
 		}
 		elseif ( method_exists( $this->button, $method ) )
 		{
-			return call_user_func_array( array( $this->button, $method ), $args );
+			return call_user_func_array( [ $this->button, $method ], $args );
 		}
 		elseif ( method_exists( $this->caret, $method ) )
 		{
-			return call_user_func_array( array( $this->caret, $method ), $args );
+			return call_user_func_array( [ $this->caret, $method ], $args );
 		}
 
 		return $this;
 	}
 
-	public function addItem($item, $describe = NULL, $attr = array(), $key = NULL )
+	public function addItem( $item, $describe = NULL, $attr = [ ], $key = NULL )
 	{
 		if ( $describe === self::ITEM_HEADER )
 		{
@@ -171,10 +171,11 @@ class Dropdown extends Lists
 		}
 		elseif ( is_string( $caret ) OR is_null( $caret ) )
 		{
-			$this->caret = implode( PHP_EOL, array(
+			$this->caret = implode(
+				PHP_EOL, [
 				new Tag( 'span', $caret, [ 'class' => 'caret' ] ),
 				new Tag( 'span', 'Toggle Dropdown', [ 'class' => 'sr-only' ] ),
-			) );
+			] );
 		}
 		elseif ( $caret instanceof Tag )
 		{

@@ -56,7 +56,7 @@ class Table extends FactoryInterface
 	 * @access  protected
 	 * @type    array
 	 */
-	protected $_headers = array();
+	protected $_headers = [ ];
 
 	/**
 	 * Table Footers
@@ -64,9 +64,9 @@ class Table extends FactoryInterface
 	 * @access  protected
 	 * @type    array
 	 */
-	protected $_footers = array();
+	protected $_footers = [ ];
 
-	protected $_colgroup = array();
+	protected $_colgroup = [ ];
 
 	/**
 	 * Table Rows
@@ -74,7 +74,7 @@ class Table extends FactoryInterface
 	 * @access  protected
 	 * @type    array
 	 */
-	protected $_rows = array();
+	protected $_rows = [ ];
 
 	protected $_tag = 'table';
 
@@ -84,9 +84,9 @@ class Table extends FactoryInterface
 	 * @access  protected
 	 * @type    array
 	 */
-	protected $_attributes = array(
+	protected $_attributes = [
 		'class' => [ 'table' ],
-	);
+	];
 
 	/**
 	 * Table Responsive Flag
@@ -110,7 +110,7 @@ class Table extends FactoryInterface
 		}
 	}
 
-	public function setCaption($caption, $attr = array() )
+	public function setCaption( $caption, $attr = [ ] )
 	{
 		if ( $caption instanceof FactoryInterface )
 		{
@@ -134,7 +134,7 @@ class Table extends FactoryInterface
 	 * @access  public
 	 * @return  $this
 	 */
-	public function setHeaders(array $headers )
+	public function setHeaders( array $headers )
 	{
 		$this->_headers = $headers;
 
@@ -149,7 +149,7 @@ class Table extends FactoryInterface
 	 * @access  public
 	 * @return  $this
 	 */
-	public function setFooters(array $footers )
+	public function setFooters( array $footers )
 	{
 		$this->_footers = $footers;
 
@@ -164,7 +164,7 @@ class Table extends FactoryInterface
 	 * @access  public
 	 * @return  $this
 	 */
-	public function setRows(array $rows )
+	public function setRows( array $rows )
 	{
 		foreach ( $rows as $row )
 		{
@@ -174,12 +174,12 @@ class Table extends FactoryInterface
 		return $this;
 	}
 
-	public function setColgroup(array $cols )
+	public function setColgroup( array $cols )
 	{
 
 	}
 
-	public function addRow(array $row, $attr = array() )
+	public function addRow( array $row, $attr = [ ] )
 	{
 		$values = array_values( $row );
 
@@ -264,7 +264,7 @@ class Table extends FactoryInterface
 	 * @access  public
 	 * @return  string
 	 */
-	public function render( array $attr = array() )
+	public function render( array $attr = [ ] )
 	{
 		if ( ! empty( $this->_rows ) )
 		{

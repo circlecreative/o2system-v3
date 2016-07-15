@@ -53,21 +53,21 @@ use O2System\Cache\Interfaces\Driver;
  */
 class Redis extends Driver
 {
-	protected $_config = array(
+	protected $_config = [
 		'driver'   => 'redis',
 		'socket'   => NULL,
 		'host'     => '127.0.0.1',
 		'port'     => 6379,
 		'password' => NULL,
 		'timeout'  => 5,
-	);
+	];
 
 	/**
 	 * An internal cache for storing keys of serialized values.
 	 *
 	 * @var    array
 	 */
-	protected $_serialized = array();
+	protected $_serialized = [ ];
 
 	// ------------------------------------------------------------------------
 
@@ -289,10 +289,10 @@ class Redis extends Driver
 
 		if ( $value )
 		{
-			return array(
+			return [
 				'expire' => time() + $this->_handle->ttl( $key ),
 				'data'   => $value,
-			);
+			];
 		}
 
 		return FALSE;

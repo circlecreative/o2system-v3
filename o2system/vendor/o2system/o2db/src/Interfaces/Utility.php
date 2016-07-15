@@ -94,7 +94,7 @@ abstract class Utility
 	 */
 	public function __construct( $driver )
 	{
-		$this->_driver = clone $driver;
+		$this->_driver                 = clone $driver;
 		$this->_driver->row_class_name = '\O2System\DB\Factory\Row';
 		$this->_driver->row_class_args = NULL;
 	}
@@ -118,7 +118,7 @@ abstract class Utility
 			return FALSE;
 		}
 
-		$this->_driver->data_cache[ 'db_names' ] = array();
+		$this->_driver->data_cache[ 'db_names' ] = [ ];
 
 		$results = $this->_driver->query( $this->_list_databases );
 
@@ -154,7 +154,7 @@ abstract class Utility
 	 *
 	 * @return    bool
 	 */
-	public function databaseExists($database_name )
+	public function databaseExists( $database_name )
 	{
 		return in_array( $database_name, $this->listDatabases() );
 	}
@@ -168,7 +168,7 @@ abstract class Utility
 	 *
 	 * @return    mixed
 	 */
-	public function optimizeTable($table_name )
+	public function optimizeTable( $table_name )
 	{
 		if ( $this->_optimize_table === FALSE )
 		{
@@ -177,7 +177,7 @@ abstract class Utility
 
 		$results = $this->_driver->query( sprintf( $this->_optimize_table, $this->_driver->escapeIdentifiers( $table_name ) ) );
 
-		if($results->numRows() > 0)
+		if ( $results->numRows() > 0 )
 		{
 			return $results;
 		}
@@ -199,12 +199,12 @@ abstract class Utility
 			return FALSE;
 		}
 
-		$result = array();
+		$result = [ ];
 		foreach ( $this->_driver->listTables() as $table_name )
 		{
 			$results = $this->_driver->query( sprintf( $this->_optimize_table, $this->_driver->escapeIdentifiers( $table_name ) ) );
 
-			if($results->numRows() > 0)
+			if ( $results->numRows() > 0 )
 			{
 				$result[ $table_name ] = $results;
 			}
@@ -222,7 +222,7 @@ abstract class Utility
 	 *
 	 * @return    mixed
 	 */
-	public function repairTable($table_name )
+	public function repairTable( $table_name )
 	{
 		if ( $this->_repair_table === FALSE )
 		{
@@ -231,7 +231,7 @@ abstract class Utility
 
 		$results = $this->_driver->query( sprintf( $this->_repair_table, $this->_driver->escapeIdentifiers( $table_name ) ) );
 
-		if($results->numRows() > 0)
+		if ( $results->numRows() > 0 )
 		{
 			return $results;
 		}
@@ -251,7 +251,7 @@ abstract class Utility
 	 *
 	 * @return    string
 	 */
-	public function csvFromResult($query, $delim = ',', $newline = "\n", $enclosure = '"' )
+	public function csvFromResult( $query, $delim = ',', $newline = "\n", $enclosure = '"' )
 	{
 		if ( ! is_object( $query ) OR ! method_exists( $query, 'list_fields' ) )
 		{
@@ -289,27 +289,27 @@ abstract class Utility
 	 *
 	 * @return    string
 	 */
-	public function backup( $params = array() )
+	public function backup( $params = [ ] )
 	{
 		// If the parameters have not been submitted as an
 		// array then we know that it is simply the table
 		// name, which is a valid short cut.
 		if ( is_string( $params ) )
 		{
-			$params = array( 'tables' => $params );
+			$params = [ 'tables' => $params ];
 		}
 
 		// Set up our default preferences
-		$prefs = array(
-			'tables'             => array(),
-			'ignore'             => array(),
+		$prefs = [
+			'tables'             => [ ],
+			'ignore'             => [ ],
 			'filename'           => '',
 			'format'             => 'gzip', // gzip, zip, txt
 			'add_drop'           => TRUE,
 			'add_insert'         => TRUE,
 			'newline'            => "\n",
 			'foreign_key_checks' => TRUE,
-		);
+		];
 
 		// Did the user submit any preferences? If so set them....
 		if ( count( $params ) > 0 )
@@ -331,7 +331,7 @@ abstract class Utility
 		}
 
 		// Validate the format
-		if ( ! in_array( $prefs[ 'format' ], array( 'gzip', 'zip', 'txt' ), TRUE ) )
+		if ( ! in_array( $prefs[ 'format' ], [ 'gzip', 'zip', 'txt' ], TRUE ) )
 		{
 			$prefs[ 'format' ] = 'txt';
 		}

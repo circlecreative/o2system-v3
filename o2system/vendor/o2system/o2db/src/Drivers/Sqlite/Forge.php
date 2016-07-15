@@ -110,7 +110,7 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    bool
 	 */
-	public function createDatabase($db_name = '' )
+	public function createDatabase( $db_name = '' )
 	{
 		// In SQLite, a database is created when you connect to the database.
 		// We'll return TRUE so that an error isn't generated
@@ -126,7 +126,7 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    bool
 	 */
-	public function dropDatabase($db_name = '' )
+	public function dropDatabase( $db_name = '' )
 	{
 		// In SQLite, a database is dropped when we delete a file
 		if ( is_file( $this->_driver->database ) )
@@ -135,7 +135,7 @@ class Forge extends ForgeInterface
 			$this->_driver->close();
 			if ( ! @unlink( $this->_driver->database ) )
 			{
-				throw new Exception('Unable to drop the specified database.');
+				throw new Exception( 'Unable to drop the specified database.' );
 			}
 			elseif ( ! empty( $this->_driver->data_cache[ 'db_names' ] ) )
 			{
@@ -149,7 +149,7 @@ class Forge extends ForgeInterface
 			return TRUE;
 		}
 
-		throw new Exception('Unable to drop the specified database.');
+		throw new Exception( 'Unable to drop the specified database.' );
 	}
 
 	// --------------------------------------------------------------------
@@ -163,7 +163,7 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    string|string[]
 	 */
-	protected function _alterTable($alter_type, $table, $field )
+	protected function _alterTable( $alter_type, $table, $field )
 	{
 		if ( $alter_type === 'DROP' OR $alter_type === 'CHANGE' )
 		{
@@ -192,7 +192,7 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    string
 	 */
-	protected function _processColumn($field )
+	protected function _processColumn( $field )
 	{
 		return $this->_driver->escapeIdentifiers( $field[ 'name' ] )
 		. ' ' . $field[ 'type' ]
@@ -213,7 +213,7 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    void
 	 */
-	protected function _attrType(&$attributes )
+	protected function _attrType( &$attributes )
 	{
 		switch ( strtoupper( $attributes[ 'TYPE' ] ) )
 		{
@@ -237,17 +237,17 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    void
 	 */
-	protected function _attrAutoIncrement(&$attributes, &$field )
+	protected function _attrAutoIncrement( &$attributes, &$field )
 	{
 		if ( ! empty( $attributes[ 'AUTO_INCREMENT' ] ) && $attributes[ 'AUTO_INCREMENT' ] === TRUE && stripos( $field[ 'type' ], 'int' ) !== FALSE )
 		{
-			$field[ 'type' ] = 'INTEGER PRIMARY KEY';
-			$field[ 'default' ] = '';
-			$field[ 'null' ] = '';
-			$field[ 'unique' ] = '';
+			$field[ 'type' ]           = 'INTEGER PRIMARY KEY';
+			$field[ 'default' ]        = '';
+			$field[ 'null' ]           = '';
+			$field[ 'unique' ]         = '';
 			$field[ 'auto_increment' ] = ' AUTOINCREMENT';
 
-			$this->primary_keys = array();
+			$this->primary_keys = [ ];
 		}
 	}
 }

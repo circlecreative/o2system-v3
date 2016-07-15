@@ -60,10 +60,10 @@ class Theme extends DriverInterface
 {
 	public $active   = FALSE;
 	public $layout;
-	public $partials = array(
-		'theme'  => array(),
-		'custom' => array(),
-	);
+	public $partials = [
+		'theme'  => [ ],
+		'custom' => [ ],
+	];
 
 	public function set( $theme )
 	{
@@ -90,7 +90,7 @@ class Theme extends DriverInterface
 	 * @access  protected
 	 * @return  bool
 	 */
-	protected function _loadPackage($theme )
+	protected function _loadPackage( $theme )
 	{
 		foreach ( $this->_library->_paths as $path )
 		{
@@ -111,10 +111,10 @@ class Theme extends DriverInterface
 				}
 				else
 				{
-					$this->active = new \ArrayObject( $properties, \ArrayObject::ARRAY_AS_PROPS );
+					$this->active                = new \ArrayObject( $properties, \ArrayObject::ARRAY_AS_PROPS );
 					$this->active[ 'parameter' ] = $theme;
-					$this->active[ 'realpath' ] = $theme_path;
-					$this->active[ 'url' ] = path_to_url( $theme_path ) . '/';
+					$this->active[ 'realpath' ]  = $theme_path;
+					$this->active[ 'url' ]       = path_to_url( $theme_path ) . '/';
 
 					$this->_library->addPath( $theme_path );
 
@@ -141,8 +141,8 @@ class Theme extends DriverInterface
 						// Read Partials
 						if ( is_dir( $theme_path . 'partials' . DIRECTORY_SEPARATOR ) )
 						{
-							$files = scandir( $theme_path . 'partials' . DIRECTORY_SEPARATOR );
-							$this->active[ 'partials' ] = array();
+							$files                      = scandir( $theme_path . 'partials' . DIRECTORY_SEPARATOR );
+							$this->active[ 'partials' ] = [ ];
 
 							foreach ( $files as $file )
 							{
@@ -189,7 +189,7 @@ class Theme extends DriverInterface
 		return FALSE;
 	}
 
-	public function layoutExists($layout )
+	public function layoutExists( $layout )
 	{
 		if ( isset( $this->active->realpath ) )
 		{
@@ -211,7 +211,7 @@ class Theme extends DriverInterface
 	 * @access  public
 	 * @return  bool
 	 */
-	public function setLayout($layout = NULL )
+	public function setLayout( $layout = NULL )
 	{
 		if ( isset( $layout ) )
 		{
@@ -246,8 +246,8 @@ class Theme extends DriverInterface
 				// Load Layout Partials
 				if ( is_dir( $layout_path . 'partials' . DIRECTORY_SEPARATOR ) )
 				{
-					$files = scandir( $layout_path . 'partials' . DIRECTORY_SEPARATOR );
-					$this->active[ 'partials' ] = array();
+					$files                      = scandir( $layout_path . 'partials' . DIRECTORY_SEPARATOR );
+					$this->active[ 'partials' ] = [ ];
 
 					foreach ( $files as $file )
 					{
@@ -268,7 +268,7 @@ class Theme extends DriverInterface
 
 class ThemeException extends Exception
 {
-	public function __construct( $message, $code, $args = array() )
+	public function __construct( $message, $code, $args = [ ] )
 	{
 		$this->_args = $args;
 		parent::__construct( $message, $code );
@@ -277,7 +277,7 @@ class ThemeException extends Exception
 
 class ThemeInvalidPropertiesException extends Exception
 {
-	public function __construct( $message, $code, $args = array() )
+	public function __construct( $message, $code, $args = [ ] )
 	{
 		$this->_args = $args;
 		parent::__construct( $message, $code );
@@ -286,7 +286,7 @@ class ThemeInvalidPropertiesException extends Exception
 
 class ThemeInvalidSettingsException extends Exception
 {
-	public function __construct( $message, $code, $args = array() )
+	public function __construct( $message, $code, $args = [ ] )
 	{
 		$this->_args = $args;
 		parent::__construct( $message, $code );

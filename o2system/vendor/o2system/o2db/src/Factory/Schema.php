@@ -9,6 +9,7 @@
 namespace O2System\DB\Factory;
 
 
-class Schema {
+class Schema
+{
 
 }

@@ -26,13 +26,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  *
- * @package		O2System
- * @author		Circle Creative Dev Team
- * @copyright	Copyright (c) 2005 - 2015, .
- * @license		http://circle-creative.com/products/o2system-codeigniter/license.html
- * @license	    http://opensource.org/licenses/MIT	MIT License
- * @link		http://circle-creative.com/products/o2system-codeigniter.html
- * @since		Version 2.0
+ * @package        O2System
+ * @author         Circle Creative Dev Team
+ * @copyright      Copyright (c) 2005 - 2015, .
+ * @license        http://circle-creative.com/products/o2system-codeigniter/license.html
+ * @license        http://opensource.org/licenses/MIT	MIT License
+ * @link           http://circle-creative.com/products/o2system-codeigniter.html
+ * @since          Version 2.0
  * @filesource
  */
 // ------------------------------------------------------------------------
@@ -42,42 +42,42 @@ use O2System\Glob\Interfaces\DriverInterface;
 
 abstract class Driver extends DriverInterface
 {
-    /**
-     * List of possible view file extensions
-     *
-     * @access  protected
-     *
-     * @type array
-     */
-    public $extensions;
+	/**
+	 * List of possible view file extensions
+	 *
+	 * @access  protected
+	 *
+	 * @type array
+	 */
+	public $extensions;
 
-    /**
-     * Setup Engine
-     *
-     * @param   $settings   Template Config
-     *
-     * @access  public
-     * @return  Parser Engine Adapter Object
-     */
-    abstract public function setup( $settings = array() );
+	/**
+	 * Setup Engine
+	 *
+	 * @param   $settings   Template Config
+	 *
+	 * @access  public
+	 * @return  Parser Engine Adapter Object
+	 */
+	abstract public function setup( $settings = [ ] );
 
-    /**
-     * Parse String
-     *
-     * @param   string   String Source Code
-     * @param   array    Array of variables data to be parsed
-     *
-     * @access  public
-     * @return  string  Parse Output Result
-     */
-    abstract public function parseString($string, $vars = array() );
+	/**
+	 * Parse String
+	 *
+	 * @param   string   String Source Code
+	 * @param   array    Array of variables data to be parsed
+	 *
+	 * @access  public
+	 * @return  string  Parse Output Result
+	 */
+	abstract public function parseString( $string, $vars = [ ] );
 
-    /**
-     * Register Plugin
-     *
-     * Registers a plugin for use in a Twig template.
-     *
-     * @access  public
-     */
-    abstract public function registerPlugin();
+	/**
+	 * Register Plugin
+	 *
+	 * Registers a plugin for use in a Twig template.
+	 *
+	 * @access  public
+	 */
+	abstract public function registerPlugin();
 }

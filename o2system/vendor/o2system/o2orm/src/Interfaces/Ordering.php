@@ -16,7 +16,7 @@ trait Ordering
 	 *
 	 * @access  public
 	 */
-	protected function _beforeProcessRowOrdering(array $row, $table = NULL )
+	protected function _beforeProcessRowOrdering( array $row, $table = NULL )
 	{
 		$table = isset( $table ) ? $table : $this->table;
 

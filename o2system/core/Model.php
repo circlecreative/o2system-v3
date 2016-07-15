@@ -85,15 +85,15 @@ class Model extends ModelInterface
 	 *
 	 * @return mixed
 	 */
-	public function __call( $method, $args = array() )
+	public function __call( $method, $args = [ ] )
 	{
 		if ( method_exists( $this, $method ) )
 		{
-			return call_user_func_array( array( $this, $method ), $args );
+			return call_user_func_array( [ $this, $method ], $args );
 		}
 		elseif ( method_exists( $this->db, $method ) )
 		{
-			return call_user_func_array( array( $this->db, $method ), $args );
+			return call_user_func_array( [ $this->db, $method ], $args );
 		}
 	}
 
@@ -119,13 +119,13 @@ class Model extends ModelInterface
 
 		$row = $this->_beforeProcess( $row, $table );
 
-		if ( $this->db->insert( $table, $row ) )
+		if ( $last_insert_id = $this->db->insert( $table, $row ) )
 		{
 			$report = $this->_afterProcess();
 
 			if ( empty( $report ) )
 			{
-				return TRUE;
+				return $last_insert_id;
 			}
 
 			return $report;
@@ -149,19 +149,36 @@ class Model extends ModelInterface
 	 *
 	 * @return bool
 	 */
-	final public function update( $row = array(), $table = NULL )
+	final public function update( $row = [ ], $table = NULL )
 	{
-		$table = isset( $table ) ? $table : $this->table;
+		$table       = isset( $table ) ? $table : $this->table;
+		$primary_key = isset( $this->primary_key ) ? $this->primary_key : 'id';
+
+		if ( empty( $this->primary_keys ) )
+		{
+			$this->db->where( $primary_key, $row[ $primary_key ] );
+		}
+		else
+		{
+			foreach ( $this->primary_keys as $primary_key )
+			{
+				$this->db->where( $primary_key, $row[ $primary_key ] );
+			}
+		}
+
+		// Reset Primary Keys
+		$this->primary_key  = 'id';
+		$this->primary_keys = [ ];
 
 		$row = $this->_beforeProcess( $row, $table );
 
-		if ( $this->db->where( 'id', $row[ 'id' ] )->update( $table, $row ) )
+		if ( $affected_rows = $this->db->update( $table, $row ) )
 		{
 			$report = $this->_afterProcess();
 
 			if ( empty( $report ) )
 			{
-				return TRUE;
+				return $affected_rows;
 			}
 
 			return $report;
@@ -187,19 +204,47 @@ class Model extends ModelInterface
 	 */
 	final public function softDelete( $id, $table = NULL )
 	{
-		$table = isset( $table ) ? $table : $this->table;
+		$table       = isset( $table ) ? $table : $this->table;
+		$primary_key = isset( $this->primary_key ) ? $this->primary_key : 'id';
 
-		$row[ $this->primary_key ] = $id;
 		$row[ 'record_status' ] = 'DELETE';
+
+		if ( empty( $this->primary_keys ) )
+		{
+			$this->db->where( $primary_key, $id );
+			$row[ $primary_key ] = $id;
+		}
+		elseif ( is_array( $id ) )
+		{
+			foreach ( $this->primary_keys as $primary_key )
+			{
+				$this->db->where( $primary_key, $row[ $primary_key ] );
+				$row[ $primary_key ] = $id[ $primary_key ];
+			}
+		}
+		else
+		{
+			foreach ( $this->primary_keys as $primary_key )
+			{
+				$this->db->where( $primary_key, $row[ $primary_key ] );
+			}
+
+			$row[ reset( $this->primary_keys ) ] = $id;
+		}
+
+		// Reset Primary Keys
+		$this->primary_key  = 'id';
+		$this->primary_keys = [ ];
+
 		$row = $this->_beforeProcess( $row, $table );
 
-		if ( $this->db->where( 'id', $row[ 'id' ] )->update( $table, $row ) )
+		if ( $affected_rows = $this->db->update( $table, $row ) )
 		{
 			$report = $this->_afterProcess();
 
 			if ( empty( $report ) )
 			{
-				return TRUE;
+				return $affected_rows;
 			}
 
 			return $report;
@@ -248,21 +293,39 @@ class Model extends ModelInterface
 		}
 
 		// Recursive Search File
-		$fields = array( 'file', 'image', 'picture', 'cover', 'avatar', 'photo', 'video' );
+		$fields = [ 'file', 'document', 'image', 'picture', 'cover', 'avatar', 'photo', 'video' ];
 
 		foreach ( $fields as $field )
 		{
 			if ( $this->db->fieldExists( $field, $table ) )
 			{
-				$result = $this->db->select( $field )->get_where( $table, [ $this->primary_key => $id ], 1 );
+				$primary_key = isset( $this->primary_key ) ? $this->primary_key : 'id';
+
+				if ( empty( $this->primary_keys ) )
+				{
+					$this->db->where( $primary_key, $id );
+				}
+				elseif ( is_array( $id ) )
+				{
+					foreach ( $this->primary_keys as $primary_key )
+					{
+						$this->db->where( $primary_key, $id[ $primary_key ] );
+					}
+				}
+				else
+				{
+					$this->db->where( reset( $this->primary_keys ), $id );
+				}
+
+				$result = $this->db->select( $field )->limit( 1 )->get( $table );
 
 				if ( $result->numRows() > 0 )
 				{
 					if ( ! empty( $result->first()->{$field} ) )
 					{
 						$directory = new \RecursiveDirectoryIterator( APPSPATH );
-						$iterator = new \RecursiveIteratorIterator( $directory );
-						$results = new \RegexIterator( $iterator, '/' . $result->first()->{$field} . '/i', \RecursiveRegexIterator::GET_MATCH );
+						$iterator  = new \RecursiveIteratorIterator( $directory );
+						$results   = new \RegexIterator( $iterator, '/' . $result->first()->{$field} . '/i', \RecursiveRegexIterator::GET_MATCH );
 
 						foreach ( $results as $file )
 						{
@@ -279,13 +342,35 @@ class Model extends ModelInterface
 			}
 		}
 
-		if ( $return = $this->db->where( $this->primary_key, $id )->delete( $table ) )
+		$primary_key = isset( $this->primary_key ) ? $this->primary_key : 'id';
+
+		if ( empty( $this->primary_keys ) )
+		{
+			$this->db->where( $primary_key, $id );
+		}
+		elseif ( is_array( $id ) )
+		{
+			foreach ( $this->primary_keys as $primary_key )
+			{
+				$this->db->where( $primary_key, $id[ $primary_key ] );
+			}
+		}
+		else
+		{
+			$this->db->where( reset( $this->primary_keys ), $id );
+		}
+
+		// Reset Primary Keys
+		$this->primary_key  = 'id';
+		$this->primary_keys = [ ];
+
+		if ( $affected_rows = $this->db->delete( $table ) )
 		{
 			$report = $this->_afterProcess();
 
 			if ( empty( $report ) )
 			{
-				return $return;
+				return (int) $affected_rows;
 			}
 
 			return $report;
@@ -332,7 +417,7 @@ class Model extends ModelInterface
 	 */
 	protected function _afterProcess()
 	{
-		$report = array();
+		$report = [ ];
 
 		if ( ! empty( $this->_after_process ) )
 		{

@@ -69,14 +69,14 @@ class Driver extends DriverInterface
 	 *
 	 * @type    string[]
 	 */
-	protected $_reserved_identifiers = array( '*', 'rownum' );
+	protected $_reserved_identifiers = [ '*', 'rownum' ];
 
 	/**
 	 * ORDER BY random keyword
 	 *
 	 * @type    array
 	 */
-	protected $_random_keywords = array( 'ASC', 'ASC' ); // Currently not supported
+	protected $_random_keywords = [ 'ASC', 'ASC' ]; // Currently not supported
 
 	/**
 	 * COUNT string
@@ -140,7 +140,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _listTablesStatement($prefix_limit = FALSE )
+	protected function _listTablesStatement( $prefix_limit = FALSE )
 	{
 		$sql = 'SELECT "TABLE_NAME" FROM "ALL_TABLES"';
 
@@ -164,7 +164,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _listColumnsStatement($table = '' )
+	protected function _listColumnsStatement( $table = '' )
 	{
 		if ( strpos( $table, '.' ) !== FALSE )
 		{
@@ -189,7 +189,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    array
 	 */
-	public function fieldData($table )
+	public function fieldData( $table )
 	{
 		if ( strpos( $table, '.' ) !== FALSE )
 		{
@@ -211,10 +211,10 @@ class Driver extends DriverInterface
 		}
 		$query = $query->resultObject();
 
-		$result = array();
+		$result = [ ];
 		for ( $i = 0, $c = count( $query ); $i < $c; $i++ )
 		{
-			$result[ $i ] = new \stdClass();
+			$result[ $i ]       = new \stdClass();
 			$result[ $i ]->name = $query[ $i ]->COLUMN_NAME;
 			$result[ $i ]->type = $query[ $i ]->DATA_TYPE;
 
@@ -248,10 +248,10 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _insertBatch($table, $keys, $values )
+	protected function _insertBatch( $table, $keys, $values )
 	{
 		$keys = implode( ', ', $keys );
-		$sql = "INSERT ALL\n";
+		$sql  = "INSERT ALL\n";
 
 		for ( $i = 0, $c = count( $values ); $i < $c; $i++ )
 		{

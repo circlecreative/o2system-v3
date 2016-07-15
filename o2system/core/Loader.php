@@ -57,7 +57,7 @@ use O2System\DB;
  */
 final class Loader extends Glob\Loader
 {
-	protected $_vars = array();
+	protected $_vars = [ ];
 
 	/**
 	 * Class Constructor
@@ -87,19 +87,22 @@ final class Loader extends Glob\Loader
 	 * @access  public
 	 * @return  object
 	 */
-	public function &library( $class, $params = array(), $object_name = NULL )
+	public function &library( $class, $params = [ ], $object_name = NULL )
 	{
-		if ( $class === 'database' || $class === 'db' ) return static::database();
+		if ( $class === 'database' || $class === 'db' )
+		{
+			return static::database();
+		}
 
 		$is_found = FALSE;
 
 		if ( is_string( $params ) )
 		{
 			$object_name = $params;
-			$params = array();
+			$params      = [ ];
 		}
 
-		$class = prepare_class_name( $class );
+		$class      = prepare_class_name( $class );
 		$class_name = get_class_name( $class );
 
 		$object_name = empty( $object_name ) ? strtolower( $class_name ) : $object_name;
@@ -157,7 +160,7 @@ final class Loader extends Glob\Loader
 	 * @access  public
 	 * @return  object
 	 */
-	public function &driver( $class, array $params = array(), $object_name = NULL )
+	public function &driver( $class, array $params = [ ], $object_name = NULL )
 	{
 		return $this->library( $class, $params, $object_name );
 	}
@@ -175,18 +178,18 @@ final class Loader extends Glob\Loader
 	 * @access  public
 	 * @return  object
 	 */
-	public function &model( $class, $data = array(), $object_name = NULL )
+	public function &model( $class, $data = [ ], $object_name = NULL )
 	{
 		$is_found = FALSE;
 
 		if ( is_string( $data ) )
 		{
 			$object_name = $data;
-			$data = array();
+			$data        = [ ];
 		}
 
-		$class = str_replace( '_model', '', $class );
-		$class = prepare_class_name( $class );
+		$class      = str_replace( '_model', '', $class );
+		$class      = prepare_class_name( $class );
 		$class_name = get_class_name( $class );
 
 		$object_name = empty( $object_name ) ? strtolower( $class_name ) : $object_name;
@@ -256,8 +259,8 @@ final class Loader extends Glob\Loader
 	{
 		$is_found = FALSE;
 
-		$class = str_replace( '_controller', '', $class );
-		$class = prepare_class_name( $class );
+		$class      = str_replace( '_controller', '', $class );
+		$class      = prepare_class_name( $class );
 		$class_name = get_class_name( $class );
 
 		$object_name = empty( $object_name ) ? strtolower( $class_name ) : $object_name;
@@ -285,7 +288,7 @@ final class Loader extends Glob\Loader
 
 		if ( $is_found === TRUE )
 		{
-			$controller = new \ReflectionClass( $called_class );
+			$controller                                   = new \ReflectionClass( $called_class );
 			static::$_controllers_classes[ $object_name ] = $controller->newInstanceWithoutConstructor();
 
 			\O2System::Log( 'debug', 'Loader: Load controller class ' . $called_class );
@@ -397,7 +400,7 @@ final class Loader extends Glob\Loader
 	 *
 	 * @return  object
 	 */
-	public function helpers( $helpers = array() )
+	public function helpers( $helpers = [ ] )
 	{
 		foreach ( $helpers as $helper )
 		{
@@ -453,7 +456,7 @@ final class Loader extends Glob\Loader
 	 * @access  public
 	 * @return  mixed
 	 */
-	public function view( $view, $vars = array(), $return = FALSE )
+	public function view( $view, $vars = [ ], $return = FALSE )
 	{
 		return \O2System::View()->load( $view, $vars, $return );
 	}
@@ -471,7 +474,7 @@ final class Loader extends Glob\Loader
 	 * @access  public
 	 * @return  mixed
 	 */
-	public function page( $page, $vars = array(), $return = FALSE )
+	public function page( $page, $vars = [ ], $return = FALSE )
 	{
 		return \O2System::View()->page( $page, $vars, $return );
 	}
@@ -516,7 +519,10 @@ final class Loader extends Glob\Loader
 			{
 				$config = array_unique( $config );
 
-				if ( empty( $config ) || count( $config ) == 0 ) continue;
+				if ( empty( $config ) || count( $config ) == 0 )
+				{
+					continue;
+				}
 
 				switch ( $type )
 				{

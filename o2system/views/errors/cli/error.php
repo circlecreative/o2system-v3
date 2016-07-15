@@ -37,21 +37,21 @@
  */
 
 // ------------------------------------------------------------------------
-defined ( 'ROOTPATH' ) OR exit( 'No direct script access allowed' );
+defined( 'ROOTPATH' ) OR exit( 'No direct script access allowed' );
 ?>
 
-    A PHP Error was encountered
+	A PHP Error was encountered
 
-    Severity: <?php echo $severity; ?>
-    Message:  <?php echo $message; ?>
-    Filename: <?php echo $filepath; ?>
-    Line Number: <?php echo $line; ?>
+	Severity: <?php echo $severity; ?>
+	Message:  <?php echo $message; ?>
+	Filename: <?php echo $filepath; ?>
+	Line Number: <?php echo $line; ?>
 
-    <?php if(isset($backtrace)) : ?>
-        Backtrace: <?php echo PHP_EOL; ?>
-        <?php foreach ($backtrace->chronology() as $chronology): ?>
-            <?php echo $chronology->call . PHP_EOL; ?>
-            <?php echo 'File: '.@realpath($chronology->file) . PHP_EOL; ?>
-            <?php echo 'Line: '.$chronology->line . PHP_EOL; ?>
-        <?php endforeach ?>
-    <?php endif; ?>
+<?php if ( isset( $backtrace ) ) : ?>
+	Backtrace: <?php echo PHP_EOL; ?>
+	<?php foreach ( $backtrace->chronology() as $chronology ): ?>
+		<?php echo $chronology->call . PHP_EOL; ?>
+		<?php echo 'File: ' . @realpath( $chronology->file ) . PHP_EOL; ?>
+		<?php echo 'Line: ' . $chronology->line . PHP_EOL; ?>
+	<?php endforeach ?>
+<?php endif; ?>

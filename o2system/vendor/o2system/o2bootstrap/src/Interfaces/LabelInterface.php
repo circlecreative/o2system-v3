@@ -40,9 +40,9 @@ namespace O2System\Bootstrap\Interfaces;
 
 trait LabelInterface
 {
-	protected $_label = array();
+	protected $_label = [ ];
 
-	public function setLabel($label )
+	public function setLabel( $label )
 	{
 		$this->_label = [ $label ];
 
@@ -59,7 +59,7 @@ trait LabelInterface
 		return $this;
 	}
 
-	public function prependLabel($label )
+	public function prependLabel( $label )
 	{
 		array_unshift( $this->_label, $label );
 		$this->_label = array_unique( $this->_label );
@@ -67,7 +67,7 @@ trait LabelInterface
 		return $this;
 	}
 
-	public function appendLabel($label )
+	public function appendLabel( $label )
 	{
 		array_push( $this->_label, $label );
 		$this->_label = array_unique( $this->_label );

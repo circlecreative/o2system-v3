@@ -40,16 +40,16 @@ namespace O2System\Bootstrap\Interfaces;
 
 trait SizeInterface
 {
-	protected $_sizes = array(
+	protected $_sizes = [
 		'tiny',
 		'small',
 		'medium',
 		'large',
-	);
+	];
 
 	protected $_size_class_prefix = NULL;
 
-	public function setSizeClassPrefix($prefix )
+	public function setSizeClassPrefix( $prefix )
 	{
 		$this->_size_class_prefix = $prefix;
 	}

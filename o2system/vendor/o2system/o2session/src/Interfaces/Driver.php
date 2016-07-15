@@ -52,122 +52,122 @@ namespace O2System\Session\Interfaces;
  */
 abstract class Driver implements \SessionHandlerInterface
 {
-    /**
-     * Session Driver Configuration
-     *
-     * @access  protected
-     * @type    array
-     */
-    protected $_config;
+	/**
+	 * Session Driver Configuration
+	 *
+	 * @access  protected
+	 * @type    array
+	 */
+	protected $_config;
 
-    /**
-     * Session Driver Resource Handle
-     *
-     * @access  protected
-     * @type    resource
-     */
-    protected $_handle;
+	/**
+	 * Session Driver Resource Handle
+	 *
+	 * @access  protected
+	 * @type    resource
+	 */
+	protected $_handle;
 
-    /**
-     * Data fingerprint
-     *
-     * @access  protected
-     * @type    bool
-     */
-    protected $_fingerprint;
+	/**
+	 * Data fingerprint
+	 *
+	 * @access  protected
+	 * @type    bool
+	 */
+	protected $_fingerprint;
 
-    /**
-     * Lock placeholder
-     *
-     * @access  protected
-     * @type    mixed
-     */
-    protected $_lock = FALSE;
+	/**
+	 * Lock placeholder
+	 *
+	 * @access  protected
+	 * @type    mixed
+	 */
+	protected $_lock = FALSE;
 
-    /**
-     * Read session ID
-     *
-     * Used to detect session_regenerate_id() calls because PHP only calls
-     * write() after regenerating the ID.
-     *
-     * @access  protected
-     * @type    string
-     */
-    protected $_session_id;
+	/**
+	 * Read session ID
+	 *
+	 * Used to detect session_regenerate_id() calls because PHP only calls
+	 * write() after regenerating the ID.
+	 *
+	 * @access  protected
+	 * @type    string
+	 */
+	protected $_session_id;
 
-    // ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
 
-    /**
-     * Class constructor
-     *
-     * @param    array $params Configuration parameters
-     */
-    public function __construct( &$params )
-    {
-        $this->_config =& $params;
-    }
+	/**
+	 * Class constructor
+	 *
+	 * @param    array $params Configuration parameters
+	 */
+	public function __construct( &$params )
+	{
+		$this->_config =& $params;
+	}
 
-    // ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
 
-    /**
-     * Cookie destroy
-     *
-     * Internal method to force removal of a cookie by the client
-     * when session_destroy() is called.
-     *
-     * @access  protected
-     * @return  bool
-     */
-    protected function _cookieDestroy()
-    {
-        return setcookie(
-            $this->_config[ 'cookie' ][ 'name' ],
-            NULL,
-            1,
-            $this->_config[ 'cookie' ][ 'path' ],
-            $this->_config[ 'cookie' ][ 'domain' ],
-            $this->_config[ 'cookie' ][ 'secure' ],
-            TRUE
-        );
-    }
+	/**
+	 * Cookie destroy
+	 *
+	 * Internal method to force removal of a cookie by the client
+	 * when session_destroy() is called.
+	 *
+	 * @access  protected
+	 * @return  bool
+	 */
+	protected function _cookieDestroy()
+	{
+		return setcookie(
+			$this->_config[ 'cookie' ][ 'name' ],
+			NULL,
+			1,
+			$this->_config[ 'cookie' ][ 'path' ],
+			$this->_config[ 'cookie' ][ 'domain' ],
+			$this->_config[ 'cookie' ][ 'secure' ],
+			TRUE
+		);
+	}
 
-    // ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
 
-    /**
-     * Get lock
-     *
-     * A dummy method allowing drivers with no locking functionality
-     * (databases other than PostgreSQL and MySQL) to act as if they
-     * do acquire a lock.
-     *
-     * @param   string  $session_id
-     *
-     * @access  protected
-     * @return  bool
-     */
-    protected function _getLock($session_id )
-    {
-        $this->_lock = TRUE;
+	/**
+	 * Get lock
+	 *
+	 * A dummy method allowing drivers with no locking functionality
+	 * (databases other than PostgreSQL and MySQL) to act as if they
+	 * do acquire a lock.
+	 *
+	 * @param   string $session_id
+	 *
+	 * @access  protected
+	 * @return  bool
+	 */
+	protected function _getLock( $session_id )
+	{
+		$this->_lock = TRUE;
 
-        return TRUE;
-    }
+		return TRUE;
+	}
 
-    // ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
 
-    /**
-     * Release lock
-     *
-     * @access  protected
-     * @return  bool
-     */
-    protected function _releaseLock()
-    {
-        if( $this->_lock )
-        {
-            $this->_lock = FALSE;
-        }
+	/**
+	 * Release lock
+	 *
+	 * @access  protected
+	 * @return  bool
+	 */
+	protected function _releaseLock()
+	{
+		if ( $this->_lock )
+		{
+			$this->_lock = FALSE;
+		}
 
-        return TRUE;
-    }
+		return TRUE;
+	}
 
 }

@@ -14,9 +14,9 @@ use JBBCode\CodeDefinition;
 interface CodeDefinitionSet
 {
 
-    /**
-     * Retrieves the CodeDefinitions within this set as an array.
-     */
-    public function getCodeDefinitions();
+	/**
+	 * Retrieves the CodeDefinitions within this set as an array.
+	 */
+	public function getCodeDefinitions();
 
 }

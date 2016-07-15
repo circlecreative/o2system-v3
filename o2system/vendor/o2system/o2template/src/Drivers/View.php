@@ -58,7 +58,7 @@ use O2System\Template\ViewException;
  */
 final class View extends DriverInterface
 {
-	public function isFile($view )
+	public function isFile( $view )
 	{
 		if ( is_file( $view ) )
 		{
@@ -102,7 +102,7 @@ final class View extends DriverInterface
 		return FALSE;
 	}
 
-	public function load( $view, $vars = array(), $return = FALSE )
+	public function load( $view, $vars = [ ], $return = FALSE )
 	{
 		$vars = array_merge( $this->_library->_cached_vars, $vars );
 

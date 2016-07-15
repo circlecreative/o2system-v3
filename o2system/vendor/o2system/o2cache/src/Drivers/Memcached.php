@@ -53,12 +53,12 @@ use O2System\Cache\Interfaces\Driver;
  */
 class Memcached extends Driver
 {
-	protected $_config = array(
+	protected $_config = [
 		'driver' => 'memcached',
 		'host'   => '127.0.0.1',
 		'port'   => 11211,
 		'weight' => 1,
-	);
+	];
 
 	/**
 	 * Driver Name
@@ -158,7 +158,7 @@ class Memcached extends Driver
 	{
 		if ( $raw !== TRUE )
 		{
-			$data = array( $data, time(), $ttl );
+			$data = [ $data, time(), $ttl ];
 		}
 
 		if ( get_class( $this->_handle ) === 'Memcached' )
@@ -263,11 +263,11 @@ class Memcached extends Driver
 
 		list( $data, $time, $ttl ) = $stored;
 
-		return array(
+		return [
 			'expire' => $time + $ttl,
 			'mtime'  => $time,
 			'data'   => $data,
-		);
+		];
 	}
 
 	// ------------------------------------------------------------------------

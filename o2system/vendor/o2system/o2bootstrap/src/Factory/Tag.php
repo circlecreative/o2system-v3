@@ -55,8 +55,8 @@ class Tag extends FactoryInterface
 	use ContentInterface;
 
 	protected $_tag;
-	
-	protected $_attributes = array();
+
+	protected $_attributes = [ ];
 
 	public function build()
 	{
@@ -102,7 +102,7 @@ class Tag extends FactoryInterface
 
 	public function render()
 	{
-		$self_closing_tags = array(
+		$self_closing_tags = [
 			'area',
 			'base',
 			'br',
@@ -119,7 +119,7 @@ class Tag extends FactoryInterface
 			'source',
 			'track',
 			'wbr',
-		);
+		];
 
 		if ( in_array( $this->_tag, $self_closing_tags ) )
 		{

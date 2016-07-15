@@ -11,5 +11,5 @@ namespace O2System\Bootstrap\Factory;
 
 class Calendar
 {
-	
+
 }

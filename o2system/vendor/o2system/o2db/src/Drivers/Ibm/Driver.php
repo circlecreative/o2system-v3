@@ -138,7 +138,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _listTablesStatement($prefix_limit = FALSE )
+	protected function _listTablesStatement( $prefix_limit = FALSE )
 	{
 		$sql = 'SELECT "tabname" FROM "syscat"."tables"
 			WHERE "type" = \'T\' AND LOWER("tabschema") = ' . $this->escape( strtolower( $this->database ) );
@@ -163,7 +163,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    array
 	 */
-	protected function _listColumnsStatement($table = '' )
+	protected function _listColumnsStatement( $table = '' )
 	{
 		return 'SELECT "colname" FROM "syscat"."columns"
 			WHERE LOWER("tabschema") = ' . $this->escape( strtolower( $this->database ) ) . '
@@ -179,7 +179,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    array
 	 */
-	public function fieldData($table )
+	public function fieldData( $table )
 	{
 		$sql = 'SELECT "colname" AS "name", "typename" AS "type", "default" AS "default", "length" AS "max_length",
 				CASE "keyseq" WHEN NULL THEN 0 ELSE 1 END AS "primary_key"
@@ -205,10 +205,10 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _updateStatement($table, $values )
+	protected function _updateStatement( $table, $values )
 	{
-		$this->qb_limit = FALSE;
-		$this->qb_orderby = array();
+		$this->qb_limit   = FALSE;
+		$this->qb_orderby = [ ];
 
 		return parent::_updateStatement( $table, $values );
 	}

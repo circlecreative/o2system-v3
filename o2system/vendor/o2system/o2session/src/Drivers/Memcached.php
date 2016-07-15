@@ -101,10 +101,10 @@ class Memcached extends Driver implements \SessionHandlerInterface
 				throw new \InvalidArgumentException( 'Session: Invalid Memcached save path format: ' . $params[ 'storage' ][ 'save_path' ] );
 			}
 
-			$params[ 'storage' ][ 'save_path' ] = array(
+			$params[ 'storage' ][ 'save_path' ] = [
 				'host' => isset( $dsn[ 'username' ] ) ? rawurldecode( $dsn[ 'username' ] ) : '',
 				'port' => isset( $dsn[ 'password' ] ) ? rawurldecode( $dsn[ 'password' ] ) : '',
-			);
+			];
 
 			// Were additional config items set?
 			if ( isset( $dsn[ 'query' ] ) )
@@ -113,7 +113,7 @@ class Memcached extends Driver implements \SessionHandlerInterface
 
 				foreach ( $extra as $key => $value )
 				{
-					if ( is_string( $value ) AND in_array( strtoupper( $value ), array( 'TRUE', 'FALSE', 'NULL' ) ) )
+					if ( is_string( $value ) AND in_array( strtoupper( $value ), [ 'TRUE', 'FALSE', 'NULL' ] ) )
 					{
 						$value = var_export( $value, TRUE );
 					}
@@ -214,7 +214,7 @@ class Memcached extends Driver implements \SessionHandlerInterface
 			// Needed by write() to detect session_regenerate_id() calls
 			$this->_session_id = $session_id;
 
-			$session_data = (string) $this->_handle->get( $this->_key_prefix . $session_id );
+			$session_data       = (string) $this->_handle->get( $this->_key_prefix . $session_id );
 			$this->_fingerprint = md5( $session_data );
 
 			return $session_data;
@@ -251,7 +251,7 @@ class Memcached extends Driver implements \SessionHandlerInterface
 			}
 
 			$this->_fingerprint = md5( '' );
-			$this->_session_id = $session_id;
+			$this->_session_id  = $session_id;
 		}
 
 		if ( isset( $this->_lock_key ) )
@@ -395,7 +395,7 @@ class Memcached extends Driver implements \SessionHandlerInterface
 	 * @access  public
 	 * @return  bool
 	 */
-	protected function _getLock($session_id )
+	protected function _getLock( $session_id )
 	{
 		if ( isset( $this->_lock_key ) )
 		{
@@ -404,7 +404,7 @@ class Memcached extends Driver implements \SessionHandlerInterface
 
 		// 30 attempts to obtain a lock, in case another request already has it
 		$lock_key = $this->_key_prefix . $session_id . ':lock';
-		$attempt = 0;
+		$attempt  = 0;
 		do
 		{
 			if ( $this->_handle->get( $lock_key ) )
@@ -465,7 +465,7 @@ class Memcached extends Driver implements \SessionHandlerInterface
 			}
 
 			$this->_lock_key = NULL;
-			$this->_lock = FALSE;
+			$this->_lock     = FALSE;
 		}
 
 		return TRUE;

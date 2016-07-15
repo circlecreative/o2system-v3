@@ -17,9 +17,9 @@ class Grid extends FactoryInterface
 	use ItemsInterface;
 
 	protected $_tag        = 'div';
-	protected $_attributes = array(
+	protected $_attributes = [
 		'class' => [ 'row' ],
-	);
+	];
 
 	public function build()
 	{

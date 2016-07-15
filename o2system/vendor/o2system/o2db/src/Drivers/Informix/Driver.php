@@ -67,7 +67,7 @@ class Driver extends DriverInterface
 	 *
 	 * @type    array
 	 */
-	protected $_random_keywords = array( 'ASC', 'ASC' ); // Currently not supported
+	protected $_random_keywords = [ 'ASC', 'ASC' ]; // Currently not supported
 
 	// --------------------------------------------------------------------
 
@@ -140,7 +140,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _listTablesStatement($prefix_limit = FALSE )
+	protected function _listTablesStatement( $prefix_limit = FALSE )
 	{
 		$sql = 'SELECT "tabname" FROM "systables"
 			WHERE "tabid" > 99 AND "tabtype" = \'T\' AND LOWER("owner") = ' . $this->escape( strtolower( $this->username ) );
@@ -165,7 +165,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _listColumnsStatement($table = '' )
+	protected function _listColumnsStatement( $table = '' )
 	{
 		if ( strpos( $table, '.' ) !== FALSE )
 		{
@@ -192,7 +192,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    array
 	 */
-	public function fieldData($table )
+	public function fieldData( $table )
 	{
 		$sql = 'SELECT "syscolumns"."colname" AS "name",
 				CASE "syscolumns"."coltype"
@@ -255,10 +255,10 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _updateStatement($table, $values )
+	protected function _updateStatement( $table, $values )
 	{
-		$this->qb_limit = FALSE;
-		$this->qb_orderby = array();
+		$this->qb_limit   = FALSE;
+		$this->qb_orderby = [ ];
 
 		return parent::_updateStatement( $table, $values );
 	}
@@ -277,7 +277,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _truncateStatement($table )
+	protected function _truncateStatement( $table )
 	{
 		return 'TRUNCATE TABLE ONLY ' . $table;
 	}

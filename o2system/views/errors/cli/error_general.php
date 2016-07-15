@@ -37,7 +37,7 @@
  */
 
 // ------------------------------------------------------------------------
-defined ( 'ROOTPATH' ) OR exit( 'No direct script access allowed' );
+defined( 'ROOTPATH' ) OR exit( 'No direct script access allowed' );
 
 echo "\nERROR: ",
 $heading,

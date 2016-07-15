@@ -22,7 +22,7 @@ trait Hierarchical
 	 *
 	 * @return numeric  rgt column value
 	 */
-	final public function _afterProcessRebuild($id_parent = 0, $left = 0, $depth = 0 )
+	final public function _afterProcessRebuild( $id_parent = 0, $left = 0, $depth = 0 )
 	{
 		$table = empty( $table ) ? $this->table : $table;
 
@@ -43,7 +43,7 @@ trait Hierarchical
 		}
 
 		/* update this page with the (possibly) new left, right, and depth values */
-		$data = array( 'record_left' => $left, 'record_right' => $right, 'record_depth' => $depth - 1 );
+		$data = [ 'record_left' => $left, 'record_right' => $right, 'record_depth' => $depth - 1 ];
 		$this->db->update( $table, $data, [ 'id' => $id_parent ] );
 
 		/* return the right value of this node + 1 */
@@ -61,7 +61,7 @@ trait Hierarchical
 	 * @access public
 	 * @return array
 	 */
-	final public function getParents($id = 0, &$parents = array() )
+	final public function getParents( $id = 0, &$parents = [ ] )
 	{
 		$query = $this->db->getWhere( $this->table, [ 'id' => $id ] );
 
@@ -89,7 +89,7 @@ trait Hierarchical
 	 * @access public
 	 * @return array
 	 */
-	public function getChilds($id_parent = NULL )
+	public function getChilds( $id_parent = NULL )
 	{
 		if ( isset( $id_parent ) )
 		{
@@ -113,7 +113,7 @@ trait Hierarchical
 			return $query->result();
 		}
 
-		return array();
+		return [ ];
 	}
 	// ------------------------------------------------------------------------
 
@@ -127,7 +127,7 @@ trait Hierarchical
 	 * @access public
 	 * @return bool
 	 */
-	final public function hasChilds($id_parent = 0 )
+	final public function hasChilds( $id_parent = 0 )
 	{
 		$query = $this->db->select( 'id' )->where( 'id_parent', $id_parent )->get( $this->table );
 
@@ -150,9 +150,9 @@ trait Hierarchical
 	 * @access public
 	 * @return bool
 	 */
-	final public function countChilds($id_parent )
+	final public function countChilds( $id_parent )
 	{
-		return $this->db->select( 'id' )->getWhere( $this->table, [ 'id_parent' => $id_parent ])->numRows();
+		return $this->db->select( 'id' )->getWhere( $this->table, [ 'id_parent' => $id_parent ] )->numRows();
 	}
 	// ------------------------------------------------------------------------
 }

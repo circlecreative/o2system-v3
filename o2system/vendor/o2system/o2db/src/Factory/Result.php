@@ -53,17 +53,17 @@ class Result implements SeekableIterator, Countable, Serializable
 	 *
 	 * @type \O2System\DB\Interfaces\Driver
 	 */
-	protected static $_driver    = NULL;
+	protected static $_driver = NULL;
 
 	/**
 	 * PDO Statement
-	 * 
+	 *
 	 * @type \PDOStatement
 	 */
 	protected static $_statement = NULL;
 	protected        $_position  = 0;
 	protected        $_num_rows  = 0;
-	protected        $_rows      = array();
+	protected        $_rows      = [ ];
 
 	// --------------------------------------------------------------------
 
@@ -76,17 +76,17 @@ class Result implements SeekableIterator, Countable, Serializable
 	 */
 	public function __construct( \O2System\DB\Interfaces\Driver $driver )
 	{
-		static::$_driver = $driver;
+		static::$_driver    = $driver;
 		static::$_statement = $driver->pdo_statement;
 
 		$class = isset( $driver->row_class_name ) ? $driver->row_class_name : NULL;
-		$args = isset( $driver->row_class_args ) ? $driver->row_class_args : NULL;
+		$args  = isset( $driver->row_class_args ) ? $driver->row_class_args : NULL;
 		$this->_fetchRows( $class, $args );
 	}
 
 	// --------------------------------------------------------------------
 
-	protected function _fetchRows($class, $args )
+	protected function _fetchRows( $class, $args )
 	{
 		if ( ! class_exists( $class ) )
 		{
@@ -198,7 +198,7 @@ class Result implements SeekableIterator, Countable, Serializable
 
 	public function __toArray()
 	{
-		$results = array();
+		$results = [ ];
 
 		if ( $this->numRows() > 0 )
 		{
@@ -221,16 +221,16 @@ class Result implements SeekableIterator, Countable, Serializable
 	 *
 	 * @return    int
 	 */
-	public function numRows($filtered_num_rows = FALSE )
+	public function numRows( $filtered_num_rows = FALSE )
 	{
 		if ( $filtered_num_rows === TRUE )
 		{
-			$statement = preg_replace( '!\s+!', ' ', static::$_statement->queryString );
+			$statement  = preg_replace( '!\s+!', ' ', static::$_statement->queryString );
 			$statements = preg_split( '/LIMIT/', $statement );
 			$statements = preg_split( '/FROM/', reset( $statements ) );
 
 			$statement = "SELECT COUNT(*) AS num_rows FROM " . trim( end( $statements ) );
-			$result = static::$_driver->query( $statement );
+			$result    = static::$_driver->query( $statement );
 
 			return $result->first()->num_rows;
 		}
@@ -322,8 +322,8 @@ class Result implements SeekableIterator, Countable, Serializable
 	 */
 	public function fieldsList()
 	{
-		$field_names = array();
-		for ($i = 0, $c = $this->numFields(); $i < $c; $i++ )
+		$field_names = [ ];
+		for ( $i = 0, $c = $this->numFields(); $i < $c; $i++ )
 		{
 			// Might trigger an E_WARNING due to not all subdrivers
 			// supporting getColumnMeta()
@@ -349,16 +349,16 @@ class Result implements SeekableIterator, Countable, Serializable
 	{
 		try
 		{
-			$result = array();
+			$result = [ ];
 
-			for ($i = 0, $c = $this->numFields(); $i < $c; $i++ )
+			for ( $i = 0, $c = $this->numFields(); $i < $c; $i++ )
 			{
 				$field = static::$_statement->getColumnMeta( $i );
 
-				$result[ $i ] = new \stdClass();
-				$result[ $i ]->name = $field[ 'name' ];
-				$result[ $i ]->type = $field[ 'native_type' ];
-				$result[ $i ]->max_length = ( $field[ 'len' ] > 0 ) ? $field[ 'len' ] : NULL;
+				$result[ $i ]              = new \stdClass();
+				$result[ $i ]->name        = $field[ 'name' ];
+				$result[ $i ]->type        = $field[ 'native_type' ];
+				$result[ $i ]->max_length  = ( $field[ 'len' ] > 0 ) ? $field[ 'len' ] : NULL;
 				$result[ $i ]->primary_key = (int) ( ! empty( $field[ 'flags' ] ) && in_array( 'primary_key', $field[ 'flags' ], TRUE ) );
 			}
 

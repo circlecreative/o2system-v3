@@ -1,11 +1,12 @@
 <?php
 /**
  * @copyright Copyright (c) 2014 Carsten Brandt
- * @license https://github.com/cebe/markdown/blob/master/LICENSE
- * @link https://github.com/cebe/markdown#readme
+ * @license   https://github.com/cebe/markdown/blob/master/LICENSE
+ * @link      https://github.com/cebe/markdown#readme
  */
 
 namespace cebe\markdown;
+
 use ReflectionMethod;
 
 /**
@@ -24,7 +25,7 @@ abstract class Parser
 	 * @var string the current context the parser is in.
 	 * TODO remove in favor of absy
 	 */
-	protected $context = [];
+	protected $context = [ ];
 	/**
 	 * @var array these are "escapeable" characters. When using one of these prefixed with a
 	 * backslash, the character will be outputted without the backslash and is not interpreted
@@ -43,24 +44,27 @@ abstract class Parser
 	 * This includes parsing block elements as well as inline elements.
 	 *
 	 * @param string $text the text to parse
+	 *
 	 * @return string parsed markup
 	 */
-	public function parse($text)
+	public function parse( $text )
 	{
 		$this->prepare();
 
-		if (ltrim($text) === '') {
+		if ( ltrim( $text ) === '' )
+		{
 			return '';
 		}
 
-		$text = str_replace(["\r\n", "\n\r", "\r"], "\n", $text);
+		$text = str_replace( [ "\r\n", "\n\r", "\r" ], "\n", $text );
 
-		$this->prepareMarkers($text);
+		$this->prepareMarkers( $text );
 
-		$absy = $this->parseBlocks(explode("\n", $text));
-		$markup = $this->renderAbsy($absy);
+		$absy   = $this->parseBlocks( explode( "\n", $text ) );
+		$markup = $this->renderAbsy( $absy );
 
 		$this->cleanup();
+
 		return $markup;
 	}
 
@@ -68,24 +72,27 @@ abstract class Parser
 	 * Parses a paragraph without block elements (block elements are ignored).
 	 *
 	 * @param string $text the text to parse
+	 *
 	 * @return string parsed markup
 	 */
-	public function parseParagraph($text)
+	public function parseParagraph( $text )
 	{
 		$this->prepare();
 
-		if (ltrim($text) === '') {
+		if ( ltrim( $text ) === '' )
+		{
 			return '';
 		}
 
-		$text = str_replace(["\r\n", "\n\r", "\r"], "\n", $text);
+		$text = str_replace( [ "\r\n", "\n\r", "\r" ], "\n", $text );
 
-		$this->prepareMarkers($text);
+		$this->prepareMarkers( $text );
 
-		$absy = $this->parseInline($text);
-		$markup = $this->renderAbsy($absy);
+		$absy   = $this->parseInline( $text );
+		$markup = $this->renderAbsy( $absy );
 
 		$this->cleanup();
+
 		return $markup;
 	}
 
@@ -115,35 +122,46 @@ abstract class Parser
 	 */
 	protected function blockTypes()
 	{
-		if ($this->_blockTypes === null) {
+		if ( $this->_blockTypes === NULL )
+		{
 			// detect block types via "identify" functions
-			$reflection = new \ReflectionClass($this);
-			$this->_blockTypes = array_filter(array_map(function($method) {
-				$name = $method->getName();
-				return strncmp($name, 'identify', 8) === 0 ? strtolower(substr($name, 8)) : false;
-			}, $reflection->getMethods(ReflectionMethod::IS_PROTECTED)));
+			$reflection        = new \ReflectionClass( $this );
+			$this->_blockTypes = array_filter(
+				array_map(
+					function ( $method )
+					{
+						$name = $method->getName();
 
-			sort($this->_blockTypes);
+						return strncmp( $name, 'identify', 8 ) === 0 ? strtolower( substr( $name, 8 ) ) : FALSE;
+					}, $reflection->getMethods( ReflectionMethod::IS_PROTECTED ) ) );
+
+			sort( $this->_blockTypes );
 		}
+
 		return $this->_blockTypes;
 	}
 
 	/**
 	 * Given a set of lines and an index of a current line it uses the registed block types to
 	 * detect the type of this line.
-	 * @param array $lines
+	 *
+	 * @param array   $lines
 	 * @param integer $current
+	 *
 	 * @return string name of the block type in lower case
 	 */
-	protected function detectLineType($lines, $current)
+	protected function detectLineType( $lines, $current )
 	{
-		$line = $lines[$current];
+		$line       = $lines[ $current ];
 		$blockTypes = $this->blockTypes();
-		foreach($blockTypes as $blockType) {
-			if ($this->{'identify' . $blockType}($line, $lines, $current)) {
+		foreach ( $blockTypes as $blockType )
+		{
+			if ( $this->{'identify' . $blockType}( $line, $lines, $current ) )
+			{
 				return $blockType;
 			}
 		}
+
 		return 'paragraph';
 	}
 
@@ -152,38 +170,45 @@ abstract class Parser
 	 * and call consume function afterwards.
 	 * The blocks are then rendered by the corresponding rendering methods.
 	 */
-	protected function parseBlocks($lines)
+	protected function parseBlocks( $lines )
 	{
-		if ($this->_depth >= $this->maximumNestingLevel) {
+		if ( $this->_depth >= $this->maximumNestingLevel )
+		{
 			// maximum depth is reached, do not parse input
-			return [['text', implode("\n", $lines)]];
+			return [ [ 'text', implode( "\n", $lines ) ] ];
 		}
 		$this->_depth++;
 
-		$blocks = [];
+		$blocks = [ ];
 
 		$blockTypes = $this->blockTypes();
 
 		// convert lines to blocks
-		for ($i = 0, $count = count($lines); $i < $count; $i++) {
-			$line = $lines[$i];
-			if ($line !== '' && rtrim($line) !== '') { // skip empty lines
+		for ( $i = 0, $count = count( $lines ); $i < $count; $i++ )
+		{
+			$line = $lines[ $i ];
+			if ( $line !== '' && rtrim( $line ) !== '' )
+			{ // skip empty lines
 				// identify a blocks beginning
-				$identified = false;
-				foreach($blockTypes as $blockType) {
-					if ($this->{'identify' . $blockType}($line, $lines, $i)) {
+				$identified = FALSE;
+				foreach ( $blockTypes as $blockType )
+				{
+					if ( $this->{'identify' . $blockType}( $line, $lines, $i ) )
+					{
 						// call consume method for the detected block type to consume further lines
-						list($block, $i) = $this->{'consume' . $blockType}($lines, $i);
-						if ($block !== false) {
+						list( $block, $i ) = $this->{'consume' . $blockType}( $lines, $i );
+						if ( $block !== FALSE )
+						{
 							$blocks[] = $block;
 						}
-						$identified = true;
+						$identified = TRUE;
 						break 1;
 					}
 				}
 				// consider the line a normal paragraph
-				if (!$identified) {
-					list($block, $i) = $this->consumeParagraph($lines, $i);
+				if ( ! $identified )
+				{
+					list( $block, $i ) = $this->consumeParagraph( $lines, $i );
 					$blocks[] = $block;
 				}
 			}
@@ -194,14 +219,16 @@ abstract class Parser
 		return $blocks;
 	}
 
-	protected function renderAbsy($blocks)
+	protected function renderAbsy( $blocks )
 	{
 		$output = '';
-		foreach ($blocks as $block) {
-			array_unshift($this->context, $block[0]);
-			$output .= $this->{'render' . $block[0]}($block);
-			array_shift($this->context);
+		foreach ( $blocks as $block )
+		{
+			array_unshift( $this->context, $block[ 0 ] );
+			$output .= $this->{'render' . $block[ 0 ]}( $block );
+			array_shift( $this->context );
 		}
+
 		return $output;
 	}
 
@@ -210,35 +237,42 @@ abstract class Parser
 	 *
 	 * @param $lines
 	 * @param $current
+	 *
 	 * @return array
 	 */
-	protected function consumeParagraph($lines, $current)
+	protected function consumeParagraph( $lines, $current )
 	{
 		// consume until newline
-		$content = [];
-		for ($i = $current, $count = count($lines); $i < $count; $i++) {
-			if (ltrim($lines[$i]) !== '') {
-				$content[] = $lines[$i];
-			} else {
+		$content = [ ];
+		for ( $i = $current, $count = count( $lines ); $i < $count; $i++ )
+		{
+			if ( ltrim( $lines[ $i ] ) !== '' )
+			{
+				$content[] = $lines[ $i ];
+			}
+			else
+			{
 				break;
 			}
 		}
 		$block = [
 			'paragraph',
-			'content' => $this->parseInline(implode("\n", $content)),
+			'content' => $this->parseInline( implode( "\n", $content ) ),
 		];
-		return [$block, --$i];
+
+		return [ $block, --$i ];
 	}
 
 	/**
 	 * Render a paragraph block
 	 *
 	 * @param $block
+	 *
 	 * @return string
 	 */
-	protected function renderParagraph($block)
+	protected function renderParagraph( $block )
 	{
-		return '<p>' . $this->renderAbsy($block['content']) . "</p>\n";
+		return '<p>' . $this->renderAbsy( $block[ 'content' ] ) . "</p>\n";
 	}
 
 
@@ -248,7 +282,7 @@ abstract class Parser
 	/**
 	 * @var array the set of inline markers to use in different contexts.
 	 */
-	private $_inlineMarkers = [];
+	private $_inlineMarkers = [ ];
 
 	/**
 	 * Returns a map of inline markers to the corresponding parser methods.
@@ -268,18 +302,22 @@ abstract class Parser
 	 */
 	protected function inlineMarkers()
 	{
-		$markers = [];
+		$markers = [ ];
 		// detect "parse" functions
-		$reflection = new \ReflectionClass($this);
-		foreach($reflection->getMethods(ReflectionMethod::IS_PROTECTED) as $method) {
+		$reflection = new \ReflectionClass( $this );
+		foreach ( $reflection->getMethods( ReflectionMethod::IS_PROTECTED ) as $method )
+		{
 			$methodName = $method->getName();
-			if (strncmp($methodName, 'parse', 5) === 0) {
-				preg_match_all('/@marker ([^\s]+)/', $method->getDocComment(), $matches);
-				foreach($matches[1] as $match) {
-					$markers[$match] = $methodName;
+			if ( strncmp( $methodName, 'parse', 5 ) === 0 )
+			{
+				preg_match_all( '/@marker ([^\s]+)/', $method->getDocComment(), $matches );
+				foreach ( $matches[ 1 ] as $match )
+				{
+					$markers[ $match ] = $methodName;
 				}
 			}
 		}
+
 		return $markers;
 	}
 
@@ -288,23 +326,28 @@ abstract class Parser
 	 *
 	 * Add all markers that are present in markdown.
 	 * Check is done to avoid iterations in parseInline(), good for huge markdown files
+	 *
 	 * @param string $text
 	 */
-	private function prepareMarkers($text)
+	private function prepareMarkers( $text )
 	{
-		$this->_inlineMarkers = [];
-		foreach ($this->inlineMarkers() as $marker => $method) {
-			if (strpos($text, $marker) !== false) {
-				$m = $marker[0];
+		$this->_inlineMarkers = [ ];
+		foreach ( $this->inlineMarkers() as $marker => $method )
+		{
+			if ( strpos( $text, $marker ) !== FALSE )
+			{
+				$m = $marker[ 0 ];
 				// put the longest marker first
-				if (isset($this->_inlineMarkers[$m])) {
-					reset($this->_inlineMarkers[$m]);
-					if (strlen($marker) > strlen(key($this->_inlineMarkers[$m]))) {
-						$this->_inlineMarkers[$m] = array_merge([$marker => $method], $this->_inlineMarkers[$m]);
+				if ( isset( $this->_inlineMarkers[ $m ] ) )
+				{
+					reset( $this->_inlineMarkers[ $m ] );
+					if ( strlen( $marker ) > strlen( key( $this->_inlineMarkers[ $m ] ) ) )
+					{
+						$this->_inlineMarkers[ $m ] = array_merge( [ $marker => $method ], $this->_inlineMarkers[ $m ] );
 						continue;
 					}
 				}
-				$this->_inlineMarkers[$m][$marker] = $method;
+				$this->_inlineMarkers[ $m ][ $marker ] = $method;
 			}
 		}
 	}
@@ -313,51 +356,58 @@ abstract class Parser
 	 * Parses inline elements of the language.
 	 *
 	 * @param string $text the inline text to parse.
+	 *
 	 * @return array
 	 */
-	protected function parseInline($text)
+	protected function parseInline( $text )
 	{
-		if ($this->_depth >= $this->maximumNestingLevel) {
+		if ( $this->_depth >= $this->maximumNestingLevel )
+		{
 			// maximum depth is reached, do not parse input
-			return [['text', $text]];
+			return [ [ 'text', $text ] ];
 		}
 		$this->_depth++;
 
-		$markers = implode('', array_keys($this->_inlineMarkers));
+		$markers = implode( '', array_keys( $this->_inlineMarkers ) );
 
-		$paragraph = [];
+		$paragraph = [ ];
 
-		while (!empty($markers) && ($found = strpbrk($text, $markers)) !== false) {
+		while ( ! empty( $markers ) && ( $found = strpbrk( $text, $markers ) ) !== FALSE )
+		{
 
-			$pos = strpos($text, $found);
+			$pos = strpos( $text, $found );
 
 			// add the text up to next marker to the paragraph
-			if ($pos !== 0) {
-				$paragraph[] = ['text', substr($text, 0, $pos)];
+			if ( $pos !== 0 )
+			{
+				$paragraph[] = [ 'text', substr( $text, 0, $pos ) ];
 			}
 			$text = $found;
 
-			$parsed = false;
-			foreach ($this->_inlineMarkers[$text[0]] as $marker => $method) {
-				if (strncmp($text, $marker, strlen($marker)) === 0) {
+			$parsed = FALSE;
+			foreach ( $this->_inlineMarkers[ $text[ 0 ] ] as $marker => $method )
+			{
+				if ( strncmp( $text, $marker, strlen( $marker ) ) === 0 )
+				{
 					// parse the marker
-					array_unshift($this->context, $method);
-					list($output, $offset) = $this->$method($text);
-					array_shift($this->context);
+					array_unshift( $this->context, $method );
+					list( $output, $offset ) = $this->$method( $text );
+					array_shift( $this->context );
 
 					$paragraph[] = $output;
-					$text = substr($text, $offset);
-					$parsed = true;
+					$text        = substr( $text, $offset );
+					$parsed      = TRUE;
 					break;
 				}
 			}
-			if (!$parsed) {
-				$paragraph[] = ['text', substr($text, 0, 1)];
-				$text = substr($text, 1);
+			if ( ! $parsed )
+			{
+				$paragraph[] = [ 'text', substr( $text, 0, 1 ) ];
+				$text        = substr( $text, 1 );
 			}
 		}
 
-		$paragraph[] = ['text', $text];
+		$paragraph[] = [ 'text', $text ];
 
 		$this->_depth--;
 
@@ -368,12 +418,14 @@ abstract class Parser
 	 * Parses escaped special characters.
 	 * @marker \
 	 */
-	protected function parseEscape($text)
+	protected function parseEscape( $text )
 	{
-		if (isset($text[1]) && in_array($text[1], $this->escapeCharacters)) {
-			return [['text', $text[1]], 2];
+		if ( isset( $text[ 1 ] ) && in_array( $text[ 1 ], $this->escapeCharacters ) )
+		{
+			return [ [ 'text', $text[ 1 ] ], 2 ];
 		}
-		return [['text', $text[0]], 1];
+
+		return [ [ 'text', $text[ 0 ] ], 1 ];
 	}
 
 	/**
@@ -381,8 +433,8 @@ abstract class Parser
 	 * It can be used to work on normal text sections for example to highlight keywords or
 	 * do special escaping.
 	 */
-	protected function renderText($block)
+	protected function renderText( $block )
 	{
-		return $block[1];
+		return $block[ 1 ];
 	}
 }

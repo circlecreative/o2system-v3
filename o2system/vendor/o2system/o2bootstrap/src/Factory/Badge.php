@@ -54,9 +54,9 @@ class Badge extends FactoryInterface
 	protected $_value    = NULL;
 	public    $container = NULL;
 
-	protected $_attributes = array(
+	protected $_attributes = [
 		'class' => [ 'badge' ],
-	);
+	];
 
 	public function build()
 	{
@@ -88,14 +88,14 @@ class Badge extends FactoryInterface
 		return $this;
 	}
 
-	public function setValue($badge )
+	public function setValue( $badge )
 	{
 		$this->_value = $badge;
 
 		return $this;
 	}
 
-	public function setContainer($container )
+	public function setContainer( $container )
 	{
 		$this->container = $container;
 

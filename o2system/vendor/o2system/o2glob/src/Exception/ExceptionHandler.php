@@ -75,11 +75,18 @@ class ExceptionHandler
 	 */
 	public function addPath( $path )
 	{
-		$path = rtrim( $path, DIRECTORY_SEPARATOR ) . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR;
+		$paths = [
+			rtrim( $path, DIRECTORY_SEPARATOR ) . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR,
+			rtrim( $path, DIRECTORY_SEPARATOR ) . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR,
+		];
 
-		if ( is_dir( $path ) AND ! in_array( $path, $this->_paths ) )
+		foreach ( $paths as $path )
 		{
-			$this->_paths[] = $path;
+			if ( is_dir( $path ) AND ! in_array( $path, $this->_paths ) )
+			{
+				$this->_paths[] = $path;
+				break;
+			}
 		}
 
 		return $this;
@@ -283,6 +290,8 @@ class ExceptionHandler
 		{
 			exit( 1 ); // EXIT_ERROR
 		}
+
+		$this->showPhpError( $severity, $message, $filepath, $line );
 	}
 
 	// ------------------------------------------------------------------------

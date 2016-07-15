@@ -46,7 +46,7 @@ use O2System\Glob\ArrayObject;
 
 class Language extends ArrayObject
 {
-	public function __construct( $data = array() )
+	public function __construct( $data = [ ] )
 	{
 		parent::__construct( (array) $data, \ArrayObject::ARRAY_AS_PROPS );
 	}

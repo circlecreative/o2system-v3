@@ -55,6 +55,6 @@ final class Benchmark extends Gears\Benchmark
 {
 	public function __construct()
 	{
-		parent::__construct( \O2System::$config['log'] );
+		parent::__construct( \O2System::$config[ 'log' ] );
 	}
 }

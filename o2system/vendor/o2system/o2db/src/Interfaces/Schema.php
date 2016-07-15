@@ -52,48 +52,48 @@ namespace O2System\DB\Interfaces;
  */
 abstract class Schema
 {
-    /**
-     * List of valid field types
-     *
-     * @static
-     * @access  public
-     * @type    array
-     */
-    public static $valid_field_types = array();
+	/**
+	 * List of valid field types
+	 *
+	 * @static
+	 * @access  public
+	 * @type    array
+	 */
+	public static $valid_field_types = [ ];
 
-    /**
-     * List of valid field relation rules
-     *
-     * @static
-     * @access  public
-     * @type    array
-     */
-    public static $relation_field_rules = array();
+	/**
+	 * List of valid field relation rules
+	 *
+	 * @static
+	 * @access  public
+	 * @type    array
+	 */
+	public static $relation_field_rules = [ ];
 
-    /**
-     * List of valid table options
-     *
-     * @static
-     * @access  public
-     * @type    array
-     */
-    public static $valid_table_options = array();
+	/**
+	 * List of valid table options
+	 *
+	 * @static
+	 * @access  public
+	 * @type    array
+	 */
+	public static $valid_table_options = [ ];
 
-    /**
-     * List of valid field options
-     *
-     * @static
-     * @access  public
-     * @type    array
-     */
-    public static $valid_field_options = array();
+	/**
+	 * List of valid field options
+	 *
+	 * @static
+	 * @access  public
+	 * @type    array
+	 */
+	public static $valid_field_options = [ ];
 
-    /**
-     * Default Record Fields
-     *
-     * @static
-     * @access  public
-     * @type    array
-     */
-    public static $record_fields = array();
+	/**
+	 * Default Record Fields
+	 *
+	 * @static
+	 * @access  public
+	 * @type    array
+	 */
+	public static $record_fields = [ ];
 }

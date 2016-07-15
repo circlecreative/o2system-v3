@@ -64,7 +64,7 @@ class View extends Template
 	 *
 	 * @access    public
 	 */
-	public function __reconstruct( array $config = array() )
+	public function __reconstruct( array $config = [ ] )
 	{
 		// Set View Config
 		$config = \O2System::$config->load( 'view', TRUE );
@@ -87,7 +87,7 @@ class View extends Template
 	 * @access  public
 	 * @return  mixed
 	 */
-	public function page( $page, $vars = array(), $return = FALSE )
+	public function page( $page, $vars = [ ], $return = FALSE )
 	{
 		if ( is_file( $page ) )
 		{
@@ -135,7 +135,7 @@ class View extends Template
 	 * @access  public
 	 * @return  string
 	 */
-	public function load( $view, array $vars = array(), $return = FALSE )
+	public function load( $view, array $vars = [ ], $return = FALSE )
 	{
 		if ( $return === TRUE )
 		{

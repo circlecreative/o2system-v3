@@ -25,15 +25,15 @@ use Upload\Validation\Size;
  */
 class Upload
 {
-	protected $_config = array(
+	protected $_config = [
 		'max_increment_filename' => 100,
-	);
-	protected $_info   = array();
-	protected $_errors = array();
+	];
+	protected $_info   = [ ];
+	protected $_errors = [ ];
 
 	// ------------------------------------------------------------------------
 
-	public function __construct( $config = array() )
+	public function __construct( $config = [ ] )
 	{
 		if ( ! class_exists( 'finfo' ) )
 		{
@@ -88,78 +88,78 @@ class Upload
 
 	// ------------------------------------------------------------------------
 
-	public function setPath($path )
+	public function setPath( $path )
 	{
 		$this->_config[ 'path' ] = $path . DIRECTORY_SEPARATOR;
 	}
 
 	// ------------------------------------------------------------------------
 
-	public function setAllowedMimes($mimes )
+	public function setAllowedMimes( $mimes )
 	{
 		if ( is_string( $mimes ) )
 		{
-			$mimes = explode( ',', $mimes );
+			$mimes                            = explode( ',', $mimes );
 			$this->_config[ 'allowed_mimes' ] = array_map( 'trim', $mimes );
 		}
 	}
 
 	// ------------------------------------------------------------------------
 
-	public function setAllowedExtensions($extensions )
+	public function setAllowedExtensions( $extensions )
 	{
 		if ( is_string( $extensions ) )
 		{
-			$extensions = explode( ',', $extensions );
+			$extensions                            = explode( ',', $extensions );
 			$this->_config[ 'allowed_extensions' ] = array_map( 'trim', $extensions );
 		}
 	}
 
 	// ------------------------------------------------------------------------
 
-	public function setMinSize($size, $unit = 'M' )
+	public function setMinSize( $size, $unit = 'M' )
 	{
 		$this->_config[ 'min_size' ] = (int) $size . $unit;
 	}
 
 	// ------------------------------------------------------------------------
 
-	public function setMaxSize($size, $unit = 'M' )
+	public function setMaxSize( $size, $unit = 'M' )
 	{
 		$this->_config[ 'max_size' ] = (int) $size . $unit;
 	}
 
 	// ------------------------------------------------------------------------
 
-	public function setMinWidth($width )
+	public function setMinWidth( $width )
 	{
 		$this->_config[ 'min_width' ] = (int) $width;
 	}
 
 	// ------------------------------------------------------------------------
 
-	public function setMinHeight($height )
+	public function setMinHeight( $height )
 	{
 		$this->_config[ 'min_height' ] = (int) $height;
 	}
 
 	// ------------------------------------------------------------------------
 
-	public function setMaxWidth($width )
+	public function setMaxWidth( $width )
 	{
 		$this->_config[ 'max_width' ] = (int) $width;
 	}
 
 	// ------------------------------------------------------------------------
 
-	public function setMaxHeight($height )
+	public function setMaxHeight( $height )
 	{
 		$this->_config[ 'max_height' ] = (int) $height;
 	}
 
 	// ------------------------------------------------------------------------
 
-	public function setFilename($filename, $delimiter = '-' )
+	public function setFilename( $filename, $delimiter = '-' )
 	{
 		$filename = strtolower( trim( $filename ) );
 		$filename = preg_replace( '/[^\w-]/', '', $filename );;
@@ -178,14 +178,14 @@ class Upload
 
 	// ------------------------------------------------------------------------
 
-	public function setMaxIncrementFilename($increment )
+	public function setMaxIncrementFilename( $increment )
 	{
 		$this->_config[ 'max_increment_filename' ] = (int) $increment;
 	}
 
 	// ------------------------------------------------------------------------
 
-	public function doUpload($field )
+	public function doUpload( $field )
 	{
 		if ( isset( $_FILES[ $field ] ) )
 		{
@@ -195,15 +195,18 @@ class Upload
 			{
 				foreach ( $files[ $field ][ 'name' ] as $key => $value )
 				{
-					if ( $value === '' ) continue;
+					if ( $value === '' )
+					{
+						continue;
+					}
 
-					$_FILES[ md5( $field . $key ) ] = array(
+					$_FILES[ md5( $field . $key ) ] = [
 						'name'     => $value,
 						'type'     => $files[ $field ][ 'type' ][ $key ],
 						'tmp_name' => $files[ $field ][ 'tmp_name' ][ $key ],
 						'error'    => $files[ $field ][ 'error' ][ $key ],
 						'size'     => $files[ $field ][ 'size' ][ $key ],
-					);
+					];
 
 					if ( $this->_uploadFile( md5( $field . $key ) ) )
 					{
@@ -244,7 +247,7 @@ class Upload
 
 	// ------------------------------------------------------------------------
 
-	protected function _uploadFile($field )
+	protected function _uploadFile( $field )
 	{
 		if ( isset( $this->_config[ 'path' ] ) )
 		{
@@ -334,22 +337,24 @@ class Upload
 
 		$path = rtrim( $this->_config[ 'path' ], DIRECTORY_SEPARATOR ) . DIRECTORY_SEPARATOR;
 
-		$this->_info = new \ArrayObject( array(
-			                                 'path'      => $path,
-			                                 'filename'  => $file->getNameWithExtension(),
-			                                 'extension' => $file->getExtension(),
-			                                 'mime'      => $file->getMimetype(),
-			                                 'size'      => $file->getSize(),
-			                                 'url'       => $this->_pathToUrl( $path . $filename . '.' . $file->getExtension() ),
-		                                 ), \ArrayObject::ARRAY_AS_PROPS );
+		$this->_info = new \ArrayObject(
+			[
+				'path'      => $path,
+				'filename'  => $file->getNameWithExtension(),
+				'extension' => $file->getExtension(),
+				'mime'      => $file->getMimetype(),
+				'size'      => $file->getSize(),
+				'url'       => $this->_pathToUrl( $path . $filename . '.' . $file->getExtension() ),
+			], \ArrayObject::ARRAY_AS_PROPS );
 
 		if ( $dimension = getimagesize( $file->getRealPath() ) )
 		{
-			$this->_info[ 'dimension' ] = new \ArrayObject( array(
-				                                                'width'     => $dimension[ 0 ],
-				                                                'height'    => $dimension[ 1 ],
-				                                                'attribute' => $dimension[ 3 ],
-			                                                ), \ArrayObject::ARRAY_AS_PROPS );
+			$this->_info[ 'dimension' ] = new \ArrayObject(
+				[
+					'width'     => $dimension[ 0 ],
+					'height'    => $dimension[ 1 ],
+					'attribute' => $dimension[ 3 ],
+				], \ArrayObject::ARRAY_AS_PROPS );
 		}
 
 		if ( isset( $this->_config[ 'min_width' ] ) )
@@ -435,7 +440,7 @@ class Upload
 
 	// ------------------------------------------------------------------------
 
-	protected function _pathToUrl($path )
+	protected function _pathToUrl( $path )
 	{
 		$base_url = isset( $_SERVER[ 'REQUEST_SCHEME' ] ) ? $_SERVER[ 'REQUEST_SCHEME' ] : 'http';
 		$base_url .= '://' . $_SERVER[ 'SERVER_NAME' ];

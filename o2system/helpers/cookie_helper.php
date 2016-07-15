@@ -109,16 +109,16 @@ if ( ! function_exists( 'set_cookie' ) )
 	 *
 	 * @return    void
 	 */
-	function set_cookie( $name, $value = '', $expire = '', $domain = '', $path = '/', $prefix = '', $secure = FALSE, $httponly = FALSE )
+	function set_cookie( $index, $value = '', $expire = 0, $domain = '', $path = '/', $prefix = '', $secure = FALSE, $httponly = FALSE )
 	{
 		// Set the config file options
-		\O2System::Input()->setCookie( $name, $value, $expire, $domain, $path, $prefix, $secure, $httponly );
+		\O2System::Input()->setCookie( $index, $value, $expire, $domain, $path, $prefix, $secure, $httponly );
 	}
 }
 
 // --------------------------------------------------------------------
 
-if ( ! function_exists('getCookie') )
+if ( ! function_exists( 'get_cookie' ) )
 {
 	/**
 	 * Fetch an item from the COOKIE array
@@ -128,18 +128,17 @@ if ( ! function_exists('getCookie') )
 	 *
 	 * @return    mixed
 	 */
-	function getCookie($index, $xss_clean = NULL )
+	function get_cookie( $index, $xss_clean = NULL )
 	{
 		is_bool( $xss_clean ) OR $xss_clean = ( \O2System::$config[ 'input' ][ 'xss_filtering' ] === TRUE );
-		$prefix = isset( $_COOKIE[ $index ] ) ? '' : \O2System::$config[ 'cookie' ][ 'prefix' ];
 
-		return \O2System::Input()->cookie( $prefix . $index, $xss_clean );
+		return \O2System::Input()->cookie( $index, $xss_clean );
 	}
 }
 
 // --------------------------------------------------------------------
 
-if ( ! function_exists('deleteCookie') )
+if ( ! function_exists( 'delete_cookie' ) )
 {
 	/**
 	 * Delete a COOKIE
@@ -151,11 +150,11 @@ if ( ! function_exists('deleteCookie') )
 	 *
 	 * @return    void
 	 */
-	function deleteCookie($name, $domain = '', $path = '/', $prefix = '' )
+	function delete_cookie( $index, $domain = '', $path = '/', $prefix = '' )
 	{
-		if( getCookie( $name ) )
+		if ( get_cookie( $index ) )
 		{
-			set_cookie( $name, '', '', $domain, $path, $prefix );
+			set_cookie( $index, NULL, -1, $domain, $path, $prefix );
 		}
 	}
 }

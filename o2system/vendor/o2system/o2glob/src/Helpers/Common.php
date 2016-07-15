@@ -528,7 +528,7 @@ if ( ! function_exists( 'prepare_filename' ) )
 			}
 		}
 
-		return implode( DIRECTORY_SEPARATOR, $directories ) . DIRECTORY_SEPARATOR . $filename . $ext;
+		return ltrim( implode( DIRECTORY_SEPARATOR, $directories ) . DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR ) . $filename . $ext;
 	}
 }
 
@@ -582,18 +582,54 @@ if ( ! function_exists( 'parse_domain' ) )
 {
 	function parse_domain( $domain = NULL )
 	{
-		$domain = isset( $domain ) ? $domain : ( isset( $_SERVER[ 'HTTP_HOST' ] ) ? $_SERVER[ 'HTTP_HOST' ] : $_SERVER[ 'SERVER_NAME' ] );
+		if ( isset( $domain ) )
+		{
+			$domain    = trim( $domain, '/' );
+			$parse_url = parse_url( $domain );
+
+			extract( $parse_url );
+
+			$scheme = isset( $scheme ) ? $scheme . '://' : ( is_https() ? 'https://' : 'http://' );
+
+			if ( isset( $path ) AND $path === $domain )
+			{
+				$x_domain = explode( '/', $domain );
+				$domain   = $x_domain[ 0 ];
+
+				$path = implode( '/', array_slice( $x_domain, 1 ) );
+			}
+			elseif ( isset( $host ) )
+			{
+				$path   = isset( $path ) ? trim( $path, '/' ) : NULL;
+				$domain = $host;
+			}
+		}
+		else
+		{
+			$domain = isset( $_SERVER[ 'HTTP_HOST' ] ) ? $_SERVER[ 'HTTP_HOST' ] : $_SERVER[ 'SERVER_NAME' ];
+			$scheme = is_https() ? 'https://' : 'http://';
+
+			$x_path = explode( '.php', $_SERVER[ 'PHP_SELF' ] );
+			$x_path = explode( '/', trim( $x_path[ 0 ], '/' ) );
+			array_pop( $x_path );
+
+			$path = empty( $x_path ) ? NULL : implode( '/', $x_path );
+		}
 
 		$result = new \O2System\Glob\ArrayObject(
 			[
-				'scheme'     => is_https() ? 'https://' : 'http://',
-				'origin'     => $domain,
+				'origin'     => ltrim( $domain, 'www.' ),
+				'scheme'     => $scheme,
 				'host'       => NULL,
 				'www'        => FALSE,
+				'ip_address' => gethostbyname( $domain ),
 				'port'       => 80,
 				'domain'     => NULL,
-				'sub_domain' => NULL,
+				'subdomain'  => NULL,
+				'subdomains' => [ ],
 				'tld'        => NULL,
+				'tlds'       => [ ],
+				'path'       => $path,
 			] );
 
 		if ( strpos( $domain, ':' ) !== FALSE )
@@ -603,64 +639,96 @@ if ( ! function_exists( 'parse_domain' ) )
 			$result[ 'port' ] = end( $x_domain );
 		}
 
-		$x_domain = explode( '.', $domain );
-
-		$result[ 'www' ] = FALSE;
-		if ( $x_domain[ 0 ] === 'www' )
+		if ( filter_var( $domain, FILTER_VALIDATE_IP ) !== FALSE )
 		{
-			$result[ 'www' ] = TRUE;
-			array_shift( $x_domain );
+			$x_domain = [ $domain ];
+		}
+		else
+		{
+			$x_domain = explode( '.', $domain );
 		}
 
-		$result[ 'tld' ] = [ ];
-		foreach ( $x_domain as $key => $hostname )
+		if ( count( $x_domain ) > 1 )
 		{
-			if ( strlen( $hostname ) <= 3 AND $key >= 1 )
+			$result[ 'www' ] = FALSE;
+			if ( $x_domain[ 0 ] === 'www' )
 			{
-				$result[ 'tld' ][] = $hostname;
+				$result[ 'www' ] = TRUE;
+				array_shift( $x_domain );
+			}
+
+			$result[ 'tlds' ] = [ ];
+			foreach ( $x_domain as $key => $hostname )
+			{
+				if ( strlen( $hostname ) <= 3 AND $key >= 1 )
+				{
+					$result[ 'tlds' ][] = $hostname;
+				}
+			}
+
+			if ( empty( $result[ 'tlds' ] ) )
+			{
+				$result[ 'tlds' ][] = end( $x_domain );
+			}
+
+			$result->tld = '.' . implode( '.', $result->tlds );
+
+			$result->subdomains = array_diff( $x_domain, $result[ 'tlds' ] );
+			$result->subdomains = count( $result->subdomains ) == 0 ? $result[ 'tlds' ] : $result->subdomains;
+
+			$result->host = end( $result->subdomains );
+			array_pop( $result->subdomains );
+
+			$result->domain = implode( '.', array_slice( $result->subdomains, 1 ) ) . '.' . $result->host . $result->tld;
+			$result->domain = ltrim( $result->domain, '.' );
+
+			if ( count( $result->subdomains ) > 0 )
+			{
+				$result->subdomain = reset( $result->subdomains );
 			}
 		}
-
-		if ( empty( $result[ 'tld' ] ) )
+		else
 		{
-			$result[ 'tld' ][] = end( $x_domain );
+			$result->domain = $result->origin;
 		}
 
-		$x_domain = array_diff( $x_domain, $result[ 'tld' ] );
-		$x_domain = count( $x_domain ) == 0 ? $result[ 'tld' ] : $x_domain;
+		$ordinal_ends = [ 'th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th' ];
 
-		if ( count( $x_domain ) == 1 )
+		foreach ( $result->subdomains as $key => $subdomain )
 		{
-			$result[ 'sub_domain' ] = NULL;
+			$ordinal_number = count( $x_domain ) - $key;
 
-			if ( $x_domain[ 0 ] === $result[ 'tld' ][ 0 ] )
+			if ( ( ( $ordinal_number % 100 ) >= 11 ) && ( ( $ordinal_number % 100 ) <= 13 ) )
 			{
-				$result[ 'domain' ] = $x_domain[ 0 ];
+				$ordinal_key = $ordinal_number . 'th';
 			}
 			else
 			{
-				$result[ 'domain' ] = implode( '.', array_merge( $x_domain, $result[ 'tld' ] ) );
+				$ordinal_key = $ordinal_number . $ordinal_ends[ $ordinal_number % 10 ];
 			}
 
-			$result[ 'host' ] = implode( '.', $x_domain );
-		}
-		else
-		{
-			$result[ 'sub_domain' ] = $x_domain[ 0 ];
-			$x_domain               = array_slice( $x_domain, 1 );
-			$result[ 'domain' ]     = implode( '.', array_merge( $x_domain, $result[ 'tld' ] ) );
-			$result[ 'host' ]       = implode( '.', $x_domain );
+			$result->subdomains[ $ordinal_key ] = $subdomain;
+
+			unset( $result->subdomains[ $key ] );
 		}
 
-		if ( $result[ 'tld' ][ 0 ] === $result[ 'domain' ] )
+		foreach ( $result->tlds as $key => $tld )
 		{
-			$result[ 'tld' ] = NULL;
-		}
-		else
-		{
-			$result[ 'tld' ] = '.' . implode( '.', $result[ 'tld' ] );
-		}
+			$ordinal_number = count( $result->tlds ) - $key;
 
+			if ( ( ( $ordinal_number % 100 ) >= 11 ) && ( ( $ordinal_number % 100 ) <= 13 ) )
+			{
+				$ordinal_key = $ordinal_number . 'th';
+			}
+			else
+			{
+				$ordinal_key = $ordinal_number . $ordinal_ends[ $ordinal_number % 10 ];
+			}
+
+			$result->tlds[ $ordinal_key ] = $tld;
+
+			unset( $result->tlds[ $key ] );
+		}
 
 		return $result;
 	}
@@ -671,5 +739,51 @@ if ( ! function_exists( 'parse_request' ) )
 	function parse_request( $request = NULL )
 	{
 		// @todo parse from $_SERVER['REQUEST']
+	}
+}
+
+if ( ! function_exists( 'http_parse_headers' ) )
+{
+	function http_parse_headers( $raw_headers )
+	{
+		$headers = [ ];
+		$key     = ''; // [+]
+
+		foreach ( explode( "\n", $raw_headers ) as $i => $h )
+		{
+			$h = explode( ':', $h, 2 );
+
+			if ( isset( $h[ 1 ] ) )
+			{
+				if ( ! isset( $headers[ $h[ 0 ] ] ) )
+				{
+					$headers[ $h[ 0 ] ] = trim( $h[ 1 ] );
+				}
+				elseif ( is_array( $headers[ $h[ 0 ] ] ) )
+				{
+					$headers[ $h[ 0 ] ] = array_merge( $headers[ $h[ 0 ] ], [ trim( $h[ 1 ] ) ] ); // [+]
+				}
+				else
+				{
+					$headers[ $h[ 0 ] ] = array_merge( [ $headers[ $h[ 0 ] ] ], [ trim( $h[ 1 ] ) ] ); // [+]
+				}
+
+				$key = $h[ 0 ]; // [+]
+			}
+			else // [+]
+			{ // [+]
+				if ( substr( $h[ 0 ], 0, 1 ) == "\t" ) // [+]
+				{
+					$headers[ $key ] .= "\r\n\t" . trim( $h[ 0 ] );
+				} // [+]
+				elseif ( ! $key ) // [+]
+				{
+					$headers[ 0 ] = trim( $h[ 0 ] );
+				}
+				trim( $h[ 0 ] ); // [+]
+			} // [+]
+		}
+
+		return $headers;
 	}
 }

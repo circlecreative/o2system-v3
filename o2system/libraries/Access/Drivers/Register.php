@@ -66,14 +66,14 @@ class Register extends DriverInterface
 	 *
 	 * @return bool
 	 */
-	public function user( $user = array(), $buffer = FALSE )
+	public function user( $user = [ ], $buffer = FALSE )
 	{
 		if ( $this->_isEmailExists( $user[ 'email' ] ) === FALSE AND
 			$this->_isUsernameExists( $user[ 'username' ] ) === FALSE AND
 			$this->_isMsidnExists( $user[ 'msisdn' ] ) === FALSE
 		)
 		{
-			$user[ 'email' ] = trim( $user[ 'email' ] );
+			$user[ 'email' ]    = trim( $user[ 'email' ] );
 			$user[ 'password' ] = $this->_library->hashPassword( $user[ 'password' ] );
 
 			if ( $this->_library->getConfig( 'password', 'salt' ) )
@@ -109,11 +109,11 @@ class Register extends DriverInterface
 
 			if ( $expired_time < now() )
 			{
-				$buffer->code_value = random_string( 'numeric' );
-				$buffer->code_expired = date( 'Y-m-d H:m:s', strtotime( '+1 day', now() ) );
+				$buffer->code_value              = random_string( 'numeric' );
+				$buffer->code_expired            = date( 'Y-m-d H:m:s', strtotime( '+1 day', now() ) );
 				$buffer->record_create_timestamp = date( 'Y-m-d H:m:s' );
-				$registration = $buffer->registration;
-				$registration[ 'token' ] = $buffer->code_value;
+				$registration                    = $buffer->registration;
+				$registration[ 'token' ]         = $buffer->code_value;
 				$this->sendEmail( $registration );
 
 				$this->_library->model->updateRegistrationBuffer( $buffer );
@@ -124,7 +124,7 @@ class Register extends DriverInterface
 			{
 				if ( $buffer->code_type === 'EMAIL' )
 				{
-					$user = $buffer->metadata;
+					$user        = $buffer->metadata;
 					$user->token = random_string( 'numeric' );
 					$this->_library->model->insertRegistrationBuffer( (array) $user, 'MSISDN' );
 
@@ -154,7 +154,7 @@ class Register extends DriverInterface
 
 	// ------------------------------------------------------------------------
 
-	public function sendEmail($registration )
+	public function sendEmail( $registration )
 	{
 		$from_email = empty ( $this->_config[ 'from_email' ] ) ? NULL : $this->_config[ 'from_email' ];
 
@@ -181,9 +181,9 @@ class Register extends DriverInterface
 
 		if ( empty( $message ) )
 		{
-			$message = \O2System::View()->load( 'email/registration/register', (array)$registration, TRUE );
+			$message = \O2System::View()->load( 'email/registration/register', (array) $registration, TRUE );
 		}
-		elseif( is_file( $message ) )
+		elseif ( is_file( $message ) )
 		{
 			$message = \O2System::View()->parser->parse_file( $message, $registration, TRUE );
 		}
@@ -192,9 +192,9 @@ class Register extends DriverInterface
 			$message = \O2System::View()->parser->parse_string( $message, $registration, TRUE );
 		}
 
-		$email = new Email(\O2System::$config->load('email', TRUE));
+		$email = new Email( \O2System::$config->load( 'email', TRUE ) );
 
-		$email->setContentType('html');
+		$email->setContentType( 'html' );
 		$email->from( $from_email, $from_name );
 		$email->to( $registration[ 'email' ] );
 		$email->subject( $subject );
@@ -222,7 +222,7 @@ class Register extends DriverInterface
 	 * @access  protected
 	 * @return  bool
 	 */
-	protected function _isEmailExists($email )
+	protected function _isEmailExists( $email )
 	{
 		if ( is_object( $this->_library->model->getAccount( $email ) ) )
 		{
@@ -244,7 +244,7 @@ class Register extends DriverInterface
 	 * @access  protected
 	 * @return  bool
 	 */
-	protected function _isUsernameExists($username )
+	protected function _isUsernameExists( $username )
 	{
 		if ( is_object( $this->_library->model->getAccount( $username ) ) )
 		{
@@ -271,7 +271,7 @@ class Register extends DriverInterface
 	 * @access  protected
 	 * @return  bool
 	 */
-	protected function _isMsidnExists($msidn )
+	protected function _isMsidnExists( $msidn )
 	{
 		if ( is_object( $this->_library->model->getAccount( $msidn ) ) )
 		{

@@ -45,7 +45,7 @@ namespace O2System\Bootstrap\Factory;
 class Breadcrumbs extends Lists
 {
 	protected $_tag        = 'ol';
-	protected $_attributes = array(
+	protected $_attributes = [
 		'class' => [ 'breadcrumb' ],
-	);
+	];
 }

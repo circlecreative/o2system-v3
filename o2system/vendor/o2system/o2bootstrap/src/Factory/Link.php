@@ -54,7 +54,7 @@ class Link extends Button
 	use ResponsiveInterface;
 
 	protected $_tag        = 'a';
-	protected $_attributes = array();
+	protected $_attributes = [ ];
 
 	/**
 	 * build
@@ -98,7 +98,7 @@ class Link extends Button
 				if ( in_array( $type, $this->_contextual_classes ) )
 				{
 					$this->addClass( 'btn' );
-					$this->{'is' . studlycapcase($type)}();
+					$this->{'is' . studlycapcase( $type )}();
 				}
 			}
 		}
@@ -114,7 +114,7 @@ class Link extends Button
 				if ( in_array( $attr, $this->_contextual_classes ) )
 				{
 					$this->addClass( 'btn' );
-					$this->{'is' . studlycapcase($attr)}();
+					$this->{'is' . studlycapcase( $attr )}();
 				}
 			}
 		}

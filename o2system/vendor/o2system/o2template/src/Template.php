@@ -50,17 +50,17 @@ namespace O2System
 	class Template extends Glob\Interfaces\LibraryInterface
 	{
 		protected $_charset = 'UTF-8';
-		protected $_paths   = array();
+		protected $_paths   = [ ];
 
 		protected $_title_separator = '-';
-		protected $_title_browser   = array();
-		protected $_title_page      = array();
+		protected $_title_browser   = [ ];
+		protected $_title_page      = [ ];
 
-		protected $_cached_vars = array();
+		protected $_cached_vars = [ ];
 
-		protected $_valid_collections = array();
+		protected $_valid_collections = [ ];
 
-		public function __reconstruct( array $config = array() )
+		public function __reconstruct( array $config = [ ] )
 		{
 			// Define valid drivers
 			$collections_path = __DIR__ . DIRECTORY_SEPARATOR . 'Collections' . DIRECTORY_SEPARATOR;
@@ -133,7 +133,7 @@ namespace O2System
 			{
 				if ( empty( $this->_cached_vars[ $property ] ) )
 				{
-					$collection_class_name = '\O2System\Template\Collections\\' . ucfirst( $property );
+					$collection_class_name           = '\O2System\Template\Collections\\' . ucfirst( $property );
 					$this->_cached_vars[ $property ] = new $collection_class_name;
 				}
 			}
@@ -153,13 +153,13 @@ namespace O2System
 		 *
 		 * @return $this
 		 */
-		public function setCharset($charset )
+		public function setCharset( $charset )
 		{
-			$_valid_charsets = array(
+			$_valid_charsets = [
 				'UTF-8', // HTML5
 				'UTF-16', // HTML5
 				'ISO-8859-8' // HTML4
-			);
+			];
 
 			$charset = strtoupper( $charset );
 
@@ -176,7 +176,7 @@ namespace O2System
 		 *
 		 * @param $separator
 		 */
-		public function setTitleSeparator($separator )
+		public function setTitleSeparator( $separator )
 		{
 			$this->_title_separator = $separator;
 		}
@@ -188,7 +188,7 @@ namespace O2System
 		 *
 		 * @param $title
 		 */
-		public function setTitle($title )
+		public function setTitle( $title )
 		{
 			$this->setTitleBrowser( $title );
 			$this->setTitlePage( $title );
@@ -201,7 +201,7 @@ namespace O2System
 		 *
 		 * @param $title
 		 */
-		public function addTitle($title )
+		public function addTitle( $title )
 		{
 			$this->addTitleBrowser( $title );
 			$this->addTitlePage( $title );
@@ -212,9 +212,9 @@ namespace O2System
 		 *
 		 * @param $browser_title
 		 */
-		public function setTitleBrowser($browser_title )
+		public function setTitleBrowser( $browser_title )
 		{
-			$this->_title_browser = array( $browser_title );
+			$this->_title_browser = [ $browser_title ];
 		}
 
 		/**
@@ -222,7 +222,7 @@ namespace O2System
 		 *
 		 * @param $browser_title
 		 */
-		public function addTitleBrowser($browser_title )
+		public function addTitleBrowser( $browser_title )
 		{
 			if ( ! in_array( $browser_title, $this->_title_browser ) )
 			{
@@ -235,9 +235,9 @@ namespace O2System
 		 *
 		 * @param $page_title
 		 */
-		public function setTitlePage($page_title )
+		public function setTitlePage( $page_title )
 		{
-			$this->_title_page = array( $page_title );
+			$this->_title_page = [ $page_title ];
 		}
 
 		/**
@@ -245,7 +245,7 @@ namespace O2System
 		 *
 		 * @param $page_title
 		 */
-		public function addTitlePage($page_title )
+		public function addTitlePage( $page_title )
 		{
 			if ( ! in_array( $page_title, $this->_title_page ) )
 			{
@@ -262,7 +262,7 @@ namespace O2System
 		 *
 		 * @return $this
 		 */
-		public function setVars(array $vars )
+		public function setVars( array $vars )
 		{
 			$this->_cached_vars = $vars;
 
@@ -278,7 +278,7 @@ namespace O2System
 		 *
 		 * @return $this
 		 */
-		public function addVars(array $vars )
+		public function addVars( array $vars )
 		{
 			$this->_cached_vars = array_merge( $this->_cached_vars, $vars );
 
@@ -293,7 +293,7 @@ namespace O2System
 		 * @param $index
 		 * @param $value
 		 */
-		public function addVar($index, $value )
+		public function addVar( $index, $value )
 		{
 			$this->_cached_vars[ $index ] = $value;
 		}
@@ -307,7 +307,7 @@ namespace O2System
 		 *
 		 * @return $this
 		 */
-		public function setPaths(array $paths )
+		public function setPaths( array $paths )
 		{
 			// Add O2Template Path
 			array_unshift( $paths, __DIR__ . DIRECTORY_SEPARATOR );
@@ -326,7 +326,7 @@ namespace O2System
 		 *
 		 * @return $this
 		 */
-		public function addPaths(array $paths )
+		public function addPaths( array $paths )
 		{
 			foreach ( $paths as $path )
 			{
@@ -345,7 +345,7 @@ namespace O2System
 		 *
 		 * @return $this
 		 */
-		public function addPath($path )
+		public function addPath( $path )
 		{
 			if ( ! in_array( $path, $this->_paths ) )
 			{
@@ -363,7 +363,7 @@ namespace O2System
 		 * @param            $view
 		 * @param array      $vars
 		 */
-		public function render( $view = NULL, array $vars = array() )
+		public function render( $view = NULL, array $vars = [ ] )
 		{
 			$this->_cached_vars = array_merge( $this->_cached_vars, $vars );
 
@@ -372,18 +372,18 @@ namespace O2System
 
 			// Set Browser Title
 			$this->_cached_vars[ 'browser_title' ] = implode( ' ' . $this->_title_separator . ' ', $this->_title_browser );
-			$this->_cached_vars[ 'page_title' ] = implode( ' ' . $this->_title_separator . ' ', $this->_title_page );
-			$this->_cached_vars[ 'navigations' ] = $this->navigations;
-			$this->_cached_vars[ 'forms' ] = $this->forms;
+			$this->_cached_vars[ 'page_title' ]    = implode( ' ' . $this->_title_separator . ' ', $this->_title_page );
+			$this->_cached_vars[ 'navigations' ]   = $this->navigations;
+			$this->_cached_vars[ 'forms' ]         = $this->forms;
 
 			if ( class_exists( 'O2System', FALSE ) )
 			{
-				$this->_cached_vars[ 'active' ] =& \O2System::$active;
+				$this->_cached_vars[ 'active' ]   =& \O2System::$active;
 				$this->_cached_vars[ 'language' ] =& \O2System::$language;
 
 				foreach ( \O2System::instance()->getStorage() as $key => $value )
 				{
-					if ( ! in_array( $key, array( 'exceptions', 'cache', 'log', 'db' ) ) )
+					if ( ! in_array( $key, [ 'exceptions', 'cache', 'log', 'db' ] ) )
 					{
 						$this->_cached_vars[ $key ] = $value;
 					}
@@ -401,15 +401,15 @@ namespace O2System
 			if ( $this->theme->active === FALSE )
 			{
 				$this->_cached_vars[ 'partials' ] = $this->partials;
-				$this->_cached_vars[ 'assets' ] = $this->assets;
-				$this->_cached_vars[ 'widgets' ] = $this->widgets;
+				$this->_cached_vars[ 'assets' ]   = $this->assets;
+				$this->_cached_vars[ 'widgets' ]  = $this->widgets;
 
 				// Load Layout
 				$output = $this->view->load( $view, $this->_cached_vars, TRUE );
 			}
 			else
 			{
-				$this->_cached_vars[ 'theme' ] = $this->theme->active;
+				$this->_cached_vars[ 'theme' ]   = $this->theme->active;
 				$this->_cached_vars[ 'widgets' ] = $this->widgets;
 
 				if ( isset( $this->theme->active[ 'partials' ] ) )
@@ -424,6 +424,15 @@ namespace O2System
 
 				$this->_cached_vars[ 'partials' ] = $this->partials;
 
+				// OpenGraph
+				if ( $this->opengraph->count() > 0 )
+				{
+					foreach ( $this->opengraph as $key => $value )
+					{
+						$this->metadata->addOpengraph( $key, $value );
+					}
+				}
+
 				if ( isset( $this->theme->active[ 'settings' ][ 'metadata' ] ) )
 				{
 					$this->metadata->addMeta( $this->theme->active[ 'settings' ][ 'metadata' ] );
@@ -437,7 +446,7 @@ namespace O2System
 				$this->assets->addAsset( pathinfo( $this->theme->active[ 'layout' ], PATHINFO_FILENAME ), 'custom' );
 
 				$this->_cached_vars[ 'metadata' ] = $this->metadata;
-				$this->_cached_vars[ 'assets' ] = $this->assets;
+				$this->_cached_vars[ 'assets' ]   = $this->assets;
 
 				// Load Layout
 				$output = $this->parser->parseSourceCode( file_get_contents( $this->theme->active[ 'layout' ] ), $this->_cached_vars );
@@ -464,11 +473,11 @@ namespace O2System\Template
 	 */
 	class Exception extends ExceptionInterface
 	{
-		public $library = array(
+		public $library = [
 			'name'        => 'O2System Template (O2Template)',
 			'description' => 'Open Source Template Management Library',
 			'version'     => '1.0',
-		);
+		];
 
 		public $view_exception = 'template_exception.php';
 	}
@@ -494,7 +503,7 @@ namespace O2System\Template
 	 */
 	class ViewException extends Exception
 	{
-		public function __construct( $message, $code, $args = array() )
+		public function __construct( $message, $code, $args = [ ] )
 		{
 			$this->_args = $args;
 			parent::__construct( $message, $code );

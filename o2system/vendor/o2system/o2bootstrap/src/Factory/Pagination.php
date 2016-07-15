@@ -43,9 +43,9 @@ class Pagination extends Lists
 	protected $_num_pages   = 0;
 	protected $_num_active  = 1;
 	protected $_num_display = 5;
-	protected $_attributes  = array(
+	protected $_attributes  = [
 		'class' => [ 'pagination' ],
-	);
+	];
 
 	protected $_link = NULL;
 
@@ -84,10 +84,15 @@ class Pagination extends Lists
 			$this->addAttributes( $attr );
 		}
 
+		if( function_exists('current_url') )
+		{
+			$this->_link = empty( $this->_link ) ? current_url() : $this->_link;
+		}
+
 		return $this;
 	}
 
-	public function setNumPages($pages )
+	public function setNumPages( $pages )
 	{
 		if ( is_numeric( $pages ) )
 		{
@@ -97,7 +102,7 @@ class Pagination extends Lists
 		return $this;
 	}
 
-	public function setNumActive($active )
+	public function setNumActive( $active )
 	{
 		if ( is_numeric( $active ) )
 		{
@@ -107,7 +112,7 @@ class Pagination extends Lists
 		return $this;
 	}
 
-	public function setNumDisplay($display )
+	public function setNumDisplay( $display )
 	{
 		if ( is_numeric( $display ) )
 		{
@@ -117,7 +122,7 @@ class Pagination extends Lists
 		return $this;
 	}
 
-	public function setLink($link )
+	public function setLink( $link )
 	{
 		$this->_link = $link;
 
@@ -136,11 +141,11 @@ class Pagination extends Lists
 
 			if ( empty( $http_query ) )
 			{
-				$link = $this->_link . '/?page=';
+				$link = rtrim( $this->_link, '/' ) . '/?page=';
 			}
 			else
 			{
-				$link = $this->_link . '/?' . http_build_query( $http_query ) . '&page=';
+				$link = rtrim( $this->_link, '/' ) . '/?' . http_build_query( $http_query ) . '&page=';
 			}
 		}
 		else
@@ -159,16 +164,16 @@ class Pagination extends Lists
 				}
 				else
 				{
-					$link = $this->_link . '/?' . http_build_query( $http_query ) . '&page=';
+					$link = rtrim( $this->_link, '/' ) . '/?' . http_build_query( $http_query ) . '&page=';
 				}
 			}
 			else
 			{
-				$link = $this->_link . '/?' . http_build_query( $http_query ) . '&page=';
+				$link = rtrim( $this->_link, '/' ) . '/?' . http_build_query( $http_query ) . '&page=';
 			}
 		}
 
-		$link = str_replace('?&', '?', $link);
+		$link = str_replace( '?&', '?', $link );
 
 		$this->_num_active = $this->_num_active == 0 ? 1 : $this->_num_active;
 
@@ -199,7 +204,7 @@ class Pagination extends Lists
 		elseif ( count( $pages ) < $this->_num_display )
 		{
 			$start_page = $this->_num_active - ( $this->_num_display - count( $pages ) );
-			$pages = range( $start_page, $total_pages );
+			$pages      = range( $start_page, $total_pages );
 		}
 
 		foreach ( $pages as $page )

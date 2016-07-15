@@ -67,11 +67,11 @@ class ControllerInterface
 
 	// ------------------------------------------------------------------------
 
-	public function __call( $method, $args = array() )
+	public function __call( $method, $args = [ ] )
 	{
 		if ( method_exists( $this, $method ) )
 		{
-			return call_user_func_array( array( $this, $method ), $args );
+			return call_user_func_array( [ $this, $method ], $args );
 		}
 		elseif ( class_exists( 'O2System', FALSE ) )
 		{
@@ -84,7 +84,7 @@ class ControllerInterface
 
 	// ------------------------------------------------------------------------
 
-	final public static function __callStatic( $method, $args = array() )
+	final public static function __callStatic( $method, $args = [ ] )
 	{
 		return static::instance()->__call( $method, $args );
 	}

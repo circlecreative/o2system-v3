@@ -39,11 +39,12 @@ class Assets extends ArrayObject
 
 							if ( $cache = \O2System::View()->cache->info( $filename ) )
 							{
-								$style = new Tag( 'link', array(
+								$style = new Tag(
+									'link', [
 									'media' => 'all',
 									'rel'   => 'stylesheet',
 									'href'  => path_to_url( $cache->realpath ),
-								) );
+								] );
 
 								$this->offsetSet( 'css', $style );
 							}
@@ -72,12 +73,13 @@ class Assets extends ArrayObject
 								{
 									if ( $cache = \O2System::View()->cache->info( $filename ) )
 									{
-										$style = new Tag( 'link', array(
+										$style = new Tag(
+											'link', [
 											'media' => 'all',
 											'rel'   => 'stylesheet',
 											'type'  => 'text/css',
 											'href'  => path_to_url( $cache->realpath ),
-										) );
+										] );
 
 										$this->offsetSet( 'css', $style );
 									}
@@ -98,11 +100,12 @@ class Assets extends ArrayObject
 
 							if ( $cache = \O2System::View()->cache->info( $filename ) )
 							{
-								$script = new Tag( 'script', array(
+								$script = new Tag(
+									'script', [
 									'type'  => 'text/javascript',
 									'defer' => 'defer',
 									'src'   => path_to_url( $cache->realpath ),
-								) );
+								] );
 
 								$this->offsetSet( 'js', $script );
 							}
@@ -131,11 +134,12 @@ class Assets extends ArrayObject
 								{
 									if ( $cache = \O2System::View()->cache->info( $filename ) )
 									{
-										$script = new Tag( 'script', array(
+										$script = new Tag(
+											'script', [
 											'type'  => 'text/javascript',
 											'defer' => 'defer',
 											'src'   => path_to_url( $cache->realpath ),
-										) );
+										] );
 
 										$this->offsetSet( 'js', $script );
 									}

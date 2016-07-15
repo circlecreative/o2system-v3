@@ -66,11 +66,11 @@ abstract class Relations
 	 */
 	protected $_reference_model = NULL;
 	protected $_reference_table = NULL;
-	protected $_reference_field   = 'id';
+	protected $_reference_field = 'id';
 
 	protected $_related_model = NULL;
 	protected $_related_table = NULL;
-	protected $_related_field   = 'id';
+	protected $_related_field = 'id';
 
 	/**
 	 * Class Constructor
@@ -105,7 +105,7 @@ abstract class Relations
 	 *
 	 * @param string|object $relation table name, model name or instance of ORM model
 	 */
-	public function setRelation($relation )
+	public function setRelation( $relation )
 	{
 		// Try to load reference model
 		$relation_model = $this->_loadRelationModel( $relation );
@@ -136,7 +136,7 @@ abstract class Relations
 
 	// ------------------------------------------------------------------------
 
-	public function setReferenceField($reference_field = NULL )
+	public function setReferenceField( $reference_field = NULL )
 	{
 		if ( isset( $reference_field ) )
 		{
@@ -148,10 +148,10 @@ abstract class Relations
 		$related_table = str_replace( Table::$prefixes, '', $this->_related_table );
 		$related_field = Inflector::singularize( $related_table );
 
-		$reference_fields = array(
+		$reference_fields = [
 			'id_' . $related_field,
 			$related_field . '_id',
-		);
+		];
 
 		foreach ( $reference_fields as $reference_field )
 		{
@@ -172,7 +172,7 @@ abstract class Relations
 	 *
 	 * @param   string  $table
 	 */
-	protected function _setRelationTable($table = NULL )
+	protected function _setRelationTable( $table = NULL )
 	{
 		if ( isset( $table ) )
 		{
@@ -194,7 +194,7 @@ abstract class Relations
 	 *
 	 * @param   string|null $primary_key   working table foreign key
 	 */
-	protected function _setRelationField($relation_field = NULL )
+	protected function _setRelationField( $relation_field = NULL )
 	{
 		if ( isset( $relation_field ) )
 		{
@@ -206,14 +206,14 @@ abstract class Relations
 		$reference_table = str_replace( Table::$prefixes, '', $this->_reference_table );
 		$reference_field = Inflector::singularize( $reference_table );
 
-		$relation_fields = array(
+		$relation_fields = [
 			'id_' . $reference_field,
 			$reference_field . '_id',
-		);
+		];
 
 		foreach ( $relation_fields as $relation_field )
 		{
-			if( isset($this->_related_model) )
+			if ( isset( $this->_related_model ) )
 			{
 				$related_fields = $this->_related_model->fields;
 			}
@@ -240,7 +240,7 @@ abstract class Relations
 	 *
 	 * @param   string|object $related model name or instance of ORM model
 	 */
-	protected function _loadRelationModel($relation )
+	protected function _loadRelationModel( $relation )
 	{
 		if ( $relation instanceof Model )
 		{
@@ -258,7 +258,6 @@ abstract class Relations
 	}
 
 	// ------------------------------------------------------------------------
-
 
 
 	/**

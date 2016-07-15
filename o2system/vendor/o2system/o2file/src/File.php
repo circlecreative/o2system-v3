@@ -193,7 +193,7 @@ class File
 	 *
 	 * @return    bool
 	 */
-	public static function isReallyWritable($file )
+	public static function isReallyWritable( $file )
 	{
 		// If we're on a Unix server with safe_mode off we call is_writable
 		if ( DIRECTORY_SEPARATOR === '/' AND
@@ -249,19 +249,19 @@ class File
 	{
 		if ( file_exists( $filename ) )
 		{
-			$fileinfo = new ArrayObject( pathinfo( $filename ) );
-			$fileinfo->mime = self::mime( $fileinfo );
-			$fileinfo->realpath = realpath( $filename );
-			$fileinfo->filesize = @filesize( $filename );
-			$fileinfo->owner = @fileowner( $filename );
-			$fileinfo->group = @filegroup( $filename );
+			$fileinfo                = new ArrayObject( pathinfo( $filename ) );
+			$fileinfo->mime          = self::mime( $fileinfo );
+			$fileinfo->realpath      = realpath( $filename );
+			$fileinfo->filesize      = @filesize( $filename );
+			$fileinfo->owner         = @fileowner( $filename );
+			$fileinfo->group         = @filegroup( $filename );
 			$fileinfo->last_modified = @date( 'r', filemtime( $filename ) );
-			$fileinfo->last_access = @date( 'r', fileatime( $filename ) );
-			$fileinfo->chmod = @substr( sprintf( '%o', fileperms( $filename ) ), -4 );
-			$fileinfo->permissions = @fileperms( $filename );
-			$fileinfo->readable = is_readable( $filename );
-			$fileinfo->writable = self::isReallyWritable( $filename );
-			$fileinfo->executable = is_executable( $filename );
+			$fileinfo->last_access   = @date( 'r', fileatime( $filename ) );
+			$fileinfo->chmod         = @substr( sprintf( '%o', fileperms( $filename ) ), -4 );
+			$fileinfo->permissions   = @fileperms( $filename );
+			$fileinfo->readable      = is_readable( $filename );
+			$fileinfo->writable      = self::isReallyWritable( $filename );
+			$fileinfo->executable    = is_executable( $filename );
 
 			return $fileinfo;
 		}
@@ -313,7 +313,7 @@ class File
 		// Set the default MIME type to send
 		$mime = 'application/octet-stream';
 
-		$x = explode( '.', $filename );
+		$x         = explode( '.', $filename );
 		$extension = end( $x );
 
 		if ( $options[ 'set.mime' ] === TRUE )
@@ -345,7 +345,7 @@ class File
 		if ( count( $x ) !== 1 && isset( $_SERVER[ 'HTTP_USER_AGENT' ] ) && preg_match( '/Android\s(1|2\.[01])/', $_SERVER[ 'HTTP_USER_AGENT' ] ) )
 		{
 			$x[ count( $x ) - 1 ] = strtoupper( $extension );
-			$filename = implode( '.', $x );
+			$filename             = implode( '.', $x );
 		}
 
 		if ( $data === NULL && ( $fp = @fopen( $filepath, 'rb' ) ) === FALSE )
@@ -442,9 +442,9 @@ class File
 				$options[ 'speed.limit' ] *= 1024; //convert to kb
 				while ( $index < $filesize and ( connection_status() == 0 ) )
 				{
-					$left = $filesize - $index;
+					$left        = $filesize - $index;
 					$buffer_size = min( $left, $options[ 'speed.limit' ] );
-					$buffer = substr( $data, $index, $buffer_size );
+					$buffer      = substr( $data, $index, $buffer_size );
 					$index += $buffer_size;
 					echo $buffer;
 					flush();

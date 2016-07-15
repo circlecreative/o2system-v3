@@ -13,7 +13,7 @@ use Traversable;
 
 class Forms extends DriverInterface implements IteratorAggregate, Countable, ArrayAccess
 {
-	private $storage = array();
+	private $storage = [ ];
 
 	public function __get( $property )
 	{

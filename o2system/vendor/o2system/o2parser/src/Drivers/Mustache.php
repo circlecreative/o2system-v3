@@ -59,69 +59,69 @@ use O2System\Parser\Interfaces\Driver;
  */
 class Mustache extends Driver
 {
-    /**
-     * List of possible view file extensions
-     *
-     * @access  public
-     *
-     * @type array
-     */
-    public $extensions = array( '.php', '.html', '.tpl' );
+	/**
+	 * List of possible view file extensions
+	 *
+	 * @access  public
+	 *
+	 * @type array
+	 */
+	public $extensions = [ '.php', '.html', '.tpl' ];
 
-    /**
-     * Static Engine Object
-     *
-     * @access  private
-     * @var  Engine Object
-     */
-    private static $_engine;
+	/**
+	 * Static Engine Object
+	 *
+	 * @access  private
+	 * @var  Engine Object
+	 */
+	private static $_engine;
 
-    /**
-     * Setup Engine
-     *
-     * @param   $settings   Template Config
-     *
-     * @access  public
-     * @return  Parser Engine Adapter Object
-     */
-    public function setup( $settings = array() )
-    {
-        if ( ! class_exists( 'Mustache_Engine' ) )
-        {
-            throw new Exception( 'The Mustache Template Engine must be loaded to use Parser with Mustache Driver.' );
-        }
+	/**
+	 * Setup Engine
+	 *
+	 * @param   $settings   Template Config
+	 *
+	 * @access  public
+	 * @return  Parser Engine Adapter Object
+	 */
+	public function setup( $settings = [ ] )
+	{
+		if ( ! class_exists( 'Mustache_Engine' ) )
+		{
+			throw new Exception( 'The Mustache Template Engine must be loaded to use Parser with Mustache Driver.' );
+		}
 
-        if( ! isset( static::$_engine ) )
-        {
-            static::$_engine = new \Mustache_Engine();
-        }
+		if ( ! isset( static::$_engine ) )
+		{
+			static::$_engine = new \Mustache_Engine();
+		}
 
-        return $this;
-    }
+		return $this;
+	}
 
-    /**
-     * Parse String
-     *
-     * @param   string   String Source Code
-     * @param   array    Array of variables data to be parsed
-     *
-     * @access  public
-     * @return  string  Parse Output Result
-     */
-    public function parseString($string, $vars = array() )
-    {
-        return static::$_engine->get( $string, $vars );
-    }
+	/**
+	 * Parse String
+	 *
+	 * @param   string   String Source Code
+	 * @param   array    Array of variables data to be parsed
+	 *
+	 * @access  public
+	 * @return  string  Parse Output Result
+	 */
+	public function parseString( $string, $vars = [ ] )
+	{
+		return static::$_engine->get( $string, $vars );
+	}
 
-    /**
-     * Register Plugin
-     *
-     * Registers a plugin for use in a Twig template.
-     *
-     * @access  public
-     */
-    public function registerPlugin()
-    {
+	/**
+	 * Register Plugin
+	 *
+	 * Registers a plugin for use in a Twig template.
+	 *
+	 * @access  public
+	 */
+	public function registerPlugin()
+	{
 
-    }
+	}
 }

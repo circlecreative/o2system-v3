@@ -40,18 +40,18 @@
 defined( 'ROOTPATH' ) OR exit( 'No direct script access allowed' );
 ?>
 
-    <?php echo $exception->header; ?>
-    <?php echo( isset( $exception->description ) ? $exception->description : NULL ); ?>
+<?php echo $exception->header; ?>
+<?php echo( isset( $exception->description ) ? $exception->description : NULL ); ?>
 
-    Message: <?php echo $exception->getMessage() . PHP_EOL; ?>
-    Filename: <?php echo $exception->getFile() . PHP_EOL; ?>
-    Line Number: <?php echo $exception->getLine() . PHP_EOL; ?>
+Message: <?php echo $exception->getMessage() . PHP_EOL; ?>
+Filename: <?php echo $exception->getFile() . PHP_EOL; ?>
+Line Number: <?php echo $exception->getLine() . PHP_EOL; ?>
 
-    <?php if(isset($backtrace)) : ?>
-    Backtrace: <?php echo PHP_EOL; ?>
-    <?php foreach ($backtrace->chronology() as $chronology): ?>
-        <?php echo $chronology->call . PHP_EOL; ?>
-        <?php echo 'File: '.@realpath($chronology->file) . PHP_EOL; ?>
-        <?php echo 'Line: '.$chronology->line . PHP_EOL; ?>
-    <?php endforeach ?>
-    <?php endif; ?>
+<?php if ( isset( $backtrace ) ) : ?>
+	Backtrace: <?php echo PHP_EOL; ?>
+	<?php foreach ( $backtrace->chronology() as $chronology ): ?>
+		<?php echo $chronology->call . PHP_EOL; ?>
+		<?php echo 'File: ' . @realpath( $chronology->file ) . PHP_EOL; ?>
+		<?php echo 'Line: ' . $chronology->line . PHP_EOL; ?>
+	<?php endforeach ?>
+<?php endif; ?>

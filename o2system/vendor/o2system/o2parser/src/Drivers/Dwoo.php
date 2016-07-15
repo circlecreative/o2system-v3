@@ -58,72 +58,72 @@ use O2System\Parser\Interfaces\Driver;
  */
 class Dwoo extends Driver
 {
-    /**
-     * Static Engine Object
-     *
-     * @access  private
-     * @var  Engine Object
-     */
-    private static $_engine;
+	/**
+	 * Static Engine Object
+	 *
+	 * @access  private
+	 * @var  Engine Object
+	 */
+	private static $_engine;
 
-    /**
-     * List of possible view file extensions
-     *
-     * @access  public
-     *
-     * @type array
-     */
-    public $extensions = array( '.php', '.html', '.tpl' );
+	/**
+	 * List of possible view file extensions
+	 *
+	 * @access  public
+	 *
+	 * @type array
+	 */
+	public $extensions = [ '.php', '.html', '.tpl' ];
 
-    /**
-     * Setup Engine
-     *
-     * @param   $settings   Template Config
-     *
-     * @access  public
-     * @return  Parser Engine Adapter Object
-     */
-    public function setup( $settings = array() )
-    {
-        if( ! isset( static::$_engine ) )
-        {
-            static::$_engine = new \Dwoo\Core();
-        }
+	/**
+	 * Setup Engine
+	 *
+	 * @param   $settings   Template Config
+	 *
+	 * @access  public
+	 * @return  Parser Engine Adapter Object
+	 */
+	public function setup( $settings = [ ] )
+	{
+		if ( ! isset( static::$_engine ) )
+		{
+			static::$_engine = new \Dwoo\Core();
+		}
 
-        static::$_engine->setCompileDir( $settings[ 'cache' ][ 'compiler' ] );
-        static::$_engine->setCacheDir( $settings[ 'cache' ][ 'path' ] );
+		static::$_engine->setCompileDir( $settings[ 'cache' ][ 'compiler' ] );
+		static::$_engine->setCacheDir( $settings[ 'cache' ][ 'path' ] );
 
-        return $this;
-    }
+		return $this;
+	}
 
-    /**
-     * Parse String
-     *
-     * @param   string   String Source Code
-     * @param   array    Array of variables data to be parsed
-     *
-     * @access  public
-     * @return  string  Parse Output Result
-     */
-    public function parseString($string, $vars = array() )
-    {
-        $dwoo_data = new \Dwoo\Data();
-        $dwoo_data->setData( $vars );
+	/**
+	 * Parse String
+	 *
+	 * @param   string   String Source Code
+	 * @param   array    Array of variables data to be parsed
+	 *
+	 * @access  public
+	 * @return  string  Parse Output Result
+	 */
+	public function parseString( $string, $vars = [ ] )
+	{
+		$dwoo_data = new \Dwoo\Data();
+		$dwoo_data->setData( $vars );
 
-        $source = new \Dwoo\Template\String( $string );
+		$source = new \Dwoo\Template\String( $string );
 
-        return static::$_engine->get( $source, $vars );
-    }
+		return static::$_engine->get( $source, $vars );
+	}
 
-    /**
-     * Register Plugin
-     *
-     * Registers a plugin for use in a Twig template.
-     *
-     * @access  public
-     */
-    public function registerPlugin()
-    {
+	/**
+	 * Register Plugin
+	 *
+	 * Registers a plugin for use in a Twig template.
+	 *
+	 * @access  public
+	 */
+	public function registerPlugin()
+	{
 
-    }
+	}
 }

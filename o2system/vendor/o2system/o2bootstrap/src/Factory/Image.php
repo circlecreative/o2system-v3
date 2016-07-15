@@ -52,9 +52,9 @@ class Image extends FactoryInterface
 	const THUMBNAIL_IMAGE  = 'thumbnail';
 
 	protected $_tag        = 'img';
-	protected $_attributes = array(
+	protected $_attributes = [
 		'class' => [ 'img' ],
-	);
+	];
 
 	protected $_realpath = NULL;
 
@@ -117,8 +117,8 @@ class Image extends FactoryInterface
 	{
 		if ( is_file( $source ) )
 		{
-			$this->_realpath = $source;
-			$source = path_to_url( $source );
+			$this->_realpath            = $source;
+			$source                     = path_to_url( $source );
 			$this->_attributes[ 'src' ] = $source;
 		}
 		elseif ( strpos( $source, 'http' ) !== FALSE )
@@ -137,7 +137,7 @@ class Image extends FactoryInterface
 	 *
 	 * @return object
 	 */
-	public function setSize(array $size )
+	public function setSize( array $size )
 	{
 		$key = key( $size );
 
@@ -155,14 +155,14 @@ class Image extends FactoryInterface
 		return $this;
 	}
 
-	public function setWidth($width )
+	public function setWidth( $width )
 	{
 		$this->_attributes[ 'width' ] = $width;
 
 		return $this;
 	}
 
-	public function setHeight($height )
+	public function setHeight( $height )
 	{
 		$this->_attributes[ 'height' ] = $height;
 
@@ -178,7 +178,7 @@ class Image extends FactoryInterface
 	 *
 	 * @return object
 	 */
-	public function setAlt($alt )
+	public function setAlt( $alt )
 	{
 		$this->_attributes[ 'alt' ] = $alt;
 

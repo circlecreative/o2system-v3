@@ -66,7 +66,7 @@ class System extends Model
 		{
 			if ( ! is_null( $result->first()->settings ) )
 			{
-				if ( isset( $registry['settings'] ) )
+				if ( isset( $registry[ 'settings' ] ) )
 				{
 					$settings = array_merge( (array) $registry[ 'settings' ], get_object_vars( $result->first()->settings ) );
 				}
@@ -96,7 +96,7 @@ class System extends Model
 	 *
 	 * @return bool
 	 */
-	public function languages( $conditions = array() )
+	public function languages( $conditions = [ ] )
 	{
 		$this->db->select( 'id, label, code_iso, code_idiom' );
 
@@ -130,7 +130,7 @@ class System extends Model
 	 * @access  public
 	 * @return  mixed
 	 */
-	public function domains( $conditions = array() )
+	public function domains( $conditions = [ ] )
 	{
 		if ( empty( $conditions ) )
 		{
@@ -154,13 +154,13 @@ class System extends Model
 		return FALSE;
 	}
 
-	public function registries($rsegment)
+	public function registries( $rsegment )
 	{
-		$this->db->from('sys_registries');
-		$this->db->where('sys_registries.segments', $rsegment);
+		$this->db->from( 'sys_registries' );
+		$this->db->where( 'sys_registries.segments', $rsegment );
 		$result = $this->db->get();
 
-		if ($result->numRows()>0)
+		if ( $result->numRows() > 0 )
 		{
 			$row = $result->row();
 

@@ -54,104 +54,111 @@ namespace O2System\Template\Factory;
  */
 class Wiki
 {
-    protected $_lang = NULL;
-    protected $_pages = array();
-    protected $_files;
+	protected $_lang  = NULL;
+	protected $_pages = [ ];
+	protected $_files;
 
-    public function __construct()
-    {
-        if( class_exists('O2System') )
-        {
-            if( \O2System::$active->offsetExists('language') )
-            {
-                $this->_lang = \O2System::$active['language']->parameter;
-            }
-        }
-    }
+	public function __construct()
+	{
+		if ( class_exists( 'O2System' ) )
+		{
+			if ( \O2System::$active->offsetExists( 'language' ) )
+			{
+				$this->_lang = \O2System::$active[ 'language' ]->parameter;
+			}
+		}
+	}
 
-    public function setLang($lang )
-    {
-        $this->_lang = $lang;
+	public function setLang( $lang )
+	{
+		$this->_lang = $lang;
 
-        return $this;
-    }
+		return $this;
+	}
 
-    /**
-     * load
-     */
-    public function load( $path )
-    {
-        if( is_dir( $path . $this->_lang ) )
-        {
-            $path = $path . $this->_lang;
-        }
+	/**
+	 * load
+	 */
+	public function load( $path )
+	{
+		if ( is_dir( $path . $this->_lang ) )
+		{
+			$path = $path . $this->_lang;
+		}
 
-        $directory = new \RecursiveDirectoryIterator( $path );
-        $iterator = new \RecursiveIteratorIterator( $directory );
-        $results = new \RegexIterator( $iterator, '/^.+\.md/i', \RecursiveRegexIterator::GET_MATCH );
+		$directory = new \RecursiveDirectoryIterator( $path );
+		$iterator  = new \RecursiveIteratorIterator( $directory );
+		$results   = new \RegexIterator( $iterator, '/^.+\.md/i', \RecursiveRegexIterator::GET_MATCH );
 
-        foreach( $results as $file )
-        {
-            foreach( $results as $files )
-            {
-                foreach( $files as $file )
-                {
-                    $wiki = new \stdClass();
-                    $wiki->realpath = realpath( $file );
+		foreach ( $results as $file )
+		{
+			foreach ( $results as $files )
+			{
+				foreach ( $files as $file )
+				{
+					$wiki           = new \stdClass();
+					$wiki->realpath = realpath( $file );
 
-                    $wiki->filepath = str_replace( realpath( $path ), '', $wiki->realpath );
-                    $wiki->filepath = str_replace( DS, '/', substr( $wiki->filepath, 1 ) );
+					$wiki->filepath = str_replace( realpath( $path ), '', $wiki->realpath );
+					$wiki->filepath = str_replace( DIRECTORY_SEPARATOR, '/', substr( $wiki->filepath, 1 ) );
 
-                    $filename = pathinfo( $wiki->realpath, PATHINFO_FILENAME );
-                    $x_filename = explode( '.', $filename );
+					$filename   = pathinfo( $wiki->realpath, PATHINFO_FILENAME );
+					$x_filename = explode( '.', $filename );
 
-                    $wiki->num = '';
-                    foreach( $x_filename as $_filename )
-                    {
-                        if( is_numeric( $_filename ) )
-                        {
-                            $wiki->num .= empty( $wiki->num ) ? $_filename : '.' . $_filename;
-                        }
-                        elseif( $_filename !== 'md' )
-                        {
-                            $wiki->title = $_filename;
-                        }
-                    }
+					$wiki->num = '';
+					foreach ( $x_filename as $_filename )
+					{
+						if ( is_numeric( $_filename ) )
+						{
+							$wiki->num .= empty( $wiki->num ) ? $_filename : '.' . $_filename;
+						}
+						elseif ( $_filename !== 'md' )
+						{
+							$wiki->title = $_filename;
+						}
+					}
 
-                    $wiki->title = str_replace( '_', '-', $wiki->title );
-                    $x_title = explode( '-', $wiki->title );
-                    $x_title = array_map( 'ucfirst', $x_title );
-                    $wiki->title = implode( ' ', $x_title );
-                    $wiki->num_title = $wiki->num . '. ' . $wiki->title;
+					$wiki->title     = str_replace( '_', '-', $wiki->title );
+					$x_title         = explode( '-', $wiki->title );
+					$x_title         = array_map( 'ucfirst', $x_title );
+					$wiki->title     = implode( ' ', $x_title );
+					$wiki->num_title = $wiki->num . '. ' . $wiki->title;
 
-                    // add to files
-                    $this->_files[ $wiki->num_title ] = $wiki->realpath;
-                }
-            }
-        }
-    }
+					// add to files
+					$this->_files[ $wiki->num_title ] = $wiki->realpath;
+				}
+			}
+		}
+	}
 
-    // ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
 
-    /**
-     * @return string
-     */
-    public function tocify( $flavour = 'github' )
-    {
-        if( ! empty( $this->_files ) )
-        {
-            ksort( $this->_files, SORT_STRING );
+	/**
+	 * @return string
+	 */
+	public function tocify( $flavour = 'github' )
+	{
+		if ( ! empty( $this->_files ) )
+		{
+			ksort( $this->_files, SORT_STRING );
 
-            $parser = new \O2System\Parser;
+			if ( class_exists( 'O2System' ) )
+			{
+				$parser = \O2System::View()->parser;
+			}
+			else
+			{
+				$parser = new \O2System\Parser;
+			}
 
-            foreach( $this->_files as $file )
-            {
-                $contents[ ] = $parser->parseMarkdown( file_get_contents( $file ), $flavour );
-            }
+			foreach ( $this->_files as $file )
+			{
+				$contents[] = $parser->parseMarkdown( file_get_contents( $file ), $flavour );
+			}
 
-            return implode( PHP_EOL, $contents );
-        }
+			return implode( PHP_EOL, $contents );
+		}
 
-        return '';
-    }
+		return '';
+	}
 }

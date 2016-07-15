@@ -96,13 +96,13 @@ class Group extends FactoryInterface
 			{
 				if ( is_string( $attr[ 'class' ] ) )
 				{
-					$class = explode( ' ', $attr[ 'class' ] );
+					$class           = explode( ' ', $attr[ 'class' ] );
 					$attr[ 'class' ] = array_map( 'trim', $class );
 				}
 			}
 			else
 			{
-				$attr[ 'class' ] = array();
+				$attr[ 'class' ] = [ ];
 			}
 
 			$this->_attributes = $attr;
@@ -112,7 +112,7 @@ class Group extends FactoryInterface
 		{
 			case self::BUTTON_GROUP:
 				$this->_type = self::BUTTON_GROUP;
-				$this->_tag = 'div';
+				$this->_tag  = 'div';
 
 				// Set SizeInterface class prefix
 				$this->setSizeClassPrefix( 'btn-group' );
@@ -122,7 +122,7 @@ class Group extends FactoryInterface
 
 			case self::INPUT_GROUP:
 				$this->_type = self::INPUT_GROUP;
-				$this->_tag = 'div';
+				$this->_tag  = 'div';
 
 				// Set SizeInterface class prefix
 				$this->setSizeClassPrefix( 'input-group' );
@@ -131,31 +131,31 @@ class Group extends FactoryInterface
 
 			case self::FORM_GROUP:
 				$this->_type = self::FORM_GROUP;
-				$this->_tag = 'div';
+				$this->_tag  = 'div';
 				$this->addClass( 'form-group' );
 				break;
 
 			case self::FORM_GROUP_INLINE:
 				$this->_type = self::FORM_GROUP_INLINE;
-				$this->_tag = 'div';
+				$this->_tag  = 'div';
 				$this->addClass( 'form-inline' );
 				break;
 
 			case self::FORM_GROUP_VERTICAL:
 				$this->_type = self::FORM_GROUP_VERTICAL;
-				$this->_tag = 'div';
+				$this->_tag  = 'div';
 				$this->addClass( 'form-vertical' );
 				break;
 
 			case self::FORM_GROUP_HORIZONTAL:
 				$this->_type = self::FORM_GROUP_HORIZONTAL;
-				$this->_tag = 'div';
+				$this->_tag  = 'div';
 				$this->addClass( 'form-horizontal' );
 				break;
 
 			case self::LIST_GROUP:
 				$this->_type = self::LIST_GROUP;
-				$this->_tag = 'ul';
+				$this->_tag  = 'ul';
 				$this->addClass( 'list-group' );
 				break;
 
@@ -163,30 +163,30 @@ class Group extends FactoryInterface
 			case self::LIST_LINK_GROUP:
 			case self::LIST_CUSTOM_GROUP:
 				$this->_type = self::LIST_GROUP;
-				$this->_tag = 'div';
+				$this->_tag  = 'div';
 				$this->addClass( 'list-group' );
 				break;
 
 			case self::PROGRESS_BAR_GROUP:
 				$this->_type = self::PROGRESS_BAR_GROUP;
-				$this->_tag = 'div';
+				$this->_tag  = 'div';
 				$this->addClass( 'progress' );
 				break;
 
 			case self::THUMBNAIL_GROUP:
 				$this->_type = self::THUMBNAIL_GROUP;
-				$this->_tag = 'div';
+				$this->_tag  = 'div';
 				$this->addClasses( [ 'row', 'thumbnails' ] );
 				break;
 
 			case self::MEDIA_GROUP:
 				$this->_type = self::MEDIA_GROUP;
-				$this->_tag = 'div';
+				$this->_tag  = 'div';
 				$this->addClass( 'media-list' );
 				break;
 			case self::PANEL_GROUP:
 				$this->_type = self::PANEL_GROUP;
-				$this->_tag = 'div';
+				$this->_tag  = 'div';
 				$this->addClass( 'panel-group' );
 				break;
 		}
@@ -235,7 +235,7 @@ class Group extends FactoryInterface
 
 	// ------------------------------------------------------------------------
 
-	public function addItem($item, $key = NULL )
+	public function addItem( $item, $key = NULL )
 	{
 		if ( $item instanceof Dropdown )
 		{

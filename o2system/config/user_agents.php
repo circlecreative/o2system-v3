@@ -191,7 +191,7 @@ $mobiles = [
 ];
 
 $tablets = [
-	'tablet pc' => 'Windows Tablet'
+	'tablet pc' => 'Windows Tablet',
 ];
 
 // There are hundreds of bots but these are the most common.

@@ -71,10 +71,10 @@ class Label extends FactoryInterface
 
 	protected $_tag        = 'span';
 	protected $_label      = NULL;
-	public $heading    = NULL;
-	protected $_attributes = array(
+	public    $heading     = NULL;
+	protected $_attributes = [
 		'class' => [ 'label' ],
-	);
+	];
 
 	// ------------------------------------------------------------------------
 
@@ -116,11 +116,11 @@ class Label extends FactoryInterface
 			{
 				if ( in_array( $for, $this->_contextual_classes ) )
 				{
-					$this->{'is' . studlycapcase($for)}();
+					$this->{'is' . studlycapcase( $for )}();
 				}
 				elseif ( in_array( $for, $this->_sizes ) )
 				{
-					$this->{'is' . studlycapcase($for)}();
+					$this->{'is' . studlycapcase( $for )}();
 				}
 				else
 				{
@@ -140,11 +140,11 @@ class Label extends FactoryInterface
 			{
 				if ( in_array( $attr, $this->_contextual_classes ) )
 				{
-					$this->{'is' . studlycapcase($attr)}();
+					$this->{'is' . studlycapcase( $attr )}();
 				}
 				elseif ( in_array( $attr, $this->_sizes ) )
 				{
-					$this->{'is' . studlycapcase($attr)}();
+					$this->{'is' . studlycapcase( $attr )}();
 				}
 			}
 		}
@@ -153,7 +153,7 @@ class Label extends FactoryInterface
 		{
 			if ( is_string( $type ) AND in_array( $type, $this->_contextual_classes ) )
 			{
-				$this->{'is' . studlycapcase($type)}();
+				$this->{'is' . studlycapcase( $type )}();
 			}
 		}
 
@@ -163,7 +163,7 @@ class Label extends FactoryInterface
 
 	// ------------------------------------------------------------------------
 
-	public function setHeading($heading, $attr = array() )
+	public function setHeading( $heading, $attr = [ ] )
 	{
 		$this->heading = new Tag( 'h3', $heading, $attr );
 		$this->heading->addClass( 'label-heading' );

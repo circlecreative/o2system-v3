@@ -120,10 +120,10 @@ class Files extends Driver
 	{
 		$ttl = isset( $this->_config[ 'ttl' ] ) ? $this->_config[ 'ttl' ] : $ttl;
 
-		$contents = array(
+		$contents = [
 			'time' => time(),
 			'data' => $data,
-		);
+		];
 
 		if ( is_int( $ttl ) AND $ttl > 0 )
 		{
@@ -192,7 +192,7 @@ class Files extends Driver
 
 		if ( $data === FALSE )
 		{
-			$data = array( 'data' => 0, 'ttl' => 60 );
+			$data = [ 'data' => 0, 'ttl' => 60 ];
 		}
 		elseif ( ! is_int( $data[ 'data' ] ) )
 		{
@@ -222,7 +222,7 @@ class Files extends Driver
 
 		if ( $data === FALSE )
 		{
-			$data = array( 'data' => 0, 'ttl' => 60 );
+			$data = [ 'data' => 0, 'ttl' => 60 ];
 		}
 		elseif ( ! is_int( $data[ 'data' ] ) )
 		{
@@ -261,7 +261,7 @@ class Files extends Driver
 	 * @access    protected
 	 * @return    bool    false on failure/true on success
 	 */
-	protected function _cleanFiles($path, $del_dir = FALSE, $htdocs = FALSE, $_level = 0 )
+	protected function _cleanFiles( $path, $del_dir = FALSE, $htdocs = FALSE, $_level = 0 )
 	{
 		// Trim the trailing slash
 		$path = rtrim( $path, '/\\' );
@@ -325,9 +325,9 @@ class Files extends Driver
 	 *
 	 * @return  array
 	 */
-	protected function _dirFileInfo($source_dir, $top_level_only = TRUE, $_recursion = FALSE )
+	protected function _dirFileInfo( $source_dir, $top_level_only = TRUE, $_recursion = FALSE )
 	{
-		static $_filedata = array();
+		static $_filedata = [ ];
 		$relative_path = $source_dir;
 
 		if ( $fp = @opendir( $source_dir ) )
@@ -335,7 +335,7 @@ class Files extends Driver
 			// reset the array and make sure $source_dir has a trailing slash on the initial call
 			if ( $_recursion === FALSE )
 			{
-				$_filedata = array();
+				$_filedata  = [ ];
 				$source_dir = rtrim( realpath( $source_dir ), DIRECTORY_SEPARATOR ) . DIRECTORY_SEPARATOR;
 			}
 
@@ -348,7 +348,7 @@ class Files extends Driver
 				}
 				elseif ( $file[ 0 ] !== '.' )
 				{
-					$_filedata[ $file ] = $this->_dirFileInfo( $source_dir . $file );
+					$_filedata[ $file ]                    = $this->_dirFileInfo( $source_dir . $file );
 					$_filedata[ $file ][ 'relative_path' ] = $relative_path;
 				}
 			}
@@ -386,10 +386,10 @@ class Files extends Driver
 				return FALSE;
 			}
 
-			return array(
+			return [
 				'expire' => $mtime + $data[ 'ttl' ],
 				'mtime'  => $mtime,
-			);
+			];
 		}
 
 		return FALSE;

@@ -17,12 +17,12 @@ abstract class Table
 	 * @access  public
 	 * @type    array
 	 */
-	public static $prefixes = array(
+	public static $prefixes = [
 		'', // none prefix
 		'tm_', // table master prefix
 		't_', // table data prefix
 		'tr_', // table relation prefix
 		'ts_', // table statistic prefix
 		'tb_', // table buffer prefix
-	);
+	];
 }

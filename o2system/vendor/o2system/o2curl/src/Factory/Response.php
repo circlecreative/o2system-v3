@@ -38,6 +38,12 @@
 namespace O2System\CURL\Factory;
 
 // ------------------------------------------------------------------------
+use O2System\CURL\Metadata\Error;
+use O2System\CURL\Metadata\Headers;
+use O2System\CURL\Metadata\Info;
+use O2System\CURL\Metadata\SimpleJSONElement;
+use O2System\CURL\Metadata\SimpleQueryElement;
+use O2System\Glob\ArrayObject;
 
 /**
  * Response
@@ -46,86 +52,103 @@ namespace O2System\CURL\Factory;
  *
  * @package O2System\CURL\Factory
  */
-class Response
+class Response extends ArrayObject
 {
 	/**
-	 * Response Metadata
+	 * Set Response Metadata
 	 *
-	 * @type \O2System\CURL\Factory\Metadata
-	 */
-	public $meta;
-
-	/**
-	 * Response RAW Body
+	 * @param   array $metadata
 	 *
-	 * @type string
+	 * @access  public
 	 */
-	public $raw_body;
-
-	/**
-	 * Response Body
-	 *
-	 * @type \O2System\CURL\Factory\Metadata|string
-	 */
-	public $body;
-
-	/**
-	 * Response Header
-	 *
-	 * @type \O2System\CURL\Factory\Metadata
-	 */
-	public $headers;
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Response constructor.
-	 *
-	 * @param $response
-	 * @param $info
-	 */
-	public function __construct( $response, $info )
+	public function setMetadata( array $metadata )
 	{
-		$this->meta = new Metadata( $info );
-		$this->raw_body = $response;
-		$this->body = $this->_parseResponse( $response );
-		$this->headers = $this->_parseHeaders( $response );
+		$this->info = new Info( $metadata );
+	}
 
-		if ( isset( $this->body->meta ) )
+	/**
+	 * Set Response Body
+	 *
+	 * @param   string $body
+	 *
+	 * @access  public
+	 */
+	public function setBody( $body )
+	{
+		if ( is_string( $body ) )
 		{
-			foreach ( get_object_vars( $this->body->meta ) as $key => $value )
-			{
-				$this->meta[ $key ] = $value;
-			}
-
-			unset( $this->body->meta );
+			$this->body    = (string) $body;
+			$this->headers = $this->__parseHeaders( $body );
+			$this->data    = $this->__parseBody( $body );
 		}
 	}
 
-	// ------------------------------------------------------------------------
+	public function setError( $code, $message )
+	{
+		$this->error = new Error();
+		$this->error->setCode( $code );
+		$this->error->setMessage( $message );
+	}
 
 	/**
-	 * Parse Response
+	 * Parse Response Body
 	 *
-	 * @param $response
+	 * @param   string $raw_body
 	 *
-	 * @return \O2System\CURL\Factory\Metadata|string
+	 * @return  mixed
 	 */
-	protected function _parseResponse($response )
+	private function __parseBody( $raw_body )
 	{
-		if ( strpos( $response, 'HTTP' ) !== FALSE )
+		$content_type = isset( $this->headers->content_type ) ? $this->headers->content_type : $this->info->content_type;
+		$content_type = explode( ';', $content_type );
+		$content_type = array_map( 'trim', $content_type );
+		$content_type = reset( $content_type );
+		$content_type = strtolower( $content_type );
+
+		if ( ! empty( $content_type ) )
 		{
-			$response = substr( $response, $this->meta->header_size );
+			if ( $content_type === 'application/json' )
+			{
+				$json_body = json_decode( $raw_body, TRUE );
+
+				if ( json_last_error() === JSON_ERROR_NONE )
+				{
+					return new SimpleJSONElement( $json_body );
+				}
+			}
+			elseif ( $content_type === 'application/xml' )
+			{
+				return simplexml_load_string( $raw_body );
+			}
 		}
 
-		$json = new Metadata( json_decode( $response, TRUE ) );
+		$raw_body        = trim( $raw_body );
+		$substr_raw_body = substr( $raw_body, $this->info->header_size );
 
-		if ( json_last_error() === JSON_ERROR_NONE )
+		$raw_body = empty( $substr_raw_body ) ? $raw_body : $substr_raw_body;
+
+		$json_body = json_decode( $raw_body, TRUE );
+
+		if ( is_array( $json_body ) AND json_last_error() === JSON_ERROR_NONE )
 		{
-			$response = $json;
+			return new SimpleJSONElement( (array) $json_body );
 		}
+		else
+		{
+			parse_str( $raw_body, $query_string );
 
-		return $response;
+			if ( is_array( $query_string ) AND count( $query_string ) > 0 )
+			{
+				return new SimpleQueryElement( (array) $query_string );
+			}
+			elseif ( ! empty( $raw_body ) )
+			{
+				$DomDocument = new \DOMDocument();
+				$DomDocument->loadHTML( $raw_body );
+
+				return $DomDocument;
+			}
+		}
 	}
 
 	// ------------------------------------------------------------------------
@@ -136,61 +159,21 @@ class Response
 	 * thanks to ricardovermeltfoort@gmail.com
 	 * http://php.net/manual/en/function.http-parse-headers.php#112986
 	 */
-	protected function _parseHeaders($response )
+	private function __parseHeaders( $body )
 	{
-		$raw_headers = substr( $response, 0, $this->meta->header_size );
+		$raw_headers = substr( $body, 0, $this->info->header_size );
+		$raw_headers = http_parse_headers( $raw_headers );
+		$raw_headers = empty( $raw_headers ) ? [ ] : $raw_headers;
 
-		if ( function_exists( 'http_parse_headers' ) )
+		$headers = new Headers();
+
+		foreach ( $raw_headers as $key => $value )
 		{
-			return new Metadata( http_parse_headers( $raw_headers ) );
+			$key = $key === 0 ? 'http' : $key;
+
+			$headers->offsetSet( underscore( $key ), $value );
 		}
-		else
-		{
-			$headers = new Metadata( json_decode( $raw_headers, TRUE ) );
 
-			if ( json_last_error() === JSON_ERROR_NONE )
-			{
-				return $headers;
-			}
-
-			$key = '';
-			$headers = new Metadata();
-
-			foreach ( explode( "\n", $raw_headers ) as $i => $h )
-			{
-				$h = explode( ':', $h, 2 );
-
-				if ( isset( $h[ 1 ] ) )
-				{
-					if ( ! isset( $headers[ $h[ 0 ] ] ) )
-					{
-						$headers[ $h[ 0 ] ] = trim( $h[ 1 ] );
-					}
-					elseif ( is_array( $headers[ $h[ 0 ] ] ) )
-					{
-						$headers[ $h[ 0 ] ] = array_merge( $headers[ $h[ 0 ] ], array( trim( $h[ 1 ] ) ) );
-					}
-					else
-					{
-						$headers[ $h[ 0 ] ] = array_merge( array( $headers[ $h[ 0 ] ] ), array( trim( $h[ 1 ] ) ) );
-					}
-
-					$key = $h[ 0 ];
-				}
-				else
-				{
-					if ( substr( $h[ 0 ], 0, 1 ) == "\t" )
-					{
-						$headers[ $key ] .= "\r\n\t" . trim( $h[ 0 ] );
-					}
-					elseif ( ! $key )
-					{
-						$headers[ 0 ] = trim( $h[ 0 ] );
-					}
-				}
-			}
-
-			return $headers;
-		}
+		return $headers;
 	}
 }

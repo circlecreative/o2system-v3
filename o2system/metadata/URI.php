@@ -94,13 +94,16 @@ class URI extends ArrayObject
 	{
 		$segments = \O2System::$active[ 'URI' ]->{$which};
 
-		if ( key( $segments ) == 0 )
+		if ( is_array( $segments ) )
 		{
-			array_unshift( $segments, NULL );
-			unset( $segments[ 0 ] );
-		}
+			if ( key( $segments ) == 0 )
+			{
+				array_unshift( $segments, NULL );
+				unset( $segments[ 0 ] );
+			}
 
-		\O2System::$active[ 'URI' ]->{$which} = $segments;
+			\O2System::$active[ 'URI' ]->{$which} = $segments;
+		}
 	}
 
 	/**
@@ -147,5 +150,36 @@ class URI extends ArrayObject
 		}
 
 		return $leading . $this->segment( $n, $which ) . $trailing;
+	}
+
+	public function hasExtensionSegment( $extension = NULL )
+	{
+		$segment_extension = pathinfo( $this->string, PATHINFO_EXTENSION );
+
+		if ( ! empty( $segment_extension ) )
+		{
+			return TRUE;
+		}
+		elseif ( isset( $extension ) )
+		{
+			if ( $extension === $segment_extension )
+			{
+				return TRUE;
+			}
+		}
+
+		return FALSE;
+	}
+
+	public function findSegmentKey( $segment, $which = 'segments' )
+	{
+		$segments = $this->{$which};
+
+		if ( $key = array_search( $segment, $segments ) )
+		{
+			return $key;
+		}
+
+		return FALSE;
 	}
 }

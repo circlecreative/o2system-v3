@@ -44,9 +44,9 @@ class Embed extends FactoryInterface
 {
 	protected $_tag          = 'div';
 	protected $_aspect_ratio = '16:9';
-	protected $_attributes   = array(
+	protected $_attributes   = [
 		'class' => [ 'embed-responsive' ],
-	);
+	];
 
 	public $source = NULL;
 
@@ -81,7 +81,7 @@ class Embed extends FactoryInterface
 		}
 	}
 
-	public function setAspectRatio($aspect_ratio )
+	public function setAspectRatio( $aspect_ratio )
 	{
 		if ( in_array( $aspect_ratio, [ '16:9', '4:3' ] ) )
 		{
@@ -91,21 +91,22 @@ class Embed extends FactoryInterface
 		return $this;
 	}
 
-	public function setSource($source, $tag = 'iframe', $attr = array() )
+	public function setSource( $source, $tag = 'iframe', $attr = [ ] )
 	{
 		if ( is_array( $tag ) )
 		{
 			$attr = $tag;
-			$tag = 'iframe';
+			$tag  = 'iframe';
 		}
 
-		$attr[ 'src' ] = str_replace( array(
-			                              'youtube.com/',
-			                              'youtu.be',
-		                              ), array(
-			                              'youtube.com/embed/',
-			                              'youtube.com/embed/',
-		                              ), $source );
+		$attr[ 'src' ] = str_replace(
+			[
+				'youtube.com/',
+				'youtu.be',
+			], [
+				'youtube.com/embed/',
+				'youtube.com/embed/',
+			], $source );
 
 		if ( strpos( $attr[ 'src' ], 'youtube.com' ) !== FALSE )
 		{
@@ -145,13 +146,13 @@ class Embed extends FactoryInterface
 			switch ( $this->_aspect_ratio )
 			{
 				case '4:3':
-					
+
 					$this->addClass( 'embed-responsive-4by3' );
 
 					break;
-				
+
 				default:
-					
+
 					$this->addClass( 'embed-responsive-16by9' );
 
 					break;

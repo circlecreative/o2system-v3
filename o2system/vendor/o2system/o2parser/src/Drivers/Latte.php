@@ -86,9 +86,10 @@ class Latte extends Driver
 	 */
 	public function setup( $settings = [ ] )
 	{
-		static::$_engine = new ArrayObject( [
-			                                    'security' => new ArrayObject( $settings[ 'security' ] ),
-		                                    ]
+		static::$_engine = new ArrayObject(
+			[
+				'security' => new ArrayObject( $settings[ 'security' ] ),
+			]
 		);
 	}
 
@@ -101,7 +102,7 @@ class Latte extends Driver
 	 * @access  public
 	 * @return  string  Parse Output Result
 	 */
-	public function parseString($string, $vars = [ ] )
+	public function parseString( $string, $vars = [ ] )
 	{
 		if ( static::$_engine->security->php_handling === FALSE )
 		{
@@ -110,26 +111,27 @@ class Latte extends Driver
 
 		if ( static::$_engine->security->allow_super_globals === FALSE )
 		{
-			$string = str_replace( [
-				                       '{$GLOBALS}',
-				                       '{$GLOBALS[%%]}',
-				                       '{$_SERVER}',
-				                       '{$_SERVER[%%]}',
-				                       '{$_GET}',
-				                       '{$_GET[%%]}',
-				                       '{$_POST}',
-				                       '{$_POST[%%]}',
-				                       '{$_FILES}',
-				                       '{$_FILES[%%]}',
-				                       '{$_COOKIE}',
-				                       '{$_COOKIE[%%]}',
-				                       '{$_SESSION}',
-				                       '{$_SESSION[%%]}',
-				                       '{$_REQUEST}',
-				                       '{$_REQUEST[%%]}',
-				                       '{$_ENV}',
-				                       '{$_ENV[%%]}',
-			                       ], '', $string
+			$string = str_replace(
+				[
+					'{$GLOBALS}',
+					'{$GLOBALS[%%]}',
+					'{$_SERVER}',
+					'{$_SERVER[%%]}',
+					'{$_GET}',
+					'{$_GET[%%]}',
+					'{$_POST}',
+					'{$_POST[%%]}',
+					'{$_FILES}',
+					'{$_FILES[%%]}',
+					'{$_COOKIE}',
+					'{$_COOKIE[%%]}',
+					'{$_SESSION}',
+					'{$_SESSION[%%]}',
+					'{$_REQUEST}',
+					'{$_REQUEST[%%]}',
+					'{$_ENV}',
+					'{$_ENV[%%]}',
+				], '', $string
 			);
 		}
 
@@ -206,7 +208,7 @@ class Latte extends Driver
 		foreach ( $php_codes as $tpl_code => $php_code )
 		{
 			$patterns[] = '#' . str_replace( '%%', '(.+)', preg_quote( $tpl_code, '#' ) ) . '#U';
-			$replace[] = $php_code;
+			$replace[]  = $php_code;
 		}
 
 		/*replace our pseudo language in template with php code*/

@@ -66,7 +66,10 @@ if ( ! function_exists( 'directory_size' ) )
 	{
 		$path = rtrim( $path, DIRECTORY_SEPARATOR );
 
-		if ( is_file( $path ) ) return filesize( $path );
+		if ( is_file( $path ) )
+		{
+			return filesize( $path );
+		}
 
 		$size = 0;
 
@@ -81,7 +84,7 @@ if ( ! function_exists( 'directory_size' ) )
 		}
 		else
 		{
-			$size_units = array( 'B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB' );
+			$size_units = [ 'B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB' ];
 
 			if ( ! isset( $size_string ) )
 			{
@@ -124,13 +127,13 @@ if ( ! function_exists( 'directory_scan' ) )
 	 */
 	function directory_scan( $dir, $ext = '*', $recursive = TRUE )
 	{
-		$result = array();
+		$result = [ ];
 
 		$scan_directory = scandir( $dir );
 
 		foreach ( $scan_directory as $key => $value )
 		{
-			if ( ! in_array( $value, array( ".", ".." ) ) )
+			if ( ! in_array( $value, [ ".", ".." ] ) )
 			{
 				if ( is_file( $dir . DIRECTORY_SEPARATOR . $value ) )
 				{
@@ -178,8 +181,8 @@ if ( ! function_exists( 'directory_files' ) )
 	 */
 	function directory_files( $dir, $ext = '*' )
 	{
-		$files = directory_map( $dir );
-		$result = array();
+		$files  = directory_map( $dir );
+		$result = [ ];
 
 		if ( ! empty( $files ) )
 		{
@@ -224,9 +227,9 @@ if ( ! function_exists( 'directory_tree' ) )
 	{
 		if ( $fp = @opendir( $dir ) )
 		{
-			$dir_tree = array();
+			$dir_tree  = [ ];
 			$new_depth = $dir_depth - 1;
-			$dir = rtrim( $dir, DIRECTORY_SEPARATOR ) . DIRECTORY_SEPARATOR;
+			$dir       = rtrim( $dir, DIRECTORY_SEPARATOR ) . DIRECTORY_SEPARATOR;
 
 			while ( FALSE !== ( $dir = readdir( $fp ) ) )
 			{
@@ -238,7 +241,7 @@ if ( ! function_exists( 'directory_tree' ) )
 
 				if ( ( $dir_depth < 1 OR $new_depth > 0 ) && @is_dir( $dir . $dir ) )
 				{
-					$info = directory_info( $dir . $dir );
+					$info         = directory_info( $dir . $dir );
 					$info->branch = directory_tree( $dir . $dir . DIRECTORY_SEPARATOR, $new_depth, $hidden );
 
 					$dir_tree[] = $info;
@@ -266,24 +269,25 @@ if ( ! function_exists( 'directory_info' ) )
 	 */
 	function directory_info( $dir )
 	{
-		$iterator = new DirectoryIterator( $dir );
-		$info = new \O2System\Glob\ArrayObject();
-		$info->name = pathinfo( $dir, PATHINFO_BASENAME );
-		$info->path = str_replace( array( '/' . DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR ), '/', $iterator->getPath() );
-		$info->realpath = realpath( $info->path );
-		$info->parent_path = str_replace( array(
-			                                  '/' . DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR,
-		                                  ), '/', pathinfo( $dir, PATHINFO_DIRNAME ) );
-		$info->parent_name = pathinfo( $info->parent_path, PATHINFO_BASENAME );
-		$info->raw_size = directory_size( $info->path, TRUE );
-		$info->size = byte_format( $info->raw_size );
-		$info->owner = $iterator->getOwner();
-		$info->group = $iterator->getGroup();
-		$info->chmod = substr( sprintf( '%o', $iterator->getPerms() ), -4 );
-		$info->permissions = $iterator->getPerms();
-		$info->writable = $iterator->isWritable();
+		$iterator            = new DirectoryIterator( $dir );
+		$info                = new \O2System\Glob\ArrayObject();
+		$info->name          = pathinfo( $dir, PATHINFO_BASENAME );
+		$info->path          = str_replace( [ '/' . DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR ], '/', $iterator->getPath() );
+		$info->realpath      = realpath( $info->path );
+		$info->parent_path   = str_replace(
+			[
+				'/' . DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR,
+			], '/', pathinfo( $dir, PATHINFO_DIRNAME ) );
+		$info->parent_name   = pathinfo( $info->parent_path, PATHINFO_BASENAME );
+		$info->raw_size      = directory_size( $info->path, TRUE );
+		$info->size          = byte_format( $info->raw_size );
+		$info->owner         = $iterator->getOwner();
+		$info->group         = $iterator->getGroup();
+		$info->chmod         = substr( sprintf( '%o', $iterator->getPerms() ), -4 );
+		$info->permissions   = $iterator->getPerms();
+		$info->writable      = $iterator->isWritable();
 		$info->last_modified = date( 'r', $iterator->getMTime() );
-		$info->last_access = date( 'r', $iterator->getATime() );
+		$info->last_access   = date( 'r', $iterator->getATime() );
 
 		return $info;
 	}
@@ -306,7 +310,7 @@ if ( ! function_exists( 'directory_remove' ) )
 		if ( is_dir( $dir ) )
 		{
 			$iterator = new RecursiveDirectoryIterator( $dir, RecursiveDirectoryIterator::SKIP_DOTS );
-			$files = new RecursiveIteratorIterator( $iterator, RecursiveIteratorIterator::CHILD_FIRST );
+			$files    = new RecursiveIteratorIterator( $iterator, RecursiveIteratorIterator::CHILD_FIRST );
 			foreach ( $files as $file )
 			{
 				if ( $file->isDir() )
@@ -375,8 +379,8 @@ if ( ! function_exists( 'directory_empty' ) )
 		closedir( $current_dir );
 
 		return ( $del_dir === TRUE && $_level > 0 )
-				? @rmdir( $path )
-				: TRUE;
+			? @rmdir( $path )
+			: TRUE;
 	}
 }
 
@@ -401,7 +405,7 @@ if ( ! function_exists( 'get_dir_file_info' ) )
 	 */
 	function get_dir_file_info( $source_dir, $top_level_only = TRUE, $_recursion = FALSE )
 	{
-		static $_filedata = array();
+		static $_filedata = [ ];
 		$relative_path = $source_dir;
 
 		if ( $fp = @opendir( $source_dir ) )
@@ -409,7 +413,7 @@ if ( ! function_exists( 'get_dir_file_info' ) )
 			// reset the array and make sure $source_dir has a trailing slash on the initial call
 			if ( $_recursion === FALSE )
 			{
-				$_filedata = array();
+				$_filedata  = [ ];
 				$source_dir = rtrim( realpath( $source_dir ), DIRECTORY_SEPARATOR ) . DIRECTORY_SEPARATOR;
 			}
 
@@ -422,7 +426,7 @@ if ( ! function_exists( 'get_dir_file_info' ) )
 				}
 				elseif ( $file[ 0 ] !== '.' )
 				{
-					$_filedata[ $file ] = get_file_info( $source_dir . $file );
+					$_filedata[ $file ]                    = get_file_info( $source_dir . $file );
 					$_filedata[ $file ][ 'relative_path' ] = $relative_path;
 				}
 			}
@@ -509,8 +513,8 @@ if ( ! function_exists( 'directory_map' ) )
 	{
 		if ( $fp = @opendir( $source_dir ) )
 		{
-			$filedata = array();
-			$new_depth = $directory_depth - 1;
+			$filedata   = [ ];
+			$new_depth  = $directory_depth - 1;
 			$source_dir = rtrim( $source_dir, DIRECTORY_SEPARATOR ) . DIRECTORY_SEPARATOR;
 
 			while ( FALSE !== ( $file = readdir( $fp ) ) )

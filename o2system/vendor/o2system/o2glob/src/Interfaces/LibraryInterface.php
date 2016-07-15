@@ -17,7 +17,7 @@ abstract class LibraryInterface extends Glob
 	 *
 	 * @access protected
 	 */
-	protected $_config = array();
+	protected $_config = [ ];
 
 	/**
 	 * List of library valid drivers
@@ -26,7 +26,7 @@ abstract class LibraryInterface extends Glob
 	 *
 	 * @type    array   driver classes list
 	 */
-	protected $_valid_drivers = array();
+	protected $_valid_drivers = [ ];
 
 	/**
 	 * List of library errors
@@ -34,7 +34,7 @@ abstract class LibraryInterface extends Glob
 	 * @access  protected
 	 * @type    array
 	 */
-	protected $_errors = array();
+	protected $_errors = [ ];
 
 	/**
 	 * Debug Mode Flag
@@ -51,7 +51,7 @@ abstract class LibraryInterface extends Glob
 	 *
 	 * @access  public
 	 */
-	public function __reconstruct( array $config = array() )
+	public function __reconstruct( array $config = [ ] )
 	{
 		$this->_config = array_merge( $this->_config, $config );
 
@@ -84,7 +84,7 @@ abstract class LibraryInterface extends Glob
 		// Reconstruct Class
 		if ( method_exists( $this, 'initialize' ) )
 		{
-			call_user_func( array( $this, 'initialize' ) );
+			call_user_func( [ $this, 'initialize' ] );
 		}
 	}
 
@@ -97,10 +97,10 @@ abstract class LibraryInterface extends Glob
 
 		$class_realpath = ( new \ReflectionClass( $parent_class ) )->getFileName();
 
-		$driver_paths = array(
+		$driver_paths = [
 			dirname( $class_realpath ) . DIRECTORY_SEPARATOR . 'Drivers' . DIRECTORY_SEPARATOR,
 			dirname( $class_realpath ) . DIRECTORY_SEPARATOR . strtolower( pathinfo( $class_realpath, PATHINFO_FILENAME ) ) . DIRECTORY_SEPARATOR,
-		);
+		];
 
 		foreach ( $driver_paths as $driver_path )
 		{
@@ -241,6 +241,11 @@ abstract class LibraryInterface extends Glob
 
 	// ------------------------------------------------------------------------
 
+	final public function addError( $code, $message )
+	{
+		$this->_errors[ $code ] = $message;
+	}
+
 	/**
 	 * Throw Error
 	 *
@@ -250,7 +255,7 @@ abstract class LibraryInterface extends Glob
 	 * @access  public
 	 * @return  bool
 	 */
-	final public function setError( $error, $code = 0, $vars = array(), $class_name = NULL )
+	final public function throwError( $error, $code = 0, $vars = [ ], $class_name = NULL )
 	{
 		if ( isset( $class_name ) )
 		{

@@ -90,7 +90,7 @@ class Driver extends DriverInterface
 	 *
 	 * @type    array
 	 */
-	protected $_random_keywords = array( 'RND()', 'RND(%d)' );
+	protected $_random_keywords = [ 'RND()', 'RND(%d)' ];
 
 	// --------------------------------------------------------------------
 
@@ -171,7 +171,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _listTablesStatement($prefix_limit = FALSE )
+	protected function _listTablesStatement( $prefix_limit = FALSE )
 	{
 		$sql = "SELECT table_name FROM information_schema.tables WHERE table_schema = '" . $this->schema . "'";
 
@@ -195,7 +195,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _listColumnsStatement($table = '' )
+	protected function _listColumnsStatement( $table = '' )
 	{
 		return 'SELECT column_name FROM information_schema.columns WHERE table_name = ' . $this->escape( $table );
 	}
@@ -212,10 +212,10 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _updateStatement($table, $values )
+	protected function _updateStatement( $table, $values )
 	{
-		$this->qb_limit = FALSE;
-		$this->qb_orderby = array();
+		$this->qb_limit   = FALSE;
+		$this->qb_orderby = [ ];
 
 		return parent::_updateStatement( $table, $values );
 	}
@@ -234,7 +234,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _truncateStatement($table )
+	protected function _truncateStatement( $table )
 	{
 		return 'DELETE FROM ' . $table;
 	}

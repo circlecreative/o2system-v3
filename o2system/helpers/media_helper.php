@@ -26,13 +26,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  *
- * @package		O2System
- * @author		Circle Creative Dev Team
- * @copyright	Copyright (c) 2005 - 2015, .
- * @license		http://circle-creative.com/products/o2system-codeigniter/license.html
- * @license	    http://opensource.org/licenses/MIT	MIT License
- * @link		http://circle-creative.com/products/o2system-codeigniter.html
- * @since		Version 2.0
+ * @package        O2System
+ * @author         Circle Creative Dev Team
+ * @copyright      Copyright (c) 2005 - 2015, .
+ * @license        http://circle-creative.com/products/o2system-codeigniter/license.html
+ * @license        http://opensource.org/licenses/MIT	MIT License
+ * @link           http://circle-creative.com/products/o2system-codeigniter.html
+ * @since          Version 2.0
  * @filesource
  */
 // ------------------------------------------------------------------------
@@ -63,35 +63,35 @@ defined( 'ROOTPATH' ) OR exit( 'No direct script access allowed' );
  *
  * @return    string
  */
-if( ! function_exists( 'player_media' ) )
+if ( ! function_exists( 'player_media' ) )
 {
-    function player_media( $filename, $path = '', $properties )
-    {
-        $system = &O2System::instance();
-        $system->load->helper( array( 'string', 'assets' ) );
+	function player_media( $filename, $path = '', $properties )
+	{
+		$system = &O2System::instance();
+		$system->load->helper( [ 'string', 'assets' ] );
 
-        assets_jquery( array( 'vplayer', 'swfobject' ), 'media-player' );
+		assets_jquery( [ 'vplayer', 'swfobject' ], 'media-player' );
 
-        $id = random_string( 'alnum', 8 );
-        $id = strtolower( $id );
-        $info = pathinfo( $filename );
-        $type = strtolower( $info[ 'extension' ] );
-        $folder = ( $path == '' ? $type : $path );
-        $allowed_media = array(
-            'mp3',
-            'wav',
-            'flv',
-            'mov',
-            'mp4',
-            'wmv',
-            'avi'
-        );
-        if( in_array( $type, $allowed_media ) )
-        {
-            switch( $type )
-            {
-                case 'flv' :
-                    $media = '
+		$id            = random_string( 'alnum', 8 );
+		$id            = strtolower( $id );
+		$info          = pathinfo( $filename );
+		$type          = strtolower( $info[ 'extension' ] );
+		$folder        = ( $path == '' ? $type : $path );
+		$allowed_media = [
+			'mp3',
+			'wav',
+			'flv',
+			'mov',
+			'mp4',
+			'wmv',
+			'avi',
+		];
+		if ( in_array( $type, $allowed_media ) )
+		{
+			switch ( $type )
+			{
+				case 'flv' :
+					$media = '
 					<!-- FLV Player :: START -->
 
 					<object id="player" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" name="player" width="' . $properties[ 'width' ] . '" height="' . $properties[ 'height' ] . '">
@@ -113,11 +113,11 @@ if( ! function_exists( 'player_media' ) )
 					</object>
 
 					<!-- FLV Player :: END -->';
-                    break;
-                case 'wmv' :
-                case 'mp4' :
-                case 'avi' :
-                    $media = '
+					break;
+				case 'wmv' :
+				case 'mp4' :
+				case 'avi' :
+					$media = '
 					<!-- Media Player :: START -->
 
 					<object id=\'mediaPlayer\' width="' . $properties[ 'width' ] . '" height="' . $properties[ 'height' ] . '"
@@ -142,9 +142,9 @@ if( ! function_exists( 'player_media' ) )
 					</object>
 
 					<!-- Media Player :: END -->';
-                    break;
-                case 'mov' :
-                    $media = '
+					break;
+				case 'mov' :
+					$media = '
 					<object classid="clsid:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B" codebase="http://www.apple.com/qtactivex/qtplugin.cab" height="' . $properties[ 'height' ] . '" width="' . $properties[ 'width' ] . '">
 
 					<param name="src" value="' . media_url() . $type . '/' . $filename . '">
@@ -155,107 +155,107 @@ if( ! function_exists( 'player_media' ) )
 
 					</object>
 					';
-                    break;
-            }
+					break;
+			}
 
-            return $media;
-        }
-        else
-        {
-            return 'Unrecognized Media Type';
-        }
-    }
+			return $media;
+		}
+		else
+		{
+			return 'Unrecognized Media Type';
+		}
+	}
 }
 
 // ------------------------------------------------------------------------
 
-if( ! function_exists( 'url_media' ) )
+if ( ! function_exists( 'url_media' ) )
 {
-    /**
-     * Media
-     *
-     * View Media
-     *
-     * @access    public
-     *
-     * @param    string
-     *
-     * @return    string
-     */
-    function url_media( $url, $properties )
-    {
-        $system =& O2System::instance();
-        $system->load->helper( 'string' );
-        $system->load->helper( 'assets' );
-        $id = random_string( 'alnum', 8 );
-        $id = strtolower( $id );
-        if( preg_match( '/\byoutube\b/i', $url ) )
-        {
-            $type = 'youtube';
-            $query = parse_url( $url, PHP_URL_QUERY );
-            $query = parse_url( $url, PHP_URL_QUERY );
-            parse_str( $query, $query );
-            $video = 'http://www.youtube.com/v/' . $query[ 'v' ] . '?fs=1&amp;hl=en_US';
-        }
-        elseif( preg_match( '/\bmetacafe\b/i', $url ) )
-        {
-            $type = 'metacafe';
-            $query = parse_url( $url, PHP_URL_PATH );
-            $query = str_replace( '/watch/', '', $query );
-            $query = explode( '/', $query, 2 );
-            $video = 'http://www.metacafe.com/fplayer/' . reset( $query ) . '/' . str_replace( '/', '', end( $query ) ) . '.swf';
-        }
-        elseif( preg_match( '/\bvimeo\b/i', $url ) )
-        {
-            $type = 'vimeo';
-            $query = parse_url( $url, PHP_URL_PATH );
-            $video = str_replace( '/', '', $query );
-        }
-        elseif( preg_match( '/\bfacebook\b/i', $url ) )
-        {
-            $type = 'facebook-video';
-            $query = parse_url( $url, PHP_URL_QUERY );
-            parse_str( $query, $query );
-            $video = 'http://www.facebook.com/v/' . $query[ 'v' ];
-        }
-        elseif( preg_match( '/\bgoogle\b/i', $url ) )
-        {
-            $type = 'google-video';
-            $query = parse_url( $url, PHP_URL_QUERY );
-            parse_str( $query, $query );
-            $video = 'http://video.google.com/googleplayer.swf?docId=' . $query[ 'docid' ] . '&hl=en';
-        }
-        elseif( preg_match( '/\byahoo\b/i', $url ) )
-        {
-            $type = 'yahoo-video';
-            $query = parse_url( $url, PHP_URL_PATH );
-            $query = str_replace( '/watch/', '', $query );
-            $query = explode( '/', $query, 2 );
-            $video[ 'id' ] = end( $query );
-            $video[ 'vid' ] = reset( $query );
-        }
-        elseif( preg_match( '/\bmyspace\b/i', $url ) )
-        {
-            $type = 'myspace-video';
-            $query = parse_url( $url, PHP_URL_PATH );
-            $query = str_replace( '/video/vid/', '', $query );
-            $video = str_replace( '/', '', $query );
-        }
-        $allowed_media = array(
-            'youtube',
-            'metacafe',
-            'vimeo',
-            'facebook-video',
-            'google-video',
-            'yahoo-video',
-            'myspace-video'
-        );
-        if( in_array( $type, $allowed_media ) )
-        {
-            switch( $type )
-            {
-                case 'youtube' :
-                    $media = '
+	/**
+	 * Media
+	 *
+	 * View Media
+	 *
+	 * @access    public
+	 *
+	 * @param    string
+	 *
+	 * @return    string
+	 */
+	function url_media( $url, $properties )
+	{
+		$system =& O2System::instance();
+		$system->load->helper( 'string' );
+		$system->load->helper( 'assets' );
+		$id = random_string( 'alnum', 8 );
+		$id = strtolower( $id );
+		if ( preg_match( '/\byoutube\b/i', $url ) )
+		{
+			$type  = 'youtube';
+			$query = parse_url( $url, PHP_URL_QUERY );
+			$query = parse_url( $url, PHP_URL_QUERY );
+			parse_str( $query, $query );
+			$video = 'http://www.youtube.com/v/' . $query[ 'v' ] . '?fs=1&amp;hl=en_US';
+		}
+		elseif ( preg_match( '/\bmetacafe\b/i', $url ) )
+		{
+			$type  = 'metacafe';
+			$query = parse_url( $url, PHP_URL_PATH );
+			$query = str_replace( '/watch/', '', $query );
+			$query = explode( '/', $query, 2 );
+			$video = 'http://www.metacafe.com/fplayer/' . reset( $query ) . '/' . str_replace( '/', '', end( $query ) ) . '.swf';
+		}
+		elseif ( preg_match( '/\bvimeo\b/i', $url ) )
+		{
+			$type  = 'vimeo';
+			$query = parse_url( $url, PHP_URL_PATH );
+			$video = str_replace( '/', '', $query );
+		}
+		elseif ( preg_match( '/\bfacebook\b/i', $url ) )
+		{
+			$type  = 'facebook-video';
+			$query = parse_url( $url, PHP_URL_QUERY );
+			parse_str( $query, $query );
+			$video = 'http://www.facebook.com/v/' . $query[ 'v' ];
+		}
+		elseif ( preg_match( '/\bgoogle\b/i', $url ) )
+		{
+			$type  = 'google-video';
+			$query = parse_url( $url, PHP_URL_QUERY );
+			parse_str( $query, $query );
+			$video = 'http://video.google.com/googleplayer.swf?docId=' . $query[ 'docid' ] . '&hl=en';
+		}
+		elseif ( preg_match( '/\byahoo\b/i', $url ) )
+		{
+			$type           = 'yahoo-video';
+			$query          = parse_url( $url, PHP_URL_PATH );
+			$query          = str_replace( '/watch/', '', $query );
+			$query          = explode( '/', $query, 2 );
+			$video[ 'id' ]  = end( $query );
+			$video[ 'vid' ] = reset( $query );
+		}
+		elseif ( preg_match( '/\bmyspace\b/i', $url ) )
+		{
+			$type  = 'myspace-video';
+			$query = parse_url( $url, PHP_URL_PATH );
+			$query = str_replace( '/video/vid/', '', $query );
+			$video = str_replace( '/', '', $query );
+		}
+		$allowed_media = [
+			'youtube',
+			'metacafe',
+			'vimeo',
+			'facebook-video',
+			'google-video',
+			'yahoo-video',
+			'myspace-video',
+		];
+		if ( in_array( $type, $allowed_media ) )
+		{
+			switch ( $type )
+			{
+				case 'youtube' :
+					$media = '
 					<!-- Youtube Player :: START -->
 					<object width="' . $properties[ 'width' ] . '" height="' . $properties[ 'height' ] . '">
 						<param name="movie" value="' . $video . '"></param>
@@ -263,9 +263,9 @@ if( ! function_exists( 'url_media' ) )
 						<embed src="' . $video . '" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="' . $properties[ 'width' ] . '" height="' . $properties[ 'height' ] . '"></embed>
 					</object>
 					<!-- Youtube Player :: END -->';
-                    break;
-                case 'vimeo' :
-                    $media = '
+					break;
+				case 'vimeo' :
+					$media = '
 					<!-- Vimeo Player :: START -->
 					<object width="' . $properties[ 'width' ] . '" height="' . $properties[ 'height' ] . '">
 						<param name="allowfullscreen" value="true" />
@@ -273,21 +273,21 @@ if( ! function_exists( 'url_media' ) )
 						<param name="movie" value="http://vimeo.com/moogaloop.swf?clip_id=' . $video . '&amp;server=vimeo.com&amp;show_title=1&amp;show_byline=1&amp;show_portrait=0&amp;color=&amp;fullscreen=1" />
 
 						<embed src="http://vimeo.com/moogaloop.swf?clip_id=' . $video . '&amp;server=vimeo.com&amp;show_title=1&amp;show_byline=1&amp;show_portrait=0&amp;color=&amp;fullscreen=1" type="application/x-shockwave-flash" allowfullscreen="true" allowscriptaccess="always" width="' .
-                             $properties[ 'width' ] . '" height="' . $properties[ 'height' ] . '">
+						$properties[ 'width' ] . '" height="' . $properties[ 'height' ] . '">
 						</embed>
 					</object>
 					<!-- Vimeo Player :: END -->';
-                    break;
-                case 'metacafe' :
-                    $media = '
+					break;
+				case 'metacafe' :
+					$media = '
 					<!-- Metacafe Player :: START -->
 					<embed src="' . $video . '" width="' . $properties[ 'width' ] . '" height="' . $properties[ 'height' ] .
-                             '" wmode="transparent" pluginspage="http://www.macromedia.com/go/getflashplayer" type="application/x-shockwave-flash" allowFullScreen="true" allowScriptAccess="always" name="' . $id . '"></embed>
+						'" wmode="transparent" pluginspage="http://www.macromedia.com/go/getflashplayer" type="application/x-shockwave-flash" allowFullScreen="true" allowScriptAccess="always" name="' . $id . '"></embed>
 					<!-- Metacafe Player :: END -->
 					';
-                    break;
-                case 'facebook-video' :
-                    $media = '
+					break;
+				case 'facebook-video' :
+					$media = '
 					<!-- Facebook Video Player :: START -->
 					<object width="' . $properties[ 'width' ] . '" height="' . $properties[ 'height' ] . '" >
 						<param name="allowfullscreen" value="true" />
@@ -299,17 +299,17 @@ if( ! function_exists( 'url_media' ) )
 					</object>
 					<!-- Facebook Video Player :: END -->
 					';
-                    break;
-                case 'google-video' :
-                    $media = '
+					break;
+				case 'google-video' :
+					$media = '
 					<!-- Google Video Player :: START -->
 					<embed style="width:' . $properties[ 'width' ] . 'px; height:' . $properties[ 'height' ] . 'px;" id="VideoPlayback" type="application/x-shockwave-flash"
 					src="' . $video . '"></embed>
 					<!-- Google Video Player :: END -->
 					';
-                    break;
-                case 'yahoo-video' :
-                    $media = '
+					break;
+				case 'yahoo-video' :
+					$media = '
 					<!-- Yahoo! Video Player :: START -->
 					<object width="' . $properties[ 'width' ] . '" height="' . $properties[ 'height' ] . '">
 						<param name="movie" value="http://d.yimg.com/static.video.yahoo.com/yep/YV_YEP.swf?ver=2.2.46" />
@@ -317,13 +317,13 @@ if( ! function_exists( 'url_media' ) )
 						<param name="bgcolor" value="#000000" />
 						<param name="flashVars" value="id=' . $video[ 'id' ] . '&vid=' . $video[ 'vid' ] . '&lang=en-us&intl=us&thumbUrl=&embed=1" />
 						<embed src="http://d.yimg.com/static.video.yahoo.com/yep/YV_YEP.swf?ver=2.2.46" type="application/x-shockwave-flash" width="' . $properties[ 'width' ] . '" height="' . $properties[ 'height' ] . '" allowFullScreen="true" AllowScriptAccess="always" bgcolor="#000000" flashVars="id=' . $video[ 'id' ] .
-                             '&vid=' . $video[ 'vid' ] . '&lang=en-us&intl=us&thumbUrl=&embed=1" ></embed>
+						'&vid=' . $video[ 'vid' ] . '&lang=en-us&intl=us&thumbUrl=&embed=1" ></embed>
 					</object>
 					<!-- Yahoo! Video Player :: END -->
 					';
-                    break;
-                case 'myspace-video' :
-                    $media = '
+					break;
+				case 'myspace-video' :
+					$media = '
 					<!-- MySpace Video Player :: START -->
 					<object width="' . $properties[ 'width' ] . '" height="' . $properties[ 'height' ] . '" >
 						<param name="allowScriptAccess" value="always"/>
@@ -334,46 +334,46 @@ if( ! function_exists( 'url_media' ) )
 					</object>
 					<!-- MySpace Video Player :: END -->
 					';
-                    break;
-            }
+					break;
+			}
 
-            return $media;
-        }
-        else
-        {
-            return 'Unrecognized Media URL';
-        }
-    }
+			return $media;
+		}
+		else
+		{
+			return 'Unrecognized Media URL';
+		}
+	}
 }
 
 // ------------------------------------------------------------------------
 
-if( ! function_exists( 'embed_media' ) )
+if ( ! function_exists( 'embed_media' ) )
 {
-    /**
-     * Media
-     *
-     * View Media
-     *
-     * @param    string
-     *
-     * @return    string
-     */
-    function embed_media( $script, $properties )
-    {
-        $pattern = array(
-            '~(width=")(\d+)"~',
-            '~(height=")(\d+)"~',
-            '~(width:)(0-9)(px;)~',
-            '~(height:)(0-9)(px;)~'
-        );
-        $replace = array(
-            'width="' . $properties[ 'width' ] . '"',
-            'height="' . $properties[ 'height' ] . '"',
-            'width: ' . $properties[ 'width' ] . 'px;',
-            'height: ' . $properties[ 'height' ] . 'px;'
-        );
+	/**
+	 * Media
+	 *
+	 * View Media
+	 *
+	 * @param    string
+	 *
+	 * @return    string
+	 */
+	function embed_media( $script, $properties )
+	{
+		$pattern = [
+			'~(width=")(\d+)"~',
+			'~(height=")(\d+)"~',
+			'~(width:)(0-9)(px;)~',
+			'~(height:)(0-9)(px;)~',
+		];
+		$replace = [
+			'width="' . $properties[ 'width' ] . '"',
+			'height="' . $properties[ 'height' ] . '"',
+			'width: ' . $properties[ 'width' ] . 'px;',
+			'height: ' . $properties[ 'height' ] . 'px;',
+		];
 
-        return preg_replace( $pattern, $replace, $script );
-    }
+		return preg_replace( $pattern, $replace, $script );
+	}
 }

@@ -66,7 +66,7 @@ class Smarty extends Driver
 	 *
 	 * @type array
 	 */
-	public $extensions = array( '.php', '.html', '.tpl' );
+	public $extensions = [ '.php', '.html', '.tpl' ];
 
 	/**
 	 * Static Engine Object
@@ -87,7 +87,7 @@ class Smarty extends Driver
 	 * @throws \O2System\Parser\Exception
 	 * @access  public
 	 */
-	public function setup( $settings = array() )
+	public function setup( $settings = [ ] )
 	{
 		if ( ! class_exists( 'Smarty' ) )
 		{
@@ -103,7 +103,7 @@ class Smarty extends Driver
 
 		if ( isset( $settings[ 'cache' ] ) )
 		{
-			$cache_path = $settings[ 'cache' ] . DIRECTORY_SEPARATOR . 'smarty' . DIRECTORY_SEPARATOR;
+			$cache_path    = $settings[ 'cache' ] . DIRECTORY_SEPARATOR . 'smarty' . DIRECTORY_SEPARATOR;
 			$compiler_path = $settings[ 'cache' ] . DIRECTORY_SEPARATOR . 'smarty' . DIRECTORY_SEPARATOR . 'compiler' . DIRECTORY_SEPARATOR;
 
 			static::$_engine->setCompileDir( $cache_path );
@@ -156,9 +156,12 @@ class Smarty extends Driver
 	 * @access  public
 	 * @return  string  Parse Output Result
 	 */
-	public function parseString($string, $vars = array() )
+	public function parseString( $string, $vars = [ ] )
 	{
-		if ( ! is_string( $string ) ) return '';
+		if ( ! is_string( $string ) )
+		{
+			return '';
+		}
 
 		foreach ( $vars as $_assign_key => $_assign_value )
 		{

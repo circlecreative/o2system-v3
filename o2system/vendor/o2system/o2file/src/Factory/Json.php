@@ -57,154 +57,154 @@ use O2System\File;
  */
 class Json
 {
-    /**
-     * Read File
-     *
-     * @access public
-     *
-     * @param string $filename Filename with realpath
-     * @param string $return   Type of return array or object
-     *
-     * @return mixed
-     */
-    public function read( $filename, $return = 'array' )
-    {
-        if( is_file( $filename ) )
-        {
-            $content = File::read( $filename );
+	/**
+	 * Read File
+	 *
+	 * @access public
+	 *
+	 * @param string $filename Filename with realpath
+	 * @param string $return   Type of return array or object
+	 *
+	 * @return mixed
+	 */
+	public function read( $filename, $return = 'array' )
+	{
+		if ( is_file( $filename ) )
+		{
+			$content = File::read( $filename );
 
-            if( ! empty( $content ) )
-            {
-                $result = json_decode( $content );
-            }
+			if ( ! empty( $content ) )
+			{
+				$result = json_decode( $content );
+			}
 
-            if( json_last_error() === JSON_ERROR_NONE )
-            {
-                if( $return === 'array' )
-                {
-                    return (array)$result;
-                }
-                elseif( $return === 'object' )
-                {
-                    if( is_array( $result ) )
-                    {
-                        return (object)$result;
-                    }
-                    elseif( is_object( $result ) )
-                    {
-                        return $result;
-                    }
-                }
-            }
-        }
+			if ( json_last_error() === JSON_ERROR_NONE )
+			{
+				if ( $return === 'array' )
+				{
+					return (array) $result;
+				}
+				elseif ( $return === 'object' )
+				{
+					if ( is_array( $result ) )
+					{
+						return (object) $result;
+					}
+					elseif ( is_object( $result ) )
+					{
+						return $result;
+					}
+				}
+			}
+		}
 
-        return NULL;
-    }
+		return NULL;
+	}
 
-    // ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
 
-    /**
-     * Write File
-     *
-     * @access  public
-     *
-     * @param string $filename Filename
-     * @param array  $data     List of data
-     */
-    public function write( $filename, $data )
-    {
-        if( ! empty( $data ) )
-        {
-            if( is_object( $data ) OR is_array( $data ) )
-            {
-                $content = self::_factory( json_encode( $data ) );
+	/**
+	 * Write File
+	 *
+	 * @access  public
+	 *
+	 * @param string $filename Filename
+	 * @param array  $data     List of data
+	 */
+	public function write( $filename, $data )
+	{
+		if ( ! empty( $data ) )
+		{
+			if ( is_object( $data ) OR is_array( $data ) )
+			{
+				$content = self::_factory( json_encode( $data ) );
 
-                File::write( $filename, $content );
-            }
-        }
-    }
+				File::write( $filename, $content );
+			}
+		}
+	}
 
-    // ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
 
-    /**
-     * File writer factory
-     *
-     * @access  protected
-     *
-     * @param string $json Json encode string
-     *
-     * @return string
-     */
-    protected static function _factory( $json )
-    {
-        $result = '';
-        $level = 0;
-        $in_quotes = FALSE;
-        $in_escape = FALSE;
-        $ends_line_level = NULL;
-        $json_length = strlen( $json );
+	/**
+	 * File writer factory
+	 *
+	 * @access  protected
+	 *
+	 * @param string $json Json encode string
+	 *
+	 * @return string
+	 */
+	protected static function _factory( $json )
+	{
+		$result          = '';
+		$level           = 0;
+		$in_quotes       = FALSE;
+		$in_escape       = FALSE;
+		$ends_line_level = NULL;
+		$json_length     = strlen( $json );
 
-        for( $i = 0; $i < $json_length; $i++ )
-        {
-            $char = $json[ $i ];
-            $new_line_level = NULL;
-            $post = "";
-            if( $ends_line_level !== NULL )
-            {
-                $new_line_level = $ends_line_level;
-                $ends_line_level = NULL;
-            }
-            if( $in_escape )
-            {
-                $in_escape = FALSE;
-            }
-            else if( $char === '"' )
-            {
-                $in_quotes = ! $in_quotes;
-            }
-            else if( ! $in_quotes )
-            {
-                switch( $char )
-                {
-                    case '}':
-                    case ']':
-                        $level--;
-                        $ends_line_level = NULL;
-                        $new_line_level = $level;
-                        break;
+		for ( $i = 0; $i < $json_length; $i++ )
+		{
+			$char           = $json[ $i ];
+			$new_line_level = NULL;
+			$post           = "";
+			if ( $ends_line_level !== NULL )
+			{
+				$new_line_level  = $ends_line_level;
+				$ends_line_level = NULL;
+			}
+			if ( $in_escape )
+			{
+				$in_escape = FALSE;
+			}
+			else if ( $char === '"' )
+			{
+				$in_quotes = ! $in_quotes;
+			}
+			else if ( ! $in_quotes )
+			{
+				switch ( $char )
+				{
+					case '}':
+					case ']':
+						$level--;
+						$ends_line_level = NULL;
+						$new_line_level  = $level;
+						break;
 
-                    case '{':
-                    case '[':
-                        $level++;
-                    case ',':
-                        $ends_line_level = $level;
-                        break;
+					case '{':
+					case '[':
+						$level++;
+					case ',':
+						$ends_line_level = $level;
+						break;
 
-                    case ':':
-                        $post = " ";
-                        break;
+					case ':':
+						$post = " ";
+						break;
 
-                    case " ":
-                    case "\t":
-                    case "\n":
-                    case "\r":
-                        $char = "";
-                        $ends_line_level = $new_line_level;
-                        $new_line_level = NULL;
-                        break;
-                }
-            }
-            else if( $char === '\\' )
-            {
-                $in_escape = TRUE;
-            }
-            if( $new_line_level !== NULL )
-            {
-                $result .= "\n" . str_repeat( "\t", $new_line_level );
-            }
-            $result .= $char . $post;
-        }
+					case " ":
+					case "\t":
+					case "\n":
+					case "\r":
+						$char            = "";
+						$ends_line_level = $new_line_level;
+						$new_line_level  = NULL;
+						break;
+				}
+			}
+			else if ( $char === '\\' )
+			{
+				$in_escape = TRUE;
+			}
+			if ( $new_line_level !== NULL )
+			{
+				$result .= "\n" . str_repeat( "\t", $new_line_level );
+			}
+			$result .= $char . $post;
+		}
 
-        return $result;
-    }
+		return $result;
+	}
 }

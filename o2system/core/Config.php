@@ -39,6 +39,9 @@
 // ------------------------------------------------------------------------
 
 namespace O2System;
+
+use O2System\Metadata\Domain;
+
 defined( 'ROOTPATH' ) || exit( 'No direct script access allowed' );
 
 // ------------------------------------------------------------------------
@@ -62,7 +65,7 @@ final class Config extends Glob\ArrayObject
 	 * @access  protected
 	 * @type array
 	 */
-	protected $_is_loaded = array();
+	protected $_is_loaded = [ ];
 
 	/**
 	 * Glob Class Constructor
@@ -191,96 +194,19 @@ final class Config extends Glob\ArrayObject
 	 *
 	 * @return    string
 	 */
-	public function baseURL( $uri = NULL, $suffix = NULL, $protocol = NULL )
+	public function baseUrl( $uri = NULL, $suffix = NULL, $query = [ ] )
 	{
-		// Set the base_url automatically if none was provided
-		if ( $this->offsetExists( 'domain' ) )
-		{
-			$domain = $this->offsetGet( 'domain' );
-		}
-
-		if ( empty( $domain ) )
-		{
-			if ( \O2System::$active->offsetExists( 'domain' ) )
-			{
-				$domain = \O2System::$active->offsetGet( 'domain' );
-			}
-		}
-
-		if ( \O2System::$active->offsetExists( 'sub_domain' ) )
-		{
-			$sub_domain = \O2System::$active->offsetGet( 'sub_domain' );
-
-			if ( ! empty( $sub_domain ) )
-			{
-				$domain = $sub_domain . '.' . str_replace( 'www.', '', $domain );
-			}
-		}
-
 		$base_url = $this->offsetGet( 'base_url' );
 
 		if ( empty( $base_url ) )
 		{
-			$base_url = is_https() ? 'https' : 'http';
-			$base_url .= '://' . ( isset( $domain ) ? $domain : '' );
-
-			// Add server port if needed
-			if ( isset( $_SERVER[ 'SERVER_PORT' ] ) )
-			{
-				$base_url .= $_SERVER[ 'SERVER_PORT' ] !== '80' ? ':' . $_SERVER[ 'SERVER_PORT' ] : '';
-			}
-
-			// Add base path
-			if ( ! is_cli() )
-			{
-				$base_url .= dirname( $_SERVER[ 'SCRIPT_NAME' ] );
-			}
-			$base_url = str_replace( DIRECTORY_SEPARATOR, '/', $base_url );
-			$base_url = trim( $base_url, '/' ) . '/';
+			$base_url = \O2System::$active[ 'domain' ];
 		}
-
-		if ( isset( $uri ) )
+		else
 		{
-			$uri = is_array( $uri ) ? implode( '/', $uri ) : $uri;
-			$base_url = $base_url . trim( $uri, '/' );
+			$base_url = new Domain( parse_domain( $base_url )->__toArray() );
 		}
 
-		if ( isset( $suffix ) )
-		{
-			if ( is_bool( $suffix ) )
-			{
-				$URI = $this->offsetGet( 'URI' );
-				$suffix = ( empty( $URI[ 'suffix' ] ) ) ? '' : $URI[ 'suffix' ];
-
-				$base_url = rtrim( $base_url, $suffix );
-			}
-			elseif ( is_array( $suffix ) )
-			{
-				$http_query = (array) $_GET;
-				$http_query = array_diff($suffix, $http_query);
-
-				$suffix = array_merge( $suffix, $http_query );
-				$suffix = array_unique( $suffix );
-
-				$suffix = '/?' . http_build_query( $suffix );
-			}
-		}
-
-		if ( ! empty( $base_url ) )
-		{
-			$extension = pathinfo( $base_url, PATHINFO_EXTENSION );
-
-			if ( empty( $extension ) )
-			{
-				$base_url = $base_url . $suffix;
-			}
-		}
-
-		if ( isset( $protocol ) )
-		{
-			$base_url = $protocol . substr( $base_url, strpos( $base_url, '://' ) );
-		}
-
-		return $base_url;
+		return $base_url->url( $uri, $query );
 	}
 }

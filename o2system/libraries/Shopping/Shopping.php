@@ -62,11 +62,11 @@ class Shopping extends LibraryInterface
 	 *
 	 * @access  public
 	 */
-	public function __reconstruct( array $config = array() )
+	public function __reconstruct( array $config = [ ] )
 	{
 		if ( empty( $_SESSION[ 'shopping_cart' ] ) )
 		{
-			$_SESSION[ 'shopping_cart' ] = array();
+			$_SESSION[ 'shopping_cart' ] = [ ];
 		}
 
 		parent::__reconstruct( $config );

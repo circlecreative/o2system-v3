@@ -44,7 +44,7 @@ defined( 'ROOTPATH' ) || exit( 'No direct script access allowed' );
 
 class Widget extends \O2System\Template\Metadata\Widget
 {
-	public function __construct( $data = array() )
+	public function __construct( $data = [ ] )
 	{
 		parent::__construct( (array) $data );
 	}

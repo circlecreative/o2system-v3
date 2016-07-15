@@ -73,12 +73,13 @@ class Registry extends Command
 	{
 		$this->setName( 'registry' )
 			->setDescription( 'Registry manager console commands' )
-			->addArgument( 'action',
-			               InputArgument::REQUIRED,
-			               'Avaliable action: ' . PHP_EOL .
-			               '1. flush : Flushing your applications registry.' . PHP_EOL .
-			               '2. fetch : Fetch your applications registry.' . PHP_EOL .
-			               '3. info  : Your applications registry info metadata.'
+			->addArgument(
+				'action',
+				InputArgument::REQUIRED,
+				'Avaliable action: ' . PHP_EOL .
+				'1. flush : Flushing your applications registry.' . PHP_EOL .
+				'2. fetch : Fetch your applications registry.' . PHP_EOL .
+				'3. info  : Your applications registry info metadata.'
 			);
 	}
 
@@ -153,7 +154,7 @@ class Registry extends Command
 
 			case 'update':
 
-				$helper = $this->getHelper( 'question' );
+				$helper   = $this->getHelper( 'question' );
 				$question = new ConfirmationQuestion( ' ::: [ CONFIRM ] ' . \O2System::$language->line( 'REGISTRY_CONFIRM_UPDATEREGISTRIES' ) . ' ', FALSE );
 
 				if ( $helper->ask( $input, $output, $question ) )

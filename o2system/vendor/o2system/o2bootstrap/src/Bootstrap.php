@@ -57,7 +57,7 @@ namespace O2System
 		 *
 		 * @access    protected
 		 */
-		protected $_valid_factories = array();
+		protected $_valid_factories = [ ];
 
 		// ------------------------------------------------------------------------
 
@@ -99,13 +99,13 @@ namespace O2System
 		 *
 		 * @return mixed
 		 */
-		public function __call( $factory, $args = array() )
+		public function __call( $factory, $args = [ ] )
 		{
 			if ( array_key_exists( $factory, $this->_valid_factories ) )
 			{
 				$factory =& $this->_loadFactory( $factory );
 
-				return call_user_func_array( array( $factory, 'build' ), $args );
+				return call_user_func_array( [ $factory, 'build' ], $args );
 			}
 		}
 
@@ -120,7 +120,7 @@ namespace O2System
 		 *
 		 * @return    object    Driver class
 		 */
-		protected function &_loadFactory($factory )
+		protected function &_loadFactory( $factory )
 		{
 			if ( empty( $this->{$factory} ) )
 			{
@@ -144,6 +144,7 @@ namespace O2System
 
 namespace O2System\Bootstrap
 {
+
 	use O2System\Glob\Interfaces\ExceptionInterface;
 
 	/**

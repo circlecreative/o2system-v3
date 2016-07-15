@@ -44,6 +44,7 @@ defined( 'ROOTPATH' ) OR exit( 'No direct script access allowed' );
 
 use O2System\Glob\ArrayIterator;
 use O2System\Glob\ArrayObject;
+use O2System\Metadata\Domain;
 use O2System\Metadata\URI;
 
 /**
@@ -69,7 +70,7 @@ final class Registry extends ArrayObject
 	 * @access  protected
 	 * @type    array
 	 */
-	public static $package_types = array(
+	public static $package_types = [
 		'app'       => 'apps',
 		'module'    => 'modules',
 		'component' => 'components',
@@ -77,7 +78,7 @@ final class Registry extends ArrayObject
 		'widget'    => 'widgets',
 		'theme'     => 'themes',
 		'language'  => 'languages',
-	);
+	];
 
 	// ------------------------------------------------------------------------
 
@@ -268,17 +269,17 @@ final class Registry extends ArrayObject
 			// Sort the properties by keys
 			ksort( $properties );
 
-			$this->__sendMessage( 'REGISTRY_INFO_COUNTFETCHINGPROPERTIES', 'INFO', array( count( $properties ) ) );
+			$this->__sendMessage( 'REGISTRY_INFO_COUNTFETCHINGPROPERTIES', 'INFO', [ count( $properties ) ] );
 
 			foreach ( $properties as $property )
 			{
 				$path_info = pathinfo( $property );
 
-				$this->__sendMessage( 'REGISTRY_INFO_DIRECTORYFETCHINGPROPERTIES', 'INFO', array( str_replace( ROOTPATH, '', $property ) ) );
+				$this->__sendMessage( 'REGISTRY_INFO_DIRECTORYFETCHINGPROPERTIES', 'INFO', [ str_replace( ROOTPATH, '', $property ) ] );
 
 				$metadata = file_get_contents( $property );
 
-				$this->__sendMessage( 'REGISTRY_INFO_DECODINGPROPERTIES', 'INFO', array( str_replace( ROOTPATH, '', $property ) ) );
+				$this->__sendMessage( 'REGISTRY_INFO_DECODINGPROPERTIES', 'INFO', [ str_replace( ROOTPATH, '', $property ) ] );
 
 				$metadata = json_decode( $metadata, TRUE );
 
@@ -287,12 +288,12 @@ final class Registry extends ArrayObject
 					// Filter realpath
 					if ( $path_info[ 'dirname' ] === substr( APPSPATH, 0, -1 ) )
 					{
-						$realpath = DIR_APPLICATIONS . DIRECTORY_SEPARATOR;
-						$parameter = NULL;
-						$segments = NULL;
+						$realpath        = DIR_APPLICATIONS . DIRECTORY_SEPARATOR;
+						$parameter       = NULL;
+						$segments        = NULL;
 						$parent_segments = NULL;
-						$checksum = md5( $path_info[ 'dirname' ] );
-						$code = strtoupper( substr( $checksum, 2, 7 ) );
+						$checksum        = md5( $path_info[ 'dirname' ] );
+						$code            = strtoupper( substr( $checksum, 2, 7 ) );
 					}
 					else
 					{
@@ -301,7 +302,7 @@ final class Registry extends ArrayObject
 						$x_realpath = explode( DIRECTORY_SEPARATOR, str_replace( [ APPSPATH, SYSTEMPATH ], '', $path_info[ 'dirname' ] ) );
 						$x_realpath = array_diff( $x_realpath, array_values( static::$package_types ) );
 
-						$parameter = end( $x_realpath );
+						$parameter       = end( $x_realpath );
 						$parent_segments = implode( '/', array_slice( $x_realpath, 0, 1 ) );
 
 						if ( $parent_segments === $parameter )
@@ -311,36 +312,37 @@ final class Registry extends ArrayObject
 
 						$segments = implode( '/', $x_realpath );
 						$checksum = md5( $segments );
-						$code = strtoupper( substr( $checksum, 2, 7 ) );
+						$code     = strtoupper( substr( $checksum, 2, 7 ) );
 					}
 
-					$metadata = array_merge( array(
-						                         'type'            => strtoupper( $path_info[ 'filename' ] ),
-						                         'realpath'        => $realpath,
-						                         'segments'        => $segments,
-						                         'parent_segments' => $parent_segments,
-						                         'parameter'       => $parameter,
-						                         'checksum'        => $checksum,
-						                         'code'            => $code,
-					                         ), (array) $metadata );
+					$metadata = array_merge(
+						[
+							'type'            => strtoupper( $path_info[ 'filename' ] ),
+							'realpath'        => $realpath,
+							'segments'        => $segments,
+							'parent_segments' => $parent_segments,
+							'parameter'       => $parameter,
+							'checksum'        => $checksum,
+							'code'            => $code,
+						], (array) $metadata );
 
-					if ( ! in_array( $path_info[ 'filename' ], array( 'language', 'theme', 'widget' ) ) )
+					if ( ! in_array( $path_info[ 'filename' ], [ 'language', 'theme', 'widget' ] ) )
 					{
 						if ( array_key_exists( 'namespace', $metadata ) === FALSE )
 						{
-							$this->__sendMessage( 'REGISTRY_ERROR_FETCHINGUNDEFINEDNAMESPACE', 'ERROR', array( $path_info[ 'filename' ] ) );
+							$this->__sendMessage( 'REGISTRY_ERROR_FETCHINGUNDEFINEDNAMESPACE', 'ERROR', [ $path_info[ 'filename' ] ] );
 						}
 					}
 
-					$this->__sendMessage( 'REGISTRY_SUCCESS_FETCHINGDECODINGPROPERTIES', 'SUCCESS', array( $path_info[ 'filename' ] ) );
+					$this->__sendMessage( 'REGISTRY_SUCCESS_FETCHINGDECODINGPROPERTIES', 'SUCCESS', [ $path_info[ 'filename' ] ] );
 
 					if ( is_file( $setting_filepath = $path_info[ 'dirname' ] . DIRECTORY_SEPARATOR . $path_info[ 'filename' ] . '.settings' ) )
 					{
-						$this->__sendMessage( 'REGISTRY_INFO_FETCHINGSETTINGSPROPERTIES', 'INFO', array( str_replace( ROOTPATH, '', $setting_filepath ) ) );
+						$this->__sendMessage( 'REGISTRY_INFO_FETCHINGSETTINGSPROPERTIES', 'INFO', [ str_replace( ROOTPATH, '', $setting_filepath ) ] );
 
 						$settings = file_get_contents( $setting_filepath );
 
-						$this->__sendMessage( 'REGISTRY_INFO_DECODINGSETTINGSPROPERTIES', 'INFO', array( str_replace( ROOTPATH, '', $setting_filepath ) ) );
+						$this->__sendMessage( 'REGISTRY_INFO_DECODINGSETTINGSPROPERTIES', 'INFO', [ str_replace( ROOTPATH, '', $setting_filepath ) ] );
 
 						$settings = json_decode( $settings, TRUE );
 
@@ -348,11 +350,11 @@ final class Registry extends ArrayObject
 						{
 							$metadata[ 'settings' ] = new \O2System\Metadata\Setting( $settings );
 
-							$this->__sendMessage( 'REGISTRY_SUCCESS_DECODINGSETTINGSPROPERTIES', 'SUCCESS', array( str_replace( ROOTPATH, '', $setting_filepath ) ) );
+							$this->__sendMessage( 'REGISTRY_SUCCESS_DECODINGSETTINGSPROPERTIES', 'SUCCESS', [ str_replace( ROOTPATH, '', $setting_filepath ) ] );
 						}
 						else
 						{
-							$this->__sendMessage( 'REGISTRY_WARNING_DECODINGSETTINGSPROPERTIES', 'WARNING', array( str_replace( ROOTPATH, '', $setting_filepath ) ) );
+							$this->__sendMessage( 'REGISTRY_WARNING_DECODINGSETTINGSPROPERTIES', 'WARNING', [ str_replace( ROOTPATH, '', $setting_filepath ) ] );
 						}
 					}
 
@@ -373,11 +375,11 @@ final class Registry extends ArrayObject
 						$cache[ 'modules' ][ $metadata[ 'segments' ] ] = new \O2System\Metadata\Module( $metadata );
 					}
 
-					$this->__sendMessage( 'REGISTRY_INFO_REGISTERINGMANIFEST', 'INFO', array( str_replace( ROOTPATH, '', $property ) ) );
+					$this->__sendMessage( 'REGISTRY_INFO_REGISTERINGMANIFEST', 'INFO', [ str_replace( ROOTPATH, '', $property ) ] );
 				}
 				else
 				{
-					$this->__sendMessage( 'REGISTRY_ERROR_DECODINGMANIFEST', 'ERROR', array( str_replace( ROOTPATH, '', $property ) ) );
+					$this->__sendMessage( 'REGISTRY_ERROR_DECODINGMANIFEST', 'ERROR', [ str_replace( ROOTPATH, '', $property ) ] );
 				}
 			}
 
@@ -394,7 +396,7 @@ final class Registry extends ArrayObject
 		if ( $this->offsetExists( 'modules' ) )
 		{
 			$storage = $this->offsetGet( 'modules' );
-			$results = array();
+			$results = [ ];
 
 			foreach ( $storage as $registry )
 			{
@@ -464,17 +466,17 @@ final class Registry extends ArrayObject
 	 */
 	public function getParents( \ArrayObject $module )
 	{
-		$parents = array();
+		$parents = [ ];
 
 		if ( isset( $module->parent_segments ) )
 		{
-			$parent_segments = explode( '/', $module->parent_segments );
+			$parent_segments     = explode( '/', $module->parent_segments );
 			$num_parent_segments = count( $parent_segments );
 
 			for ( $i = 0; $i < $num_parent_segments; $i++ )
 			{
 				$slice_paths = array_slice( $parent_segments, 0, ( $num_parent_segments - $i ) );
-				$offset = implode( '/', $slice_paths );
+				$offset      = implode( '/', $slice_paths );
 
 				if ( $parent = $this->find( $offset, 'modules' ) )
 				{
@@ -486,7 +488,7 @@ final class Registry extends ArrayObject
 		return $parents;
 	}
 
-	private function __sendMessage($message, $type = 'INFO', $vars = array() )
+	private function __sendMessage( $message, $type = 'INFO', $vars = [ ] )
 	{
 		$message = \O2System::$language->line( $message );
 
@@ -546,18 +548,18 @@ class RegistryCacheHandler
 
 class RegistryActive extends ArrayObject
 {
-	public function __construct( array $active = array() )
+	public function __construct( array $active = [ ] )
 	{
-		parent::__construct( array(
-			                     'URI'         => new URI(),
-			                     'namespaces'  => new ArrayIterator(),
-			                     'directories' => new ArrayIterator(),
-			                     'modules'     => new ArrayIterator(),
-			                     'language'    => NULL,
-			                     'domain'      => NULL,
-			                     'sub_domain'  => NULL,
-			                     'controller'  => NULL,
-		                     ) );
+		parent::__construct(
+			[
+				'URI'         => new URI(),
+				'namespaces'  => new ArrayIterator(),
+				'directories' => new ArrayIterator(),
+				'modules'     => new ArrayIterator(),
+				'language'    => NULL,
+				'domain'      => new Domain(),
+				'controller'  => NULL,
+			] );
 	}
 }
 
@@ -583,18 +585,18 @@ class RegistryDatabaseHandler
 		{
 			foreach ( $result as $row )
 			{
-				$metadata = array(
+				$metadata = [
 					'name'            => $row->name,
 					'version'         => $row->version,
 					'type'            => $row->type,
-					'realpath'        => $row->realpath,
+					'realpath'        => str_replace( [ '/', '\\' ], DIRECTORY_SEPARATOR, $row->realpath ),
 					'segments'        => $row->segments,
 					'parent_segments' => $row->parent_segments,
 					'parameter'       => $row->parameter,
 					'checksum'        => $row->checksum,
 					'code'            => $row->code,
 					'namespace'       => $row->namespace,
-				);
+				];
 
 				if ( ! empty( $row->metadata ) )
 				{
@@ -638,16 +640,16 @@ class RegistryDatabaseHandler
 			{
 				foreach ( $registry as $key => $value )
 				{
-					$settings = isset( $value->settings ) ? json_encode( $value->settings ) : NULL;
-					$checksum = $value->checksum;
-					$code = $value->code;
-					$parameter = $value->parameter;
-					$name = $value->name;
-					$realpath = $value->realpath;
-					$namespace = isset( $value->namespace ) ? $value->namespace : NULL;
-					$segments = $value->segments;
+					$settings        = isset( $value->settings ) ? json_encode( $value->settings ) : NULL;
+					$checksum        = $value->checksum;
+					$code            = $value->code;
+					$parameter       = $value->parameter;
+					$name            = $value->name;
+					$realpath        = $value->realpath;
+					$namespace       = isset( $value->namespace ) ? $value->namespace : NULL;
+					$segments        = $value->segments;
 					$parent_segments = $value->parent_segments;
-					$type = $value->type;
+					$type            = $value->type;
 
 					unset( $value->checksum, $value->code, $value->parameter, $value->name, $value->realpath, $value->segments, $value->parent_segments, $value->type );
 
@@ -660,7 +662,8 @@ class RegistryDatabaseHandler
 
 					if ( $result->numRows() == 0 )
 					{
-						$return = $this->db->insert( 'sys_registries', array(
+						$return = $this->db->insert(
+							'sys_registries', [
 							'key'             => $key,
 							'checksum'        => $checksum,
 							'code'            => $code,
@@ -673,11 +676,12 @@ class RegistryDatabaseHandler
 							'type'            => $type,
 							'metadata'        => json_encode( $value ),
 							'settings'        => $settings,
-						) );
+						] );
 					}
 					else
 					{
-						$return = $this->db->where( 'key', $key )->update( 'sys_registries', array(
+						$return = $this->db->where( 'key', $key )->update(
+							'sys_registries', [
 							'checksum'        => $checksum,
 							'code'            => $code,
 							'parameter'       => $parameter,
@@ -689,7 +693,7 @@ class RegistryDatabaseHandler
 							'type'            => $type,
 							'metadata'        => json_encode( $value ),
 							'settings'        => $settings,
-						) );
+						] );
 					}
 				}
 			}

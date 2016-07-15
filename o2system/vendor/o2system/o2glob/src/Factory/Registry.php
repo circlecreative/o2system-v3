@@ -57,6 +57,7 @@ class Registry extends \ArrayObject
 {
 	/**
 	 * Registry Cache Handler
+	 *
 	 * @type null
 	 */
 	protected static $cacheHandler = NULL;
@@ -75,7 +76,7 @@ class Registry extends \ArrayObject
 	 *
 	 * @param array $data
 	 */
-	public function __construct( array $data = array() )
+	public function __construct( array $data = [ ] )
 	{
 		parent::__construct( $data, \ArrayObject::ARRAY_AS_PROPS );
 	}
@@ -91,13 +92,13 @@ class Registry extends \ArrayObject
 	 */
 	public function setCacheHandler( Cache $cache )
 	{
-		if($cache->isSetup())
+		if ( $cache->isSetup() )
 		{
 			static::$cacheHandler = $cache;
 		}
 		else
 		{
-			throw new \Exception('Cache is not setup properly, please check your configuration');
+			throw new \Exception( 'Cache is not setup properly, please check your configuration' );
 		}
 	}
 
@@ -211,7 +212,7 @@ class Registry extends \ArrayObject
 	{
 		if ( method_exists( $this, $method ) )
 		{
-			return call_user_func_array( array( $this, $method ), $args );
+			return call_user_func_array( [ $this, $method ], $args );
 		}
 		elseif ( empty( $args ) )
 		{
@@ -296,7 +297,7 @@ class Registry extends \ArrayObject
 							break;
 						case 'flatten':
 							$value = is_object( $value ) ? get_object_vars( $value ) : $value;
-							$glue = isset( $args[ 2 ] ) ? $args[ 2 ] : ', ';
+							$glue  = isset( $args[ 2 ] ) ? $args[ 2 ] : ', ';
 
 							foreach ( $value as $key => $val )
 							{
@@ -325,13 +326,13 @@ class Registry extends \ArrayObject
 							break;
 						case 'flatten_keys':
 							$value = is_object( $value ) ? get_object_vars( $value ) : $value;
-							$glue = isset( $args[ 2 ] ) ? $args[ 2 ] : ', ';
+							$glue  = isset( $args[ 2 ] ) ? $args[ 2 ] : ', ';
 
 							return implode( $glue, array_keys( $value ) );
 							break;
 						case 'flatten_values':
 							$value = is_object( $value ) ? get_object_vars( $value ) : $value;
-							$glue = isset( $args[ 2 ] ) ? $args[ 2 ] : ', ';
+							$glue  = isset( $args[ 2 ] ) ? $args[ 2 ] : ', ';
 
 							foreach ( array_values( $value ) as $val )
 							{

@@ -71,12 +71,12 @@ class Button extends FactoryInterface
 	const COMMON_BUTTON = 'BUTTON';
 
 	protected $_tag        = 'button';
-	protected $_attributes = array(
+	protected $_attributes = [
 		'class' => [ 'btn' ],
 		'type'  => 'button',
-	);
+	];
 
-	protected $_types = array(
+	protected $_types = [
 		'default',
 		'primary',
 		'success',
@@ -84,7 +84,7 @@ class Button extends FactoryInterface
 		'warning',
 		'danger',
 		'link',
-	);
+	];
 
 	public function build()
 	{
@@ -125,7 +125,7 @@ class Button extends FactoryInterface
 		return $this;
 	}
 
-	public function setTag($tag )
+	public function setTag( $tag )
 	{
 		if ( $tag !== 'button' )
 		{

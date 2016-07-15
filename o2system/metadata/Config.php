@@ -46,9 +46,9 @@ use O2System\Glob\ArrayObject;
 
 class Config extends ArrayObject
 {
-	protected static $_privateOffsets = array();
+	protected static $_privateOffsets = [ ];
 
-	public function __construct( $data = array() )
+	public function __construct( $data = [ ] )
 	{
 		parent::__construct( (array) $data );
 	}

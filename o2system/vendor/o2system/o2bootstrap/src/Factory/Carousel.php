@@ -46,10 +46,10 @@ class Carousel extends FactoryInterface
 	use ItemsInterface;
 
 	protected $_tag        = 'div';
-	protected $_attributes = array(
+	protected $_attributes = [
 		'class'     => [ 'carousel', 'slide' ],
 		'data-ride' => 'carousel',
-	);
+	];
 
 	public function build()
 	{
@@ -76,7 +76,7 @@ class Carousel extends FactoryInterface
 		return $this;
 	}
 
-	public function addItem($item )
+	public function addItem( $item )
 	{
 		if ( $item instanceof Image )
 		{
@@ -113,19 +113,21 @@ class Carousel extends FactoryInterface
 			{
 				if ( $key == 0 )
 				{
-					$indicators->addItem( '', Lists::ITEM_ACTIVE, array(
+					$indicators->addItem(
+						'', Lists::ITEM_ACTIVE, [
 						'data-target'   => '#' . $this->_attributes[ 'id' ],
 						'data-slide-to' => $key,
-					) );
+					] );
 
 					$slides[ $key ] = new Tag( 'div', $item, [ 'class' => 'item active' ] );
 				}
 				else
 				{
-					$indicators->addItem( '', array(
+					$indicators->addItem(
+						'', [
 						'data-target'   => '#' . $this->_attributes[ 'id' ],
 						'data-slide-to' => $key,
-					) );
+					] );
 
 					$slides[ $key ] = new Tag( 'div', $item, [ 'class' => 'item' ] );
 				}
@@ -133,20 +135,26 @@ class Carousel extends FactoryInterface
 
 			$slide = new Tag( 'div', implode( PHP_EOL, $slides ), [ 'class' => 'carousel-inner', 'role' => 'listbox' ] );
 
-			$controls[ 'left' ] = new Link( implode( PHP_EOL, array(
-				new Tag( 'span', [ 'class' => 'glyphicon glyphicon-chevron-left', 'aria-hidden' => TRUE ] ),
-				new Tag( 'span', 'Previous', [ 'class' => 'sr-only' ] ),
-			) ), [ 'class' => 'left carousel-control', 'href' => '#' . $this->_attributes[ 'id' ], 'role' => 'button', 'data-slide' => 'prev' ] );
+			$controls[ 'left' ] = new Link(
+				implode(
+					PHP_EOL, [
+					new Tag( 'span', [ 'class' => 'glyphicon glyphicon-chevron-left', 'aria-hidden' => TRUE ] ),
+					new Tag( 'span', 'Previous', [ 'class' => 'sr-only' ] ),
+				] ), [ 'class' => 'left carousel-control', 'href' => '#' . $this->_attributes[ 'id' ], 'role' => 'button', 'data-slide' => 'prev' ] );
 
-			$controls[ 'right' ] = new Link( implode( PHP_EOL, array(
-				new Tag( 'span', [ 'class' => 'glyphicon glyphicon-chevron-right', 'aria-hidden' => TRUE ] ),
-				new Tag( 'span', 'Next', [ 'class' => 'sr-only' ] ),
-			) ), [ 'class' => 'right carousel-control', 'href' => '#' . $this->_attributes[ 'id' ], 'role' => 'button', 'data-slide' => 'next' ] );
+			$controls[ 'right' ] = new Link(
+				implode(
+					PHP_EOL, [
+					new Tag( 'span', [ 'class' => 'glyphicon glyphicon-chevron-right', 'aria-hidden' => TRUE ] ),
+					new Tag( 'span', 'Next', [ 'class' => 'sr-only' ] ),
+				] ), [ 'class' => 'right carousel-control', 'href' => '#' . $this->_attributes[ 'id' ], 'role' => 'button', 'data-slide' => 'next' ] );
 
-			return ( new Tag( $this->_tag, implode( PHP_EOL, array(
+			return ( new Tag(
+				$this->_tag, implode(
+				PHP_EOL, [
 				//$indicators, $slide, $controls[ 'left' ], $controls[ 'right' ],
-				$indicators, $slide
-			) ), $this->_attributes ) )->render();
+				$indicators, $slide,
+			] ), $this->_attributes ) )->render();
 		}
 
 		return '';

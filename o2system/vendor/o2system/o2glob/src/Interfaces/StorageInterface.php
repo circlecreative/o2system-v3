@@ -11,8 +11,8 @@ namespace O2System\Glob\Interfaces;
 
 trait StorageInterface
 {
-	private   $storage      = array();
-	protected $_object_maps = array();
+	private   $storage      = [ ];
+	protected $_object_maps = [ ];
 
 	// ------------------------------------------------------------------------
 

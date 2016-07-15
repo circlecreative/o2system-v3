@@ -56,12 +56,12 @@ namespace O2System
 		 * @access  protected
 		 * @type    array
 		 */
-		protected $_valid_drivers = array(
+		protected $_valid_drivers = [
 			'database',
 			'files',
 			'memcached',
 			'redis',
-		);
+		];
 
 		/**
 		 * Session Driver
@@ -88,7 +88,7 @@ namespace O2System
 		 *
 		 * @access  public
 		 */
-		public function __construct( array $config = array() )
+		public function __construct( array $config = [ ] )
 		{
 			if ( PHP_SAPI === 'cli' OR // No sessions under CLI
 				defined( 'STDIN' ) OR
@@ -129,7 +129,7 @@ namespace O2System
 					)
 				)
 				{
-					print_out('t');
+					print_out( 't' );
 					unset( $_COOKIE[ $this->_config[ 'cookie' ][ 'name' ] ] );
 				}
 
@@ -274,7 +274,7 @@ namespace O2System
 		 * @access  public
 		 * @return  bool
 		 */
-		public function markFlashdata($key )
+		public function markFlashdata( $key )
 		{
 			if ( is_array( $key ) )
 			{
@@ -317,10 +317,10 @@ namespace O2System
 		{
 			if ( ! isset( $_SESSION[ '__session_vars' ] ) )
 			{
-				return array();
+				return [ ];
 			}
 
-			$keys = array();
+			$keys = [ ];
 			foreach ( array_keys( $_SESSION[ '__session_vars' ] ) as $key )
 			{
 				is_int( $_SESSION[ '__session_vars' ][ $key ] ) OR $keys[] = $key;
@@ -339,14 +339,14 @@ namespace O2System
 		 * @access  public
 		 * @return  void
 		 */
-		public function unsetFlashdata($key )
+		public function unsetFlashdata( $key )
 		{
 			if ( empty( $_SESSION[ '__session_vars' ] ) )
 			{
 				return;
 			}
 
-			is_array( $key ) OR $key = array( $key );
+			is_array( $key ) OR $key = [ $key ];
 
 			foreach ( $key as $k )
 			{
@@ -373,13 +373,13 @@ namespace O2System
 		 * @access  public
 		 * @return  bool
 		 */
-		public function markTempdata($key, $ttl = 300 )
+		public function markTempdata( $key, $ttl = 300 )
 		{
 			$ttl += time();
 
 			if ( is_array( $key ) )
 			{
-				$temp = array();
+				$temp = [ ];
 
 				foreach ( $key as $k => $v )
 				{
@@ -431,10 +431,10 @@ namespace O2System
 		{
 			if ( ! isset( $_SESSION[ '__session_vars' ] ) )
 			{
-				return array();
+				return [ ];
 			}
 
-			$keys = array();
+			$keys = [ ];
 			foreach ( array_keys( $_SESSION[ '__session_vars' ] ) as $key )
 			{
 				is_int( $_SESSION[ '__session_vars' ][ $key ] ) && $keys[] = $key;
@@ -509,7 +509,7 @@ namespace O2System
 		 *
 		 * @access  public
 		 */
-		public function regenerateId($destroy = FALSE )
+		public function regenerateId( $destroy = FALSE )
 		{
 			$_SESSION[ '__session_last_regenerate' ] = time();
 			session_regenerate_id( $destroy );
@@ -550,12 +550,12 @@ namespace O2System
 			}
 			elseif ( empty( $_SESSION ) )
 			{
-				return array();
+				return [ ];
 			}
 
-			$userdata = array();
+			$userdata = [ ];
 			$_exclude = array_merge(
-				array( '__session_vars' ),
+				[ '__session_vars' ],
 				$this->getFlashdata(),
 				$this->getTempdata()
 			);
@@ -583,7 +583,7 @@ namespace O2System
 		 *
 		 * @access  public
 		 */
-		public function setUserdata($data, $value = NULL )
+		public function setUserdata( $data, $value = NULL )
 		{
 			if ( is_array( $data ) )
 			{
@@ -609,7 +609,7 @@ namespace O2System
 		 *
 		 * @access  public
 		 */
-		public function unsetUserdata($key )
+		public function unsetUserdata( $key )
 		{
 			if ( is_array( $key ) )
 			{
@@ -651,7 +651,7 @@ namespace O2System
 		 * @access  public
 		 * @return  bool
 		 */
-		public function hasUserdata($key )
+		public function hasUserdata( $key )
 		{
 			return isset( $_SESSION[ $key ] );
 		}
@@ -677,7 +677,7 @@ namespace O2System
 					: NULL;
 			}
 
-			$flashdata = array();
+			$flashdata = [ ];
 
 			if ( ! empty( $_SESSION[ '__session_vars' ] ) )
 			{
@@ -702,7 +702,7 @@ namespace O2System
 		 *
 		 * @access  public
 		 */
-		public function setFlashdata($data, $value = NULL )
+		public function setFlashdata( $data, $value = NULL )
 		{
 			$this->setUserdata( $data, $value );
 			$this->markFlashdata( is_array( $data ) ? array_keys( $data ) : $data );
@@ -719,7 +719,7 @@ namespace O2System
 		 *
 		 * @access  public
 		 */
-		public function keepFlashdata($key )
+		public function keepFlashdata( $key )
 		{
 			$this->markFlashdata( $key );
 		}
@@ -745,7 +745,7 @@ namespace O2System
 					: NULL;
 			}
 
-			$tempdata = array();
+			$tempdata = [ ];
 
 			if ( ! empty( $_SESSION[ '__session_vars' ] ) )
 			{
@@ -771,7 +771,7 @@ namespace O2System
 		 *
 		 * @access  public
 		 */
-		public function setTempdata($data, $value = NULL, $ttl = 300 )
+		public function setTempdata( $data, $value = NULL, $ttl = 300 )
 		{
 			$this->setUserdata( $data, $value );
 			$this->markTempdata( is_array( $data ) ? array_keys( $data ) : $data, $ttl );
@@ -788,7 +788,7 @@ namespace O2System
 		 *
 		 * @access  public
 		 */
-		public function unsetTempdata($key )
+		public function unsetTempdata( $key )
 		{
 			$this->unsetFlashdata( $key );
 		}

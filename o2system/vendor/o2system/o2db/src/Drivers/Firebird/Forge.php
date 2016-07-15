@@ -65,11 +65,11 @@ class Forge extends ForgeInterface
 	 *
 	 * @type    array
 	 */
-	protected $_unsigned = array(
+	protected $_unsigned = [
 		'SMALLINT' => 'INTEGER',
 		'INTEGER'  => 'INT64',
 		'FLOAT'    => 'DOUBLE PRECISION',
-	);
+	];
 
 	/**
 	 * NULL value representation in CREATE/ALTER TABLE statements
@@ -87,7 +87,7 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    string
 	 */
-	public function createDatabase($db_name )
+	public function createDatabase( $db_name )
 	{
 		// Firebird databases are flat files, so a path is required
 
@@ -106,7 +106,7 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    bool
 	 */
-	public function dropDatabase($db_name = '' )
+	public function dropDatabase( $db_name = '' )
 	{
 		if ( ! ibase_drop_db( $this->conn_id ) )
 		{
@@ -135,15 +135,15 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    string|string[]
 	 */
-	protected function _alterTable($alter_type, $table, $field )
+	protected function _alterTable( $alter_type, $table, $field )
 	{
-		if ( in_array( $alter_type, array( 'DROP', 'ADD' ), TRUE ) )
+		if ( in_array( $alter_type, [ 'DROP', 'ADD' ], TRUE ) )
 		{
 			return parent::_alterTable( $alter_type, $table, $field );
 		}
 
-		$sql = 'ALTER TABLE ' . $this->_driver->escapeIdentifiers( $table );
-		$sqls = array();
+		$sql  = 'ALTER TABLE ' . $this->_driver->escapeIdentifiers( $table );
+		$sqls = [ ];
 		for ( $i = 0, $c = count( $field ); $i < $c; $i++ )
 		{
 			if ( $field[ $i ][ '_literal' ] !== FALSE )
@@ -190,7 +190,7 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    string
 	 */
-	protected function _processColumn($field )
+	protected function _processColumn( $field )
 	{
 		return $this->_driver->escapeIdentifiers( $field[ 'name' ] )
 		. ' ' . $field[ 'type' ] . $field[ 'length' ]
@@ -210,17 +210,17 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    void
 	 */
-	protected function _attrType(&$attributes )
+	protected function _attrType( &$attributes )
 	{
 		switch ( strtoupper( $attributes[ 'TYPE' ] ) )
 		{
 			case 'TINYINT':
-				$attributes[ 'TYPE' ] = 'SMALLINT';
+				$attributes[ 'TYPE' ]     = 'SMALLINT';
 				$attributes[ 'UNSIGNED' ] = FALSE;
 
 				return;
 			case 'MEDIUMINT':
-				$attributes[ 'TYPE' ] = 'INTEGER';
+				$attributes[ 'TYPE' ]     = 'INTEGER';
 				$attributes[ 'UNSIGNED' ] = FALSE;
 
 				return;
@@ -247,7 +247,7 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    void
 	 */
-	protected function _attrAutoIncrement(&$attributes, &$field )
+	protected function _attrAutoIncrement( &$attributes, &$field )
 	{
 		// Not supported
 	}

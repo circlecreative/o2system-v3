@@ -92,7 +92,7 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    string|string[]
 	 */
-	protected function _alterTable($alter_type, $table, $field )
+	protected function _alterTable( $alter_type, $table, $field )
 	{
 		if ( $alter_type === 'DROP' )
 		{
@@ -103,8 +103,8 @@ class Forge extends ForgeInterface
 			$alter_type = 'MODIFY';
 		}
 
-		$sql = 'ALTER TABLE ' . $this->_driver->escapeIdentifiers( $table );
-		$sqls = array();
+		$sql  = 'ALTER TABLE ' . $this->_driver->escapeIdentifiers( $table );
+		$sqls = [ ];
 		for ( $i = 0, $c = count( $field ); $i < $c; $i++ )
 		{
 			if ( $field[ $i ][ '_literal' ] !== FALSE )
@@ -151,7 +151,7 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    void
 	 */
-	protected function _attrAutoIncrement(&$attributes, &$field )
+	protected function _attrAutoIncrement( &$attributes, &$field )
 	{
 		// Not supported - sequences and triggers must be used instead
 	}

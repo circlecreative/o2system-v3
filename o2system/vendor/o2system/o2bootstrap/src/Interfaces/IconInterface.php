@@ -44,7 +44,7 @@ trait IconInterface
 {
 	public $icon;
 
-	public function setIcon($icon )
+	public function setIcon( $icon )
 	{
 		if ( $icon instanceof Tag )
 		{

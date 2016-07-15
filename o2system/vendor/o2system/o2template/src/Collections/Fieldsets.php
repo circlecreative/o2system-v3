@@ -14,7 +14,7 @@ use O2System\Glob\ArrayObject;
 
 class Fieldsets extends ArrayObject
 {
-	public function __construct( array $fieldsets = array() )
+	public function __construct( array $fieldsets = [ ] )
 	{
 		if ( ! empty( $fieldsets ) )
 		{

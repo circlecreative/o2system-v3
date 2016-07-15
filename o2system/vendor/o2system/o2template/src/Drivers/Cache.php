@@ -42,10 +42,10 @@ class Cache extends DriverInterface
 				return FALSE;
 			}
 
-			$info = new ArrayObject();
-			$info->size = filesize( $filename );
-			$info->realpath = $filename;
-			$info->url = path_to_url( $filename );
+			$info             = new ArrayObject();
+			$info->size       = filesize( $filename );
+			$info->realpath   = $filename;
+			$info->url        = path_to_url( $filename );
 			$info->is_expired = FALSE;
 
 			return $info;

@@ -73,7 +73,7 @@ class Row extends RowInterface
 	 *
 	 * @return  mixed
 	 */
-	public function __call( $method, $args = array() )
+	public function __call( $method, $args = [ ] )
 	{
 		foreach ( get_object_vars( $this ) as $key => $value )
 		{

@@ -11,32 +11,32 @@ namespace O2System\File\Factory;
 
 class Download
 {
-	protected $_filename = NULL;
-	protected $_data = FALSE;
-	protected $_mime = 'application/octet-stream';
-	protected $_speed = 0;
+	protected $_filename        = NULL;
+	protected $_data            = FALSE;
+	protected $_mime            = 'application/octet-stream';
+	protected $_speed           = 0;
 	protected $_partial_enabled = FALSE;
 
 	// ------------------------------------------------------------------------
 
-	public function __construct($filename = NULL)
+	public function __construct( $filename = NULL )
 	{
-		if(isset($filename))
+		if ( isset( $filename ) )
 		{
-			$this->setFile($filename);
+			$this->setFile( $filename );
 		}
 	}
 
 	// ------------------------------------------------------------------------
 
-	public function setFile($filename)
+	public function setFile( $filename )
 	{
 		$this->_filename = $filename;
 	}
 
 	// ------------------------------------------------------------------------
 
-	public function setData($data)
+	public function setData( $data )
 	{
 		$this->_data = $data;
 	}
@@ -50,14 +50,14 @@ class Download
 
 	// ------------------------------------------------------------------------
 
-	public function setMime($mime)
+	public function setMime( $mime )
 	{
 
 	}
 
 	// ------------------------------------------------------------------------
 
-	public function setSpeed($speed)
+	public function setSpeed( $speed )
 	{
 
 	}
@@ -72,34 +72,35 @@ class Download
          *
          * Reference: http://digiblog.de/2011/04/19/android-and-the-download-file-headers/
          */
-		if( isset($this->_filename) AND
+		if ( isset( $this->_filename ) AND
 			isset( $_SERVER[ 'HTTP_USER_AGENT' ] ) AND
-			preg_match( '/Android\s(1|2\.[01])/', $_SERVER[ 'HTTP_USER_AGENT' ] ) )
+			preg_match( '/Android\s(1|2\.[01])/', $_SERVER[ 'HTTP_USER_AGENT' ] )
+		)
 		{
 			$x[ count( $x ) - 1 ] = strtoupper( $extension );
-			$filename = implode( '.', $x );
+			$filename             = implode( '.', $x );
 		}
 
-		if( $this->_data === FALSE AND ( $fp = @fopen( $this->_filename, 'rb' ) ) === FALSE )
+		if ( $this->_data === FALSE AND ( $fp = @fopen( $this->_filename, 'rb' ) ) === FALSE )
 		{
 			return FALSE;
 		}
 
 		// Clean output buffer
-		if( ob_get_level() !== 0 && @ob_end_clean() === FALSE )
+		if ( ob_get_level() !== 0 && @ob_end_clean() === FALSE )
 		{
 			@ob_clean();
 		}
 
 		// Check for partial download
-		if( isset( $_SERVER[ 'HTTP_RANGE' ] ) AND
+		if ( isset( $_SERVER[ 'HTTP_RANGE' ] ) AND
 			$this->_partial_enabled === TRUE
 		)
 		{
 			list ( $a, $range ) = explode( "=", $_SERVER[ 'HTTP_RANGE' ] );
 			list ( $fbyte, $lbyte ) = explode( "-", $range );
 
-			if( ! $lbyte )
+			if ( ! $lbyte )
 			{
 				$lbyte = $filesize - 1;
 			}
@@ -127,21 +128,21 @@ class Download
 		header( 'Pragma: private', TRUE );
 
 		// Open file
-		if( $data === FALSE )
+		if ( $data === FALSE )
 		{
 			$file = fopen( $filename, 'r' );
-			if( ! $file )
+			if ( ! $file )
 			{
 				return FALSE;
 			}
 		}
 
 		// Cut data for partial download
-		if( isset( $_SERVER[ 'HTTP_RANGE' ] ) AND
+		if ( isset( $_SERVER[ 'HTTP_RANGE' ] ) AND
 			$this->_partial_enabled === TRUE
 		)
 		{
-			if( $this->_data === FALSE )
+			if ( $this->_data === FALSE )
 			{
 				fseek( $file, $range );
 			}
@@ -155,17 +156,17 @@ class Download
 		@set_time_limit( 0 );
 
 		// Check for speed limit or file optimize
-		if( $this->_speed > 0 OR $this->_data === FALSE )
+		if ( $this->_speed > 0 OR $this->_data === FALSE )
 		{
-			if( $this->_data === FALSE )
+			if ( $this->_data === FALSE )
 			{
-				$chunk_size = $this->_speed > 0 ?$this->_speed * 1024 : 512 * 1024;
-				while( ! feof( $file ) and ( connection_status() == 0 ) )
+				$chunk_size = $this->_speed > 0 ? $this->_speed * 1024 : 512 * 1024;
+				while ( ! feof( $file ) and ( connection_status() == 0 ) )
 				{
 					$buffer = fread( $file, $chunk_size );
 					echo $buffer;
 					flush();
-					if( $this->_speed > 0 )
+					if ( $this->_speed > 0 )
 					{
 						sleep( 1 );
 					}
@@ -176,11 +177,11 @@ class Download
 			{
 				$index = 0;
 				$this->_speed *= 1024; //convert to kb
-				while( $index < $filesize and ( connection_status() == 0 ) )
+				while ( $index < $filesize and ( connection_status() == 0 ) )
 				{
-					$left = $filesize - $index;
+					$left        = $filesize - $index;
 					$buffer_size = min( $left, $this->_speed );
-					$buffer = substr( $this->_data, $index, $buffer_size );
+					$buffer      = substr( $this->_data, $index, $buffer_size );
 					$index += $buffer_size;
 					echo $buffer;
 					flush();

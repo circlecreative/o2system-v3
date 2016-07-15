@@ -52,74 +52,74 @@ use O2System\Parser\Interfaces\Driver;
  */
 class Twig extends Driver
 {
-    /**
-     * List of possible view file extensions
-     *
-     * @access  public
-     *
-     * @type array
-     */
-    public $extensions = array( '.php', '.html', '.tpl' );
+	/**
+	 * List of possible view file extensions
+	 *
+	 * @access  public
+	 *
+	 * @type array
+	 */
+	public $extensions = [ '.php', '.html', '.tpl' ];
 
-    /**
-     * Static Engine Object
-     *
-     * @access  private
-     * @var  Engine Object
-     */
-    private static $_engine;
+	/**
+	 * Static Engine Object
+	 *
+	 * @access  private
+	 * @var  Engine Object
+	 */
+	private static $_engine;
 
-    // ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
 
-    /**
-     * Setup Engine
-     *
-     * @param   $settings   Template Config
-     *
-     * @access  public
-     * @return  Parser Engine Adapter Object
-     */
-    public function setup( $settings = array() )
-    {
-        if ( ! class_exists( 'Twig_Environment' ) )
-        {
-            throw new Exception( 'The Twig Template Engine must be loaded to use Parser with Twig Driver.' );
-        }
+	/**
+	 * Setup Engine
+	 *
+	 * @param   $settings   Template Config
+	 *
+	 * @access  public
+	 * @return  Parser Engine Adapter Object
+	 */
+	public function setup( $settings = [ ] )
+	{
+		if ( ! class_exists( 'Twig_Environment' ) )
+		{
+			throw new Exception( 'The Twig Template Engine must be loaded to use Parser with Twig Driver.' );
+		}
 
-        $twig = new \Twig_Loader_String();
-        static::$_engine = new \Twig_Environment( $twig );
+		$twig            = new \Twig_Loader_String();
+		static::$_engine = new \Twig_Environment( $twig );
 
-        return $this;
-    }
+		return $this;
+	}
 
-    // ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
 
-    /**
-     * Parse String
-     *
-     * @param   string   String Source Code
-     * @param   array    Array of variables data to be parsed
-     *
-     * @access  public
-     * @return  string  Parse Output Result
-     */
-    public function parseString($string, $vars = array() )
-    {
-        return static::$_engine->render( $string, $vars );
-    }
+	/**
+	 * Parse String
+	 *
+	 * @param   string   String Source Code
+	 * @param   array    Array of variables data to be parsed
+	 *
+	 * @access  public
+	 * @return  string  Parse Output Result
+	 */
+	public function parseString( $string, $vars = [ ] )
+	{
+		return static::$_engine->render( $string, $vars );
+	}
 
-    // ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
 
-    /**
-     * Register Plugin
-     *
-     * Registers a plugin for use in a Twig template.
-     *
-     * @access  public
-     */
-    public function registerPlugin()
-    {
-        list( $name ) = func_get_args();
-        static::$_engine->addFunction( $name, new \Twig_Function_Function( $name ) );
-    }
+	/**
+	 * Register Plugin
+	 *
+	 * Registers a plugin for use in a Twig template.
+	 *
+	 * @access  public
+	 */
+	public function registerPlugin()
+	{
+		list( $name ) = func_get_args();
+		static::$_engine->addFunction( $name, new \Twig_Function_Function( $name ) );
+	}
 }

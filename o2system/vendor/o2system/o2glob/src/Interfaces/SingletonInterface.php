@@ -30,7 +30,7 @@ trait SingletonInterface
 		// Reconstruct Class
 		if ( method_exists( $this, '__reconstruct' ) )
 		{
-			call_user_func_array( array( $this, '__reconstruct' ), $params );
+			call_user_func_array( [ $this, '__reconstruct' ], $params );
 		}
 	}
 
@@ -48,32 +48,30 @@ trait SingletonInterface
 
 	// ------------------------------------------------------------------------
 
-	public function __call( $method, $args = array() )
+	public function __call( $method, $args = [ ] )
 	{
-		$method = strtolower( $method );
-
-		if ( method_exists( $this, $method ) )
+		if ( method_exists( $this, camelcase( $method ) ) )
 		{
-			return call_user_func_array( array( $this, $method ), $args );
+			return call_user_func_array( [ $this, camelcase( $method ) ], $args );
 		}
-		elseif ( method_exists( $this, 'get_' . $method ) )
+		elseif ( method_exists( $this, 'get' . studlycapcase( $method ) ) )
 		{
-			return call_user_func_array( array( $this, 'get_' . $method ), $args );
+			return call_user_func_array( [ $this, 'get' . studlycapcase( $method ) ], $args );
 		}
-		elseif ( $this->__isset( $method ) )
+		elseif ( $this->__isset( underscore( $method ) ) )
 		{
 			if ( empty( $args ) )
 			{
-				return $this->__get( $method );
+				return $this->__get( underscore( $method ) );
 			}
-			elseif ( method_exists( $this->{$method}, '__call' ) )
+			elseif ( method_exists( $this->{underscore( $method )}, '__call' ) )
 			{
-				return call_user_func_array( array( $this->{$method}, '__call' ), $args );
+				return call_user_func_array( [ $this->{underscore( $method )}, '__call' ], $args );
 			}
 		}
 	}
 
-	public static function __callStatic( $method, $args = array() )
+	public static function __callStatic( $method, $args = [ ] )
 	{
 		return static::instance()->__call( $method, $args );
 	}

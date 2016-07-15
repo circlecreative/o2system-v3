@@ -14,9 +14,9 @@ use O2System\Bootstrap\Interfaces\FactoryInterface;
 class Thumbnail extends FactoryInterface
 {
 	protected $_tag        = 'div';
-	protected $_attributes = array(
+	protected $_attributes = [
 		'class' => [ 'thumbnail' ],
-	);
+	];
 
 	protected $_template = NULL;
 
@@ -24,7 +24,7 @@ class Thumbnail extends FactoryInterface
 	public $caption     = NULL;
 	public $description = NULL;
 	public $link        = NULL;
-	public $buttons     = array();
+	public $buttons     = [ ];
 
 	public function build()
 	{
@@ -69,7 +69,7 @@ class Thumbnail extends FactoryInterface
 		return $this;
 	}
 
-	public function setImage($image )
+	public function setImage( $image )
 	{
 		if ( $image instanceof Image )
 		{
@@ -88,12 +88,12 @@ class Thumbnail extends FactoryInterface
 		return $this;
 	}
 
-	public function setCaption($caption, $tag = 'h3', $attr = array() )
+	public function setCaption( $caption, $tag = 'h3', $attr = [ ] )
 	{
 		if ( is_array( $tag ) )
 		{
 			$attr = $tag;
-			$tag = 'h3';
+			$tag  = 'h3';
 		}
 
 		if ( $caption instanceof FactoryInterface )
@@ -105,17 +105,17 @@ class Thumbnail extends FactoryInterface
 			$this->caption = new Tag( $tag, $caption, $attr );
 		}
 
-		$this->caption->addClass('thumbnail-caption');
+		$this->caption->addClass( 'thumbnail-caption' );
 
 		return $this;
 	}
 
-	public function setDescription($description, $tag = 'p', $attr = array() )
+	public function setDescription( $description, $tag = 'p', $attr = [ ] )
 	{
 		if ( is_array( $tag ) )
 		{
 			$attr = $tag;
-			$tag = 'p';
+			$tag  = 'p';
 		}
 
 		if ( $description instanceof Tag )
@@ -132,7 +132,7 @@ class Thumbnail extends FactoryInterface
 		return $this;
 	}
 
-	public function setTemplate($template )
+	public function setTemplate( $template )
 	{
 		if ( is_file( $template ) )
 		{
@@ -155,7 +155,7 @@ class Thumbnail extends FactoryInterface
 	 *
 	 * @return object
 	 */
-	public function setLink($link, $attr = array() )
+	public function setLink( $link, $attr = [ ] )
 	{
 		if ( $link instanceof Link )
 		{
@@ -169,7 +169,7 @@ class Thumbnail extends FactoryInterface
 		return $this;
 	}
 
-	public function addButton($label, $attr = array() )
+	public function addButton( $label, $attr = [ ] )
 	{
 		if ( $label instanceof Button )
 		{
@@ -222,12 +222,12 @@ class Thumbnail extends FactoryInterface
 				if ( isset( $this->link ) )
 				{
 					$output[] = new Link( $this->image, $this->link );
-					$caption = new Link( $this->caption, $this->link, [ 'class' => 'caption' ] );
+					$caption  = new Link( $this->caption, $this->link, [ 'class' => 'caption' ] );
 				}
 				else
 				{
 					$output[] = $this->image;
-					$caption = new Tag( 'div', $this->caption, [ 'class' => 'caption' ] );
+					$caption  = new Tag( 'div', $this->caption, [ 'class' => 'caption' ] );
 				}
 
 				if ( isset( $this->description ) )

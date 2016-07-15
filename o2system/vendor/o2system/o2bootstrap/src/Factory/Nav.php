@@ -51,9 +51,9 @@ class Nav extends Lists
 	const NAV_TABS  = 'NAV_TABS';
 	const NAV_PILLS = 'NAV_PILLS';
 
-	protected $_attributes = array(
-		'class' => array( 'nav' ),
-	);
+	protected $_attributes = [
+		'class' => [ 'nav' ],
+	];
 
 	/**
 	 * build
@@ -87,12 +87,12 @@ class Nav extends Lists
 
 	// ------------------------------------------------------------------------
 
-	public function setType($type )
+	public function setType( $type )
 	{
-		$types = array(
+		$types = [
 			self::NAV_TABS  => 'nav-tabs',
 			self::NAV_PILLS => 'nav-pills',
-		);
+		];
 
 		if ( array_key_exists( $type, $types ) )
 		{
@@ -102,7 +102,7 @@ class Nav extends Lists
 		return $this;
 	}
 
-	public function addItem($item, $describe = NULL, $attr = array(), $key = NULL )
+	public function addItem( $item, $describe = NULL, $attr = [ ], $key = NULL )
 	{
 		if ( $item instanceof Link )
 		{

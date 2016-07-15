@@ -86,14 +86,14 @@ namespace O2System
 					throw new DB\Exception( 'DB_INVALIDCONNECTIONSTR' );
 				}
 
-				$config = array(
+				$config = [
 					'driver'   => $dsn[ 'scheme' ],
 					'hostname' => isset( $dsn[ 'host' ] ) ? rawurldecode( $dsn[ 'host' ] ) : '',
 					'port'     => isset( $dsn[ 'port' ] ) ? rawurldecode( $dsn[ 'port' ] ) : '',
 					'username' => isset( $dsn[ 'user' ] ) ? rawurldecode( $dsn[ 'user' ] ) : '',
 					'password' => isset( $dsn[ 'pass' ] ) ? rawurldecode( $dsn[ 'pass' ] ) : '',
 					'database' => isset( $dsn[ 'path' ] ) ? rawurldecode( substr( $dsn[ 'path' ], 1 ) ) : '',
-				);
+				];
 
 				// Validate Connection
 				$config[ 'username' ] = $config[ 'username' ] === 'username' ? NULL : $config[ 'username' ];
@@ -107,7 +107,7 @@ namespace O2System
 
 					foreach ( $extra as $key => $value )
 					{
-						if ( is_string( $value ) AND in_array( strtoupper( $value ), array( 'TRUE', 'FALSE', 'NULL' ) ) )
+						if ( is_string( $value ) AND in_array( strtoupper( $value ), [ 'TRUE', 'FALSE', 'NULL' ] ) )
 						{
 							$value = var_export( $value, TRUE );
 						}
@@ -122,12 +122,12 @@ namespace O2System
 				throw new UndefinedDriverException( 'DB_UNDEFINEDDRIVER' );
 			}
 
-			if ( in_array( $config[ 'driver' ], array( 'mssql', 'sybase' ) ) )
+			if ( in_array( $config[ 'driver' ], [ 'mssql', 'sybase' ] ) )
 			{
 				$config[ 'driver' ] = 'dblib';
 			}
 
-			$_valid_drivers = array(
+			$_valid_drivers = [
 				'cubrid',
 				'mysql',
 				'mssql',
@@ -138,7 +138,7 @@ namespace O2System
 				'odbc',
 				'pgsql',
 				'sqlite',
-			);
+			];
 
 			if ( ! in_array( $config[ 'driver' ], $_valid_drivers ) )
 			{
@@ -175,14 +175,14 @@ namespace O2System
 				case 'forge':
 
 					$forge_class_name = '\O2System\DB\Drivers\\' . $driver . '\\Forge';
-					$this->forge = new $forge_class_name( $this->_driver );
+					$this->forge      = new $forge_class_name( $this->_driver );
 
 					return $this->forge;
 					break;
 				case 'utility':
 
 					$utility_class_name = '\O2System\DB\Drivers\\' . $driver . '\\Utility';
-					$this->utility = new $utility_class_name( $this->_driver );
+					$this->utility      = new $utility_class_name( $this->_driver );
 
 					return $this->utility;
 					break;
@@ -202,17 +202,17 @@ namespace O2System
 			return \PDO::getAvailableDrivers();
 		}
 
-		public function __call( $method, $args = array() )
+		public function __call( $method, $args = [ ] )
 		{
 			if ( method_exists( $this, $method ) )
 			{
-				return call_user_func_array( array( $this, $method ), $args );
+				return call_user_func_array( [ $this, $method ], $args );
 			}
 
 			return $this->_driver->__call( $method, $args );
 		}
 
-		public static function __callStatic( $method, $args = array() )
+		public static function __callStatic( $method, $args = [ ] )
 		{
 			if ( isset( static::$_instance ) )
 			{
@@ -229,11 +229,11 @@ namespace O2System\DB
 
 	class Exception extends ExceptionInterface
 	{
-		public $library = array(
+		public $library = [
 			'name'        => 'O2System DB (O2DB)',
 			'description' => 'Open Source PHP Data Object (PDO) Wrapper',
 			'version'     => '1.0',
-		);
+		];
 
 		public $view_exception = 'db_exception.php';
 
@@ -249,7 +249,7 @@ namespace O2System\DB
 
 					if ( ! empty( $matches ) )
 					{
-						$code = ( $matches[ 1 ] == 'HT000' || 'HY000' ? $matches[ 2 ] : $matches[ 1 ] );
+						$code    = ( $matches[ 1 ] == 'HT000' || 'HY000' ? $matches[ 2 ] : $matches[ 1 ] );
 						$message = $matches[ 3 ];
 					}
 					else
@@ -274,7 +274,7 @@ namespace O2System\DB
 
 	class UnsupportedDriverException extends Exception
 	{
-		public function __construct( $message, $code = 0, $args = array() )
+		public function __construct( $message, $code = 0, $args = [ ] )
 		{
 			$this->_args = $args;
 			parent::__construct( $message, $code );
@@ -283,7 +283,7 @@ namespace O2System\DB
 
 	class BadMethodCallException extends Exception
 	{
-		public function __construct( $message, $code, $args = array() )
+		public function __construct( $message, $code, $args = [ ] )
 		{
 			$this->_args = $args;
 			parent::__construct( $message, $code );

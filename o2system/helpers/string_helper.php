@@ -76,10 +76,11 @@ if ( ! function_exists( 'str_capitalize' ) )
 			{
 				$string = explode( ' ', $string );
 
-				$strings = array_map( function ( $string )
-				{
-					return ucfirst( $string );
-				}, $string );
+				$strings = array_map(
+					function ( $string )
+					{
+						return ucfirst( $string );
+					}, $string );
 
 				return implode( ' ', $strings );
 			}
@@ -110,6 +111,21 @@ if ( ! function_exists( 'is_default_str' ) )
 }
 
 // ------------------------------------------------------------------------
+
+if ( ! function_exists( 'is_html' ) )
+{
+	/**
+	 * Determine if string is HTML
+	 *
+	 * @param $string
+	 *
+	 * @return bool
+	 */
+	function is_html( $string )
+	{
+		return $string != strip_tags( $string ) ? TRUE : FALSE;
+	}
+}
 
 if ( ! function_exists( 'str_echo' ) )
 {
@@ -183,13 +199,14 @@ if ( ! function_exists( 'str_email' ) )
 	{
 		if ( ! empty( $string ) or $string != '' )
 		{
-			return str_replace( array(
-				                    '.',
-				                    '@',
-			                    ), array(
-				                    ' [dot] ',
-				                    ' [at] ',
-			                    ), trim( $string ) );
+			return str_replace(
+				[
+					'.',
+					'@',
+				], [
+					' [dot] ',
+					' [at] ',
+				], trim( $string ) );
 		}
 
 		return $string;
@@ -359,8 +376,8 @@ if ( ! function_exists( 'str_shorten' ) )
 	{
 		if ( strlen( $string ) > $limit )
 		{
-			$pre = substr( $string, 0, ( $limit / 2 ) );
-			$suf = substr( $string, -( $limit / 2 ) );
+			$pre    = substr( $string, 0, ( $limit / 2 ) );
+			$suf    = substr( $string, -( $limit / 2 ) );
 			$string = $pre . ' ... ' . $suf;
 		}
 
@@ -381,7 +398,7 @@ if ( ! function_exists( 'str_obfuscate' ) )
 	 */
 	function str_obfuscate( $string )
 	{
-		$length = strlen( $string );
+		$length    = strlen( $string );
 		$scrambled = '';
 		for ( $i = 0; $i < $length; ++$i )
 		{
@@ -406,7 +423,7 @@ if ( ! function_exists( 'symbols_to_entities' ) )
 	 */
 	function symbols_to_entities( $string )
 	{
-		static $symbols = array(
+		static $symbols = [
 			'‚', 'ƒ', '"', '…', '†', '‡', 'ˆ', '‰', 'Š', '‹', 'Œ', "'", "'", '"', '"', '•', '–', '—', '˜',
 			'™', 'š', '›', 'œ', 'Ÿ', '€', 'Æ', 'Á', 'Â', 'À', 'Å', 'Ã', 'Ä', 'Ç',
 			'Ð',
@@ -498,8 +515,8 @@ if ( ! function_exists( 'symbols_to_entities' ) )
 			'¢',
 			'…',
 			'µ',
-		);
-		static $entities = array(
+		];
+		static $entities = [
 			'&#8218;',
 			'&#402;',
 			'&#8222;',
@@ -622,7 +639,7 @@ if ( ! function_exists( 'symbols_to_entities' ) )
 			'&cent;',
 			'...',
 			'&micro;',
-		);
+		];
 
 		return str_replace( $symbols, $entities, $string );
 	}
@@ -701,7 +718,7 @@ if ( ! function_exists( 'mb_stripos_all' ) )
 			if ( is_integer( $i ) )
 			{
 				$aStrPos[] = $i;
-				$s = $i + mbStrlen( $needle );
+				$s         = $i + mb_strlen( $needle );
 			}
 		}
 
@@ -897,7 +914,7 @@ if ( ! function_exists( 'strip_quotes' ) )
 	 */
 	function strip_quotes( $str )
 	{
-		return str_replace( array( '"', "'" ), '', $str );
+		return str_replace( [ '"', "'" ], '', $str );
 	}
 }
 
@@ -916,7 +933,7 @@ if ( ! function_exists( 'quotes_to_entities' ) )
 	 */
 	function quotes_to_entities( $str )
 	{
-		return str_replace( array( "\'", "\"", "'", '"' ), array( "&#39;", "&quot;", "&#39;", "&quot;" ), $str );
+		return str_replace( [ "\'", "\"", "'", '"' ], [ "&#39;", "&quot;", "&#39;", "&quot;" ], $str );
 	}
 }
 

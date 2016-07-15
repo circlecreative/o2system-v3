@@ -58,10 +58,10 @@ use O2System\Glob\ArrayObject;
  */
 class Token extends DriverInterface
 {
-	private $storage = array(
+	private $storage = [
 		'signature'   => NULL,
-		'credentials' => array(),
-	);
+		'credentials' => [ ],
+	];
 
 	/**
 	 * Set Access
@@ -79,13 +79,14 @@ class Token extends DriverInterface
 
 		if ( $user->offsetExists( 'salt' ) )
 		{
-			$salt = $this->_library->saltPassword();
+			$salt          = $this->_library->saltPassword();
 			$hash_password = $this->_library->hashPassword( $password, $salt );
-			$this->_library->model->updateAccount( array(
-				                                        'id'       => $id_user_account,
-				                                        'password' => $hash_password,
-				                                        'salt'     => $salt,
-			                                        ) );
+			$this->_library->model->updateAccount(
+				[
+					'id'       => $id_user_account,
+					'password' => $hash_password,
+					'salt'     => $salt,
+				] );
 
 			$user->offsetUnset( 'salt' );
 		}
@@ -106,14 +107,14 @@ class Token extends DriverInterface
 
 		\O2System::Session()->setUserdata( 'account', $user );
 
-		$this->storage[ 'signature' ] = hash( "haval256,5", \O2System::$config[ 'encryption_key' ] . $id_user_account . $user_agent . $ip_address . microtime() );
-		$this->storage[ 'credentials' ] = array(
+		$this->storage[ 'signature' ]   = hash( "haval256,5", \O2System::$config[ 'encryption_key' ] . $id_user_account . $user_agent . $ip_address . microtime() );
+		$this->storage[ 'credentials' ] = [
 			'id_user_account' => ( $user->offsetExists( 'id_user_account' ) ? $user->id_user_account : $user->id ),
 			'ip_address'      => \O2System::Input()->ipAddress(),
 			'user_agent'      => \O2System::Input()->userAgent(),
-		);
+		];
 
-		if ( $this->_library->getConfig( 'json', 'access' ) === TRUE )
+		if ( $this->_library->getConfig( 'token', 'access' ) === TRUE )
 		{
 			$this->__setJson();
 		}
@@ -131,12 +132,13 @@ class Token extends DriverInterface
 
 	private function __setJson()
 	{
-		\O2System::Cache()->save( 'json-' . $this->storage[ 'signature' ], $this->storage, $this->_library->getConfig( 'json', 'lifetime' ) );
+		$lifetime = time() + $this->_library->getConfig( 'token', 'lifetime' );
+		\O2System::Cache()->save( 'token-' . $this->storage[ 'signature' ], $this->storage, ( $lifetime - 60 ) );
 	}
 
 	private function __setRemember()
 	{
-		$lifetime = time() + \O2System::$config[ 'cookie' ][ 'lifetime' ];
+		$lifetime = time() + $this->_library->getConfig( 'remember', 'lifetime' );
 		\O2System::Cache()->save( 'remember-' . $this->storage[ 'signature' ], $this->storage, ( $lifetime - 60 ) );
 
 		$credentials = serialize( $this->storage );
@@ -163,9 +165,10 @@ class Token extends DriverInterface
 
 	public function getCredentials( $signature )
 	{
-		if ( $cache = \O2System::Cache()->get( 'json-' . $signature ) )
+		if ( $cache = \O2System::Cache()->get( 'token-' . $signature ) )
 		{
-			$this->storage[ 'signature' ] = $cache[ 'signature' ];
+			$this->storage[ 'signature' ]          = $cache[ 'signature' ];
+			$cache[ 'credentials' ][ 'signature' ] = $cache[ 'signature' ];
 
 			return $this->storage[ 'credentials' ] = new Credentials( $cache[ 'credentials' ] );
 		}

@@ -42,7 +42,7 @@ trait AlignmentInterface
 {
 	protected $_pull_class_prefix = 'pull';
 
-	public function setPullClassPrefix($prefix )
+	public function setPullClassPrefix( $prefix )
 	{
 		$this->_pull_class_prefix = $prefix;
 	}

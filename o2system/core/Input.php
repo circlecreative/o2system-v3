@@ -63,7 +63,7 @@ final class Input
 	 * @access  protected
 	 * @type    array
 	 */
-	protected $_config = array();
+	protected $_config = [ ];
 
 	/**
 	 * IP address of the current user
@@ -79,7 +79,7 @@ final class Input
 	 * @access  protected
 	 * @type    array
 	 */
-	protected $headers = array();
+	protected $headers = [ ];
 
 	/**
 	 * Input stream data
@@ -125,7 +125,7 @@ final class Input
 		// Is $_GET data allowed? If not we'll set the $_GET to an empty array
 		if ( $this->_config[ 'allowed_get' ] === FALSE )
 		{
-			$_GET = array();
+			$_GET = [ ];
 		}
 		// Clean $_GET Data
 		elseif ( is_array( $_GET ) AND count( $_GET ) > 0 )
@@ -208,7 +208,7 @@ final class Input
 		// allow fetching multiple keys at once
 		if ( is_array( $index ) )
 		{
-			$output = array();
+			$output = [ ];
 			foreach ( $index as $key )
 			{
 				$output[ $key ] = $this->_fetchFromArray( $array, $key, $xss_clean );
@@ -380,7 +380,7 @@ final class Input
 		if ( ! is_array( $this->_input_stream ) )
 		{
 			parse_str( file_get_contents( 'php://input' ), $this->_input_stream );
-			is_array( $this->_input_stream ) || $this->_input_stream = array();
+			is_array( $this->_input_stream ) || $this->_input_stream = [ ];
 		}
 
 		return $this->_fetchFromArray( $this->_input_stream, $index, $xss_clean );
@@ -427,7 +427,7 @@ final class Input
 	 * @access  public
 	 * @return  void
 	 */
-	public function setCookie( $name, $value = '', $expire = '', $domain = '', $path = '/', $prefix = '', $secure = FALSE, $httponly = FALSE )
+	public function setCookie( $name, $value = '', $expire = 0, $domain = '', $path = '/', $prefix = '', $secure = FALSE, $httponly = FALSE )
 	{
 		$cookie = is_array( $name ) ? $name : func_get_args();
 
@@ -444,7 +444,7 @@ final class Input
 					$cookie[ $item ] = $cookie[ $key ];
 				}
 			}
-			elseif ( isset( $cookie[ $item ] ) )
+			elseif ( isset( $cookie[ $item ] ) AND isset( \O2System::$config[ 'cookie' ][ $item ] ) )
 			{
 				$cookie[ $item ] = \O2System::$config[ 'cookie' ][ $item ];
 			}
@@ -452,9 +452,14 @@ final class Input
 			unset( $cookie[ $key ] );
 		}
 
-		$cookie[ 'name' ] = $cookie[ 'prefix' ] . ltrim( $cookie[ 'name' ], $cookie[ 'prefix' ] );
-		$cookie[ 'value' ] = empty( $cookie[ 'value' ] ) ? $cookie[ 'value' ] : $cookie[ 'value' ];
-		$cookie[ 'expire' ] = empty( $cookie[ 'expire' ] ) ? time() + \O2System::$config[ 'cookie' ][ 'lifetime' ] : (int) $cookie[ 'expire' ];
+		$cookie[ 'name' ]  = $cookie[ 'prefix' ] . ltrim( $cookie[ 'name' ], $cookie[ 'prefix' ] );
+		$cookie[ 'value' ] = empty( $cookie[ 'value' ] ) ? NULL : $cookie[ 'value' ];
+
+		if ( $cookie[ 'expire' ] > 0 )
+		{
+			$cookie[ 'expire' ] = empty( $cookie[ 'expire' ] ) ? time() + \O2System::$config[ 'cookie' ][ 'lifetime' ] : (int) $cookie[ 'expire' ];
+		}
+
 		$cookie[ 'domain' ] = '.' . ( empty( $cookie[ 'domain' ] ) ? parse_domain()->domain : ltrim( $cookie[ 'domain' ], '.' ) );
 
 		setcookie(
@@ -496,11 +501,14 @@ final class Input
 
 		if ( $proxy_ips )
 		{
-			foreach ( array(
-				          'HTTP_X_FORWARDED_FOR', 'HTTP_CLIENT_IP', 'HTTP_X_CLIENT_IP', 'HTTP_X_CLUSTER_CLIENT_IP',
-			          ) as $header )
+			foreach ( [
+				          'HTTP_CLIENT_IP', 'HTTP_X_CLIENT_IP', 'HTTP_FORWARDED', 'HTTP_X_FORWARDED', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_CLUSTER_CLIENT_IP', 'REMOTE_ADDR',
+			          ] as $header )
 			{
-				if ( ( $spoof = $this->server( $header ) ) !== NULL )
+				$spoof = $this->server( $header );
+				$spoof = empty( $spoof ) ? getenv( $header ) : $spoof;
+
+				if ( $spoof !== NULL )
 				{
 					// Some proxies typically list the whole chain of IP
 					// addresses through which the client has reached us.
@@ -551,11 +559,13 @@ final class Input
 						if ( $separator === ':' )
 						{
 							// Make sure we're have the "full" IPv6 format
-							$ip = explode( ':',
-							               str_replace( '::',
-							                            str_repeat( ':', 9 - substr_count( $this->ip_address, ':' ) ),
-							                            $this->ip_address
-							               )
+							$ip = explode(
+								':',
+								str_replace(
+									'::',
+									str_repeat( ':', 9 - substr_count( $this->ip_address, ':' ) ),
+									$this->ip_address
+								)
 							);
 
 							for ( $i = 0; $i < 8; $i++ )
@@ -567,7 +577,7 @@ final class Input
 						}
 						else
 						{
-							$ip = explode( '.', $this->ip_address );
+							$ip      = explode( '.', $this->ip_address );
 							$sprintf = '%08b%08b%08b%08b';
 						}
 
@@ -620,7 +630,7 @@ final class Input
 	 * @access  public
 	 * @return  mixed
 	 */
-	public function globals( $index, $xss_clean = NULL )
+	public function globals( $index = NULL, $xss_clean = NULL )
 	{
 		return $this->_fetchFromArray( $_GLOBALS, $index, $xss_clean );
 	}
@@ -636,7 +646,7 @@ final class Input
 	 * @access  public
 	 * @return  mixed
 	 */
-	public function server( $index, $xss_clean = NULL )
+	public function server( $index = NULL, $xss_clean = NULL )
 	{
 		return $this->_fetchFromArray( $_SERVER, $index, $xss_clean );
 	}
@@ -864,7 +874,7 @@ final class Input
 	{
 		if ( is_array( $string ) )
 		{
-			$new_array = array();
+			$new_array = [ ];
 			foreach ( array_keys( $string ) as $key )
 			{
 				$new_array[ $this->_cleanInputKeys( $key ) ] = $this->_cleanInputData( $string[ $key ] );

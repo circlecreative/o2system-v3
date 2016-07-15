@@ -71,7 +71,7 @@ class Cart extends DriverInterface implements IteratorAggregate, ArrayAccess, Co
 		return (bool) ( $this->count() == 0 ? TRUE : FALSE );
 	}
 
-	public function addItems(array $items )
+	public function addItems( array $items )
 	{
 		foreach ( $items as $item )
 		{
@@ -79,7 +79,7 @@ class Cart extends DriverInterface implements IteratorAggregate, ArrayAccess, Co
 		}
 	}
 
-	public function addItem(ArrayObject $item )
+	public function addItem( ArrayObject $item )
 	{
 		if ( $item instanceof ArrayObject )
 		{
@@ -100,25 +100,29 @@ class Cart extends DriverInterface implements IteratorAggregate, ArrayAccess, Co
 			else
 			{
 				$item[ 'quantity' ] = 1;
-				$item[ 'price' ] = new ArrayObject( array(
-					                                    'amount'        => $item[ 'price' ]->amount,
-					                                    'currency'      => $currency = ( isset( $item[ 'price' ]->currency ) ? $item[ 'price' ]->currency : \O2System::$config[ 'currency' ] ),
-					                                    'with_currency' => number_price( $item[ 'price' ]->amount, $currency, TRUE ),
-				                                    ) );
+				$item[ 'price' ]    = new ArrayObject(
+					[
+						'amount'        => $item[ 'price' ]->amount,
+						'currency'      => $currency = ( isset( $item[ 'price' ]->currency ) ? $item[ 'price' ]->currency : \O2System::$config[ 'currency' ] ),
+						'with_currency' => currency_format( $item[ 'price' ]->amount, $currency, TRUE ),
+					] );
 
-				$item[ 'sub_total' ] = new ArrayObject( array(
-					                                        'price' => new ArrayObject( array(
-						                                                                    'amount'        => $amount = ( $item[ 'discount' ]->is_discounted !== FALSE ? $item[ 'quantity' ] * $item[ 'discount' ]->price->amount : $item[ 'quantity' ] * $item[ 'price' ]->amount ),
-						                                                                    'currency'      => $currency = ( isset( $item->price[ 'currency' ] ) ? $item->price[ 'currency' ] : \O2System::$config[ 'currency' ] ),
-						                                                                    'with_currency' => number_price( $amount, $currency, TRUE ),
-					                                                                    ) ),
+				$item[ 'sub_total' ] = new ArrayObject(
+					[
+						'price' => new ArrayObject(
+							[
+								'amount'        => $amount = ( $item[ 'discount' ]->is_discounted !== FALSE ? $item[ 'quantity' ] * $item[ 'discount' ]->price->amount : $item[ 'quantity' ] * $item[ 'price' ]->amount ),
+								'currency'      => $currency = ( isset( $item->price[ 'currency' ] ) ? $item->price[ 'currency' ] : \O2System::$config[ 'currency' ] ),
+								'with_currency' => currency_format( $amount, $currency, TRUE ),
+							] ),
 
-					                                        'weight' => new ArrayObject( array(
-						                                                                     'amount'    => $amount = $item[ 'quantity' ] * $item[ 'specification' ]->weight->amount,
-						                                                                     'unit'      => $unit = ( isset( $item[ 'specification' ]->weight->unit ) ? $item[ 'specification' ]->weight->unit : \O2System::$config[ 'weight' ] ),
-						                                                                     'with_unit' => number_weight( $amount, $unit, TRUE ),
-					                                                                     ) ),
-				                                        ) );
+						'weight' => new ArrayObject(
+							[
+								'amount'    => $amount = $item[ 'quantity' ] * $item[ 'specification' ]->weight->amount,
+								'unit'      => $unit = ( isset( $item[ 'specification' ]->weight->unit ) ? $item[ 'specification' ]->weight->unit : \O2System::$config[ 'weight' ] ),
+								'with_unit' => number_weight( $amount, $unit, TRUE ),
+							] ),
+					] );
 
 				$_SESSION[ 'shopping_cart' ][ $item->id ] = $item;
 
@@ -129,7 +133,7 @@ class Cart extends DriverInterface implements IteratorAggregate, ArrayAccess, Co
 		return FALSE;
 	}
 
-	public function updateItem($id, $quantity )
+	public function updateItem( $id, $quantity )
 	{
 		if ( $this->offsetExists( $id ) )
 		{
@@ -142,19 +146,22 @@ class Cart extends DriverInterface implements IteratorAggregate, ArrayAccess, Co
 			{
 				$_SESSION[ 'shopping_cart' ][ $id ][ 'quantity' ] = $quantity;
 
-				$_SESSION[ 'shopping_cart' ][ $id ][ 'sub_total' ] = new ArrayObject( array(
-					                                                                      'price' => new ArrayObject( array(
-						                                                                                                  'amount'        => $amount = ( $_SESSION[ 'shopping_cart' ][ $id ][ 'discount' ]->is_discounted !== FALSE  ? $quantity * $_SESSION[ 'shopping_cart' ][ $id ][ 'discount' ]->price->amount : $quantity * $_SESSION[ 'shopping_cart' ][ $id ]->price[ 'amount' ] ),
-						                                                                                                  'currency'      => $currency = ( isset( $_SESSION[ 'shopping_cart' ][ $id ]->price[ 'currency' ] ) ? $_SESSION[ 'shopping_cart' ][ $id ]->price[ 'currency' ] : \O2System::$config[ 'currency' ] ),
-						                                                                                                  'with_currency' => number_price( $amount, $currency, TRUE ),
-					                                                                                                  ) ),
+				$_SESSION[ 'shopping_cart' ][ $id ][ 'sub_total' ] = new ArrayObject(
+					[
+						'price' => new ArrayObject(
+							[
+								'amount'        => $amount = ( $_SESSION[ 'shopping_cart' ][ $id ][ 'discount' ]->is_discounted !== FALSE ? $quantity * $_SESSION[ 'shopping_cart' ][ $id ][ 'discount' ]->price->amount : $quantity * $_SESSION[ 'shopping_cart' ][ $id ]->price[ 'amount' ] ),
+								'currency'      => $currency = ( isset( $_SESSION[ 'shopping_cart' ][ $id ]->price[ 'currency' ] ) ? $_SESSION[ 'shopping_cart' ][ $id ]->price[ 'currency' ] : \O2System::$config[ 'currency' ] ),
+								'with_currency' => currency_format( $amount, $currency, TRUE ),
+							] ),
 
-					                                                                      'weight' => new ArrayObject( array(
-						                                                                                                   'amount'    => $amount = $_SESSION[ 'shopping_cart' ][ $id ][ 'quantity' ] * $_SESSION[ 'shopping_cart' ][ $id ][ 'specification' ]->weight->amount,
-						                                                                                                   'unit'      => $unit = ( isset( $_SESSION[ 'shopping_cart' ][ $id ][ 'specification' ]->weight->unit ) ? $_SESSION[ 'shopping_cart' ][ $id ][ 'specification' ]->weight->unit : \O2System::$config[ 'weight' ] ),
-						                                                                                                   'with_unit' => number_weight( $amount, $unit, TRUE ),
-					                                                                                                   ) ),
-				                                                                      ) );
+						'weight' => new ArrayObject(
+							[
+								'amount'    => $amount = $_SESSION[ 'shopping_cart' ][ $id ][ 'quantity' ] * $_SESSION[ 'shopping_cart' ][ $id ][ 'specification' ]->weight->amount,
+								'unit'      => $unit = ( isset( $_SESSION[ 'shopping_cart' ][ $id ][ 'specification' ]->weight->unit ) ? $_SESSION[ 'shopping_cart' ][ $id ][ 'specification' ]->weight->unit : \O2System::$config[ 'weight' ] ),
+								'with_unit' => number_weight( $amount, $unit, TRUE ),
+							] ),
+					] );
 			}
 
 			return TRUE;
@@ -164,7 +171,7 @@ class Cart extends DriverInterface implements IteratorAggregate, ArrayAccess, Co
 	} // End of updateItem() method.
 
 	// Removes an item from the cart:
-	public function deleteItem($id )
+	public function deleteItem( $id )
 	{
 		// Remove it:
 		if ( $this->offsetExists( $id ) )
@@ -177,7 +184,7 @@ class Cart extends DriverInterface implements IteratorAggregate, ArrayAccess, Co
 		return FALSE;
 	}
 
-	public function getTotalPrice($return = 'amount' )
+	public function getTotalPrice( $return = 'amount' )
 	{
 		$total_price = 0;
 
@@ -189,16 +196,17 @@ class Cart extends DriverInterface implements IteratorAggregate, ArrayAccess, Co
 			}
 		}
 
-		$total = new ArrayObject( array(
-			                          'amount'        => $total_price,
-			                          'currency'      => $currency = ( isset( $item->price[ 'currency' ] ) ? $item->price[ 'currency' ] : \O2System::$config[ 'currency' ] ),
-			                          'with_currency' => number_price( $total_price, $currency, TRUE ),
-		                          ) );
+		$total = new ArrayObject(
+			[
+				'amount'        => $total_price,
+				'currency'      => $currency = ( isset( $item->price[ 'currency' ] ) ? $item->price[ 'currency' ] : \O2System::$config[ 'currency' ] ),
+				'with_currency' => currency_format( $total_price, $currency, TRUE ),
+			] );
 
 		return $total->offsetGet( $return );
 	}
 
-	public function getTotalWeight($return = 'amount' )
+	public function getTotalWeight( $return = 'amount' )
 	{
 		$total_weight = 0;
 
@@ -210,11 +218,12 @@ class Cart extends DriverInterface implements IteratorAggregate, ArrayAccess, Co
 			}
 		}
 
-		$total = new ArrayObject( array(
-			                          'amount'    => $total_weight,
-			                          'unit'      => $unit = ( isset( $item[ 'specification' ]->weight->unit ) ? $item[ 'specification' ]->weight->unit : \O2System::$config[ 'weight' ] ),
-			                          'with_unit' => number_weight( $total_weight, $unit, TRUE ),
-		                          ) );
+		$total = new ArrayObject(
+			[
+				'amount'    => $total_weight,
+				'unit'      => $unit = ( isset( $item[ 'specification' ]->weight->unit ) ? $item[ 'specification' ]->weight->unit : \O2System::$config[ 'weight' ] ),
+				'with_unit' => number_weight( $total_weight, $unit, TRUE ),
+			] );
 
 		return $total->offsetGet( $return );
 	}

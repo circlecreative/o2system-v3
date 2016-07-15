@@ -108,7 +108,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _listTablesStatement($prefix_limit = FALSE )
+	protected function _listTablesStatement( $prefix_limit = FALSE )
 	{
 		$sql = 'SELECT "NAME" FROM "SQLITE_MASTER" WHERE "TYPE" = \'table\'';
 
@@ -132,7 +132,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _listColumnsStatement($table = '' )
+	protected function _listColumnsStatement( $table = '' )
 	{
 		// Not supported
 		return FALSE;
@@ -147,7 +147,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    array
 	 */
-	public function fieldData($table )
+	public function fieldData( $table )
 	{
 		if ( ( $query = $this->query( 'PRAGMA TABLE_INFO(' . $this->protectIdentifiers( $table, TRUE, NULL, FALSE ) . ')' ) ) === FALSE )
 		{
@@ -160,14 +160,14 @@ class Driver extends DriverInterface
 			return FALSE;
 		}
 
-		$result = array();
+		$result = [ ];
 		for ( $i = 0, $c = count( $query ); $i < $c; $i++ )
 		{
-			$result[ $i ] = new \stdClass();
-			$result[ $i ]->name = $query[ $i ][ 'name' ];
-			$result[ $i ]->type = $query[ $i ][ 'type' ];
-			$result[ $i ]->max_length = NULL;
-			$result[ $i ]->default = $query[ $i ][ 'dflt_value' ];
+			$result[ $i ]              = new \stdClass();
+			$result[ $i ]->name        = $query[ $i ][ 'name' ];
+			$result[ $i ]->type        = $query[ $i ][ 'type' ];
+			$result[ $i ]->max_length  = NULL;
+			$result[ $i ]->default     = $query[ $i ][ 'dflt_value' ];
 			$result[ $i ]->primary_key = isset( $query[ $i ][ 'pk' ] ) ? (int) $query[ $i ][ 'pk' ] : 0;
 		}
 
@@ -204,7 +204,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _truncateStatement($table )
+	protected function _truncateStatement( $table )
 	{
 		return 'DELETE FROM ' . $table;
 	}

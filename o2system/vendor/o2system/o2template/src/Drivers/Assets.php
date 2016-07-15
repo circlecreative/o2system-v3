@@ -63,25 +63,25 @@ final class Assets extends DriverInterface
 {
 	private $storage;
 
-	protected $_collections = array(
-		'fonts'   => array(),
-		'icons'   => array(),
-		'core'    => array(),
-		'plugins' => array(),
-		'module'  => array(),
-		'theme'   => array(),
-		'custom'  => array(),
-		'inline'  => array(),
-	);
+	protected $_collections = [
+		'fonts'   => [ ],
+		'icons'   => [ ],
+		'core'    => [ ],
+		'plugins' => [ ],
+		'module'  => [ ],
+		'theme'   => [ ],
+		'custom'  => [ ],
+		'inline'  => [ ],
+	];
 
 	// ------------------------------------------------------------------------
 
-	public function isCollected($asset, $group )
+	public function isCollected( $asset, $group )
 	{
 
 	}
 
-	public function addAssets(array $assets, $group = 'custom' )
+	public function addAssets( array $assets, $group = 'custom' )
 	{
 		if ( isset( $this->_collections[ $group ] ) )
 		{
@@ -114,7 +114,7 @@ final class Assets extends DriverInterface
 		return $this;
 	}
 
-	public function addAsset($asset, $group = 'custom' )
+	public function addAsset( $asset, $group = 'custom' )
 	{
 		if ( isset( $this->_collections[ $group ] ) )
 		{
@@ -125,7 +125,7 @@ final class Assets extends DriverInterface
 				if ( empty( $ext ) )
 				{
 					$this->_collections[ $group ][ 'css' ][ $asset ] = $asset;
-					$this->_collections[ $group ][ 'js' ][ $asset ] = $asset;
+					$this->_collections[ $group ][ 'js' ][ $asset ]  = $asset;
 				}
 				else
 				{
@@ -137,24 +137,25 @@ final class Assets extends DriverInterface
 		return $this;
 	}
 
-	public function addCss($css, $attr = NULL, $group = 'custom' )
+	public function addCss( $css, $attr = NULL, $group = 'custom' )
 	{
 		if ( is_string( $attr ) )
 		{
 			$group = $attr;
-			$attr = array(
+			$attr  = [
 				'media' => 'all',
 				'rel'   => 'stylesheet',
 				'type'  => 'text/css',
-			);
+			];
 		}
 		elseif ( is_array( $attr ) )
 		{
-			$attr = array_merge( array(
-				                     'media' => 'all',
-				                     'rel'   => 'stylesheet',
-				                     'type'  => 'text/css',
-			                     ), $attr );
+			$attr = array_merge(
+				[
+					'media' => 'all',
+					'rel'   => 'stylesheet',
+					'type'  => 'text/css',
+				], $attr );
 		}
 
 		if ( isset( $this->_collections[ $group ][ 'css' ] ) )
@@ -167,12 +168,12 @@ final class Assets extends DriverInterface
 
 		if ( is_file( $css ) )
 		{
-			$attr[ 'realpath' ] = $css;
+			$attr[ 'realpath' ]                                                           = $css;
 			$this->_collections[ $group ][ 'css' ][ pathinfo( $css, PATHINFO_FILENAME ) ] = new Tag( 'link', $attr );
 		}
 		elseif ( strpos( $css, '://' ) !== FALSE )
 		{
-			$attr[ 'src' ] = $css;
+			$attr[ 'src' ]                                                                = $css;
 			$this->_collections[ $group ][ 'css' ][ pathinfo( $css, PATHINFO_FILENAME ) ] = new Tag( 'link', $attr );
 		}
 		elseif ( $group === 'inline' )
@@ -187,22 +188,23 @@ final class Assets extends DriverInterface
 		return $this;
 	}
 
-	public function addJs($js, $attr = array(), $group = 'custom' )
+	public function addJs( $js, $attr = [ ], $group = 'custom' )
 	{
 		if ( is_string( $attr ) )
 		{
 			$group = $attr;
-			$attr = array(
+			$attr  = [
 				'type'  => 'text/javascript',
 				'defer' => 'defer',
-			);
+			];
 		}
 		elseif ( is_array( $attr ) )
 		{
-			$attr = array_merge( $attr, array(
+			$attr = array_merge(
+				$attr, [
 				'type'  => 'text/javascript',
 				'defer' => 'defer',
-			) );
+			] );
 		}
 
 		if ( isset( $this->_collections[ $group ][ 'js' ] ) )
@@ -215,12 +217,12 @@ final class Assets extends DriverInterface
 
 		if ( is_file( $js ) )
 		{
-			$attr[ 'realpath' ] = $js;
+			$attr[ 'realpath' ]                                                         = $js;
 			$this->_collections[ $group ][ 'js' ][ pathinfo( $js, PATHINFO_FILENAME ) ] = new Tag( 'script', $attr );
 		}
 		elseif ( strpos( $js, '://' ) !== FALSE )
 		{
-			$attr[ 'src' ] = $js;
+			$attr[ 'src' ]                                                              = $js;
 			$this->_collections[ $group ][ 'js' ][ pathinfo( $js, PATHINFO_FILENAME ) ] = new Tag( 'script', $attr );
 		}
 		elseif ( $group === 'inline' )
@@ -235,17 +237,17 @@ final class Assets extends DriverInterface
 		return $this;
 	}
 
-	public function addFonts($fonts )
+	public function addFonts( $fonts )
 	{
 		$this->addAssets( $fonts );
 	}
 
-	public function addFont($font, $attr = array() )
+	public function addFont( $font, $attr = [ ] )
 	{
 		$this->addCss( $font, $attr, 'fonts' );
 	}
 
-	public function addIcons($icons )
+	public function addIcons( $icons )
 	{
 		foreach ( $icons as $icon )
 		{
@@ -253,12 +255,13 @@ final class Assets extends DriverInterface
 		}
 	}
 
-	public function addIcon($icon, $attr = array() )
+	public function addIcon( $icon, $attr = [ ] )
 	{
-		$attr = array_merge( array(
-			                     'rel'  => 'shortcut-icon',
-			                     'type' => 'image/x-icon',
-		                     ), $attr );
+		$attr = array_merge(
+			[
+				'rel'  => 'shortcut-icon',
+				'type' => 'image/x-icon',
+			], $attr );
 
 		if ( isset( $this->_collections[ 'icons' ][ 'css' ] ) )
 		{
@@ -286,7 +289,7 @@ final class Assets extends DriverInterface
 		return $this;
 	}
 
-	public function addPackages(array $packages, $group = 'plugins' )
+	public function addPackages( array $packages, $group = 'plugins' )
 	{
 		foreach ( $packages as $package )
 		{
@@ -294,25 +297,27 @@ final class Assets extends DriverInterface
 		}
 	}
 
-	public function addPackage($package, $group = 'plugins' )
+	public function addPackage( $package, $group = 'plugins' )
 	{
-		$this->_collections[ $group ]['packages'][] = $package;
+		$this->_collections[ $group ][ 'packages' ][] = $package;
 	}
 
 	private function __inlineCss( $collection )
 	{
-		$this->storage[ 'css' ][ 'inline' ] = new Tag( 'style', implode( PHP_EOL, $collection ), array(
+		$this->storage[ 'css' ][ 'inline' ] = new Tag(
+			'style', implode( PHP_EOL, $collection ), [
 			'media' => 'all',
 			'rel'   => 'stylesheet',
 			'type'  => 'text/css',
-		) );
+		] );
 	}
 
 	private function __inlineJs( $collection )
 	{
-		$this->storage[ 'js' ][ 'inline' ] = new Tag( 'script', implode( PHP_EOL, $collection ), array(
-			'type'  => 'text/javascript',
-		) );
+		$this->storage[ 'js' ][ 'inline' ] = new Tag(
+			'script', implode( PHP_EOL, $collection ), [
+			'type' => 'text/javascript',
+		] );
 	}
 
 	private function __fetchCss( $collection )
@@ -327,12 +332,13 @@ final class Assets extends DriverInterface
 			{
 				$key = is_numeric( $key ) ? pathinfo( $css, PATHINFO_FILENAME ) : $key;
 
-				$this->storage[ 'css' ][ $key ] = new Tag( 'link', array(
+				$this->storage[ 'css' ][ $key ] = new Tag(
+					'link', [
 					'media' => 'all',
 					'rel'   => 'stylesheet',
 					'type'  => 'text/css',
 					'href'  => $css,
-				) );
+				] );
 			}
 			else
 			{
@@ -342,13 +348,14 @@ final class Assets extends DriverInterface
 				{
 					$key = is_numeric( $key ) ? pathinfo( $filepath, PATHINFO_FILENAME ) : $key;
 
-					$this->storage[ 'css' ][ $key ] = new Tag( 'link', array(
+					$this->storage[ 'css' ][ $key ] = new Tag(
+						'link', [
 						'media'    => 'all',
 						'rel'      => 'stylesheet',
 						'type'     => 'text/css',
 						'realpath' => $filepath,
 						'href'     => path_to_url( $filepath ),
-					) );
+					] );
 				}
 			}
 		}
@@ -366,11 +373,12 @@ final class Assets extends DriverInterface
 			{
 				$key = is_numeric( $key ) ? pathinfo( $js, PATHINFO_FILENAME ) : $key;
 
-				$this->storage[ 'js' ][ $key ] = new Tag( 'script', array(
+				$this->storage[ 'js' ][ $key ] = new Tag(
+					'script', [
 					'type'  => 'text/javascript',
 					'defer' => 'defer',
 					'src'   => $js,
-				) );
+				] );
 			}
 			else
 			{
@@ -380,12 +388,13 @@ final class Assets extends DriverInterface
 				{
 					$key = is_numeric( $key ) ? pathinfo( $filepath, PATHINFO_FILENAME ) : $key;
 
-					$this->storage[ 'js' ][ $key ] = new Tag( 'script', array(
+					$this->storage[ 'js' ][ $key ] = new Tag(
+						'script', [
 						'type'     => 'text/javascript',
 						'defer'    => 'defer',
 						'realpath' => $filepath,
 						'src'      => path_to_url( $filepath ),
-					) );
+					] );
 				}
 			}
 		}
@@ -403,12 +412,13 @@ final class Assets extends DriverInterface
 			{
 				$key = is_numeric( $key ) ? pathinfo( $font, PATHINFO_FILENAME ) : $key;
 
-				$this->storage[ 'css' ][ $key ] = new Tag( 'link', array(
+				$this->storage[ 'css' ][ $key ] = new Tag(
+					'link', [
 					'media' => 'all',
 					'rel'   => 'stylesheet',
 					'type'  => 'text/css',
 					'href'  => $font,
-				) );
+				] );
 			}
 			else
 			{
@@ -418,13 +428,14 @@ final class Assets extends DriverInterface
 				{
 					$key = is_numeric( $key ) ? pathinfo( $filepath, PATHINFO_FILENAME ) : $key;
 
-					$this->storage[ 'css' ][ $key ] = new Tag( 'link', array(
+					$this->storage[ 'css' ][ $key ] = new Tag(
+						'link', [
 						'media'    => 'all',
 						'rel'      => 'stylesheet',
 						'type'     => 'text/css',
 						'realpath' => $filepath,
 						'href'     => path_to_url( $filepath ),
-					) );
+					] );
 				}
 			}
 		}
@@ -444,7 +455,7 @@ final class Assets extends DriverInterface
 					{
 						$icon[ 'src' ] = path_to_url( $filepath );
 
-						$key = is_numeric( $key ) ? pathinfo( $filepath, PATHINFO_FILENAME ) : $key;
+						$key                              = is_numeric( $key ) ? pathinfo( $filepath, PATHINFO_FILENAME ) : $key;
 						$this->storage[ 'icons' ][ $key ] = new Tag( 'link', $icon );
 					}
 				}
@@ -503,13 +514,14 @@ final class Assets extends DriverInterface
 
 		if ( is_file( $filepath = $css_path . $css . '.css' ) )
 		{
-			$this->storage[ 'css' ][ $css ] = new Tag( 'link', array(
+			$this->storage[ 'css' ][ $css ] = new Tag(
+				'link', [
 				'media'    => 'all',
 				'rel'      => 'stylesheet',
 				'type'     => 'text/css',
 				'realpath' => $filepath,
 				'href'     => path_to_url( $filepath ),
-			) );
+			] );
 
 			return TRUE;
 		}
@@ -536,12 +548,13 @@ final class Assets extends DriverInterface
 
 		if ( is_file( $filepath = $js_path . $js . '.js' ) )
 		{
-			$this->storage[ 'js' ][ $js ] = new Tag( 'script', array(
+			$this->storage[ 'js' ][ $js ] = new Tag(
+				'script', [
 				'type'     => 'text/javascript',
 				'defer'    => 'defer',
 				'realpath' => $filepath,
 				'src'      => path_to_url( $filepath ),
-			) );
+			] );
 		}
 
 		return FALSE;
@@ -672,10 +685,10 @@ final class Assets extends DriverInterface
 			$this->render();
 		}
 
-		$properties_map = array(
+		$properties_map = [
 			'header' => 'css',
 			'footer' => 'js',
-		);
+		];
 
 		if ( isset( $properties_map[ $property ] ) )
 		{

@@ -78,11 +78,11 @@ class Utility extends UtilityInterface
 	 *
 	 * @return    mixed
 	 */
-	protected function _backup( $params = array() )
+	protected function _backup( $params = [ ] )
 	{
 		// No SQL based support in CUBRID as of version 8.4.0. Database or
 		// table backup can be performed using CUBRID Manager
 		// database administration tool.
-		throw new Exception('Unsupported feature of the database platform you are using.');
+		throw new Exception( 'Unsupported feature of the database platform you are using.' );
 	}
 }

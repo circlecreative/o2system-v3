@@ -161,7 +161,7 @@ if ( ! function_exists( 'format_date' ) )
 	function format_date( $timestamp = NULL, $format = '%l, %d-%F-%Y %h:%i:%s %a' )
 	{
 		$timestamp = ( is_null( $timestamp ) ? now() : ( is_numeric( $timestamp ) ? $timestamp : strtotime( $timestamp ) ) );
-		$date = parse_date( $timestamp );
+		$date      = parse_date( $timestamp );
 
 		$output = $format;
 
@@ -196,26 +196,27 @@ if ( ! function_exists( 'parse_date' ) )
 	 */
 	function parse_date( $timestamp = NULL )
 	{
-		$timestamp = ( is_null( $timestamp ) ? now() : ( is_numeric( $timestamp ) ? $timestamp : strtotime( $timestamp ) ) );
-		$date_parts = new \O2System\Glob\ArrayObject( array(
-			                                              't'  => $timestamp,
-			                                              'd'  => date( 'd', $timestamp ),
-			                                              'Y'  => date( 'Y', $timestamp ),
-			                                              'y'  => date( 'y', $timestamp ),
-			                                              'am' => time_meridiem( $timestamp ),
-			                                              'a'  => date( 'a', $timestamp ),
-			                                              'h'  => date( 'h', $timestamp ),
-			                                              'H'  => date( 'H', $timestamp ),
-			                                              'i'  => date( 'i', $timestamp ),
-			                                              's'  => date( 's', $timestamp ),
-			                                              'w'  => date( 'w', $timestamp ),
-			                                              'l'  => day_name( $timestamp, 'l' ),
-			                                              'm'  => date( 'm', $timestamp ),
-			                                              'n'  => date( 'n', $timestamp ),
-			                                              'F'  => month_name( $timestamp, 'F' ),
-			                                              'M'  => month_name( $timestamp, 'M' ),
-			                                              'e'  => string_time_elapsed( $timestamp )
-		                                              ) );
+		$timestamp  = ( is_null( $timestamp ) ? now() : ( is_numeric( $timestamp ) ? $timestamp : strtotime( $timestamp ) ) );
+		$date_parts = new \O2System\Glob\ArrayObject(
+			[
+				't'  => $timestamp,
+				'd'  => date( 'd', $timestamp ),
+				'Y'  => date( 'Y', $timestamp ),
+				'y'  => date( 'y', $timestamp ),
+				'am' => time_meridiem( $timestamp ),
+				'a'  => date( 'a', $timestamp ),
+				'h'  => date( 'h', $timestamp ),
+				'H'  => date( 'H', $timestamp ),
+				'i'  => date( 'i', $timestamp ),
+				's'  => date( 's', $timestamp ),
+				'w'  => date( 'w', $timestamp ),
+				'l'  => day_name( $timestamp, 'l' ),
+				'm'  => date( 'm', $timestamp ),
+				'n'  => date( 'n', $timestamp ),
+				'F'  => month_name( $timestamp, 'F' ),
+				'M'  => month_name( $timestamp, 'M' ),
+				'e'  => string_time_elapsed( $timestamp ),
+			] );
 
 		return $date_parts;
 	}
@@ -286,7 +287,7 @@ if ( ! function_exists( 'part_time' ) )
 	 */
 	function time_meridiem( $timestamp = NULL )
 	{
-		$timestamp = ( is_null( $timestamp ) ? now() : ( is_numeric( $timestamp ) ? $timestamp : strtotime( $timestamp ) ) );
+		$timestamp        = ( is_null( $timestamp ) ? now() : ( is_numeric( $timestamp ) ? $timestamp : strtotime( $timestamp ) ) );
 		$part_time_number = date( 'G', $timestamp );
 		\O2System::$language->load( 'date' );
 
@@ -340,14 +341,14 @@ if ( ! function_exists( 'string_time_elapsed' ) )
 			$time = date( 'Y-m-d H:m:s', $time );
 		}
 
-		$now = new DateTime;
-		$ago = new DateTime( $time );
+		$now  = new DateTime;
+		$ago  = new DateTime( $time );
 		$diff = $now->diff( $ago );
 
 		$diff->w = floor( $diff->d / 7 );
 		$diff->d -= $diff->w * 7;
 
-		$string = array(
+		$string = [
 			'y' => \O2System::$language->line( 'DATE_YEAR' ),
 			'm' => \O2System::$language->line( 'DATE_MONTH' ),
 			'w' => \O2System::$language->line( 'DATE_WEEK' ),
@@ -355,7 +356,7 @@ if ( ! function_exists( 'string_time_elapsed' ) )
 			'h' => \O2System::$language->line( 'DATE_HOUR' ),
 			'i' => \O2System::$language->line( 'DATE_MINUTE' ),
 			's' => \O2System::$language->line( 'DATE_SECOND' ),
-		);
+		];
 		foreach ( $string as $key => &$value )
 		{
 			if ( $diff->$key )
@@ -368,7 +369,10 @@ if ( ! function_exists( 'string_time_elapsed' ) )
 			}
 		}
 
-		if ( ! $full ) $string = array_slice( $string, 0, 1 );
+		if ( ! $full )
+		{
+			$string = array_slice( $string, 0, 1 );
+		}
 
 		return $string ? strtolower( implode( ', ', $string ) ) . ' ' . \O2System::$language->line( 'DATE_AGO' ) : \O2System::$language->line( 'DATE_JUSTNOW' );
 
@@ -394,13 +398,13 @@ if ( ! function_exists( 'dates_between' ) )
 	 */
 	function dates_between( $start_date, $end_date, $format = 'Y-m-d' )
 	{
-		$day = 60 * 60 * 24;
+		$day        = 60 * 60 * 24;
 		$start_date = ( ! is_numeric( $start_date ) ? strtotime( $start_date ) : $start_date );
-		$end_date = ( ! is_numeric( $end_date ) ? strtotime( $end_date ) : $end_date );
+		$end_date   = ( ! is_numeric( $end_date ) ? strtotime( $end_date ) : $end_date );
 
 		$days_diff = round( ( $end_date - $start_date ) / $day ); // Unix time difference devided by 1 day to get total days in between
 
-		$dates_array = array();
+		$dates_array = [ ];
 
 		if ( $format == 'time' )
 		{
@@ -452,14 +456,14 @@ if ( ! function_exists( 'time_range' ) )
 	 */
 	function time_range( $mode = 24, $step = 15 )
 	{
-		$time = array();
+		$time    = [ ];
 		$minutes = range( 0, ( 60 - $step ), $step );
 		for ( $i = 0; $i <= 23; $i++ )
 		{
 			$hour = ( strlen( $i ) == 1 ? '0' . $i : $i );
 			foreach ( $minutes as $minute )
 			{
-				$hours = $hour . ':' . ( strlen( $minute ) == 1 ? '0' . $minute : $minute );
+				$hours   = $hour . ':' . ( strlen( $minute ) == 1 ? '0' . $minute : $minute );
 				$time_12 = date( "h:i a", strtotime( $hours ) );
 				$time_24 = $hours;
 				if ( $mode == 12 )
@@ -531,17 +535,17 @@ if ( ! function_exists( 'calculate_days' ) )
 	function calculate_days( $start_date, $end_date, $hour = '12:00:00 am' )
 	{
 		$start_date = ( is_numeric( $start_date ) ? date( 'd-m-Y', $start_date ) : $start_date );
-		$end_date = ( is_numeric( $end_date ) ? date( 'd-m-Y', $end_date ) : $end_date );
-		$hour = ( is_numeric( $hour ) ? date( 'h:i:s a', $hour ) : $hour );
+		$end_date   = ( is_numeric( $end_date ) ? date( 'd-m-Y', $end_date ) : $end_date );
+		$hour       = ( is_numeric( $hour ) ? date( 'h:i:s a', $hour ) : $hour );
 
 		$start_date = $start_date . ' ' . $hour;
-		$end_date = $end_date . ' ' . $hour;
+		$end_date   = $end_date . ' ' . $hour;
 
 		$start_date = strtotime( $start_date );
-		$end_date = strtotime( $end_date );
+		$end_date   = strtotime( $end_date );
 
 		$hours = 24 * 60 * 60; // Hours in a day
-		$time = $end_date - $start_date;
+		$time  = $end_date - $start_date;
 
 		return round( $time / $hours );
 	}
@@ -564,17 +568,17 @@ if ( ! function_exists( 'calculate_weeks' ) )
 	function calculate_weeks( $start_date, $end_date, $hour = '12:00:00 am' )
 	{
 		$start_date = ( is_numeric( $start_date ) ? date( 'd-m-Y', $start_date ) : $start_date );
-		$end_date = ( is_numeric( $end_date ) ? date( 'd-m-Y', $end_date ) : $end_date );
-		$hour = ( is_numeric( $hour ) ? date( 'h:i:s a', $hour ) : $hour );
+		$end_date   = ( is_numeric( $end_date ) ? date( 'd-m-Y', $end_date ) : $end_date );
+		$hour       = ( is_numeric( $hour ) ? date( 'h:i:s a', $hour ) : $hour );
 
 		$start_date = $start_date . ' ' . $hour;
-		$end_date = $end_date . ' ' . $hour;
+		$end_date   = $end_date . ' ' . $hour;
 
 		$start_date = strtotime( $start_date );
-		$end_date = strtotime( $end_date );
+		$end_date   = strtotime( $end_date );
 
 		$hours = 24 * 60 * 60 * 7; // Hours in a day
-		$time = $end_date - $start_date;
+		$time  = $end_date - $start_date;
 
 		return floor( $time / $hours );
 	}
@@ -650,24 +654,24 @@ if ( ! function_exists( 'get_age' ) )
 		$birthdate = ( ! is_numeric( $birthdate ) ? strtotime( str_replace( '/', '-', $birthdate ) ) : $birthdate );
 
 		$birthdate = new DateTime( date( 'Y-m-d', $birthdate ) );
-		$now = new DateTime( date( 'Y-m-d' ) );
-		$interval = $birthdate->diff( $now );
+		$now       = new DateTime( date( 'Y-m-d' ) );
+		$interval  = $birthdate->diff( $now );
 
-		$available = array(
-			'years' => 'y',
-			'months' => 'm',
-			'hours' => 'h',
+		$available = [
+			'years'   => 'y',
+			'months'  => 'm',
+			'hours'   => 'h',
 			'minutes' => 'i',
-			'seconds' => 's'
-		);
+			'seconds' => 's',
+		];
 
-		if( array_key_exists( $return, $available ) )
+		if ( array_key_exists( $return, $available ) )
 		{
-			return $interval->{ $available[ $return ] };
+			return $interval->{$available[ $return ]};
 		}
-		elseif( isset( $interval->{ $return } ) )
+		elseif ( isset( $interval->{$return} ) )
 		{
-			return $interval->{ $return };
+			return $interval->{$return};
 		}
 
 		return $interval;
@@ -693,7 +697,7 @@ if ( ! function_exists( 'time_breakdown' ) )
 			$time = strtotime( $time );
 		}
 		$currentTime = time();
-		$periods = array(
+		$periods     = [
 			'years'   => 31556926,
 			'months'  => 2629743,
 			'weeks'   => 604800,
@@ -701,8 +705,8 @@ if ( ! function_exists( 'time_breakdown' ) )
 			'hours'   => 3600,
 			'minutes' => 60,
 			'seconds' => 1,
-		);
-		$durations = array(
+		];
+		$durations   = [
 			'years'   => 0,
 			'months'  => 0,
 			'weeks'   => 0,
@@ -710,7 +714,7 @@ if ( ! function_exists( 'time_breakdown' ) )
 			'hours'   => 0,
 			'minutes' => 0,
 			'seconds' => 0,
-		);
+		];
 		if ( $time )
 		{
 			$seconds = $currentTime - $time;
@@ -744,7 +748,7 @@ if ( ! function_exists( 'sec2hms' ) )
 	 */
 	function sec2hms( $num_secs )
 	{
-		$str = '';
+		$str   = '';
 		$hours = intval( intval( $num_secs ) / 3600 );
 		$str .= $hours . ':';
 		$minutes = intval( ( ( intval( $num_secs ) / 60 ) % 60 ) );
@@ -779,7 +783,7 @@ if ( ! function_exists( 'add_time_duration' ) )
 	function add_time_duration( $start_time, $duration, $return = 'time' )
 	{
 		$start_time = ( ! is_numeric( $start_time ) ? strtotime( $start_time ) : $start_time );
-		$duration = $duration * 60 * 60; // (x) hours * 60 minutes * 60 seconds
+		$duration   = $duration * 60 * 60; // (x) hours * 60 minutes * 60 seconds
 
 		$add_time = $start_time + $duration;
 
@@ -809,7 +813,7 @@ if ( ! function_exists( 'calculate_hours' ) )
 	function calculate_hours( $start_time, $end_time, $return = 'time' )
 	{
 		$start_time = ( ! is_numeric( $start_time ) ? strtotime( $start_time ) : $start_time );
-		$end_time = ( ! is_numeric( $end_time ) ? strtotime( $end_time ) : $end_time );
+		$end_time   = ( ! is_numeric( $end_time ) ? strtotime( $end_time ) : $end_time );
 
 		// Times Difference
 		$difference = $end_time - $start_time;
@@ -823,12 +827,12 @@ if ( ! function_exists( 'calculate_hours' ) )
 		$hours = ( $minutes != 0 ? $hours - 1 : $hours );
 
 		// Final
-		$final_hours = round( $hours, 0 );
+		$final_hours   = round( $hours, 0 );
 		$final_minutes = round( $minutes );
 
 		if ( $return === 'time' )
 		{
-			$final_hours = ( $final_hours < 10 ? '0' . $final_hours : $final_hours );
+			$final_hours   = ( $final_hours < 10 ? '0' . $final_hours : $final_hours );
 			$final_minutes = ( $final_minutes < 10 ? '0' . $final_minutes : $final_minutes );
 
 			return $final_hours . ':' . $final_minutes;
@@ -855,11 +859,11 @@ if ( ! function_exists( 'time_difference' ) )
 	function time_difference( $start_time, $end_time, $return = 'array' )
 	{
 		$start_time = ( ! is_numeric( $start_time ) ? strtotime( $start_time ) : $start_time );
-		$end_time = ( ! is_numeric( $end_time ) ? strtotime( $end_time ) : $end_time );
+		$end_time   = ( ! is_numeric( $end_time ) ? strtotime( $end_time ) : $end_time );
 
 		// Times Difference
 		$difference = $end_time - $start_time;
-		$result = format_time( abs( $difference ) );
+		$result     = format_time( abs( $difference ) );
 
 		if ( $return == 'array' )
 		{
@@ -914,11 +918,11 @@ if ( ! function_exists( 'monday_of_week' ) )
 	{
 		$year = is_null( $year ) ? date( 'Y' ) : $year;
 
-		$new_year_date = mktime( 0, 0, 0, 1, 1, $year );
-		$first_monday_date = 7 + 1 - date( "w", mktime( 0, 0, 0, 1, 1, $year ) );
-		$dates_from_first_monday = 7 * $week_number;
-		$second_from_first_monday = 60 * 60 * 24 * ( $first_monday_date + $dates_from_first_monday );
-		$monday_day_of_week = $new_year_date + $second_from_first_monday;
+		$new_year_date              = mktime( 0, 0, 0, 1, 1, $year );
+		$first_monday_date          = 7 + 1 - date( "w", mktime( 0, 0, 0, 1, 1, $year ) );
+		$dates_from_first_monday    = 7 * $week_number;
+		$second_from_first_monday   = 60 * 60 * 24 * ( $first_monday_date + $dates_from_first_monday );
+		$monday_day_of_week         = $new_year_date + $second_from_first_monday;
 		$date_of_monday_day_of_week = 0 + date( "j", $monday_day_of_week );
 
 		return $date_of_monday_day_of_week;
@@ -940,14 +944,14 @@ if ( ! function_exists( 'week_number_of_month' ) )
 	function week_number_of_month( $date = NULL, $month = NULL, $year = NULL )
 	{
 		$month = is_null( $month ) ? date( 'm' ) : $month;
-		$year = is_null( $year ) ? date( 'Y' ) : $year;
+		$year  = is_null( $year ) ? date( 'Y' ) : $year;
 
 		// Start Date in Month
 		$start_date_month = mktime( 0, 0, 0, $month, 1, $year );
 		$start_week_month = (int) date( 'W', $start_date_month );
 
 		// Date Search
-		$date_search = mktime( 0, 0, 0, $month, $date, $year );
+		$date_search      = mktime( 0, 0, 0, $month, $date, $year );
 		$date_week_search = (int) date( 'W', $date_search );
 
 		$number_of_week = $date_week_search - $start_week_month + 1;
@@ -990,10 +994,10 @@ if ( ! function_exists( 'format_time' ) )
 			$seconds -= $minutes * 60;
 		}
 
-		$format[ 'days' ] = $days;
-		$format[ 'years' ] = $years;
-		$format[ 'months' ] = $months;
-		$format[ 'hours' ] = $hours;
+		$format[ 'days' ]    = $days;
+		$format[ 'years' ]   = $years;
+		$format[ 'months' ]  = $months;
+		$format[ 'hours' ]   = $hours;
 		$format[ 'minutes' ] = $minutes;
 		$format[ 'seconds' ] = $seconds;
 
@@ -1190,7 +1194,7 @@ if ( ! function_exists( 'timespan' ) )
 
 		$seconds = ( $time <= $seconds ) ? 1 : $time - $seconds;
 
-		$str = array();
+		$str   = [ ];
 		$years = floor( $seconds / 31557600 );
 
 		if ( $years > 0 )
@@ -1312,7 +1316,7 @@ if ( ! function_exists( 'days_in_month' ) )
 			}
 		}
 
-		$days_in_month = array( 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 );
+		$days_in_month = [ 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ];
 
 		return $days_in_month[ $month - 1 ];
 	}
@@ -1394,7 +1398,7 @@ if ( ! function_exists( 'mysql_to_unix' ) )
 		// since the formatting changed with MySQL 4.1
 		// YYYY-MM-DD HH:MM:SS
 
-		$time = str_replace( array( '-', ':', ' ' ), '', $time );
+		$time = str_replace( [ '-', ':', ' ' ], '', $time );
 
 		// YYYYMMDDHHMMSS
 		return mktime(
@@ -1526,15 +1530,15 @@ if ( ! function_exists( 'nice_date' ) )
 		// Date like: YYYYMM
 		if ( preg_match( '/^\d{6}$/i', $bad_date ) )
 		{
-			if ( in_array( substr( $bad_date, 0, 2 ), array( '19', '20' ) ) )
+			if ( in_array( substr( $bad_date, 0, 2 ), [ '19', '20' ] ) )
 			{
-				$year = substr( $bad_date, 0, 4 );
+				$year  = substr( $bad_date, 0, 4 );
 				$month = substr( $bad_date, 4, 2 );
 			}
 			else
 			{
 				$month = substr( $bad_date, 0, 2 );
-				$year = substr( $bad_date, 2, 4 );
+				$year  = substr( $bad_date, 2, 4 );
 			}
 
 			return date( $format, strtotime( $year . '-' . $month . '-01' ) );
@@ -1625,7 +1629,7 @@ if ( ! function_exists( 'timezones' ) )
 		// Note: Don't change the order of these even though
 		// some items appear to be in the wrong order
 
-		$zones = array(
+		$zones = [
 			'UM12'   => -12,
 			'UM11'   => -11,
 			'UM10'   => -10,
@@ -1666,7 +1670,7 @@ if ( ! function_exists( 'timezones' ) )
 			'UP1275' => +12.75,
 			'UP13'   => +13,
 			'UP14'   => +14,
-		);
+		];
 
 		if ( $tz === '' )
 		{
@@ -1717,10 +1721,10 @@ if ( ! function_exists( 'date_range' ) )
 
 		if ( $is_unix && ( $unix_start == $mixed OR date( $format, $unix_start ) === date( $format, $mixed ) ) )
 		{
-			return array( date( $format, $unix_start ) );
+			return [ date( $format, $unix_start ) ];
 		}
 
-		$range = array();
+		$range = [ ];
 
 		/* NOTE: Even though the DateTime object has many useful features, it appears that
 		 *	 it doesn't always handle properly timezones, when timestamps are passed

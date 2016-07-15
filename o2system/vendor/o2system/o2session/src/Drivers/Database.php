@@ -112,14 +112,14 @@ class Database extends Driver implements \SessionHandlerInterface
 				throw new \InvalidArgumentException( 'Session: Invalid Database save path format: ' . $params[ 'storage' ][ 'save_path' ] );
 			}
 
-			$params[ 'storage' ][ 'save_path' ] = array(
+			$params[ 'storage' ][ 'save_path' ] = [
 				'driver'   => $dsn[ 'scheme' ],
 				'hostname' => isset( $dsn[ 'host' ] ) ? rawurldecode( $dsn[ 'host' ] ) : '',
 				'port'     => isset( $dsn[ 'port' ] ) ? rawurldecode( $dsn[ 'port' ] ) : '',
 				'username' => isset( $dsn[ 'user' ] ) ? rawurldecode( $dsn[ 'user' ] ) : '',
 				'password' => isset( $dsn[ 'pass' ] ) ? rawurldecode( $dsn[ 'pass' ] ) : '',
 				'database' => isset( $dsn[ 'path' ] ) ? rawurldecode( substr( $dsn[ 'path' ], 1 ) ) : '',
-			);
+			];
 
 			// Validate Connection
 			$params[ 'storage' ][ 'save_path' ][ 'username' ] = $params[ 'storage' ][ 'save_path' ][ 'username' ] === 'username' ? NULL : $params[ 'storage' ][ 'save_path' ][ 'username' ];
@@ -133,7 +133,7 @@ class Database extends Driver implements \SessionHandlerInterface
 
 				foreach ( $extra as $key => $value )
 				{
-					if ( is_string( $value ) AND in_array( strtoupper( $value ), array( 'TRUE', 'FALSE', 'NULL' ) ) )
+					if ( is_string( $value ) AND in_array( strtoupper( $value ), [ 'TRUE', 'FALSE', 'NULL' ] ) )
 					{
 						$value = var_export( $value, TRUE );
 					}
@@ -230,7 +230,7 @@ class Database extends Driver implements \SessionHandlerInterface
 				: $result->data;
 
 			$this->_fingerprint = md5( $result );
-			$this->_row_exists = TRUE;
+			$this->_row_exists  = TRUE;
 
 			return $result;
 		}
@@ -273,12 +273,12 @@ class Database extends Driver implements \SessionHandlerInterface
 
 		if ( $this->_row_exists === FALSE )
 		{
-			$insert_data = array(
+			$insert_data = [
 				'id'         => $session_id,
 				'ip_address' => $_SERVER[ 'REMOTE_ADDR' ],
 				'start'      => time(),
 				'data'       => ( $this->_platform === 'postgre' ? base64_encode( $session_data ) : $session_data ),
-			);
+			];
 
 			if ( $this->_db->insert( $this->_config[ 'storage' ][ 'save_path' ][ 'table' ], $insert_data ) )
 			{
@@ -296,7 +296,7 @@ class Database extends Driver implements \SessionHandlerInterface
 			$this->_db->where( 'ip_address', $_SERVER[ 'REMOTE_ADDR' ] );
 		}
 
-		$update_data = array( 'timestamp' => time() );
+		$update_data = [ 'timestamp' => time() ];
 		if ( $this->_fingerprint !== md5( $session_data ) )
 		{
 			$update_data[ 'data' ] = ( $this->_platform === 'postgre' )
@@ -390,7 +390,7 @@ class Database extends Driver implements \SessionHandlerInterface
 	 * @access  public
 	 * @return  bool
 	 */
-	protected function _getLock($session_id )
+	protected function _getLock( $session_id )
 	{
 		if ( $this->_platform === 'mysql' )
 		{

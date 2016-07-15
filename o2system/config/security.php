@@ -41,13 +41,13 @@ defined( 'ROOTPATH' ) OR exit( 'No direct script access allowed' );
 
 // ------------------------------------------------------------------------
 
-return array(
+return [
 	/**
 	 * List of sanitize filename strings
 	 *
 	 * @var    array
 	 */
-	'filename_bad_characters' => array(
+	'filename_bad_characters' => [
 		'../', '<!--', '-->', '<', '>',
 		"'", '"', '&', '$', '#',
 		'{', '}', '[', ']', '=',
@@ -64,7 +64,7 @@ return array(
 		'%3f',        // ?
 		'%3b',        // ;
 		'%3d'        // =
-	),
+	],
 
 	// ------------------------------------------------------------------------
 
@@ -73,7 +73,7 @@ return array(
 	 *
 	 * @var    array
 	 */
-	'never_allowed_strings'   => array(
+	'never_allowed_strings'   => [
 		'document.cookie' => '[removed]',
 		'document.write'  => '[removed]',
 		'.parentNode'     => '[removed]',
@@ -83,7 +83,7 @@ return array(
 		'-->'             => '--&gt;',
 		'<![CDATA['       => '&lt;![CDATA[',
 		'<comment>'       => '&lt;comment&gt;',
-	),
+	],
 
 	// ------------------------------------------------------------------------
 
@@ -92,7 +92,7 @@ return array(
 	 *
 	 * @var    array
 	 */
-	'never_allowed_regex'     => array(
+	'never_allowed_regex'     => [
 		'javascript\s*:',
 		'(document|(document\.)?window)\.(location|on\w*)',
 		'expression\s*(\(|&\#40;)', // CSS and IE
@@ -102,7 +102,7 @@ return array(
 		'vbs\s*:', // IE
 		'Redirect\s+30\d',
 		"([\"'])?data\s*:[^\\1]*?base64[^\\1]*?,[^\\1]*?\\1?",
-	),
+	],
 
 	// ------------------------------------------------------------------------
 
@@ -111,12 +111,12 @@ return array(
 	 *
 	 * @var    array
 	 */
-	'naughty_tags'            => array(
+	'naughty_tags'            => [
 		'alert', 'prompt', 'confirm', 'applet', 'audio', 'basefont', 'base', 'behavior', 'bgsound',
 		'blink', 'body', 'embed', 'expression', 'form', 'frameset', 'frame', 'head', 'html', 'ilayer',
 		'iframe', 'input', 'button', 'select', 'isindex', 'layer', 'link', 'meta', 'keygen', 'object',
 		'plaintext', 'style', 'script', 'textarea', 'title', 'math', 'video', 'svg', 'xml', 'xss',
-	),
+	],
 
 	// ------------------------------------------------------------------------
 
@@ -125,9 +125,9 @@ return array(
 	 *
 	 * @var    array
 	 */
-	'evil_attributes'         => array(
+	'evil_attributes'         => [
 		'on\w+', 'style', 'xmlns', 'formaction', 'form', 'xlink:href', 'FSCommand', 'seekSegmentTime',
-	),
+	],
 
 	// ------------------------------------------------------------------------
 
@@ -136,7 +136,7 @@ return array(
 	 *
 	 * @var    array
 	 */
-	'sql_injection_commands'  => array(
+	'sql_injection_commands'  => [
 		'union',
 		'sql',
 		'mysql',
@@ -157,7 +157,7 @@ return array(
 		'truncate',
 		'wget',
 		'/**/',
-	),
+	],
 
 	// ------------------------------------------------------------------------
 
@@ -166,7 +166,7 @@ return array(
 	 *
 	 * @var    array
 	 */
-	'proxy_detection_keys'    => array(
+	'proxy_detection_keys'    => [
 		'HTTP_VIA',
 		'HTTP_X_FORWARDED_FOR',
 		'HTTP_FORWARDED_FOR',
@@ -185,7 +185,7 @@ return array(
 		'HTTP_PC_REMOTE_ADDR',
 		'HTTP_X_IMFORWARDS',
 		'HTTP_XROXY_CONNECTION',
-	),
+	],
 
 	// ------------------------------------------------------------------------
 
@@ -194,7 +194,7 @@ return array(
 	 *
 	 * @var    array
 	 */
-	'dnsbl_spam_lookup'       => array(
+	'dnsbl_spam_lookup'       => [
 		'dnsbl.solid.net',
 		'dnsbl-1.uceprotect.net',
 		'dnsbl-2.uceprotect.net',
@@ -202,5 +202,5 @@ return array(
 		'dnsbl.dronebl.org',
 		'dnsbl.sorbs.net',
 		'zen.spamhaus.org',
-	),
-);
+	],
+];

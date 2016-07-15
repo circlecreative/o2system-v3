@@ -46,9 +46,9 @@ class Fieldset extends Tag
 	const PANEL_DEFAULT  = 'PANEL_DEFAULT';
 	const PANEL_FIELDSET = 'PANEL_FIELDSET';
 
-	protected $_tag           = 'fieldset';
+	protected $_tag          = 'fieldset';
 	protected $_fieldsetType = 'PANEL_DEFAULT';
-	protected $_group_type    = 'FORM_GROUP';
+	protected $_group_type   = 'FORM_GROUP';
 
 	public $legend = NULL;
 	public $fields = NULL;
@@ -129,13 +129,13 @@ class Fieldset extends Tag
 		if ( in_array( $group_type, [ Group::FORM_GROUP, Group::FORM_GROUP_INLINE, Group::FORM_GROUP_VERTICAL, Group::FORM_GROUP_HORIZONTAL ] ) )
 		{
 			$this->_group_type = $group_type;
-			$this->fields = new Group( $group_type );
+			$this->fields      = new Group( $group_type );
 		}
 
 		return $this;
 	}
 
-	public function setLegend( $legend, $attr = array() )
+	public function setLegend( $legend, $attr = [ ] )
 	{
 		if ( is_string( $legend ) )
 		{
@@ -149,7 +149,7 @@ class Fieldset extends Tag
 		return $this;
 	}
 
-	public function addItems(array $items )
+	public function addItems( array $items )
 	{
 		foreach ( $items as $label => $item )
 		{
@@ -159,7 +159,7 @@ class Fieldset extends Tag
 		return $this;
 	}
 
-	public function addItem($item )
+	public function addItem( $item )
 	{
 		if ( $item instanceof Group )
 		{
@@ -174,7 +174,7 @@ class Fieldset extends Tag
 			{
 				if ( isset( $item[ 'label' ][ 'show' ] ) AND $item[ 'label' ][ 'show' ] === TRUE )
 				{
-					$attr = isset( $item[ 'label' ][ 'attr' ] ) ? $item[ 'label' ][ 'attr' ] : [ 'for' => $item[ 'input' ][ 'name' ] ];
+					$attr  = isset( $item[ 'label' ][ 'attr' ] ) ? $item[ 'label' ][ 'attr' ] : [ 'for' => $item[ 'input' ][ 'name' ] ];
 					$label = new Tag( 'label', $item[ 'label' ][ 'text' ], $attr );
 					$label->addClass( 'control-label' );
 
@@ -242,8 +242,9 @@ class Fieldset extends Tag
 
 				$fieldset = new Panel( Panel::DEFAULT_PANEL, $this->_attributes );
 
-				$this->legend->appendContent( ( new Link( [ 'class' => 'panel-collapse pull-right' ] ) )
-					                               ->setIcon( 'fa fa-chevron-up' ) );
+				$this->legend->appendContent(
+					( new Link( [ 'class' => 'panel-collapse pull-right' ] ) )
+						->setIcon( 'fa fa-chevron-up' ) );
 
 				$fieldset->setTitle( $this->legend );
 

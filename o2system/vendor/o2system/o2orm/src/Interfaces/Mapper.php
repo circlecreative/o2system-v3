@@ -26,7 +26,7 @@ trait Mapper
 	 *
 	 * @return mixed
 	 */
-	final protected function belongsTo($relation, $reference_key = NULL )
+	final protected function belongsTo( $relation, $reference_key = NULL )
 	{
 		$belongs_to = new Relations\Belongs_To( $this );
 
@@ -48,7 +48,7 @@ trait Mapper
 	 *
 	 * @return array
 	 */
-	final protected function belongsToMany($relation, $reference_key = NULL )
+	final protected function belongsToMany( $relation, $reference_key = NULL )
 	{
 		$belongs_to_many = new Relations\Belongs_To_Many( $this );
 
@@ -74,7 +74,7 @@ trait Mapper
 	 *
 	 * @return mixed
 	 */
-	final protected function hasOne($relation, $reference_key = NULL )
+	final protected function hasOne( $relation, $reference_key = NULL )
 	{
 		$has_one = new Relations\Has_One( $this );
 
@@ -100,7 +100,7 @@ trait Mapper
 	 *
 	 * @return mixed
 	 */
-	final protected function hasMany($relation, $reference_key = NULL )
+	final protected function hasMany( $relation, $reference_key = NULL )
 	{
 		$has_many = new Relations\Has_Many( $this );
 

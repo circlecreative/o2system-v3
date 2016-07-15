@@ -72,7 +72,7 @@ class Metadata extends DriverInterface implements IteratorAggregate, Countable, 
 	 *
 	 * @type    array
 	 */
-	private $storage = array();
+	private $storage = [ ];
 
 	/**
 	 * Set Metadata Variables
@@ -83,9 +83,9 @@ class Metadata extends DriverInterface implements IteratorAggregate, Countable, 
 	 *
 	 * @return $this
 	 */
-	public function setMeta(array $meta )
+	public function setMeta( array $meta )
 	{
-		$this->storage = array();
+		$this->storage = [ ];
 		$this->addMeta( $meta );
 
 		return $this;
@@ -93,7 +93,7 @@ class Metadata extends DriverInterface implements IteratorAggregate, Countable, 
 
 	// ------------------------------------------------------------------------
 
-	public function addMeta($meta, $content = NULL )
+	public function addMeta( $meta, $content = NULL )
 	{
 		if ( is_array( $meta ) )
 		{
@@ -108,22 +108,48 @@ class Metadata extends DriverInterface implements IteratorAggregate, Countable, 
 			{
 				$value = key( $content );
 
-				$this->storage[ 'http_equiv_' . $value ] = new Tag( 'meta', array(
+				$this->storage[ 'http_equiv_' . $value ] = new Tag(
+					'meta', [
 					'http-equiv' => $value,
 					'content'    => $content[ $value ],
-				) );
+				] );
+			}
+			elseif ( $meta === 'property' )
+			{
+				$value = key( $content );
+
+				$this->storage[ 'property_' . $value ] = new Tag(
+					'meta', [
+					'property' => $value,
+					'content'  => $content[ $value ],
+				] );
 			}
 			else
 			{
-				$this->storage[ $meta ] = new Tag( 'meta', array(
+				$this->storage[ $meta ] = new Tag(
+					'meta', [
 					'name'    => $meta,
 					'content' => ( is_array( $content ) ? implode( ', ', $content ) : $content ),
-				) );
+				] );
 			}
 		}
 	}
 
-	public function setCharset($charset )
+	public function addOpengraph( $property, $content )
+	{
+		if ( strpos( $property, 'og:' ) === FALSE )
+		{
+			$property = 'og:' . $property;
+		}
+
+		$this->storage[ $property ] = new Tag(
+			'meta', [
+			'property' => $property,
+			'content'  => $content,
+		] );
+	}
+
+	public function setCharset( $charset )
 	{
 		$this->_config[ 'charset' ] = $charset;
 	}

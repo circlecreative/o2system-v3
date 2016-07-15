@@ -57,6 +57,6 @@ final class Logger extends Glob\Logger
 
 	public function __construct()
 	{
-		parent::__construct( \O2System::$config['log'] );
+		parent::__construct( \O2System::$config[ 'log' ] );
 	}
 }

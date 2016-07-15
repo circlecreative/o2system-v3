@@ -93,9 +93,11 @@ trait Record
 			$row[ 'record_status' ] = $this->_record_status;
 		}
 
-		if ( isset( $this->primary_key ) )
+		if ( empty( $this->primary_keys ) )
 		{
-			if ( empty( $row[ $this->primary_key ] ) )
+			$primary_key = isset( $this->primary_key ) ? $this->primary_key : 'id';
+
+			if ( empty( $row[ $primary_key ] ) )
 			{
 				if ( ! isset( $row[ 'record_create_user' ] ) )
 				{
@@ -105,6 +107,24 @@ trait Record
 				if ( ! isset( $row[ 'record_create_timestamp' ] ) )
 				{
 					$row[ 'record_create_timestamp' ] = $timestamp;
+				}
+			}
+		}
+		else
+		{
+			foreach ( $this->primary_keys as $primary_key )
+			{
+				if ( empty( $row[ $primary_key ] ) )
+				{
+					if ( ! isset( $row[ 'record_create_user' ] ) )
+					{
+						$row[ 'record_create_user' ] = $this->_record_user;
+					}
+
+					if ( ! isset( $row[ 'record_create_timestamp' ] ) )
+					{
+						$row[ 'record_create_timestamp' ] = $timestamp;
+					}
 				}
 			}
 		}
@@ -118,12 +138,12 @@ trait Record
 
 		if ( $row[ 'record_status' ] === 'DELETE' )
 		{
-			$row[ 'record_delete_user' ] = $this->_record_user;
+			$row[ 'record_delete_user' ]      = $this->_record_user;
 			$row[ 'record_delete_timestamp' ] = $timestamp;
 		}
 		else
 		{
-			$row[ 'record_delete_user' ] = NULL;
+			$row[ 'record_delete_user' ]      = NULL;
 			$row[ 'record_delete_timestamp' ] = NULL;
 		}
 

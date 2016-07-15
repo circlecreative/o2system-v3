@@ -59,15 +59,15 @@ use O2System\ORM\Factory\Query;
 class Morph_many extends Relation
 {
 
-    /**
-     * Result
-     *
-     * Abstract: extended class of Relation must implements result method
-     *
-     * @return mixed
-     */
-    public function result()
-    {
-        // TODO: Implement result() method.
-    }
+	/**
+	 * Result
+	 *
+	 * Abstract: extended class of Relation must implements result method
+	 *
+	 * @return mixed
+	 */
+	public function result()
+	{
+		// TODO: Implement result() method.
+	}
 }

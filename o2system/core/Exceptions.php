@@ -61,11 +61,11 @@ class Exception extends ExceptionInterface
 	 * @access  public
 	 * @type    array
 	 */
-	public $library = array(
-		'name' => SYSTEM_NAME,
+	public $library = [
+		'name'        => SYSTEM_NAME,
 		'description' => 'Open Source PHP Framework',
-		'version' => SYSTEM_VERSION
-	);
+		'version'     => SYSTEM_VERSION,
+	];
 }
 
 // --------------------------------------------------------------------

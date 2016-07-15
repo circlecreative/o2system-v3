@@ -16,7 +16,7 @@ class DriverInterface
 	 *
 	 * @access protected
 	 */
-	protected $_config = array();
+	protected $_config = [ ];
 
 	/**
 	 * Instance of the library class
@@ -25,7 +25,7 @@ class DriverInterface
 	 */
 	protected $_library;
 
-	protected $_errors = array();
+	protected $_errors = [ ];
 
 	// ------------------------------------------------------------------------
 
@@ -95,20 +95,20 @@ class DriverInterface
 	 */
 	final public function getConfig( $item = NULL, $offset = NULL )
 	{
-		if( empty( $item ) )
+		if ( empty( $item ) )
 		{
 			return $this->_config;
 		}
-		elseif( isset( $item ) )
+		elseif ( isset( $item ) )
 		{
-			if( isset( $offset ) )
+			if ( isset( $offset ) )
 			{
-				if( isset( $this->_config[ $item ][ $offset ] ) )
+				if ( isset( $this->_config[ $item ][ $offset ] ) )
 				{
 					return $this->_config[ $item ][ $offset ];
 				}
 			}
-			elseif( isset( $this->_config[ $item ] ) )
+			elseif ( isset( $this->_config[ $item ] ) )
 			{
 				return $this->_config[ $item ];
 			}
@@ -119,6 +119,11 @@ class DriverInterface
 
 	// ------------------------------------------------------------------------
 
+	final public function addError( $code, $message )
+	{
+		$this->_errors[ $code ] = $message;
+	}
+
 	/**
 	 * Throw Error
 	 *
@@ -128,7 +133,7 @@ class DriverInterface
 	 * @access  public
 	 * @return  bool
 	 */
-	final public function setError( $error, $code = 0, array $args = array() )
+	final public function throwError( $error, $code = 0, array $args = [ ] )
 	{
 		if ( class_exists( 'O2System', FALSE ) )
 		{
@@ -156,5 +161,16 @@ class DriverInterface
 		$this->_errors[ $code ] = $error;
 
 		return FALSE;
+	}
+
+	/**
+	 * Get Error
+	 *
+	 * @access  public
+	 * @return  array
+	 */
+	final public function getErrors()
+	{
+		return $this->_errors;
 	}
 }

@@ -61,127 +61,127 @@ use O2System\File;
  */
 class Zip
 {
-    public static function read( $file )
-    {
-        if( ! extension_loaded( 'zip' ) )
-        {
-            return FALSE;
-        }
+	public static function read( $file )
+	{
+		if ( ! extension_loaded( 'zip' ) )
+		{
+			return FALSE;
+		}
 
-        if( is_file( $file ) )
-        {
-            $zip = zip_open( $file );
+		if ( is_file( $file ) )
+		{
+			$zip = zip_open( $file );
 
-            if( $zip )
-            {
-                while( $zip_entry = zip_read( $zip ) )
-                {
-                    $contents[ ] = zip_entry_name( $zip_entry );
-                }
+			if ( $zip )
+			{
+				while ( $zip_entry = zip_read( $zip ) )
+				{
+					$contents[] = zip_entry_name( $zip_entry );
+				}
 
-                zip_close( $zip );
-            }
+				zip_close( $zip );
+			}
 
-            return $contents;
-        }
-    }
+			return $contents;
+		}
+	}
 
-    // ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
 
-    public static function write( $file, $source )
-    {
-        if( ! extension_loaded( 'zip' ) )
-        {
-            return FALSE;
-        }
+	public static function write( $file, $source )
+	{
+		if ( ! extension_loaded( 'zip' ) )
+		{
+			return FALSE;
+		}
 
-        if( is_file( $file ) )
-        {
-            unlink( $file );
-        }
+		if ( is_file( $file ) )
+		{
+			unlink( $file );
+		}
 
-        $zip = new \ZipArchive();
+		$zip = new \ZipArchive();
 
-        if( ! $zip->open( $file, ZIPARCHIVE::CREATE ) )
-        {
-            return FALSE;
-        }
+		if ( ! $zip->open( $file, ZIPARCHIVE::CREATE ) )
+		{
+			return FALSE;
+		}
 
-        $source = str_replace( '\\', '/', realpath( $source ) );
+		$source = str_replace( '\\', '/', realpath( $source ) );
 
-        if( is_dir( $source ) === TRUE )
-        {
+		if ( is_dir( $source ) === TRUE )
+		{
 
-            $files = new \RecursiveIteratorIterator(
-                new \RecursiveDirectoryIterator( $source ),
-                \RecursiveIteratorIterator::SELF_FIRST
-            );
+			$files = new \RecursiveIteratorIterator(
+				new \RecursiveDirectoryIterator( $source ),
+				\RecursiveIteratorIterator::SELF_FIRST
+			);
 
-            $arr = explode( "/", $source );
-            $maindir = $arr[ count( $arr ) - 1 ];
+			$arr     = explode( "/", $source );
+			$maindir = $arr[ count( $arr ) - 1 ];
 
-            $source = "";
-            for( $i = 0; $i < count( $arr ) - 1; $i++ )
-            {
-                $source .= '/' . $arr[ $i ];
-            }
+			$source = "";
+			for ( $i = 0; $i < count( $arr ) - 1; $i++ )
+			{
+				$source .= '/' . $arr[ $i ];
+			}
 
-            $source = substr( $source, 1 );
+			$source = substr( $source, 1 );
 
-            $zip->addEmptyDir( $maindir );
+			$zip->addEmptyDir( $maindir );
 
-            foreach( $files as $file )
-            {
-                $file = str_replace( '\\', '/', $file );
+			foreach ( $files as $file )
+			{
+				$file = str_replace( '\\', '/', $file );
 
-                // Ignore "." and ".." folders
-                if( in_array( substr( $file, strrpos( $file, '/' ) + 1 ), array( '.', '..' ) ) )
-                {
-                    continue;
-                }
+				// Ignore "." and ".." folders
+				if ( in_array( substr( $file, strrpos( $file, '/' ) + 1 ), [ '.', '..' ] ) )
+				{
+					continue;
+				}
 
-                $file = realpath( $file );
+				$file = realpath( $file );
 
-                if( is_dir( $file ) === TRUE )
-                {
-                    $zip->addEmptyDir( str_replace( $source . '/', '', $file . '/' ) );
-                }
-                else if( is_file( $file ) === TRUE )
-                {
-                    $zip->addFromString( str_replace( $source . '/', '', $file ), file_get_contents( $file ) );
-                }
-            }
-        }
-        else if( is_file( $source ) === TRUE )
-        {
-            $zip->addFromString( basename( $source ), File::read( $source ) );
-        }
+				if ( is_dir( $file ) === TRUE )
+				{
+					$zip->addEmptyDir( str_replace( $source . '/', '', $file . '/' ) );
+				}
+				else if ( is_file( $file ) === TRUE )
+				{
+					$zip->addFromString( str_replace( $source . '/', '', $file ), file_get_contents( $file ) );
+				}
+			}
+		}
+		else if ( is_file( $source ) === TRUE )
+		{
+			$zip->addFromString( basename( $source ), File::read( $source ) );
+		}
 
-        return $zip->close();
-    }
+		return $zip->close();
+	}
 
-    // ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
 
-    public static function extract( $file, $destination_path )
-    {
-        if( ! extension_loaded( 'zip' ) )
-        {
-            return FALSE;
-        }
+	public static function extract( $file, $destination_path )
+	{
+		if ( ! extension_loaded( 'zip' ) )
+		{
+			return FALSE;
+		}
 
-        if( is_file( $file ) )
-        {
-            $zip = new \ZipArchive;
-            $contents = $zip->open( $file );
+		if ( is_file( $file ) )
+		{
+			$zip      = new \ZipArchive;
+			$contents = $zip->open( $file );
 
-            if( $contents === TRUE )
-            {
-                if( is_dir( $destination_path ) )
-                {
-                    $zip->extractTo( $destination_path );
-                    $zip->close();
-                }
-            }
-        }
-    }
+			if ( $contents === TRUE )
+			{
+				if ( is_dir( $destination_path ) )
+				{
+					$zip->extractTo( $destination_path );
+					$zip->close();
+				}
+			}
+		}
+	}
 }

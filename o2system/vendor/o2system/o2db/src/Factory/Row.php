@@ -53,14 +53,14 @@ namespace O2System\DB\Factory
 	 */
 	class Row implements IteratorAggregate, ArrayAccess, Countable, Serializable
 	{
-		protected $_fields     = array();
+		protected $_fields     = [ ];
 		protected $_num_fields = 0;
 
-		public function __construct( $array = array() )
+		public function __construct( $array = [ ] )
 		{
 			if ( ! empty( $array ) )
 			{
-				$this->_fields = $array;
+				$this->_fields     = $array;
 				$this->_num_fields = count( $array );
 			}
 		}
@@ -146,7 +146,7 @@ namespace O2System\DB\Factory
 
 		// ------------------------------------------------------------------------
 
-		protected function _isSerialize($string )
+		protected function _isSerialize( $string )
 		{
 			// Bit of a give away this one
 			if ( ! is_string( $string ) )
@@ -163,9 +163,12 @@ namespace O2System\DB\Factory
 			}
 
 			$length = strlen( $string );
-			$end = '';
+			$end    = '';
 
-			if ( ! isset( $string[ 0 ] ) ) return FALSE;
+			if ( ! isset( $string[ 0 ] ) )
+			{
+				return FALSE;
+			}
 
 			switch ( $string[ 0 ] )
 			{
@@ -223,7 +226,7 @@ namespace O2System\DB\Factory
 
 		// ------------------------------------------------------------------------
 
-		protected function _isJson($string )
+		protected function _isJson( $string )
 		{
 			// make sure provided input is of type string
 			if ( ! is_string( $string ) )
@@ -286,7 +289,7 @@ namespace O2System\DB\Factory\Row
 {
 	class Metadata extends \ArrayObject
 	{
-		public function __construct( $data = array() )
+		public function __construct( $data = [ ] )
 		{
 			parent::__construct( [ ], \ArrayObject::ARRAY_AS_PROPS );
 

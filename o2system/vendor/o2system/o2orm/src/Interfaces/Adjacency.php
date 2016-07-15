@@ -36,7 +36,7 @@ trait Adjacency
 	 * @access  public
 	 * @return  mixed
 	 */
-	public function getChildren($id_parent, $table = NULL)
+	public function getChildren( $id_parent, $table = NULL )
 	{
 		$table = isset( $table ) ? $table : $this->table;
 
@@ -59,7 +59,7 @@ trait Adjacency
 	 * @access  public
 	 * @return  bool
 	 */
-	public function hasChildren($id_parent, $table = NULL )
+	public function hasChildren( $id_parent, $table = NULL )
 	{
 		$table = isset( $table ) ? $table : $this->table;
 

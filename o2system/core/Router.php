@@ -294,7 +294,7 @@ class Router
 		if ( \O2System::$active->offsetExists( 'controller' ) === FALSE )
 		{
 			$validate_segments = \O2System::$active[ 'URI' ]->isegments;
-			
+
 			// Find controller first
 			$directories = \O2System::Load()->getPackagePaths( 'controllers', TRUE );
 
@@ -776,7 +776,7 @@ class Router
 		return FALSE;
 	}
 
-	public function baseURL( $uri = NULL, $suffix = NULL, $protocol = NULL )
+	public function routeUrl( $uri = NULL, $suffix = NULL, $protocol = NULL )
 	{
 		if ( \O2System::$config->offsetExists( 'route_url' ) )
 		{
@@ -833,10 +833,10 @@ class Router
 			{
 				$uri = is_array( $uri ) ? array_unshift( $uri, $route_url ) : trim( $route_url, '/' ) . '/' . $uri;
 
-				return \O2System::$config->baseURL( $uri, $suffix, $protocol );
+				return \O2System::$config->baseUrl( $uri, $suffix, $protocol );
 			}
 		}
 
-		return \O2System::$config->baseURL( $uri, $suffix, $protocol );
+		return \O2System::$config->baseUrl( $uri, $suffix, $protocol );
 	}
 }

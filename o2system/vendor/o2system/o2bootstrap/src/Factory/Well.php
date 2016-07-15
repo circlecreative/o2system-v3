@@ -56,9 +56,9 @@ class Well extends FactoryInterface
 	const LARGE_WELL  = 'large';
 
 	protected $_tag        = 'div';
-	protected $_attributes = array(
+	protected $_attributes = [
 		'class' => [ 'well' ],
-	);
+	];
 
 	// ------------------------------------------------------------------------
 
@@ -75,7 +75,7 @@ class Well extends FactoryInterface
 
 		if ( is_array( $content ) )
 		{
-			if( ! isset( $content[ 'id' ] ) OR 
+			if ( ! isset( $content[ 'id' ] ) OR
 				! isset( $content[ 'class' ] ) OR
 				! isset( $content[ 'style' ] )
 			)
@@ -91,7 +91,7 @@ class Well extends FactoryInterface
 		{
 			if ( in_array( $content, $this->_sizes ) AND $content !== 'tiny' )
 			{
-				$this->{'is' . studlycapcase($content)}();
+				$this->{'is' . studlycapcase( $content )}();
 			}
 			else
 			{
@@ -109,7 +109,7 @@ class Well extends FactoryInterface
 			{
 				if ( in_array( $type, $this->_sizes ) AND $type !== 'tiny' )
 				{
-					$this->{'is' . studlycapcase($type)}();
+					$this->{'is' . studlycapcase( $type )}();
 				}
 			}
 		}
@@ -124,7 +124,7 @@ class Well extends FactoryInterface
 			{
 				if ( in_array( $attr, $this->_sizes ) AND $attr !== 'tiny' )
 				{
-					$this->{'is' . studlycapcase($attr)}();
+					$this->{'is' . studlycapcase( $attr )}();
 				}
 			}
 		}
@@ -143,7 +143,7 @@ class Well extends FactoryInterface
 	{
 		if ( ! empty( $this->_content ) )
 		{
-			return ( new Tag( $this->_tag, implode(PHP_EOL, $this->_content), $this->_attributes ) )->render();
+			return ( new Tag( $this->_tag, implode( PHP_EOL, $this->_content ), $this->_attributes ) )->render();
 		}
 
 		return '';

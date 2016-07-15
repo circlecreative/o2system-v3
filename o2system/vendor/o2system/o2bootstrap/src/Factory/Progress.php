@@ -48,17 +48,17 @@ use O2System\Bootstrap\Interfaces\ContextualInterface;
 class Progress extends FactoryInterface
 {
 	use ContextualInterface;
-	
+
 	const SUCCESS_PROGRESS_BAR = 'success';
 	const INFO_PROGRESS_BAR    = 'info';
 	const WARNING_PROGRESS_BAR = 'warning';
 	const DANGER_PROGRESS_BAR  = 'danger';
 
 	protected $_tag        = 'div';
-	protected $_attributes = array(
+	protected $_attributes = [
 		'class' => [ 'progress-bar' ],
 		'role'  => 'progressbar',
-	);
+	];
 
 	public $progress = NULL;
 
@@ -92,7 +92,7 @@ class Progress extends FactoryInterface
 					in_array( $type, [ 'default', 'primary' ] )
 				)
 				{
-					$this->{'is' . studlycapcase($type)}();
+					$this->{'is' . studlycapcase( $type )}();
 				}
 			}
 		}
@@ -109,7 +109,7 @@ class Progress extends FactoryInterface
 					in_array( $attr, [ 'default', 'primary' ] )
 				)
 				{
-					$this->{'is' . studlycapcase($attr)}();
+					$this->{'is' . studlycapcase( $attr )}();
 				}
 			}
 		}
@@ -129,7 +129,7 @@ class Progress extends FactoryInterface
 		return $this;
 	}
 
-	public function setProgress($value )
+	public function setProgress( $value )
 	{
 		$this->progress = new Tag( 'span', (int) $value . '%', [ 'class' => 'sr-only' ] );
 		$this->addAttribute( 'aria-valuenow', (int) $value );
@@ -138,14 +138,14 @@ class Progress extends FactoryInterface
 		return $this;
 	}
 
-	public function setMinValue($value )
+	public function setMinValue( $value )
 	{
 		$this->addAttribute( 'aria-valuemin', (int) $value );
 
 		return $this;
 	}
 
-	public function setMaxValue($value )
+	public function setMaxValue( $value )
 	{
 		$this->addAttribute( 'aria-valuemax', (int) $value );
 

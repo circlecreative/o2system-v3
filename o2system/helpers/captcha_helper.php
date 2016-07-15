@@ -103,7 +103,7 @@ if ( ! function_exists( 'create_captcha' ) )
 	 */
 	function create_captcha( $data = '', $img_path = '', $img_url = '', $font_path = '' )
 	{
-		$defaults = array(
+		$defaults = [
 			'word'        => '',
 			'img_path'    => '',
 			'img_url'     => '',
@@ -115,13 +115,13 @@ if ( ! function_exists( 'create_captcha' ) )
 			'font_size'   => 16,
 			'img_id'      => '',
 			'pool'        => '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
-			'colors'      => array(
-				'background' => array( 255, 255, 255 ),
-				'border'     => array( 153, 102, 102 ),
-				'text'       => array( 204, 153, 153 ),
-				'grid'       => array( 255, 182, 182 ),
-			),
-		);
+			'colors'      => [
+				'background' => [ 255, 255, 255 ],
+				'border'     => [ 153, 102, 102 ],
+				'text'       => [ 204, 153, 153 ],
+				'grid'       => [ 255, 182, 182 ],
+			],
+		];
 
 		foreach ( $defaults as $key => $val )
 		{
@@ -181,7 +181,7 @@ if ( ! function_exists( 'create_captcha' ) )
 		// Determine angle and position
 		// -----------------------------------
 		$length = strlen( $word );
-		$angle = ( $length >= 6 ) ? mt_rand( -( $length - 6 ), ( $length - 6 ) ) : 0;
+		$angle  = ( $length >= 6 ) ? mt_rand( -( $length - 6 ), ( $length - 6 ) ) : 0;
 		$x_axis = mt_rand( 6, ( 360 / $length ) - 16 );
 		$y_axis = ( $angle >= 0 ) ? mt_rand( $img_height, $img_width ) : mt_rand( 6, $img_height );
 
@@ -210,22 +210,22 @@ if ( ! function_exists( 'create_captcha' ) )
 		// -----------------------------------
 		//  Create the spiral pattern
 		// -----------------------------------
-		$theta = 1;
-		$thetac = 7;
-		$radius = 16;
+		$theta   = 1;
+		$thetac  = 7;
+		$radius  = 16;
 		$circles = 20;
-		$points = 32;
+		$points  = 32;
 
 		for ( $i = 0, $cp = ( $circles * $points ) - 1; $i < $cp; $i++ )
 		{
 			$theta += $thetac;
 			$rad = $radius * ( $i / $points );
-			$x = ( $rad * cos( $theta ) ) + $x_axis;
-			$y = ( $rad * sin( $theta ) ) + $y_axis;
+			$x   = ( $rad * cos( $theta ) ) + $x_axis;
+			$y   = ( $rad * sin( $theta ) ) + $y_axis;
 			$theta += $thetac;
 			$rad1 = $radius * ( ( $i + 1 ) / $points );
-			$x1 = ( $rad1 * cos( $theta ) ) + $x_axis;
-			$y1 = ( $rad1 * sin( $theta ) ) + $y_axis;
+			$x1   = ( $rad1 * cos( $theta ) ) + $x_axis;
+			$y1   = ( $rad1 * sin( $theta ) ) + $y_axis;
 			imageline( $im, $x, $y, $x1, $y1, $colors[ 'grid' ] );
 			$theta -= $thetac;
 		}
@@ -290,6 +290,6 @@ if ( ! function_exists( 'create_captcha' ) )
 		$img = '<img ' . ( $img_id === '' ? '' : 'id="' . $img_id . '"' ) . ' src="' . $img_url . $img_filename . '" style="width: ' . $img_width . '; height: ' . $img_height . '; border: 0;" alt=" " />';
 		ImageDestroy( $im );
 
-		return array( 'word' => $word, 'time' => $now, 'image' => $img, 'filename' => $img_filename );
+		return [ 'word' => $word, 'time' => $now, 'image' => $img, 'filename' => $img_filename ];
 	}
 }

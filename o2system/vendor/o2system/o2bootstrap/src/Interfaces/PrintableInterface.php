@@ -42,13 +42,15 @@ trait PrintableInterface
 {
 	public function isPrintVisible()
 	{
-		$this->addClass('visible-print');
+		$this->addClass( 'visible-print' );
+
 		return $this;
 	}
 
 	public function isPrintHidden()
 	{
-		$this->addClass('hidden-print');
+		$this->addClass( 'hidden-print' );
+
 		return $this;
 	}
 }

@@ -42,19 +42,19 @@ use O2System\Bootstrap\Interfaces\FactoryInterface;
 
 class Header extends FactoryInterface
 {
-	protected $_tag = 'div';
-	protected $_attributes = array(
-		'class' => [ 'page-header' ]
-	);
+	protected $_tag            = 'div';
+	protected $_attributes     = [
+		'class' => [ 'page-header' ],
+	];
 	protected $_is_page_header = TRUE;
-	public $title = NULL;
-	public $subtext = NULL;
+	public    $title           = NULL;
+	public    $subtext         = NULL;
 
 	public function build()
 	{
-		@list($title, $attr) = func_get_args();
+		@list( $title, $attr ) = func_get_args();
 
-		if( is_array( $title ) )
+		if ( is_array( $title ) )
 		{
 			$attr = $title;
 		}
@@ -63,7 +63,7 @@ class Header extends FactoryInterface
 			$this->setTitle( $title );
 		}
 
-		if( isset( $attr ) )
+		if ( isset( $attr ) )
 		{
 			$this->addAttributes( $attr );
 		}
@@ -84,15 +84,15 @@ class Header extends FactoryInterface
 		return $this;
 	}
 
-	public function setTitle($title, $tag = 'h1', $attr = array() )
+	public function setTitle( $title, $tag = 'h1', $attr = [ ] )
 	{
-		if( is_array( $tag ) )
+		if ( is_array( $tag ) )
 		{
 			$attr = $tag;
-			$tag = $this->_is_page_header === TRUE ? 'h1' : 'h2';
+			$tag  = $this->_is_page_header === TRUE ? 'h1' : 'h2';
 		}
 
-		if( $title instanceof Tag )
+		if ( $title instanceof Tag )
 		{
 			$this->title = clone $title;
 			$this->title->setTag( $tag );
@@ -105,15 +105,15 @@ class Header extends FactoryInterface
 		return $this;
 	}
 
-	public function setSubtext($subtext, $tag = 'small', $attr = array() )
+	public function setSubtext( $subtext, $tag = 'small', $attr = [ ] )
 	{
-		if( is_array( $tag ) )
+		if ( is_array( $tag ) )
 		{
 			$attr = $tag;
-			$tag = 'small';
+			$tag  = 'small';
 		}
 
-		if( $subtext instanceof Tag )
+		if ( $subtext instanceof Tag )
 		{
 			$this->subtext = clone $subtext;
 			$this->subtext->setTag( $tag );
@@ -126,23 +126,23 @@ class Header extends FactoryInterface
 		return $this;
 	}
 
-	public function isPageHeader($is_page_header )
+	public function isPageHeader( $is_page_header )
 	{
 		$this->_is_page_header = (bool) $is_page_header;
 	}
 
 	public function render()
 	{
-		if( isset( $this->title ) )
+		if ( isset( $this->title ) )
 		{
-			if( isset( $this->subtext ) )
+			if ( isset( $this->subtext ) )
 			{
 				$this->title->appendContent( $this->subtext );
 			}
 
-			if( $this->is_page_header === TRUE )
+			if ( $this->is_page_header === TRUE )
 			{
-				return ( new Tag( $this->_tag, $this->title, $this->_attributes) )->render();
+				return ( new Tag( $this->_tag, $this->title, $this->_attributes ) )->render();
 			}
 			else
 			{

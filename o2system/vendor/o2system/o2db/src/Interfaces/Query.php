@@ -73,7 +73,7 @@ class Query
 	 *
 	 * @type    array
 	 */
-	protected $qb_select = array();
+	protected $qb_select = [ ];
 
 	/**
 	 * QB DISTINCT flag
@@ -87,42 +87,42 @@ class Query
 	 *
 	 * @type    array
 	 */
-	protected $qb_from = array();
+	protected $qb_from = [ ];
 
 	/**
 	 * QB JOIN data
 	 *
 	 * @type    array
 	 */
-	protected $qb_join = array();
+	protected $qb_join = [ ];
 
 	/**
 	 * QB WHERE data
 	 *
 	 * @type    array
 	 */
-	protected $qb_where = array();
+	protected $qb_where = [ ];
 
 	/**
 	 * QB GROUP BY data
 	 *
 	 * @type    array
 	 */
-	protected $qb_group_by = array();
+	protected $qb_group_by = [ ];
 
 	/**
 	 * QB HAVING data
 	 *
 	 * @type    array
 	 */
-	protected $qb_having = array();
+	protected $qb_having = [ ];
 
 	/**
 	 * QB keys
 	 *
 	 * @type    array
 	 */
-	protected $qb_keys = array();
+	protected $qb_keys = [ ];
 
 	/**
 	 * QB LIMIT data
@@ -143,21 +143,21 @@ class Query
 	 *
 	 * @type    array
 	 */
-	protected $qb_order_by = array();
+	protected $qb_order_by = [ ];
 
 	/**
 	 * QB data sets
 	 *
 	 * @type    array
 	 */
-	protected $qb_set = array();
+	protected $qb_set = [ ];
 
 	/**
 	 * QB aliased tables list
 	 *
 	 * @type    array
 	 */
-	protected $qb_aliased_tables = array();
+	protected $qb_aliased_tables = [ ];
 
 	/**
 	 * QB WHERE group started flag
@@ -187,77 +187,77 @@ class Query
 	 *
 	 * @type    array
 	 */
-	protected $qb_cache_exists = array();
+	protected $qb_cache_exists = [ ];
 
 	/**
 	 * QB Cache SELECT data
 	 *
 	 * @type    array
 	 */
-	protected $qb_cache_select = array();
+	protected $qb_cache_select = [ ];
 
 	/**
 	 * QB Cache FROM data
 	 *
 	 * @type    array
 	 */
-	protected $qb_cache_from = array();
+	protected $qb_cache_from = [ ];
 
 	/**
 	 * QB Cache JOIN data
 	 *
 	 * @type    array
 	 */
-	protected $qb_cache_join = array();
+	protected $qb_cache_join = [ ];
 
 	/**
 	 * QB Cache WHERE data
 	 *
 	 * @type    array
 	 */
-	protected $qb_cache_where = array();
+	protected $qb_cache_where = [ ];
 
 	/**
 	 * QB Cache GROUP BY data
 	 *
 	 * @type    array
 	 */
-	protected $qb_cache_group_by = array();
+	protected $qb_cache_group_by = [ ];
 
 	/**
 	 * QB Cache HAVING data
 	 *
 	 * @type    array
 	 */
-	protected $qb_cache_having = array();
+	protected $qb_cache_having = [ ];
 
 	/**
 	 * QB Cache ORDER BY data
 	 *
 	 * @type    array
 	 */
-	protected $qb_cache_order_by = array();
+	protected $qb_cache_order_by = [ ];
 
 	/**
 	 * QB Cache data sets
 	 *
 	 * @type    array
 	 */
-	protected $qb_cache_set = array();
+	protected $qb_cache_set = [ ];
 
 	/**
 	 * QB No Escape data
 	 *
 	 * @type    array
 	 */
-	protected $qb_no_escape = array();
+	protected $qb_no_escape = [ ];
 
 	/**
 	 * QB Cache No Escape data
 	 *
 	 * @type    array
 	 */
-	protected $qb_cache_no_escape = array();
+	protected $qb_cache_no_escape = [ ];
 
 	// --------------------------------------------------------------------
 
@@ -292,13 +292,13 @@ class Query
 
 			if ( $field !== '' )
 			{
-				$this->qb_select[] = $field;
+				$this->qb_select[]    = $field;
 				$this->qb_no_escape[] = $escape;
 
 				if ( $this->qb_caching === TRUE )
 				{
-					$this->qb_cache_select[] = $field;
-					$this->qb_cache_exists[] = 'select';
+					$this->qb_cache_select[]    = $field;
+					$this->qb_cache_exists[]    = 'select';
 					$this->qb_cache_no_escape[] = $escape;
 				}
 			}
@@ -391,7 +391,7 @@ class Query
 	 *
 	 * @return    Query
 	 */
-	protected function _prepareAggregate($select = '', $alias = '', $type = 'MAX' )
+	protected function _prepareAggregate( $select = '', $alias = '', $type = 'MAX' )
 	{
 		if ( ! is_string( $select ) OR $select === '' )
 		{
@@ -400,7 +400,7 @@ class Query
 
 		$type = strtoupper( $type );
 
-		if ( ! in_array( $type, array( 'MAX', 'MIN', 'AVG', 'SUM' ) ) )
+		if ( ! in_array( $type, [ 'MAX', 'MIN', 'AVG', 'SUM' ] ) )
 		{
 			throw new Exception( 'Invalid function type: ' . $type );
 		}
@@ -412,7 +412,7 @@ class Query
 
 		$sql = $type . '(' . $this->protectIdentifiers( trim( $select ) ) . ') AS ' . $this->escapeIdentifiers( trim( $alias ) );
 
-		$this->qb_select[] = $sql;
+		$this->qb_select[]    = $sql;
 		$this->qb_no_escape[] = NULL;
 
 		if ( $this->qb_caching === TRUE )
@@ -433,7 +433,7 @@ class Query
 	 *
 	 * @return    string
 	 */
-	protected function _createAliasFromTable($item )
+	protected function _createAliasFromTable( $item )
 	{
 		if ( strpos( $item, '.' ) !== FALSE )
 		{
@@ -489,7 +489,7 @@ class Query
 
 					if ( $this->qb_caching === TRUE )
 					{
-						$this->qb_cache_from[] = $v;
+						$this->qb_cache_from[]   = $v;
 						$this->qb_cache_exists[] = 'from';
 					}
 				}
@@ -506,7 +506,7 @@ class Query
 
 				if ( $this->qb_caching === TRUE )
 				{
-					$this->qb_cache_from[] = $val;
+					$this->qb_cache_from[]   = $val;
 					$this->qb_cache_exists[] = 'from';
 				}
 			}
@@ -535,7 +535,7 @@ class Query
 		{
 			$type = strtoupper( trim( $type ) );
 
-			if ( ! in_array( $type, array( 'LEFT', 'RIGHT', 'OUTER', 'INNER', 'LEFT OUTER', 'RIGHT OUTER' ), TRUE ) )
+			if ( ! in_array( $type, [ 'LEFT', 'RIGHT', 'OUTER', 'INNER', 'LEFT OUTER', 'RIGHT OUTER' ], TRUE ) )
 			{
 				$type = '';
 			}
@@ -554,8 +554,8 @@ class Query
 		// Split multiple conditions
 		if ( $escape === TRUE && preg_match_all( '/\sAND\s|\sOR\s/i', $cond, $m, PREG_OFFSET_CAPTURE ) )
 		{
-			$newcond = '';
-			$m[ 0 ][] = array( '', strlen( $cond ) );
+			$newcond  = '';
+			$m[ 0 ][] = [ '', strlen( $cond ) ];
 
 			for ( $i = 0, $c = count( $m[ 0 ] ), $s = 0;
 			      $i < $c;
@@ -597,7 +597,7 @@ class Query
 
 		if ( $this->qb_caching === TRUE )
 		{
-			$this->qb_cache_join[] = $join;
+			$this->qb_cache_join[]   = $join;
 			$this->qb_cache_exists[] = 'join';
 		}
 
@@ -637,7 +637,7 @@ class Query
 	 *
 	 * @return    Query
 	 */
-	public function orWhere($key, $value = NULL, $escape = NULL )
+	public function orWhere( $key, $value = NULL, $escape = NULL )
 	{
 		return $this->_prepareWhereHaving( 'qb_where', $key, $value, 'OR ', $escape );
 	}
@@ -660,13 +660,13 @@ class Query
 	 *
 	 * @return    Query
 	 */
-	protected function _prepareWhereHaving($qb_key, $key, $value = NULL, $type = 'AND ', $escape = NULL )
+	protected function _prepareWhereHaving( $qb_key, $key, $value = NULL, $type = 'AND ', $escape = NULL )
 	{
 		$qb_cache_key = ( $qb_key === 'qb_having' ) ? 'qb_cache_having' : 'qb_cache_where';
 
 		if ( ! is_array( $key ) )
 		{
-			$key = array( $key => $value );
+			$key = [ $key => $value ];
 		}
 
 		// If the escape value was not set will base it on the global setting
@@ -700,10 +700,10 @@ class Query
 				$k = substr( $k, 0, $match[ 0 ][ 1 ] ) . ( $match[ 1 ][ 0 ] === '=' ? ' IS NULL' : ' IS NOT NULL' );
 			}
 
-			$this->{$qb_key}[] = array( 'condition' => $prefix . $k . $v, 'escape' => $escape );
+			$this->{$qb_key}[] = [ 'condition' => $prefix . $k . $v, 'escape' => $escape ];
 			if ( $this->qb_caching === TRUE )
 			{
-				$this->{$qb_cache_key}[] = array( 'condition' => $prefix . $k . $v, 'escape' => $escape );
+				$this->{$qb_cache_key}[] = [ 'condition' => $prefix . $k . $v, 'escape' => $escape ];
 				$this->qb_cache_exists[] = substr( $qb_key, 3 );
 			}
 
@@ -726,7 +726,7 @@ class Query
 	 *
 	 * @return    Query
 	 */
-	public function whereIn($key = NULL, $values = NULL, $escape = NULL )
+	public function whereIn( $key = NULL, $values = NULL, $escape = NULL )
 	{
 		return $this->_whereIn( $key, $values, FALSE, 'AND ', $escape );
 	}
@@ -745,7 +745,7 @@ class Query
 	 *
 	 * @return    Query
 	 */
-	public function orWhereIn($key = NULL, $values = NULL, $escape = NULL )
+	public function orWhereIn( $key = NULL, $values = NULL, $escape = NULL )
 	{
 		return $this->_whereIn( $key, $values, FALSE, 'OR ', $escape );
 	}
@@ -764,7 +764,7 @@ class Query
 	 *
 	 * @return    Query
 	 */
-	public function whereNotIn($key = NULL, $values = NULL, $escape = NULL )
+	public function whereNotIn( $key = NULL, $values = NULL, $escape = NULL )
 	{
 		return $this->_whereIn( $key, $values, TRUE, 'AND ', $escape );
 	}
@@ -783,7 +783,7 @@ class Query
 	 *
 	 * @return    Query
 	 */
-	public function orWhereNotIn($key = NULL, $values = NULL, $escape = NULL )
+	public function orWhereNotIn( $key = NULL, $values = NULL, $escape = NULL )
 	{
 		return $this->_whereIn( $key, $values, TRUE, 'OR ', $escape );
 	}
@@ -806,7 +806,7 @@ class Query
 	 *
 	 * @return    Query
 	 */
-	protected function _whereIn($key = NULL, $values = NULL, $not = FALSE, $type = 'AND ', $escape = NULL )
+	protected function _whereIn( $key = NULL, $values = NULL, $not = FALSE, $type = 'AND ', $escape = NULL )
 	{
 		if ( $key === NULL OR $values === NULL )
 		{
@@ -815,29 +815,29 @@ class Query
 
 		if ( ! is_array( $values ) )
 		{
-			$values = array( $values );
+			$values = [ $values ];
 		}
 
 		is_bool( $escape ) OR $escape = $this->_protect_identifiers;
 
 		$not = ( $not ) ? ' NOT' : '';
 
-		$where_in = array();
+		$where_in = [ ];
 		foreach ( $values as $value )
 		{
 			$where_in[] = $this->escape( $value );
 		}
 
-		$prefix = ( count( $this->qb_where ) === 0 ) ? $this->_groupGetType( '' ) : $this->_groupGetType( $type );
-		$where_in = array(
+		$prefix   = ( count( $this->qb_where ) === 0 ) ? $this->_groupGetType( '' ) : $this->_groupGetType( $type );
+		$where_in = [
 			'condition' => $prefix . $key . $not . ' IN(' . implode( ', ', $where_in ) . ')',
 			'escape'    => $escape,
-		);
+		];
 
 		$this->qb_where[] = $where_in;
 		if ( $this->qb_caching === TRUE )
 		{
-			$this->qb_cache_where[] = $where_in;
+			$this->qb_cache_where[]  = $where_in;
 			$this->qb_cache_exists[] = 'where';
 		}
 
@@ -879,7 +879,7 @@ class Query
 	 *
 	 * @return    Query
 	 */
-	public function notLike($field, $match = '', $side = 'both', $escape = NULL )
+	public function notLike( $field, $match = '', $side = 'both', $escape = NULL )
 	{
 		return $this->_like( $field, $match, 'AND ', $side, 'NOT', $escape );
 	}
@@ -899,7 +899,7 @@ class Query
 	 *
 	 * @return    Query
 	 */
-	public function orLike($field, $match = '', $side = 'both', $escape = NULL )
+	public function orLike( $field, $match = '', $side = 'both', $escape = NULL )
 	{
 		return $this->_like( $field, $match, 'OR ', $side, '', $escape );
 	}
@@ -919,7 +919,7 @@ class Query
 	 *
 	 * @return    Query
 	 */
-	public function orNotLike($field, $match = '', $side = 'both', $escape = NULL )
+	public function orNotLike( $field, $match = '', $side = 'both', $escape = NULL )
 	{
 		return $this->_like( $field, $match, 'OR ', $side, 'NOT', $escape );
 	}
@@ -947,7 +947,7 @@ class Query
 	{
 		if ( ! is_array( $field ) )
 		{
-			$field = array( $field => $match );
+			$field = [ $field => $match ];
 		}
 
 		is_bool( $escape ) OR $escape = $this->_protect_identifiers;
@@ -982,10 +982,10 @@ class Query
 				$like_statement .= sprintf( $this->_like_escape_string, $this->_like_escape_character );
 			}
 
-			$this->qb_where[] = array( 'condition' => $like_statement, 'escape' => $escape );
+			$this->qb_where[] = [ 'condition' => $like_statement, 'escape' => $escape ];
 			if ( $this->qb_caching === TRUE )
 			{
-				$this->qb_cache_where[] = array( 'condition' => $like_statement, 'escape' => $escape );
+				$this->qb_cache_where[]  = [ 'condition' => $like_statement, 'escape' => $escape ];
 				$this->qb_cache_exists[] = 'where';
 			}
 		}
@@ -1003,16 +1003,16 @@ class Query
 	 *
 	 * @return    Query
 	 */
-	public function groupStart($not = '', $type = 'AND ' )
+	public function groupStart( $not = '', $type = 'AND ' )
 	{
 		$type = $this->_groupGetType( $type );
 
 		$this->qb_where_group_started = TRUE;
-		$prefix = ( count( $this->qb_where ) === 0 && count( $this->qb_cache_where ) === 0 ) ? '' : $type;
-		$where = array(
+		$prefix                       = ( count( $this->qb_where ) === 0 && count( $this->qb_cache_where ) === 0 ) ? '' : $type;
+		$where                        = [
 			'condition' => $prefix . $not . str_repeat( ' ', ++$this->qb_where_group_count ) . ' (',
 			'escape'    => FALSE,
-		);
+		];
 
 		$this->qb_where[] = $where;
 		if ( $this->qb_caching )
@@ -1069,10 +1069,10 @@ class Query
 	public function groupEnd()
 	{
 		$this->qb_where_group_started = FALSE;
-		$where = array(
+		$where                        = [
 			'condition' => str_repeat( ' ', $this->qb_where_group_count-- ) . ')',
 			'escape'    => FALSE,
-		);
+		];
 
 		$this->qb_where[] = $where;
 		if ( $this->qb_caching )
@@ -1097,11 +1097,11 @@ class Query
 	 *
 	 * @return    string
 	 */
-	protected function _groupGetType($type )
+	protected function _groupGetType( $type )
 	{
 		if ( $this->qb_where_group_started )
 		{
-			$type = '';
+			$type                         = '';
 			$this->qb_where_group_started = FALSE;
 		}
 
@@ -1118,7 +1118,7 @@ class Query
 	 *
 	 * @return    Query
 	 */
-	public function groupBy($by, $escape = NULL )
+	public function groupBy( $by, $escape = NULL )
 	{
 		is_bool( $escape ) OR $escape = $this->_protect_identifiers;
 
@@ -1126,7 +1126,7 @@ class Query
 		{
 			$by = ( $escape === TRUE )
 				? explode( ',', $by )
-				: array( $by );
+				: [ $by ];
 		}
 
 		foreach ( $by as $val )
@@ -1135,13 +1135,13 @@ class Query
 
 			if ( $val !== '' )
 			{
-				$val = array( 'field' => $val, 'escape' => $escape );
+				$val = [ 'field' => $val, 'escape' => $escape ];
 
 				$this->qb_group_by[] = $val;
 				if ( $this->qb_caching === TRUE )
 				{
 					$this->qb_cache_group_by[] = $val;
-					$this->qb_cache_exists[] = 'group_by';
+					$this->qb_cache_exists[]   = 'group_by';
 				}
 			}
 		}
@@ -1180,7 +1180,7 @@ class Query
 	 *
 	 * @return    object
 	 */
-	public function orHaving($key, $value = NULL, $escape = NULL )
+	public function orHaving( $key, $value = NULL, $escape = NULL )
 	{
 		return $this->_prepareWhereHaving( 'qb_having', $key, $value, 'OR ', $escape );
 	}
@@ -1196,7 +1196,7 @@ class Query
 	 *
 	 * @return    Query
 	 */
-	public function orderBy($order_by, $direction = '', $escape = NULL )
+	public function orderBy( $order_by, $direction = '', $escape = NULL )
 	{
 		$direction = strtoupper( trim( $direction ) );
 
@@ -1215,23 +1215,23 @@ class Query
 		}
 		elseif ( $direction !== '' )
 		{
-			$direction = in_array( $direction, array( 'ASC', 'DESC' ), TRUE ) ? ' ' . $direction : '';
+			$direction = in_array( $direction, [ 'ASC', 'DESC' ], TRUE ) ? ' ' . $direction : '';
 		}
 
 		is_bool( $escape ) OR $escape = $this->_protect_identifiers; //_protect_identifiers
 
 		if ( $escape === FALSE )
 		{
-			$qb_order_by[] = array( 'field' => $order_by, 'direction' => $direction, 'escape' => FALSE );
+			$qb_order_by[] = [ 'field' => $order_by, 'direction' => $direction, 'escape' => FALSE ];
 		}
 		else
 		{
-			$qb_order_by = array();
+			$qb_order_by = [ ];
 			foreach ( explode( ',', $order_by ) as $field )
 			{
 				$qb_order_by[] = ( $direction === '' && preg_match( '/\s+(ASC|DESC)$/i', rtrim( $field ), $match, PREG_OFFSET_CAPTURE ) )
-					? array( 'field' => ltrim( substr( $field, 0, $match[ 0 ][ 1 ] ) ), 'direction' => ' ' . $match[ 1 ][ 0 ], 'escape' => TRUE )
-					: array( 'field' => trim( $field ), 'direction' => $direction, 'escape' => TRUE );
+					? [ 'field' => ltrim( substr( $field, 0, $match[ 0 ][ 1 ] ) ), 'direction' => ' ' . $match[ 1 ][ 0 ], 'escape' => TRUE ]
+					: [ 'field' => trim( $field ), 'direction' => $direction, 'escape' => TRUE ];
 			}
 		}
 
@@ -1314,7 +1314,7 @@ class Query
 
 		if ( ! is_array( $key ) )
 		{
-			$key = array( $key => $value );
+			$key = [ $key => $value ];
 		}
 
 		is_bool( $escape ) OR $escape = $this->_protect_identifiers;
@@ -1353,7 +1353,7 @@ class Query
 	 *
 	 * @return    string
 	 */
-	public function getCompiledSelect($table = '', $reset = TRUE )
+	public function getCompiledSelect( $table = '', $reset = TRUE )
 	{
 		if ( $table !== '' )
 		{
@@ -1417,7 +1417,7 @@ class Query
 	 *
 	 * @return    int
 	 */
-	public function countAll($table = '', $reset = TRUE )
+	public function countAll( $table = '', $reset = TRUE )
 	{
 		if ( $table !== '' )
 		{
@@ -1458,7 +1458,7 @@ class Query
 	 *
 	 * @return    object
 	 */
-	public function getWhere($table = '', $where = NULL, $limit = NULL, $offset = NULL )
+	public function getWhere( $table = '', $where = NULL, $limit = NULL, $offset = NULL )
 	{
 		if ( $table !== '' )
 		{
@@ -1494,7 +1494,7 @@ class Query
 	 *
 	 * @return    int    Number of rows inserted or FALSE on failure
 	 */
-	public function insertBatch($table = '', $set = NULL, $escape = NULL )
+	public function insertBatch( $table = '', $set = NULL, $escape = NULL )
 	{
 		if ( $set !== NULL )
 		{
@@ -1543,7 +1543,7 @@ class Query
 	 *
 	 * @return    string
 	 */
-	protected function _insertBatch($table, $keys, $values )
+	protected function _insertBatch( $table, $keys, $values )
 	{
 		return 'INSERT INTO ' . $table . ' (' . implode( ', ', $keys ) . ') VALUES ' . implode( ', ', $values );
 	}
@@ -1559,13 +1559,13 @@ class Query
 	 *
 	 * @return    Query
 	 */
-	public function setInsertBatch($key, $value = '', $escape = NULL )
+	public function setInsertBatch( $key, $value = '', $escape = NULL )
 	{
 		$key = $this->_objectToArrayBatch( $key );
 
 		if ( ! is_array( $key ) )
 		{
-			$key = array( $key => $value );
+			$key = [ $key => $value ];
 		}
 
 		is_bool( $escape ) OR $escape = $this->_protect_identifiers;
@@ -1579,7 +1579,7 @@ class Query
 			if ( count( array_diff( $keys, array_keys( $row ) ) ) > 0 OR count( array_diff( array_keys( $row ), $keys ) ) > 0 )
 			{
 				// batch function above returns an error on an empty array
-				$this->qb_set[] = array();
+				$this->qb_set[] = [ ];
 
 				return;
 			}
@@ -1588,7 +1588,7 @@ class Query
 
 			if ( $escape !== FALSE )
 			{
-				$clean = array();
+				$clean = [ ];
 				foreach ( $row as $value )
 				{
 					$clean[] = $this->escape( $value );
@@ -1620,7 +1620,7 @@ class Query
 	 *
 	 * @return    string
 	 */
-	public function getCompiledInsert($table = '', $reset = TRUE )
+	public function getCompiledInsert( $table = '', $reset = TRUE )
 	{
 		if ( $this->_validateInsert( $table ) === FALSE )
 		{
@@ -1694,7 +1694,7 @@ class Query
 	 *
 	 * @return    string
 	 */
-	protected function _validateInsert($table = '' )
+	protected function _validateInsert( $table = '' )
 	{
 		if ( count( $this->qb_set ) === 0 )
 		{
@@ -1801,7 +1801,7 @@ class Query
 	 *
 	 * @return    string
 	 */
-	public function getCompiledUpdate($table = '', $reset = TRUE )
+	public function getCompiledUpdate( $table = '', $reset = TRUE )
 	{
 		// Combine any cached components with the current statements
 		$this->_mergeCache();
@@ -1879,7 +1879,7 @@ class Query
 	 *
 	 * @return    bool
 	 */
-	protected function _validateUpdate($table = '' )
+	protected function _validateUpdate( $table = '' )
 	{
 		if ( count( $this->qb_set ) === 0 )
 		{
@@ -1911,7 +1911,7 @@ class Query
 	 *
 	 * @return    int    number of rows affected or FALSE on failure
 	 */
-	public function updateBatch($table = '', $set = NULL, $index = NULL )
+	public function updateBatch( $table = '', $set = NULL, $index = NULL )
 	{
 		// Combine any cached components with the current statements
 		$this->_mergeCache();
@@ -1947,7 +1947,7 @@ class Query
 		{
 			$this->query( $this->_updateBatchStatement( $this->protectIdentifiers( $table, TRUE, NULL, FALSE ), array_slice( $this->qb_set, $i, 100 ), $this->protectIdentifiers( $index ) ) );
 			$affected_rows += $this->affectedRows();
-			$this->qb_where = array();
+			$this->qb_where = [ ];
 		}
 
 		$this->_resetWrite();
@@ -1968,9 +1968,9 @@ class Query
 	 *
 	 * @return    string
 	 */
-	protected function _updateBatchStatement($table, $values, $index )
+	protected function _updateBatchStatement( $table, $values, $index )
 	{
-		$ids = array();
+		$ids = [ ];
 		foreach ( $values as $key => $val )
 		{
 			$ids[] = $val[ $index ];
@@ -2008,7 +2008,7 @@ class Query
 	 *
 	 * @return    Query
 	 */
-	public function setUpdateBatch($key, $index = '', $escape = NULL )
+	public function setUpdateBatch( $key, $index = '', $escape = NULL )
 	{
 		$key = $this->_objectToArrayBatch( $key );
 
@@ -2022,7 +2022,7 @@ class Query
 		foreach ( $key as $k => $v )
 		{
 			$index_set = FALSE;
-			$clean = array();
+			$clean     = [ ];
 			foreach ( $v as $k2 => $v2 )
 			{
 				if ( $k2 === $index )
@@ -2055,7 +2055,7 @@ class Query
 	 *
 	 * @return    object
 	 */
-	public function emptyTable($table = '' )
+	public function emptyTable( $table = '' )
 	{
 		if ( $table === '' )
 		{
@@ -2126,7 +2126,7 @@ class Query
 	 *
 	 * @return    string
 	 */
-	protected function _truncateStatement($table )
+	protected function _truncateStatement( $table )
 	{
 		return 'TRUNCATE ' . $table;
 	}
@@ -2143,10 +2143,10 @@ class Query
 	 *
 	 * @return    string
 	 */
-	public function getCompiledDelete($table = '', $reset = TRUE )
+	public function getCompiledDelete( $table = '', $reset = TRUE )
 	{
 		$this->return_delete_sql = TRUE;
-		$sql = $this->delete( $table, '', NULL, $reset );
+		$sql                     = $this->delete( $table, '', NULL, $reset );
 		$this->return_delete_sql = FALSE;
 
 		return $sql;
@@ -2246,7 +2246,7 @@ class Query
 	 *
 	 * @return    string
 	 */
-	public function tablePrefix($table = '' )
+	public function tablePrefix( $table = '' )
 	{
 		if ( $table === '' )
 		{
@@ -2267,7 +2267,7 @@ class Query
 	 *
 	 * @return    string
 	 */
-	public function setTablePrefix($prefix = '' )
+	public function setTablePrefix( $prefix = '' )
 	{
 		return $this->table_prefix = $prefix;
 	}
@@ -2283,7 +2283,7 @@ class Query
 	 *
 	 * @return    string
 	 */
-	protected function _trackAliases($table )
+	protected function _trackAliases( $table )
 	{
 		if ( is_array( $table ) )
 		{
@@ -2331,7 +2331,7 @@ class Query
 	 *
 	 * @return    string
 	 */
-	protected function _compileSelect($select_override = FALSE )
+	protected function _compileSelect( $select_override = FALSE )
 	{
 		// Combine any cached components with the current statements
 		$this->_mergeCache();
@@ -2356,7 +2356,7 @@ class Query
 				// is because until the user calls the from() function we don't know if there are aliases
 				foreach ( $this->qb_select as $key => $val )
 				{
-					$no_escape = isset( $this->qb_no_escape[ $key ] ) ? $this->qb_no_escape[ $key ] : NULL;
+					$no_escape               = isset( $this->qb_no_escape[ $key ] ) ? $this->qb_no_escape[ $key ] : NULL;
 					$this->qb_select[ $key ] = $this->protectIdentifiers( $val, FALSE, $no_escape );
 				}
 
@@ -2405,7 +2405,7 @@ class Query
 	 *
 	 * @return    string    SQL statement
 	 */
-	protected function _compileWhereHaving($qb_key )
+	protected function _compileWhereHaving( $qb_key )
 	{
 		if ( count( $this->$qb_key ) > 0 )
 		{
@@ -2552,14 +2552,14 @@ class Query
 	 *
 	 * @return    array
 	 */
-	protected function _objectToArray($object )
+	protected function _objectToArray( $object )
 	{
 		if ( ! is_object( $object ) )
 		{
 			return $object;
 		}
 
-		$array = array();
+		$array = [ ];
 		foreach ( get_object_vars( $object ) as $key => $val )
 		{
 			// There are some built in keys we need to ignore for this conversion
@@ -2583,15 +2583,15 @@ class Query
 	 *
 	 * @return    array
 	 */
-	protected function _objectToArrayBatch($object )
+	protected function _objectToArrayBatch( $object )
 	{
 		if ( ! is_object( $object ) )
 		{
 			return $object;
 		}
 
-		$array = array();
-		$out = get_object_vars( $object );
+		$array  = [ ];
+		$out    = get_object_vars( $object );
 		$fields = array_keys( $out );
 
 		foreach ( $fields as $val )
@@ -2653,18 +2653,19 @@ class Query
 	 */
 	public function flushCache()
 	{
-		$this->_resetRun( array(
-			                   'qb_cache_select'    => array(),
-			                   'qb_cache_from'      => array(),
-			                   'qb_cache_join'      => array(),
-			                   'qb_cache_where'     => array(),
-			                   'qb_cache_group_by'  => array(),
-			                   'qb_cache_having'    => array(),
-			                   'qb_cache_order_by'  => array(),
-			                   'qb_cache_set'       => array(),
-			                   'qb_cache_exists'    => array(),
-			                   'qb_cache_no_escape' => array(),
-		                   ) );
+		$this->_resetRun(
+			[
+				'qb_cache_select'    => [ ],
+				'qb_cache_from'      => [ ],
+				'qb_cache_join'      => [ ],
+				'qb_cache_where'     => [ ],
+				'qb_cache_group_by'  => [ ],
+				'qb_cache_having'    => [ ],
+				'qb_cache_order_by'  => [ ],
+				'qb_cache_set'       => [ ],
+				'qb_cache_exists'    => [ ],
+				'qb_cache_no_escape' => [ ],
+			] );
 
 		return $this;
 	}
@@ -2692,9 +2693,9 @@ class Query
 
 		foreach ( array_unique( $this->qb_cache_exists ) as $val ) // select, from, etc.
 		{
-			$qb_variable = 'qb_' . $val;
+			$qb_variable  = 'qb_' . $val;
 			$qb_cache_var = 'qb_cache_' . $val;
-			$qb_new = $this->$qb_cache_var;
+			$qb_new       = $this->$qb_cache_var;
 
 			for ( $i = 0, $c = count( $this->$qb_variable ); $i < $c; $i++ )
 			{
@@ -2734,11 +2735,11 @@ class Query
 	 *
 	 * @return    bool
 	 */
-	protected function _isLiteral($str )
+	protected function _isLiteral( $str )
 	{
 		$str = trim( $str );
 
-		if ( empty( $str ) OR ctype_digit( $str ) OR (string) (float) $str === $str OR in_array( strtoupper( $str ), array( 'TRUE', 'FALSE' ), TRUE ) )
+		if ( empty( $str ) OR ctype_digit( $str ) OR (string) (float) $str === $str OR in_array( strtoupper( $str ), [ 'TRUE', 'FALSE' ], TRUE ) )
 		{
 			return TRUE;
 		}
@@ -2748,7 +2749,7 @@ class Query
 		if ( empty( $_str ) )
 		{
 			$_str = ( $this->_escape_character !== '"' )
-				? array( '"', "'" ) : array( "'" );
+				? [ '"', "'" ] : [ "'" ];
 		}
 
 		return in_array( $str[ 0 ], $_str, TRUE );
@@ -2780,7 +2781,7 @@ class Query
 	 *
 	 * @return    void
 	 */
-	protected function _resetRun($qb_reset_items )
+	protected function _resetRun( $qb_reset_items )
 	{
 		foreach ( $qb_reset_items as $item => $default_value )
 		{
@@ -2797,20 +2798,21 @@ class Query
 	 */
 	protected function _resetSelect()
 	{
-		$this->_resetRun( array(
-			                   'qb_select'         => array(),
-			                   'qb_from'           => array(),
-			                   'qb_join'           => array(),
-			                   'qb_where'          => array(),
-			                   'qb_group_by'       => array(),
-			                   'qb_having'         => array(),
-			                   'qb_order_by'       => array(),
-			                   'qb_aliased_tables' => array(),
-			                   'qb_no_escape'      => array(),
-			                   'qb_distinct'       => FALSE,
-			                   'qb_limit'          => FALSE,
-			                   'qb_offset'         => FALSE,
-		                   ) );
+		$this->_resetRun(
+			[
+				'qb_select'         => [ ],
+				'qb_from'           => [ ],
+				'qb_join'           => [ ],
+				'qb_where'          => [ ],
+				'qb_group_by'       => [ ],
+				'qb_having'         => [ ],
+				'qb_order_by'       => [ ],
+				'qb_aliased_tables' => [ ],
+				'qb_no_escape'      => [ ],
+				'qb_distinct'       => FALSE,
+				'qb_limit'          => FALSE,
+				'qb_offset'         => FALSE,
+			] );
 	}
 
 	// --------------------------------------------------------------------
@@ -2824,14 +2826,15 @@ class Query
 	 */
 	protected function _resetWrite()
 	{
-		$this->_resetRun( array(
-			                   'qb_set'      => array(),
-			                   'qb_from'     => array(),
-			                   'qb_join'     => array(),
-			                   'qb_where'    => array(),
-			                   'qb_order_by' => array(),
-			                   'qb_keys'     => array(),
-			                   'qb_limit'    => FALSE,
-		                   ) );
+		$this->_resetRun(
+			[
+				'qb_set'      => [ ],
+				'qb_from'     => [ ],
+				'qb_join'     => [ ],
+				'qb_where'    => [ ],
+				'qb_order_by' => [ ],
+				'qb_keys'     => [ ],
+				'qb_limit'    => FALSE,
+			] );
 	}
 }

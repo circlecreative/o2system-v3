@@ -44,7 +44,7 @@ defined( 'ROOTPATH' ) || exit( 'No direct script access allowed' );
 
 class Plugin extends Module
 {
-	public function __construct( $data = array() )
+	public function __construct( $data = [ ] )
 	{
 		parent::__construct( $data );
 	}

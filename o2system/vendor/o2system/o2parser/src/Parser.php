@@ -62,13 +62,13 @@ namespace O2System
 		 *
 		 * @access protected
 		 */
-		protected $_config = array(
+		protected $_config = [
 			'driver'             => 'smarty',
 			'php'                => TRUE,
 			'markdown'           => FALSE,
 			'shortcode'          => FALSE,
 			'rewrite_short_tags' => FALSE,
-		);
+		];
 
 
 		/**
@@ -87,11 +87,11 @@ namespace O2System
 		 *
 		 * @type array
 		 */
-		public $extensions = array( '.php', '.phtml', '.html', '.tpl' );
+		public $extensions = [ '.php', '.phtml', '.html', '.tpl' ];
 
 		// ------------------------------------------------------------------------
 
-		public function __reconstruct( array $config = array() )
+		public function __reconstruct( array $config = [ ] )
 		{
 			if ( class_exists( 'O2System' ) )
 			{
@@ -129,7 +129,7 @@ namespace O2System
 		 *
 		 * @return \O2System\Libraries\Template Instance of O2System\Core\Template class
 		 */
-		public function setDriver($driver )
+		public function setDriver( $driver )
 		{
 			$driver = strtolower( $driver );
 
@@ -150,7 +150,7 @@ namespace O2System
 			}
 		}
 
-		public function parseFile($file, $vars = array() )
+		public function parseFile( $file, $vars = [ ] )
 		{
 			if ( is_file( $file ) )
 			{
@@ -172,7 +172,7 @@ namespace O2System
 		 *
 		 * @return string
 		 */
-		public function parseSourceCode($source_code = '', $vars = array() )
+		public function parseSourceCode( $source_code = '', $vars = [ ] )
 		{
 			// Parse PHP
 			if ( $this->_config[ 'php' ] === TRUE )
@@ -216,7 +216,7 @@ namespace O2System
 		 *
 		 * @return string
 		 */
-		public function parseString($source_code, $vars = array() )
+		public function parseString( $source_code, $vars = [ ] )
 		{
 			return $this->_driver->parseString( $source_code, $vars );
 		}
@@ -232,7 +232,7 @@ namespace O2System
 		 *
 		 * @return string
 		 */
-		public function parseMarkdown($source_code, $flavour = 'default' )
+		public function parseMarkdown( $source_code, $flavour = 'default' )
 		{
 			if ( $flavour === 'github' )
 			{
@@ -242,10 +242,10 @@ namespace O2System
 				}
 
 				// use github markdown
-				$markdown = new \cebe\markdown\GithubMarkdown();
-				$markdown->html5 = TRUE;
+				$markdown                      = new \cebe\markdown\GithubMarkdown();
+				$markdown->html5               = TRUE;
 				$markdown->keepListStartNumber = TRUE;
-				$markdown->enableNewlines = TRUE;
+				$markdown->enableNewlines      = TRUE;
 
 				return $markdown->parse( $source_code );
 			}
@@ -257,10 +257,10 @@ namespace O2System
 				}
 
 				// parse only inline elements (useful for one-line descriptions)
-				$markdown = new \cebe\markdown\GithubMarkdown();
-				$markdown->html5 = TRUE;
+				$markdown                      = new \cebe\markdown\GithubMarkdown();
+				$markdown->html5               = TRUE;
 				$markdown->keepListStartNumber = TRUE;
-				$markdown->enableNewlines = TRUE;
+				$markdown->enableNewlines      = TRUE;
 
 				return $markdown->parseParagraph( $source_code );
 			}
@@ -272,10 +272,10 @@ namespace O2System
 				}
 
 				// use markdown extra
-				$markdown = new \cebe\markdown\MarkdownExtra();
-				$markdown->html5 = TRUE;
+				$markdown                      = new \cebe\markdown\MarkdownExtra();
+				$markdown->html5               = TRUE;
 				$markdown->keepListStartNumber = TRUE;
-				$markdown->enableNewlines = TRUE;
+				$markdown->enableNewlines      = TRUE;
 
 				return $markdown->parse( $source_code );
 			}
@@ -286,10 +286,10 @@ namespace O2System
 			}
 
 			// traditional markdown and parse full text
-			$markdown = new \cebe\markdown\Markdown();
-			$markdown->html5 = TRUE;
+			$markdown                      = new \cebe\markdown\Markdown();
+			$markdown->html5               = TRUE;
 			$markdown->keepListStartNumber = TRUE;
-			$markdown->enableNewlines = TRUE;
+			$markdown->enableNewlines      = TRUE;
 
 			return $markdown->parse( $source_code );
 		}
@@ -305,7 +305,7 @@ namespace O2System
 		 *
 		 * @return string
 		 */
-		public function parseBbcode($source_code )
+		public function parseBbcode( $source_code )
 		{
 			if ( ! class_exists( 'JBBCode\Parser' ) )
 			{
@@ -331,7 +331,7 @@ namespace O2System
 		 *
 		 * @return string
 		 */
-		public function parseShortcode($source_code )
+		public function parseShortcode( $source_code )
 		{
 			if ( $shortcodes = $this->shortcode->fetch( $source_code ) )
 			{
@@ -339,8 +339,9 @@ namespace O2System
 			}
 
 			// Fixed Output
-			$source_code = str_replace( array( '_shortcode', '[?php', '?]' ), array( 'shortcode', '&lt;?php', '?&gt;' ),
-			                            $source_code );
+			$source_code = str_replace(
+				[ '_shortcode', '[?php', '?]' ], [ 'shortcode', '&lt;?php', '?&gt;' ],
+				$source_code );
 
 			return $source_code;
 		}
@@ -357,16 +358,16 @@ namespace O2System
 		 *
 		 * @return string
 		 */
-		public function parsePhp($source_code, $vars = array() )
+		public function parsePhp( $source_code, $vars = [ ] )
 		{
 			$source_code = htmlspecialchars_decode( $source_code );
-			$vars = is_object( $vars ) ? get_object_vars( $vars ) : $vars;
+			$vars        = is_object( $vars ) ? get_object_vars( $vars ) : $vars;
 
 			extract( $vars );
 
 			if ( class_exists( 'O2System', FALSE ) )
 			{
-				$active = \O2System::$active;
+				$active   = \O2System::$active;
 				$language = \O2System::$language;
 
 				extract( \O2System::instance()->getStorage()->getArrayCopy() );
@@ -423,10 +424,10 @@ namespace O2System\Parser
 	 */
 	class Exception extends ExceptionInterface
 	{
-		public $library = array(
+		public $library = [
 			'name'        => 'O2System Parser (O2Parser)',
 			'description' => 'Open Source PHP Parser Driver Library',
 			'version'     => '1.0.0',
-		);
+		];
 	}
 }

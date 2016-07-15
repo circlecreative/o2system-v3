@@ -10,9 +10,9 @@ namespace O2System\Glob\Interfaces;
 
 class ExceptionInterface extends \Exception
 {
-	public    $header             = NULL;
-	public    $description        = NULL;
-	protected $_args              = NULL;
+	public    $header      = NULL;
+	public    $description = NULL;
+	protected $_args       = NULL;
 
 	// ------------------------------------------------------------------------
 
@@ -21,15 +21,15 @@ class ExceptionInterface extends \Exception
 		if ( class_exists( 'O2System', FALSE ) )
 		{
 			\O2System::$language->load( 'exception' );
-			$lang_message = \O2System::$language->line( $message );
-			$this->header = \O2System::$language->line( 'EXCEPTIONHEADER_' . get_class_name( $this ) );
+			$lang_message      = \O2System::$language->line( $message );
+			$this->header      = \O2System::$language->line( 'EXCEPTIONHEADER_' . get_class_name( $this ) );
 			$this->description = \O2System::$language->line( 'EXCEPTIONDESCRIPTION_' . get_class_name( $this ) );
 		}
 		else
 		{
 			\O2System\Glob::$language->load( 'exception' );
-			$lang_message = \O2System\Glob::$language->line( $message );
-			$this->header = \O2System::$language->line( 'EXCEPTIONHEADER_' . get_class_name( $this ) );
+			$lang_message      = \O2System\Glob::$language->line( $message );
+			$this->header      = \O2System::$language->line( 'EXCEPTIONHEADER_' . get_class_name( $this ) );
 			$this->description = \O2System::$language->line( 'EXCEPTIONDESCRIPTION_' . get_class_name( $this ) );
 		}
 

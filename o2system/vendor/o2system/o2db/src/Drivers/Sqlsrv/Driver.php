@@ -68,7 +68,7 @@ class Driver extends DriverInterface
 	 *
 	 * @type    array
 	 */
-	protected $_random_keywords = array( 'NEWID()', 'RAND(%d)' );
+	protected $_random_keywords = [ 'NEWID()', 'RAND(%d)' ];
 
 	/**
 	 * Quoted identifier flag
@@ -152,7 +152,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    object
 	 */
-	public function dbConnect($persistent = FALSE )
+	public function dbConnect( $persistent = FALSE )
 	{
 		if ( ! empty( $this->charset ) && preg_match( '/utf[^8]*8/i', $this->charset ) )
 		{
@@ -167,10 +167,10 @@ class Driver extends DriverInterface
 		}
 
 		// Determine how identifiers are escaped
-		$query = $this->query( 'SELECT CASE WHEN (@@OPTIONS | 256) = @@OPTIONS THEN 1 ELSE 0 END AS qi' );
-		$query = $query->rowArray();
+		$query                    = $this->query( 'SELECT CASE WHEN (@@OPTIONS | 256) = @@OPTIONS THEN 1 ELSE 0 END AS qi' );
+		$query                    = $query->rowArray();
 		$this->_quoted_identifier = empty( $query ) ? FALSE : (bool) $query[ 'qi' ];
-		$this->_escape_character = ( $this->_quoted_identifier ) ? '"' : array( '[', ']' );
+		$this->_escape_character  = ( $this->_quoted_identifier ) ? '"' : [ '[', ']' ];
 
 		return $this->pdo_conn;
 	}
@@ -186,7 +186,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _listTablesStatement($prefix_limit = FALSE )
+	protected function _listTablesStatement( $prefix_limit = FALSE )
 	{
 		$sql = 'SELECT ' . $this->escapeIdentifiers( 'name' )
 			. ' FROM ' . $this->escapeIdentifiers( 'sysobjects' )
@@ -212,7 +212,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _listColumnsStatement($table = '' )
+	protected function _listColumnsStatement( $table = '' )
 	{
 		return 'SELECT COLUMN_NAME
 			FROM INFORMATION_SCHEMA.Columns
@@ -228,7 +228,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    array
 	 */
-	public function fieldData($table )
+	public function fieldData( $table )
 	{
 		$sql = 'SELECT COLUMN_NAME, DATA_TYPE, CHARACTER_MAXIMUM_LENGTH, NUMERIC_PRECISION, COLUMN_DEFAULT
 			FROM INFORMATION_SCHEMA.Columns
@@ -240,14 +240,14 @@ class Driver extends DriverInterface
 		}
 		$query = $query->resultObject();
 
-		$result = array();
+		$result = [ ];
 		for ( $i = 0, $c = count( $query ); $i < $c; $i++ )
 		{
-			$result[ $i ] = new stdClass();
-			$result[ $i ]->name = $query[ $i ]->COLUMN_NAME;
-			$result[ $i ]->type = $query[ $i ]->DATA_TYPE;
+			$result[ $i ]             = new stdClass();
+			$result[ $i ]->name       = $query[ $i ]->COLUMN_NAME;
+			$result[ $i ]->type       = $query[ $i ]->DATA_TYPE;
 			$result[ $i ]->max_length = ( $query[ $i ]->CHARACTER_MAXIMUM_LENGTH > 0 ) ? $query[ $i ]->CHARACTER_MAXIMUM_LENGTH : $query[ $i ]->NUMERIC_PRECISION;
-			$result[ $i ]->default = $query[ $i ]->COLUMN_DEFAULT;
+			$result[ $i ]->default    = $query[ $i ]->COLUMN_DEFAULT;
 		}
 
 		return $result;
@@ -265,10 +265,10 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _updateStatement($table, $values )
+	protected function _updateStatement( $table, $values )
 	{
-		$this->qb_limit = FALSE;
-		$this->qb_orderby = array();
+		$this->qb_limit   = FALSE;
+		$this->qb_orderby = [ ];
 
 		return parent::_updateStatement( $table, $values );
 	}
@@ -334,7 +334,7 @@ class Driver extends DriverInterface
 			else
 			{
 				// Use only field names and their aliases, everything else is out of our scope.
-				$select = array();
+				$select       = [ ];
 				$field_regexp = ( $this->_quoted_identifier )
 					? '("[^\"]+")' : '(\[[^\]]+\])';
 				for ( $i = 0, $c = count( $this->qb_select ); $i < $c; $i++ )
@@ -367,7 +367,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string|bool
 	 */
-	protected function _insertBatch($table, $keys, $values )
+	protected function _insertBatch( $table, $keys, $values )
 	{
 		// Multiple-value inserts are only supported as of SQL Server 2008
 		if ( version_compare( $this->version(), '10', '>=' ) )
@@ -375,6 +375,6 @@ class Driver extends DriverInterface
 			return parent::_insertBatch( $table, $keys, $values );
 		}
 
-		throw new Exception('Unsupported feature of the database platform you are using.');
+		throw new Exception( 'Unsupported feature of the database platform you are using.' );
 	}
 }

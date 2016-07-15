@@ -174,7 +174,14 @@ namespace O2System\Glob
 		 */
 		public function __set( $index, $value )
 		{
-			return $this->offsetSet( $index, $value );
+			if ( is_array( $value ) )
+			{
+				parent::offsetSet( $index, $this->___setObject( $value ) );
+			}
+			else
+			{
+				parent::offsetSet( $index, $value );
+			}
 		}
 
 		// ------------------------------------------------------------------------
@@ -413,6 +420,30 @@ namespace O2System\Glob
 		public function __toArray()
 		{
 			return $this->getArrayCopy();
+		}
+
+		private function ___setObject( array $array )
+		{
+			$ArrayObject = [ ];
+
+			if ( is_string( key( $array ) ) )
+			{
+				$ArrayObject = new ArrayObject();
+			}
+
+			foreach ( $array as $key => $value )
+			{
+				if ( is_array( $value ) )
+				{
+					$ArrayObject[ $key ] = $this->___setObject( $value );
+				}
+				else
+				{
+					$ArrayObject[ $key ] = $value;
+				}
+			}
+
+			return $ArrayObject;
 		}
 	}
 
@@ -786,7 +817,7 @@ namespace O2System\Glob
 			elseif ( is_dir( $path = realpath( $path ) . DIRECTORY_SEPARATOR ) )
 			{
 				$namespaces = rtrim( $namespaces, '\\' ) . '\\';
-				$path       = str_replace( '/', DIRECTORY_SEPARATOR, $path );
+				$path       = str_replace( [ '/', '\\' ], DIRECTORY_SEPARATOR, $path );
 
 				if ( $path === DIRECTORY_SEPARATOR )
 				{
@@ -1282,7 +1313,11 @@ namespace O2System\Glob
 		{
 			$path = str_replace( '/', DIRECTORY_SEPARATOR, $path );
 
-			if ( is_dir( rtrim( $path, DIRECTORY_SEPARATOR ) . DIRECTORY_SEPARATOR . 'languages' ) )
+			if ( is_dir( rtrim( $path, DIRECTORY_SEPARATOR ) . DIRECTORY_SEPARATOR . 'Languages' ) )
+			{
+				$this->_paths[] = rtrim( $path, DIRECTORY_SEPARATOR ) . DIRECTORY_SEPARATOR . 'Languages' . DIRECTORY_SEPARATOR;
+			}
+			elseif ( is_dir( rtrim( $path, DIRECTORY_SEPARATOR ) . DIRECTORY_SEPARATOR . 'languages' ) )
 			{
 				$this->_paths[] = rtrim( $path, DIRECTORY_SEPARATOR ) . DIRECTORY_SEPARATOR . 'languages' . DIRECTORY_SEPARATOR;
 			}
@@ -1463,6 +1498,8 @@ namespace O2System\Glob
 
 			if ( isset( $user_ip_address ) )
 			{
+				$user_ip_address = $user_ip_address === '::1' ? '127.0.0.1' : $user_ip_address;
+
 				if ( in_array( $user_ip_address, $this->_debug_ips ) )
 				{
 					$this->setEnvironment( 'development' );

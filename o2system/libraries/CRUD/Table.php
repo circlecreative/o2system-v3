@@ -24,9 +24,9 @@ class Table
 {
 	protected $_title        = NULL;
 	protected $_show_entries = 10;
-	protected $_attributes   = array();
+	protected $_attributes   = [ ];
 
-	protected $_config = array(
+	protected $_config = [
 		'show_nested'    => TRUE,
 		'show_checkbox'  => TRUE,
 		'show_id'        => TRUE,
@@ -37,10 +37,10 @@ class Table
 		'show_toolbar'   => TRUE,
 		'show_actions'   => TRUE,
 		'show_labels'    => FALSE,
-	);
+	];
 
-	protected $_toolbar = array(
-		'buttons' => array(
+	protected $_toolbar = [
+		'buttons' => [
 			'add-new'   => TRUE,
 			'edit'      => FALSE,
 			'publish'   => TRUE,
@@ -48,10 +48,10 @@ class Table
 			'delete'    => TRUE,
 			'archive'   => TRUE,
 			'help'      => TRUE,
-		),
-	);
+		],
+	];
 
-	protected $_actions = array(
+	protected $_actions = [
 		'view'    => TRUE,
 		'copy'    => TRUE,
 		'edit'    => TRUE,
@@ -59,19 +59,19 @@ class Table
 		'archive' => TRUE,
 		'export'  => TRUE,
 		'import'  => TRUE,
-	);
+	];
 
-	protected $_prepend_columns = array(
-		'numbering' => array(
+	protected $_prepend_columns = [
+		'numbering' => [
 			'field'     => NULL,
 			'label'     => '#',
-			'attr'      => array(
+			'attr'      => [
 				'name'  => '',
 				'id'    => '',
 				'class' => 'text-right',
 				'width' => '3%',
 				'style' => '',
-			),
+			],
 			'type'      => 'numbering',
 			'show'      => [ 'lg', 'md', 'sm' ],
 			'hidden'    => FALSE,
@@ -80,17 +80,17 @@ class Table
 			'options'   => FALSE,
 			'nested'    => FALSE,
 			'content'   => '',
-		),
-		'id'        => array(
+		],
+		'id'        => [
 			'field'     => 'id',
 			'label'     => 'ID',
-			'attr'      => array(
+			'attr'      => [
 				'name'  => '',
 				'id'    => '',
 				'class' => 'text-right',
 				'width' => '3%',
 				'style' => '',
-			),
+			],
 			'type'      => 'txt',
 			'show'      => [ 'lg', 'md', 'sm' ],
 			'hidden'    => FALSE,
@@ -99,17 +99,17 @@ class Table
 			'options'   => FALSE,
 			'nested'    => FALSE,
 			'content'   => '',
-		),
-		'checkbox'  => array(
+		],
+		'checkbox'  => [
 			'field'     => 'id',
 			'label'     => '<div class="checkbox"><input type="checkbox" data-action="item-checkboxes"><label></label></div>',
-			'attr'      => array(
+			'attr'      => [
 				'name'  => '',
 				'id'    => '',
 				'class' => 'width-fit',
 				'width' => '2%',
 				'style' => '',
-			),
+			],
 			'type'      => 'checkbox',
 			'show'      => [ 'lg', 'md', 'sm' ],
 			'hidden'    => FALSE,
@@ -117,17 +117,17 @@ class Table
 			'filtering' => FALSE,
 			'options'   => FALSE,
 			'nested'    => FALSE,
-		),
-		'images'    => array(
+		],
+		'images'    => [
 			'field'     => 'images',
 			'label'     => NULL,
-			'attr'      => array(
+			'attr'      => [
 				'name'  => '',
 				'id'    => '',
 				'class' => '',
 				'width' => '5%',
 				'style' => '',
-			),
+			],
 			'type'      => 'image',
 			'show'      => [ 'lg', 'md', 'sm' ],
 			'hidden'    => FALSE,
@@ -135,20 +135,20 @@ class Table
 			'filtering' => FALSE,
 			'options'   => FALSE,
 			'nested'    => FALSE,
-		),
-	);
+		],
+	];
 
-	protected $_append_columns = array(
-		'ordering'         => array(
+	protected $_append_columns = [
+		'ordering'         => [
 			'field'     => 'ordering',
 			'label'     => '',
-			'attr'      => array(
+			'attr'      => [
 				'name'  => '',
 				'id'    => '',
 				'class' => 'width-fit',
 				'width' => '1%',
 				'style' => '',
-			),
+			],
 			'type'      => 'ordering',
 			'show'      => [ 'lg', 'md', 'sm' ],
 			'hidden'    => FALSE,
@@ -156,44 +156,44 @@ class Table
 			'filtering' => FALSE,
 			'options'   => TRUE,
 			'nested'    => FALSE,
-		),
-		'status'           => array(
+		],
+		'status'           => [
 			'field'     => 'record->status',
 			'label'     => 'STATUS',
-			'attr'      => array(
+			'attr'      => [
 				'name'  => '',
 				'id'    => '',
 				'class' => '',
 				'width' => '5%',
 				'style' => '',
-			),
+			],
 			'type'      => 'status',
 			'show'      => [ 'lg', 'md', 'sm' ],
 			'hidden'    => FALSE,
 			'sorting'   => TRUE,
-			'filtering' => array(
-				'options' => array(
+			'filtering' => [
+				'options' => [
 					'PUBLISH'   => 'PUBLISH',
 					'UNPUBLISH' => 'UNPUBLISH',
 					'DRAFT'     => 'DRAFT',
 					'ARCHIVE'   => 'ARCHIVE',
 					'DELETE'    => 'DELETE',
-				),
-			),
+				],
+			],
 			'grouping'  => TRUE,
 			'options'   => TRUE,
 			'nested'    => FALSE,
-		),
-		'create_timestamp' => array(
+		],
+		'create_timestamp' => [
 			'field'     => 'create_timestamp',
 			'label'     => 'CREATED_DATE',
-			'attr'      => array(
+			'attr'      => [
 				'name'  => '',
 				'id'    => '',
 				'class' => '',
 				'width' => 'width-fit',
 				'style' => '',
-			),
+			],
 			'type'      => 'date-user',
 			'show'      => FALSE,
 			'hidden'    => TRUE,
@@ -202,17 +202,17 @@ class Table
 			'grouping'  => FALSE,
 			'options'   => TRUE,
 			'nested'    => FALSE,
-		),
-		'update_timestamp' => array(
+		],
+		'update_timestamp' => [
 			'field'     => 'update_timestamp',
 			'label'     => 'MODIFIED_DATE',
-			'attr'      => array(
+			'attr'      => [
 				'name'  => '',
 				'id'    => '',
 				'class' => '',
 				'width' => 'width-fit',
 				'style' => '',
-			),
+			],
 			'type'      => 'date-user',
 			'show'      => FALSE,
 			'hidden'    => TRUE,
@@ -221,17 +221,17 @@ class Table
 			'grouping'  => FALSE,
 			'options'   => TRUE,
 			'nested'    => FALSE,
-		),
-		'actions'          => array(
+		],
+		'actions'          => [
 			'field'     => NULL,
 			'label'     => NULL,
-			'attr'      => array(
+			'attr'      => [
 				'name'  => '',
 				'id'    => '',
 				'class' => '',
 				'width' => '22.3%',
 				'style' => '',
-			),
+			],
 			'type'      => 'actions',
 			'show'      => [ 'lg', 'md', 'sm' ],
 			'hidden'    => FALSE,
@@ -240,8 +240,8 @@ class Table
 			'grouping'  => FALSE,
 			'options'   => FALSE,
 			'nested'    => FALSE,
-		),
-	);
+		],
+	];
 
 	protected $_filter_columns;
 	protected $_sorting_columns;
@@ -256,37 +256,37 @@ class Table
 		\O2System::View()->assets->addAsset( 'crud-table' );
 	}
 
-	public function setTitle($title )
+	public function setTitle( $title )
 	{
 		$this->_title = $title;
 	}
 
-	public function setAttributes(array $attributes )
+	public function setAttributes( array $attributes )
 	{
 		$this->_attributes = $attributes;
 	}
 
-	public function setConfig(array $config )
+	public function setConfig( array $config )
 	{
 		$this->_config = array_merge( $this->_config, $config );
 	}
 
-	public function setShowEntries($entries )
+	public function setShowEntries( $entries )
 	{
 		$this->_show_entries = (int) $entries;
 	}
 
-	public function setToolbar(array $toolbar )
+	public function setToolbar( array $toolbar )
 	{
 		$this->_toolbar = array_merge( $this->_toolbar, $toolbar );
 	}
 
-	public function setActions(array $actions )
+	public function setActions( array $actions )
 	{
 		$this->_actions = array_merge( $this->_actions, $actions );
 	}
 
-	public function setColumns(array $columns )
+	public function setColumns( array $columns )
 	{
 		$this->_columns = new ArrayObject();
 
@@ -355,12 +355,12 @@ class Table
 		}
 	}
 
-	public function setRows(array $rows )
+	public function setRows( array $rows )
 	{
 		$this->_rows = $rows;
 	}
 
-	public function setResults(ArrayObject $results )
+	public function setResults( ArrayObject $results )
 	{
 		$this->_results = $results;
 	}
@@ -373,7 +373,7 @@ class Table
 
 		if ( $this->_config[ 'show_labels' ] === TRUE )
 		{
-			$toolbar_actions = array(
+			$toolbar_actions = [
 				'add-new'   => ( new Button( lang( 'BTN_ADDNEW' ), [ 'data-action' => 'toolbar-add-new' ] ) )->isMedium()->setIcon( 'fa fa-file' ),
 				'edit'      => ( new Button( lang( 'BTN_EDIT' ), [ 'data-action' => 'toolbar-edit' ] ) )->isMedium()->setIcon( 'fa fa-edit' ),
 				'publish'   => ( new Button( lang( 'BTN_SELECTED_PUBLISH' ), [ 'data-action' => 'toolbar-publish' ] ) )->isMedium()->setIcon( 'fa fa-eye' ),
@@ -381,11 +381,11 @@ class Table
 				'delete'    => ( new Button( lang( 'BTN_SELECTED_DELETE' ), [ 'data-action' => 'toolbar-delete' ] ) )->isMedium()->setIcon( 'fa fa-trash' ),
 				'archive'   => ( new Button( lang( 'BTN_ARCHIVE' ), [ 'data-action' => 'toolbar-archive' ] ) )->isMedium()->setIcon( 'fa fa-archive' ),
 				'help'      => ( new Button( lang( 'BTN_HELP' ), [ 'data-action' => 'toolbar-help' ] ) )->isMedium()->setIcon( 'fa fa-question-circle' ),
-			);
+			];
 		}
 		else
 		{
-			$toolbar_actions = array(
+			$toolbar_actions = [
 				'add-new'   => ( new Button( [ 'data-action' => 'toolbar-add-new' ] ) )->isMedium()->setIcon( 'fa fa-file' ),
 				'edit'      => ( new Button( [ 'data-action' => 'toolbar-edit' ] ) )->isMedium()->setIcon( 'fa fa-edit' ),
 				'publish'   => ( new Button( [ 'data-action' => 'toolbar-publish' ] ) )->isMedium()->setIcon( 'fa fa-eye' ),
@@ -393,7 +393,7 @@ class Table
 				'delete'    => ( new Button( [ 'data-action' => 'toolbar-delete' ] ) )->isMedium()->setIcon( 'fa fa-trash' ),
 				'archive'   => ( new Button( [ 'data-action' => 'toolbar-archive' ] ) )->isMedium()->setIcon( 'fa fa-archive' ),
 				'help'      => ( new Button( [ 'data-action' => 'toolbar-help' ] ) )->isMedium()->setIcon( 'fa fa-question-circle' ),
-			);
+			];
 		}
 
 		$toolbar_buttons = new Group( Group::BUTTON_GROUP );
@@ -422,46 +422,53 @@ class Table
 			$entries_options[ $entries ] = $entries;
 		}
 
-		$grid_entries->addItem( implode( PHP_EOL, array(
-			( new Input( 'select' ) )
-				->setAttributes( array(
-					                  'data-action' => 'table-filter-entries',
-					                  'name'        => 'entries',
-					                  'class'       => 'select input-sm',
-				                  ) )
-				->setLabel( 'Entries: ' )
-				->setOptions( $entries_options ),
-			( new Input( 'select' ) )
-				->setAttributes( array(
-					                  'data-action' => 'table-filter-status',
-					                  'name'        => 'status',
-					                  'class'       => 'select input-sm',
-				                  ) )
-				->setLabel( 'Status: ' )
-				->setOptions( array(
-					               'PUBLISH'   => lang( 'PUBLISH' ),
-					               'UNPUBLISH' => lang( 'UNPUBLISH' ),
-					               'DRAFT'     => lang( 'DRAFT' ),
-					               'ARCHIVE'   => lang( 'ARCHIVE' ),
-					               'DELETE'    => lang( 'DELETE' ),
-				               ) ),
-		) ) );
+		$grid_entries->addItem(
+			implode(
+				PHP_EOL, [
+				( new Input( 'select' ) )
+					->setAttributes(
+						[
+							'data-action' => 'table-filter-entries',
+							'name'        => 'entries',
+							'class'       => 'select input-sm',
+						] )
+					->setLabel( 'Entries: ' )
+					->setOptions( $entries_options ),
+				( new Input( 'select' ) )
+					->setAttributes(
+						[
+							'data-action' => 'table-filter-status',
+							'name'        => 'status',
+							'class'       => 'select input-sm',
+						] )
+					->setLabel( 'Status: ' )
+					->setOptions(
+						[
+							'PUBLISH'   => lang( 'PUBLISH' ),
+							'UNPUBLISH' => lang( 'UNPUBLISH' ),
+							'DRAFT'     => lang( 'DRAFT' ),
+							'ARCHIVE'   => lang( 'ARCHIVE' ),
+							'DELETE'    => lang( 'DELETE' ),
+						] ),
+			] ) );
 
 		$panel->setBody( $grid_entries );
 
 		$panel->setTable( new Tag( 'div', $table, [ 'class' => 'table-responsive' ] ) );
 
-		$panel->setFooter( ( new Pagination( $this->_results->total->pages ) )
-			                    ->setLink( current_url() )
-			                    ->addAttribute( 'data-role', 'table-list-pagination' )
+		$panel->setFooter(
+			( new Pagination( $this->_results->total->pages ) )
+				->setLink( current_url() )
+				->addAttribute( 'data-role', 'table-list-pagination' )
 		);
 
-		return ( new Tag( 'form', $panel, array(
+		return ( new Tag(
+			'form', $panel, [
 			'data-form' => 'table-list-form',
 			'data-role' => 'table-list-panel',
 			'action'    => current_url(),
 			'method'    => 'get',
-		) ) )->render();
+		] ) )->render();
 	}
 
 	protected function _renderThead()
@@ -523,7 +530,7 @@ class Table
 		return $thead;
 	}
 
-	protected function _renderThFilter($config )
+	protected function _renderThFilter( $config )
 	{
 		switch ( $config->type )
 		{
@@ -537,7 +544,7 @@ class Table
 			case 'text':
 
 				$attr[ 'data-action' ] = 'col-filter';
-				$attr[ 'class' ] = 'form-control input-sm';
+				$attr[ 'class' ]       = 'form-control input-sm';
 
 				if ( isset( $config->filtering[ 'attr' ] ) )
 				{
@@ -552,7 +559,7 @@ class Table
 			case 'number':
 
 				$attr[ 'data-action' ] = 'col-filter';
-				$attr[ 'class' ] = 'form-control input-sm';
+				$attr[ 'class' ]       = 'form-control input-sm';
 
 				if ( isset( $config->filtering[ 'attr' ] ) )
 				{
@@ -566,7 +573,7 @@ class Table
 			case 'date':
 
 				$attr[ 'data-action' ] = 'col-filter';
-				$attr[ 'class' ] = 'form-control input-sm';
+				$attr[ 'class' ]       = 'form-control input-sm';
 
 				if ( isset( $config->filtering[ 'attr' ] ) )
 				{
@@ -582,7 +589,7 @@ class Table
 
 				$buttons = new Group( Group::BUTTON_GROUP );
 
-				if($this->_config['show_labels'] === TRUE)
+				if ( $this->_config[ 'show_labels' ] === TRUE )
 				{
 					$buttons->addItem( ( new Button( lang( 'BTN_SUBMIT' ), [ 'data-action' => 'table-filter-submit' ] ) )->setIcon( 'fa fa-search' )->isSubmit()->isSmall() );
 					$buttons->addItem( ( new Button( lang( 'BTN_RESET' ), [ 'data-action' => 'table-filter-reset' ] ) )->setIcon( 'fa fa-repeat' )->isReset()->isSmall() );
@@ -705,7 +712,7 @@ class Table
 		return $tbody;
 	}
 
-	protected function _renderTd($content, $type )
+	protected function _renderTd( $content, $type )
 	{
 		switch ( $type )
 		{
@@ -747,10 +754,10 @@ class Table
 			case 'price':
 				if ( $content instanceof ArrayObject )
 				{
-					return number_price( $content->amount, $content->currency, TRUE );
+					return currency_format( $content->amount, $content->currency, TRUE );
 				}
 
-				return number_price( $content );
+				return currency_format( $content );
 
 				break;
 
@@ -779,27 +786,27 @@ class Table
 
 				if ( $this->_config[ 'show_labels' ] === TRUE )
 				{
-					$actions = array(
-							'views'   => ( new Button( lang( 'BTN_VIEW' ), [ 'data-action' => 'item-view' ] ) )->isSmall()->setIcon( 'fa fa-eye' ),
-							'copy'    => ( new Button( lang( 'BTN_COPY' ), [ 'data-action' => 'item-copy' ] ) )->isSmall()->setIcon( 'fa fa-clone' ),
-							'edit'    => ( new Button( lang( 'BTN_EDIT' ), [ 'data-action' => 'item-edit' ] ) )->isSmall()->setIcon( 'fa fa-edit' ),
-							'delete'  => ( new Button( lang( 'BTN_DELETE' ), [ 'data-action' => 'item-delete', 'data-confirm' => 'Are you sure?' ] ) )->isSmall()->setIcon( 'fa fa-trash' ),
-							'archive' => ( new Button( lang( 'BTN_ARCHIVE' ), [ 'data-action' => 'item-archive' ] ) )->isSmall()->setIcon( 'fa fa-achive' ),
-							'export'  => ( new Button( lang( 'BTN_EXPORT' ), [ 'data-action' => 'item-export' ] ) )->isSmall()->setIcon( 'fa fa-mail-forward' ),
-							'import'  => ( new Button( lang( 'BTN_IMPORT' ), [ 'data-action' => 'item-import' ] ) )->isSmall()->setIcon( 'fa fa-mail-reply' ),
-					);
+					$actions = [
+						'views'   => ( new Button( lang( 'BTN_VIEW' ), [ 'data-action' => 'item-view' ] ) )->isSmall()->setIcon( 'fa fa-eye' ),
+						'copy'    => ( new Button( lang( 'BTN_COPY' ), [ 'data-action' => 'item-copy' ] ) )->isSmall()->setIcon( 'fa fa-clone' ),
+						'edit'    => ( new Button( lang( 'BTN_EDIT' ), [ 'data-action' => 'item-edit' ] ) )->isSmall()->setIcon( 'fa fa-edit' ),
+						'delete'  => ( new Button( lang( 'BTN_DELETE' ), [ 'data-action' => 'item-delete', 'data-confirm' => 'Are you sure?' ] ) )->isSmall()->setIcon( 'fa fa-trash' ),
+						'archive' => ( new Button( lang( 'BTN_ARCHIVE' ), [ 'data-action' => 'item-archive' ] ) )->isSmall()->setIcon( 'fa fa-achive' ),
+						'export'  => ( new Button( lang( 'BTN_EXPORT' ), [ 'data-action' => 'item-export' ] ) )->isSmall()->setIcon( 'fa fa-mail-forward' ),
+						'import'  => ( new Button( lang( 'BTN_IMPORT' ), [ 'data-action' => 'item-import' ] ) )->isSmall()->setIcon( 'fa fa-mail-reply' ),
+					];
 				}
 				else
 				{
-					$actions = array(
-							'views'   => ( new Button( [ 'data-action' => 'item-view' ] ) )->isSmall()->setIcon( 'fa fa-eye' ),
-							'copy'    => ( new Button( [ 'data-action' => 'item-copy' ] ) )->isSmall()->setIcon( 'fa fa-clone' ),
-							'edit'    => ( new Button( [ 'data-action' => 'item-edit' ] ) )->isSmall()->setIcon( 'fa fa-edit' ),
-							'delete'  => ( new Button( [ 'data-action' => 'item-delete', 'data-confirm' => 'Are you sure?' ] ) )->isSmall()->setIcon( 'fa fa-trash' ),
-							'archive' => ( new Button( [ 'data-action' => 'item-archive' ] ) )->isSmall()->setIcon( 'fa fa-achive' ),
-							'export'  => ( new Button(  [ 'data-action' => 'item-export' ] ) )->isSmall()->setIcon( 'fa fa-mail-forward' ),
-							'import'  => ( new Button( [ 'data-action' => 'item-import' ] ) )->isSmall()->setIcon( 'fa fa-mail-reply' ),
-					);
+					$actions = [
+						'views'   => ( new Button( [ 'data-action' => 'item-view' ] ) )->isSmall()->setIcon( 'fa fa-eye' ),
+						'copy'    => ( new Button( [ 'data-action' => 'item-copy' ] ) )->isSmall()->setIcon( 'fa fa-clone' ),
+						'edit'    => ( new Button( [ 'data-action' => 'item-edit' ] ) )->isSmall()->setIcon( 'fa fa-edit' ),
+						'delete'  => ( new Button( [ 'data-action' => 'item-delete', 'data-confirm' => 'Are you sure?' ] ) )->isSmall()->setIcon( 'fa fa-trash' ),
+						'archive' => ( new Button( [ 'data-action' => 'item-archive' ] ) )->isSmall()->setIcon( 'fa fa-achive' ),
+						'export'  => ( new Button( [ 'data-action' => 'item-export' ] ) )->isSmall()->setIcon( 'fa fa-mail-forward' ),
+						'import'  => ( new Button( [ 'data-action' => 'item-import' ] ) )->isSmall()->setIcon( 'fa fa-mail-reply' ),
+					];
 				}
 
 				$buttons = new Group( Group::BUTTON_GROUP );

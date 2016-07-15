@@ -48,11 +48,11 @@ class Input extends FactoryInterface
 {
 	protected $_tag = 'input';
 
-	protected $_attributes = array(
+	protected $_attributes = [
 		'class' => [ 'form-control' ],
-	);
+	];
 
-	protected $_properties = array();
+	protected $_properties = [ ];
 
 	protected $_type    = NULL;
 	protected $_value   = NULL;
@@ -95,7 +95,7 @@ class Input extends FactoryInterface
 		return $this;
 	}
 
-	public function setLabel($label, $attr = array() )
+	public function setLabel( $label, $attr = [ ] )
 	{
 		if ( $label instanceof Tag )
 		{
@@ -110,14 +110,14 @@ class Input extends FactoryInterface
 		return $this;
 	}
 
-	public function setType($type )
+	public function setType( $type )
 	{
 		$this->_type = $type;
 
 		return $this;
 	}
 
-	public function setValue($value, $post_get = TRUE )
+	public function setValue( $value, $post_get = TRUE )
 	{
 		if ( empty( $value ) )
 		{
@@ -139,14 +139,14 @@ class Input extends FactoryInterface
 		return $this;
 	}
 
-	public function setOptions(array $options )
+	public function setOptions( array $options )
 	{
 		$this->_options = $options;
 
 		return $this;
 	}
 
-	public function setHelp($help, $attr = array() )
+	public function setHelp( $help, $attr = [ ] )
 	{
 		if ( $help instanceof Tag )
 		{
@@ -162,7 +162,7 @@ class Input extends FactoryInterface
 		return $this;
 	}
 
-	public function setProperties(array $properties )
+	public function setProperties( array $properties )
 	{
 		$this->_properties = $properties;
 
@@ -183,112 +183,112 @@ class Input extends FactoryInterface
 			case 'text':
 
 				$this->_attributes[ 'type' ] = 'text';
-				$field = new Tag( 'input', $this->_attributes );
+				$field                       = new Tag( 'input', $this->_attributes );
 
 				break;
 
 			case 'password':
 
 				$this->_attributes[ 'type' ] = 'password';
-				$field = new Tag( 'input', $this->_attributes );
+				$field                       = new Tag( 'input', $this->_attributes );
 
 				break;
 
 			case 'radio':
 
 				$this->_attributes[ 'type' ] = 'radio';
-				$field = new Tag( 'input', $this->_attributes );
+				$field                       = new Tag( 'input', $this->_attributes );
 
 				break;
 
 			case 'checkbox':
 
 				$this->_attributes[ 'type' ] = 'checkbox';
-				$field = new Tag( 'input', $this->_attributes );
+				$field                       = new Tag( 'input', $this->_attributes );
 
 				break;
 
 			case 'number':
 
 				$this->_attributes[ 'type' ] = 'number';
-				$field = new Tag( 'input', $this->_attributes );
+				$field                       = new Tag( 'input', $this->_attributes );
 
 				break;
 
 			case 'date':
 
 				$this->_attributes[ 'type' ] = 'date';
-				$field = new Tag( 'input', $this->_attributes );
+				$field                       = new Tag( 'input', $this->_attributes );
 
 				break;
 
 			case 'color':
 
 				$this->_attributes[ 'type' ] = 'color';
-				$field = new Tag( 'input', $this->_attributes );
+				$field                       = new Tag( 'input', $this->_attributes );
 
 				break;
 
 			case 'month':
 
 				$this->_attributes[ 'type' ] = 'month';
-				$field = new Tag( 'input', $this->_attributes );
+				$field                       = new Tag( 'input', $this->_attributes );
 
 				break;
 
 			case 'week':
 
 				$this->_attributes[ 'type' ] = 'week';
-				$field = new Tag( 'input', $this->_attributes );
+				$field                       = new Tag( 'input', $this->_attributes );
 
 				break;
 
 			case 'time':
 
 				$this->_attributes[ 'type' ] = 'time';
-				$field = new Tag( 'input', $this->_attributes );
+				$field                       = new Tag( 'input', $this->_attributes );
 
 				break;
 
 			case 'datetime':
 
 				$this->_attributes[ 'type' ] = 'datetime';
-				$field = new Tag( 'input', $this->_attributes );
+				$field                       = new Tag( 'input', $this->_attributes );
 
 				break;
 
 			case 'datetime-local':
 
 				$this->_attributes[ 'type' ] = 'datetime-local';
-				$field = new Tag( 'input', $this->_attributes );
+				$field                       = new Tag( 'input', $this->_attributes );
 
 				break;
 
 			case 'email':
 
 				$this->_attributes[ 'type' ] = 'email';
-				$field = new Tag( 'input', $this->_attributes );
+				$field                       = new Tag( 'input', $this->_attributes );
 
 				break;
 
 			case 'search':
 
 				$this->_attributes[ 'type' ] = 'search';
-				$field = new Tag( 'input', $this->_attributes );
+				$field                       = new Tag( 'input', $this->_attributes );
 
 				break;
 
 			case 'tel':
 
 				$this->_attributes[ 'type' ] = 'tel';
-				$field = new Tag( 'input', $this->_attributes );
+				$field                       = new Tag( 'input', $this->_attributes );
 
 				break;
 
 			case 'url':
 
 				$this->_attributes[ 'type' ] = 'url';
-				$field = new Tag( 'input', $this->_attributes );
+				$field                       = new Tag( 'input', $this->_attributes );
 
 				break;
 
@@ -343,14 +343,14 @@ class Input extends FactoryInterface
 			case 'textarea':
 
 				$this->_attributes[ 'type' ] = 'textarea';
-				$field = new Tag( 'textarea', $this->_attributes );
+				$field                       = new Tag( 'textarea', $this->_attributes );
 
 				break;
 
 			case 'file':
 
 				$this->_attributes[ 'type' ] = 'file';
-				$field = new Tag( 'input', $this->_attributes );
+				$field                       = new Tag( 'input', $this->_attributes );
 
 				break;
 
@@ -359,41 +359,45 @@ class Input extends FactoryInterface
 				$field = new Tag( 'div', [ 'data-role' => 'featured-image' ] );
 
 				$properties[ 'size' ] = isset( $this->_properties[ 'size' ] ) ? $this->_properties[ 'size' ] : [ 'width' => 270, 'height' => 270 ];
-				$properties['text'] = isset($this->_properties['text']) ? $this->_properties['text'] : 'Featured Image';
+				$properties[ 'text' ] = isset( $this->_properties[ 'text' ] ) ? $this->_properties[ 'text' ] : 'Featured Image';
 
-				$image_holder = new Tag( 'img', array(
+				$image_holder = new Tag(
+					'img', [
 					'src'          => 'holder.js/' . implode( 'x', $properties[ 'size' ] ) . '?text=' . $this->_properties[ 'text' ],
 					'data-pattern' => 'image-preview',
-				) );
+				] );
 
 				if ( ! empty( $this->_value ) )
 				{
 					$image_holder->addClass( 'hidden' );
 
-					$image_preview = new Tag( 'img', array(
+					$image_preview = new Tag(
+						'img', [
 						'src'       => $this->_value,
 						'data-role' => 'image-preview',
-					) );
+					] );
 
 					$field->appendContent( $image_preview );
 				}
 
 				$field->appendContent( $image_holder );
 
-				$this->_attributes[ 'type' ] = 'file';
+				$this->_attributes[ 'type' ]      = 'file';
 				$this->_attributes[ 'data-role' ] = 'image-input';
-				$this->_attributes[ 'accept' ] = 'image/*';
+				$this->_attributes[ 'accept' ]    = 'image/*';
 
 				$input_group = new Group( Group::INPUT_GROUP );
-				$input_group->addItem( new Tag(
-					                        'span',
-					                        new Tag( 'span', '<i class="fa fa-camera"></i>' . new Tag( 'input', $this->_attributes ), array(
-							                        'class' => 'btn btn-file',
-							                        'data-role' => 'image-browse',
-							                        'title' => 'Browse',
-							                        'data-toggle' => 'tooltip'
-					                        ) ),
-					                        [ 'class' => 'input-group-btn' ] ) );
+				$input_group->addItem(
+					new Tag(
+						'span',
+						new Tag(
+							'span', '<i class="fa fa-camera"></i>' . new Tag( 'input', $this->_attributes ), [
+							'class'       => 'btn btn-file',
+							'data-role'   => 'image-browse',
+							'title'       => 'Browse',
+							'data-toggle' => 'tooltip',
+						] ),
+						[ 'class' => 'input-group-btn' ] ) );
 
 				$field->appendContent( $input_group );
 
@@ -402,7 +406,7 @@ class Input extends FactoryInterface
 			case 'textarea':
 
 				$this->_attributes[ 'type' ] = 'textarea';
-				$field = new Tag( 'textarea', $this->_attributes );
+				$field                       = new Tag( 'textarea', $this->_attributes );
 
 				break;
 
@@ -415,14 +419,14 @@ class Input extends FactoryInterface
 
 		$field->addClass( 'form-control' );
 
-		if( isset( $this->label ) )
+		if ( isset( $this->label ) )
 		{
 			$group = new Group( Group::FORM_GROUP );
 			$group->addItem( $this->label );
 
 			$group->addItem( $field );
 
-			if( isset ($this->help ) )
+			if ( isset ( $this->help ) )
 			{
 				$group->addItem( $this->help );
 			}

@@ -147,7 +147,7 @@ if ( ! function_exists( 'console' ) )
 	 * @param mixed  $vars  string|array|object|integer|boolean
 	 * @param int    $type  \O2System\Gears\Console type
 	 */
-	function console( $title, $vars = array(), $type = \O2System\Gears\Console::LOG )
+	function console( $title, $vars = [ ], $type = \O2System\Gears\Console::LOG )
 	{
 		O2System\Gears::printConsole( $title, $vars, $type );
 	}

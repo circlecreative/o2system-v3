@@ -69,7 +69,7 @@ class Model
 	 * @access  public
 	 * @type    array
 	 */
-	public $fields = array();
+	public $fields = [ ];
 
 	/**
 	 * Model Table Primary Key
@@ -85,7 +85,7 @@ class Model
 	 * @access  public
 	 * @type    array
 	 */
-	public $primary_keys = array();
+	public $primary_keys = [ ];
 
 	/**
 	 * Model Table Relations
@@ -93,7 +93,7 @@ class Model
 	 * @access  public
 	 * @type    array
 	 */
-	public $relations = array();
+	public $relations = [ ];
 
 	/**
 	 * Model Table Record User Model
@@ -112,7 +112,7 @@ class Model
 	 *
 	 * @access  public
 	 */
-	public function __construct( array $data = array() )
+	public function __construct( array $data = [ ] )
 	{
 		// Set table fields
 		if ( isset( $this->table ) )
@@ -139,7 +139,7 @@ class Model
 	 *
 	 * @access  public
 	 */
-	public function setData($field, $value = NULL )
+	public function setData( $field, $value = NULL )
 	{
 		if ( is_array( $field ) )
 		{
@@ -168,7 +168,7 @@ class Model
 
 		if ( method_exists( $this, $setter ) )
 		{
-			$value = call_user_func( array( $this, $setter ), $value );
+			$value = call_user_func( [ $this, $setter ], $value );
 			$this->setData( $field, $value );
 		}
 		else
@@ -215,19 +215,19 @@ class Model
 	 *
 	 * @access  public
 	 */
-	public function __call( $method, $args = array() )
+	public function __call( $method, $args = [ ] )
 	{
 		if ( method_exists( $this, $method ) )
 		{
-			return call_user_func_array( array( $this, $method ), $args );
+			return call_user_func_array( [ $this, $method ], $args );
 		}
 		elseif ( method_exists( $this->db, $method ) )
 		{
-			return call_user_func_array( array( $this->db, $method ), $args );
+			return call_user_func_array( [ $this->db, $method ], $args );
 		}
 		elseif ( method_exists( $this, 'scope_' . $method ) )
 		{
-			return call_user_func_array( array( $this, 'scope_' . $method ), $args );
+			return call_user_func_array( [ $this, 'scope_' . $method ], $args );
 		}
 		else
 		{
@@ -258,7 +258,7 @@ class Model
 					{
 						if ( ! is_array( reset( $params ) ) )
 						{
-							$params = array( 'id' => reset( $params ) );
+							$params = [ 'id' => reset( $params ) ];
 						}
 						else
 						{
@@ -275,7 +275,7 @@ class Model
 			}
 		}
 
-		return array();
+		return [ ];
 	}
 
 	// ------------------------------------------------------------------------
@@ -288,7 +288,7 @@ class Model
 	 *
 	 * @access  public
 	 */
-	public static function __callStatic( $method, $args = array() )
+	public static function __callStatic( $method, $args = [ ] )
 	{
 		$model = get_called_class();
 
@@ -333,11 +333,11 @@ use O2System\Glob\Interfaces\ExceptionInterface;
  */
 class Exception extends ExceptionInterface
 {
-	public $library = array(
-			'name'        => 'O2System ORM (O2ORM)',
-			'description' => 'Open Source Object Relationship Management Library',
-			'version'     => '1.0',
-	);
+	public $library = [
+		'name'        => 'O2System ORM (O2ORM)',
+		'description' => 'Open Source Object Relationship Management Library',
+		'version'     => '1.0',
+	];
 }
 
 // ------------------------------------------------------------------------

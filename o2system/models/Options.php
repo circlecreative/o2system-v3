@@ -36,11 +36,11 @@ class Options extends Model
 	 *
 	 * @access public
 	 */
-	var $option_config = array(
+	var $option_config = [
 		'root_option' => 'Choose {db}',
 		'root_value'  => NULL,
 		'default'     => NULL,
-	);
+	];
 
 	/**
 	 * Controller Constructor
@@ -82,7 +82,7 @@ class Options extends Model
 
 		$query = $this->db->get( $db );
 
-		$options = array();
+		$options = [ ];
 
 		if ( $root_option === TRUE )
 		{
@@ -93,7 +93,7 @@ class Options extends Model
 		}
 
 		$option = element( 'option', $config, 'name' );
-		$value = element( 'value', $config, 'id' );
+		$value  = element( 'value', $config, 'id' );
 
 		if ( $query->numRows() > 0 )
 		{
@@ -125,7 +125,7 @@ class Options extends Model
 
 				if ( isset( $row->depth ) AND $row->depth > 0 )
 				{
-					$sub = str_repeat( '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;', $row->depth ) . '&#8627;&nbsp;&nbsp;';
+					$sub     = str_repeat( '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;', $row->depth ) . '&#8627;&nbsp;&nbsp;';
 					$_option = $sub . $_option;
 				}
 
@@ -145,7 +145,7 @@ class Options extends Model
 		return $options;
 	}
 
-	public function buildFlat($db )
+	public function buildFlat( $db )
 	{
 		$config = ( ! is_array( $db ) ? $this->option_config : $db );
 
@@ -175,10 +175,10 @@ class Options extends Model
 
 		$query = $this->db->get( $db );
 
-		$options = array();
+		$options = [ ];
 
 		$option = element( 'option', $config, 'name' );
-		$value = element( 'value', $config, 'id' );
+		$value  = element( 'value', $config, 'id' );
 
 		if ( $query->numRows() > 0 )
 		{
@@ -203,7 +203,7 @@ class Options extends Model
 		return FALSE;
 	}
 
-	public function buildTree($db, $parent_id = 0 )
+	public function buildTree( $db, $parent_id = 0 )
 	{
 		$this->option_config = ( ! is_array( $db ) ? $this->option_config : $db );
 
@@ -238,10 +238,10 @@ class Options extends Model
 
 		$query = $this->db->get( $db );
 
-		$options = array();
+		$options = [ ];
 
 		$option = element( 'option', $this->option_config, 'name' );
-		$value = element( 'value', $this->option_config, 'id' );
+		$value  = element( 'value', $this->option_config, 'id' );
 
 		if ( $query->numRows() > 0 )
 		{
@@ -263,7 +263,7 @@ class Options extends Model
 
 					if ( ! empty( $_value_child ) )
 					{
-						$_value = array( $row->$value );
+						$_value = [ $row->$value ];
 						$_value = array_merge( $_value, $_value_child );
 					}
 				}
@@ -312,7 +312,7 @@ class Options extends Model
 
 		$query = $this->db->get( 'plugin_' . $db );
 
-		$options = array();
+		$options = [ ];
 
 		if ( $root_option === TRUE )
 		{
@@ -332,7 +332,7 @@ class Options extends Model
 		}
 
 		$option = element( 'option', $config, $default_option );
-		$value = element( 'value', $config, 'id' );
+		$value  = element( 'value', $config, 'id' );
 
 		if ( $query->numRows() > 0 )
 		{
@@ -359,7 +359,7 @@ class Options extends Model
 
 	public function options( $parameter, $root_option = FALSE )
 	{
-		$config = ( is_array( $parameter ) ? $parameter : array( 'root_option' => 'please choose', 'root_value' => NULL ) );
+		$config = ( is_array( $parameter ) ? $parameter : [ 'root_option' => 'please choose', 'root_value' => NULL ] );
 
 		$parameter = ( is_array( $parameter ) ? element( 'parameter', $parameter ) : $parameter );
 
@@ -368,9 +368,9 @@ class Options extends Model
 			$this->db->where( $config[ 'conditions' ] );
 		}
 
-		$query = $this->db->orderBy( 'ordering', 'asc' )->getWhere( 'plugin_options', array( 'parameter' => $parameter ) );
+		$query = $this->db->orderBy( 'ordering', 'asc' )->getWhere( 'plugin_options', [ 'parameter' => $parameter ] );
 
-		$options = array();
+		$options = [ ];
 
 		if ( $root_option === TRUE )
 		{
@@ -383,8 +383,8 @@ class Options extends Model
 
 		foreach ( $query->result() as $row )
 		{
-			$option = ( is_serialized( $row->options ) ? unserialize( $row->options ) : $row->options );
-			$option = ( is_array( $option ) ? element( $this->active_language, $option ) : $option );
+			$option                 = ( is_serialized( $row->options ) ? unserialize( $row->options ) : $row->options );
+			$option                 = ( is_array( $option ) ? element( $this->active_language, $option ) : $option );
 			$options[ $row->value ] = $option;
 		}
 
@@ -393,8 +393,8 @@ class Options extends Model
 
 	public function lookup( $parameter, $value )
 	{
-		$query = $this->db->getWhere( 'plugin_options', array( 'parameter' => $parameter, 'value' => $value ) );
-		$row = $query->firstRow();
+		$query = $this->db->getWhere( 'plugin_options', [ 'parameter' => $parameter, 'value' => $value ] );
+		$row   = $query->firstRow();
 		if ( $query->numRows() > 0 )
 		{
 			$option = ( is_serialized( $row->options ) ? unserialize( $row->options ) : $row->options );
@@ -409,19 +409,19 @@ class Options extends Model
 
 	public function bloodType()
 	{
-		$result = array(
+		$result = [
 			'o'  => 'O',
 			'a'  => 'A',
 			'b'  => 'B',
 			'ab' => 'AB',
-		);
+		];
 
 		return $result;
 	}
 
 	public function tshirtSize()
 	{
-		$result = array(
+		$result = [
 			'xs'   => 'XS',
 			's'    => 'S',
 			'm'    => 'M',
@@ -429,14 +429,14 @@ class Options extends Model
 			'xl'   => 'XL',
 			'xxl'  => 'XXL',
 			'xxxl' => 'XXXL',
-		);
+		];
 
 		return $result;
 	}
 
 	public function onlineMessengers()
 	{
-		$result = array(
+		$result = [
 			'yahoo'    => 'Yahoo! Messenger',
 			'skype'    => 'Windows Live MSN / Skype',
 			'hangouts' => 'GTalk / Hangouts',
@@ -445,20 +445,20 @@ class Options extends Model
 			'line'     => 'Line',
 			'whatsapp' => 'WhatsApp',
 			'kakao'    => 'Kakao Talk',
-		);
+		];
 
 		return $result;
 	}
 
 	public function socialNetworks()
 	{
-		$result = array(
+		$result = [
 			'facebook' => 'Facebook',
 			'twitter'  => 'Twitter',
 			'linkedin' => 'LinkedIn',
 			'google+'  => 'Google+',
 			'Path'     => 'Path',
-		);
+		];
 
 		return $result;
 	}
@@ -477,12 +477,12 @@ class Options extends Model
 
 	public function status()
 	{
-		return array(
+		return [
 			'PUBLISH'   => 'Publish',
 			'UNPUBLISH' => 'Unpublish',
 			'DRAFT'     => 'Draft',
 			'ARCHIVE'   => 'Archive',
-		);
+		];
 	}
 
 	public function geographics( $db, $root_option = TRUE )
@@ -501,9 +501,9 @@ class Options extends Model
 			$options[ $root_option ] = element( 'root_value', $config, NULL );
 		}
 
-		$options = array();
-		$option = element( 'option', $config, 'name' );
-		$value = element( 'value', $config, 'id' );
+		$options = [ ];
+		$option  = element( 'option', $config, 'name' );
+		$value   = element( 'value', $config, 'id' );
 
 		if ( $query->numRows() > 0 )
 		{
@@ -521,7 +521,7 @@ class Options extends Model
 	public function currency( $root_option = 'please choose currency', $root_value = NULL )
 	{
 		$this->db->select( 'currency_name, currency_code' );
-		$query = $this->db->getWhere( 'plugin_countries', array( 'currency_code' => 'idr' ) );
+		$query                    = $this->db->getWhere( 'plugin_countries', [ 'currency_code' => 'idr' ] );
 		$currency[ $root_option ] = $root_value;
 		if ( $query->numRows() > 0 )
 		{
@@ -550,8 +550,8 @@ class Options extends Model
 		{
 			foreach ( $query->result() as $row )
 			{
-				$title = unserialize( $row->$option );
-				$title = $title[ $this->active_language ];
+				$title                = unserialize( $row->$option );
+				$title                = $title[ $this->active_language ];
 				$components[ $title ] = $row->$value;
 			}
 
@@ -578,7 +578,7 @@ class Options extends Model
 		return $options;
 	}
 
-	public function templatesPositions($option = '', $root_option = TRUE )
+	public function templatesPositions( $option = '', $root_option = TRUE )
 	{
 		$templates = $this->templates->packages();
 
@@ -615,7 +615,7 @@ class Options extends Model
 		return $options;
 	}
 
-	public function componentsMethods($option = '', $root_option = TRUE )
+	public function componentsMethods( $option = '', $root_option = TRUE )
 	{
 		$components = $this->components->packages();
 
@@ -626,7 +626,10 @@ class Options extends Model
 
 		foreach ( $components as $component )
 		{
-			if ( in_array( $component->parameter, array( 'administrator', 'developer' ) ) ) continue;
+			if ( in_array( $component->parameter, [ 'administrator', 'developer' ] ) )
+			{
+				continue;
+			}
 
 			$methods = $this->components->methods( $component->id );
 
@@ -640,7 +643,7 @@ class Options extends Model
 
 					if ( isset( $method->depth ) AND $method->depth > 0 )
 					{
-						$sub = str_repeat( '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;', $method->depth ) . '&#8627;&nbsp;&nbsp;';
+						$sub   = str_repeat( '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;', $method->depth ) . '&#8627;&nbsp;&nbsp;';
 						$label = $sub . $label;
 					}
 
@@ -672,7 +675,7 @@ class Options extends Model
 		return $options;
 	}
 
-	public function pluginsMethods($option = '', $root_option = TRUE )
+	public function pluginsMethods( $option = '', $root_option = TRUE )
 	{
 		$plugins = $this->plugins->packages();
 
@@ -693,7 +696,7 @@ class Options extends Model
 
 					if ( isset( $method->depth ) AND $method->depth > 0 )
 					{
-						$sub = str_repeat( '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;', $method->depth ) . '&#8627;&nbsp;&nbsp;';
+						$sub   = str_repeat( '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;', $method->depth ) . '&#8627;&nbsp;&nbsp;';
 						$label = $sub . $label;
 					}
 
@@ -705,31 +708,31 @@ class Options extends Model
 		return $options;
 	}
 
-	public function linkTypes($root_option = TRUE )
+	public function linkTypes( $root_option = TRUE )
 	{
 		if ( $root_option === TRUE )
 		{
 			$options[ 0 ] = lang( 'CHOOSE_LINK_TYPE' );
 		}
 
-		$options[ 'Application Link' ] = array(
+		$options[ 'Application Link' ] = [
 			'component' => 'Component',
 			'page'      => 'Page',
-		);
+		];
 
-		$options[ 'System Link' ] = array(
+		$options[ 'System Link' ] = [
 			'menu-heading'   => 'Menu Heading',
 			'text-separator' => 'Text Separator',
 			'external-url'   => 'External URL',
 			'wrapper-url'    => 'Wrapper URL',
-		);
+		];
 
 		return $options;
 	}
 
-	public function getExportDatabaseOptions($root_option = '', $root_value = '' )
+	public function getExportDatabaseOptions( $root_option = '', $root_value = '' )
 	{
-		$export = array(
+		$export = [
 			$root_option                                         => $root_value,
 			'Microsoft Excel 2003 (*.xls)'                       => 'xls',
 			'Comma Separated Value (*.csv)'                      => 'csv',
@@ -738,14 +741,14 @@ class Options extends Model
 			'Zip File Structured Query Language (*.zip)'         => 'zip',
 			'GZip File Structured Query Language (*.gzip)'       => 'gzip',
 			'Structured Query Language Text File Format (*.txt)' => 'txt',
-		);
+		];
 
 		return $export;
 	}
 
-	public function getExportDataOptions($root_option = '', $root_option_value = '' )
+	public function getExportDataOptions( $root_option = '', $root_option_value = '' )
 	{
-		$export = array(
+		$export = [
 			$root_option                         => $root_option_value,
 			'Portable Document Format (*.pdf)'   => 'pdf',
 			'Microsoft Word 2003 (*.doc)'        => 'doc',
@@ -753,15 +756,15 @@ class Options extends Model
 			'Text Format (*.txt)'                => 'txt',
 			'Extensible Markup Language (*.xml)' => 'xml',
 			'HyperText Markup Language (*.html)' => 'html',
-		);
+		];
 
 		return $export;
 	}
 
-	public function getLookup($id, $database, $value = 'title' )
+	public function getLookup( $id, $database, $value = 'title' )
 	{
 		$this->db->select( $value );
-		$query = $this->db->getWhere( $database, array( 'id' => $id ) );
+		$query = $this->db->getWhere( $database, [ 'id' => $id ] );
 		if ( $query->numRows() > 0 )
 		{
 			$row = $query->result();
@@ -771,7 +774,7 @@ class Options extends Model
 				if ( is_serialized( $data_lookup ) )
 				{
 					$data_array = unserialize( $data_lookup );
-					$data = $data_array[ $this->active_language ];
+					$data       = $data_array[ $this->active_language ];
 				}
 				else
 				{

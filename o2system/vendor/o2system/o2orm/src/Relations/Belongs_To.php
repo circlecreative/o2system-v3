@@ -57,35 +57,36 @@ use O2System\ORM\Factory\Result;
  */
 class Belongs_To extends Relations
 {
-    /**
-     * Result
-     *
-     * Belongs to query result
-     *
-     * @access  public
-     *
-     * @uses    O2System\ORM\Factory\Query
-     *
-     * @return  mixed
-     */
-    public function result()
-    {
-        if( $this->_related_model instanceof Model )
-        {
-            return $this->_related_model->find( $this->_reference_model->{ $this->_reference_field }, $this->_related_field );
-        }
-        else
-        {
-            $query = $this->_reference_model->db->getWhere( $this->_related_table, array(
-                $this->_related_field => $this->_reference_model->{ $this->_reference_field }
-            ), 1 );
+	/**
+	 * Result
+	 *
+	 * Belongs to query result
+	 *
+	 * @access  public
+	 *
+	 * @uses    O2System\ORM\Factory\Query
+	 *
+	 * @return  mixed
+	 */
+	public function result()
+	{
+		if ( $this->_related_model instanceof Model )
+		{
+			return $this->_related_model->find( $this->_reference_model->{$this->_reference_field}, $this->_related_field );
+		}
+		else
+		{
+			$query = $this->_reference_model->db->getWhere(
+				$this->_related_table, [
+				$this->_related_field => $this->_reference_model->{$this->_reference_field},
+			], 1 );
 
-            if($query->numRows() > 0)
-            {
-                return $query->firstRow();
-            }
-        }
+			if ( $query->numRows() > 0 )
+			{
+				return $query->firstRow();
+			}
+		}
 
-        return NULL;
-    }
+		return NULL;
+	}
 }

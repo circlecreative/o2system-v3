@@ -27,7 +27,7 @@ abstract class ModelInterface
 	 * @access  public
 	 * @type    array
 	 */
-	public $fields = array();
+	public $fields = [ ];
 
 	/**
 	 * Model Table Primary Key
@@ -43,7 +43,7 @@ abstract class ModelInterface
 	 * @access  public
 	 * @type    array
 	 */
-	public $primary_keys = array();
+	public $primary_keys = [ ];
 
 	/**
 	 * List of library valid sub models
@@ -52,7 +52,7 @@ abstract class ModelInterface
 	 *
 	 * @type    array   driver classes list
 	 */
-	protected $_valid_sub_models = array();
+	protected $_valid_sub_models = [ ];
 
 	/**
 	 * List of Before Process Methods
@@ -60,7 +60,7 @@ abstract class ModelInterface
 	 * @access  protected
 	 * @type    array
 	 */
-	protected $_before_process = array();
+	protected $_before_process = [ ];
 
 	/**
 	 * List of After Process Methods
@@ -68,7 +68,7 @@ abstract class ModelInterface
 	 * @access  protected
 	 * @type    array
 	 */
-	protected $_after_process = array();
+	protected $_after_process = [ ];
 
 	// ------------------------------------------------------------------------
 
@@ -104,7 +104,7 @@ abstract class ModelInterface
 	final protected function _fetchSubModels()
 	{
 		$reflection = new \ReflectionClass( get_called_class() );
-		$filepath = $reflection->getFileName();
+		$filepath   = $reflection->getFileName();
 
 		if ( strpos( dirname( $filepath ), 'core' ) !== FALSE )
 		{
@@ -226,11 +226,11 @@ abstract class ModelInterface
 
 	// ------------------------------------------------------------------------
 
-	public function __call( $method, $args = array() )
+	public function __call( $method, $args = [ ] )
 	{
 		if ( method_exists( $this, $method ) )
 		{
-			return call_user_func_array( array( $this, $method ), $args );
+			return call_user_func_array( [ $this, $method ], $args );
 		}
 		elseif ( class_exists( 'O2System', FALSE ) )
 		{
@@ -243,7 +243,7 @@ abstract class ModelInterface
 
 	// ------------------------------------------------------------------------
 
-	final public static function __callStatic( $method, $args = array() )
+	final public static function __callStatic( $method, $args = [ ] )
 	{
 		return static::instance()->__call( $method, $args );
 	}

@@ -72,12 +72,12 @@ class Forge extends ForgeInterface
 	 *
 	 * @type    array
 	 */
-	protected $_unsigned = array(
+	protected $_unsigned = [
 		'TINYINT'  => 'SMALLINT',
 		'SMALLINT' => 'INT',
 		'INT'      => 'BIGINT',
 		'REAL'     => 'FLOAT',
-	);
+	];
 
 	// --------------------------------------------------------------------
 
@@ -90,15 +90,15 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    string|string[]
 	 */
-	protected function _alterTable($alter_type, $table, $field )
+	protected function _alterTable( $alter_type, $table, $field )
 	{
-		if ( in_array( $alter_type, array( 'ADD', 'DROP' ), TRUE ) )
+		if ( in_array( $alter_type, [ 'ADD', 'DROP' ], TRUE ) )
 		{
 			return parent::_alterTable( $alter_type, $table, $field );
 		}
 
-		$sql = 'ALTER TABLE ' . $this->_driver->escapeIdentifiers( $table ) . ' ALTER COLUMN ';
-		$sqls = array();
+		$sql  = 'ALTER TABLE ' . $this->_driver->escapeIdentifiers( $table ) . ' ALTER COLUMN ';
+		$sqls = [ ];
 		for ( $i = 0, $c = count( $field ); $i < $c; $i++ )
 		{
 			$sqls[] = $sql . $this->_processColumn( $field[ $i ] );
@@ -118,12 +118,12 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    void
 	 */
-	protected function _attrType(&$attributes )
+	protected function _attrType( &$attributes )
 	{
 		switch ( strtoupper( $attributes[ 'TYPE' ] ) )
 		{
 			case 'MEDIUMINT':
-				$attributes[ 'TYPE' ] = 'INTEGER';
+				$attributes[ 'TYPE' ]     = 'INTEGER';
 				$attributes[ 'UNSIGNED' ] = FALSE;
 
 				return;
@@ -146,7 +146,7 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    void
 	 */
-	protected function _attrAutoIncrement(&$attributes, &$field )
+	protected function _attrAutoIncrement( &$attributes, &$field )
 	{
 		if ( ! empty( $attributes[ 'AUTO_INCREMENT' ] ) && $attributes[ 'AUTO_INCREMENT' ] === TRUE && stripos( $field[ 'type' ], 'int' ) !== FALSE )
 		{

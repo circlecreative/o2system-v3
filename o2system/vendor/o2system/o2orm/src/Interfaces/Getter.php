@@ -21,7 +21,7 @@ trait Getter
 	 * @access  protected
 	 * @return  array
 	 */
-	protected function all( $conditions = array() )
+	protected function all( $conditions = [ ] )
 	{
 		// Sort by record left
 		if ( $this->db->fieldExists( 'record_left', $this->table ) )
@@ -47,7 +47,7 @@ trait Getter
 			return $result;
 		}
 
-		return array();
+		return [ ];
 	}
 
 	// ------------------------------------------------------------------------
@@ -62,7 +62,7 @@ trait Getter
 	 * @access  protected
 	 * @return  array
 	 */
-	protected function rows( $conditions = array() )
+	protected function rows( $conditions = [ ] )
 	{
 		return $this->all( $conditions );
 	}

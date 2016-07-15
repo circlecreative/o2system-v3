@@ -44,9 +44,9 @@ use O2System\Bootstrap\Interfaces\FactoryInterface;
 class Media extends FactoryInterface
 {
 	protected $_tag        = 'div';
-	protected $_attributes = array(
+	protected $_attributes = [
 		'class' => [ 'media' ],
-	);
+	];
 
 	protected $_is_align_bottom = FALSE;
 	protected $_is_align_middle = FALSE;
@@ -56,7 +56,7 @@ class Media extends FactoryInterface
 	public $heading     = NULL;
 	public $description = NULL;
 	public $link        = NULL;
-	public $childs      = array();
+	public $childs      = [ ];
 
 	public function build()
 	{
@@ -101,12 +101,12 @@ class Media extends FactoryInterface
 		return $this;
 	}
 
-	public function setMedia($media )
+	public function setMedia( $media )
 	{
 		return $this->setLeftMedia( $media );
 	}
 
-	public function setLeftMedia($media )
+	public function setLeftMedia( $media )
 	{
 		if ( $media instanceof Image )
 		{
@@ -127,12 +127,12 @@ class Media extends FactoryInterface
 		return $this;
 	}
 
-	public function setAltMedia($media, $link = NULL )
+	public function setAltMedia( $media, $link = NULL )
 	{
 		return $this->setRightMedia( $media, $link );
 	}
 
-	public function setRightMedia($media, $link = NULL )
+	public function setRightMedia( $media, $link = NULL )
 	{
 		if ( $media instanceof Image )
 		{
@@ -174,12 +174,12 @@ class Media extends FactoryInterface
 		return $this;
 	}
 
-	public function setHeading($heading, $tag = 'h4', $attr = array() )
+	public function setHeading( $heading, $tag = 'h4', $attr = [ ] )
 	{
 		if ( is_array( $tag ) )
 		{
 			$attr = $tag;
-			$tag = 'h3';
+			$tag  = 'h3';
 		}
 
 		if ( $heading instanceof Tag )
@@ -196,12 +196,12 @@ class Media extends FactoryInterface
 		return $this;
 	}
 
-	public function setDescription($description, $tag = 'p', $attr = array() )
+	public function setDescription( $description, $tag = 'p', $attr = [ ] )
 	{
 		if ( is_array( $tag ) )
 		{
 			$attr = $tag;
-			$tag = 'p';
+			$tag  = 'p';
 		}
 
 		if ( $description instanceof Tag )
@@ -227,7 +227,7 @@ class Media extends FactoryInterface
 	 *
 	 * @return object
 	 */
-	public function setLink($link, $attr = array() )
+	public function setLink( $link, $attr = [ ] )
 	{
 		if ( $link instanceof Link )
 		{
@@ -255,7 +255,7 @@ class Media extends FactoryInterface
 		return $this;
 	}
 
-	public function addChild(Media $child )
+	public function addChild( Media $child )
 	{
 		$this->childs[] = $child;
 

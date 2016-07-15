@@ -20,7 +20,7 @@ abstract class ExceptionSeverity
 	 *
 	 * @type array
 	 */
-	private static $_severities = array(
+	private static $_severities = [
 		E_ERROR           => 'ERROR',
 		E_WARNING         => 'WARNING',
 		E_PARSE           => 'PARSE',
@@ -33,7 +33,7 @@ abstract class ExceptionSeverity
 		E_USER_WARNING    => 'USER_WARNING',
 		E_USER_NOTICE     => 'USER_NOTICE',
 		E_STRICT          => 'RUNTIME_NOTICE',
-	);
+	];
 
 	// ------------------------------------------------------------------------
 

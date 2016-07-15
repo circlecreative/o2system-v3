@@ -101,18 +101,26 @@ if ( ! function_exists( 'array_limit' ) )
 	 *
 	 * @return  array
 	 */
-	function limit( array $array, $limit )
+	function array_limit( array $array, $limit )
 	{
-		if(empty($array)) return array();
+		$return = [ ];
+
+		if ( empty( $array ) )
+		{
+			return $return;
+		}
 
 		$i = 0;
-		foreach($array as $key => $value)
+		foreach ( $array as $key => $value )
 		{
-			if($i < $limit) $new_array[ $key ] = $value;
+			if ( $i < $limit )
+			{
+				$return[ $key ] = $value;
+			}
 			$i++;
 		}
 
-		return $new_array;
+		return $return;
 	}
 }
 
@@ -131,9 +139,12 @@ if ( ! function_exists( 'array_to_object' ) )
 	 *
 	 * @return  mixed
 	 */
-	function array_to_object( $array, $depth = 'all', $depth_counter = 0 )
+	function array_to_object( $array, $depth = 'ALL', $depth_counter = 0 )
 	{
-		if ( empty( $array ) OR ! is_array( $array ) ) return FALSE;
+		if ( empty( $array ) OR ! is_array( $array ) )
+		{
+			return FALSE;
+		}
 
 		$object = new stdClass;
 		$depth_counter++;
@@ -143,7 +154,7 @@ if ( ! function_exists( 'array_to_object' ) )
 			{
 				if ( is_array( $value ) )
 				{
-					if ( $depth == 'ALL' )
+					if ( $depth === 'ALL' )
 					{
 						$object->{$key} = array_to_object( $value, $depth ); // Recursive
 					}
@@ -197,9 +208,9 @@ if ( ! function_exists( 'array_combined_recursive' ) )
 	 */
 	function array_combined_recursive()
 	{
-		$source = func_get_args();
-		$default_methods = array( 'implode' => 'space' );
-		$methods = array();
+		$source          = func_get_args();
+		$default_methods = [ 'implode' => 'space' ];
+		$methods         = [ ];
 
 		foreach ( $source as $content )
 		{
@@ -229,7 +240,7 @@ if ( ! function_exists( 'array_combined_recursive' ) )
 			$default_methods = element( 'default', $methods, $default_methods );
 		}
 
-		$result = array();
+		$result = [ ];
 
 		foreach ( $combined as $key => $value )
 		{
@@ -271,7 +282,7 @@ if ( ! function_exists( 'array_combined_recursive' ) )
 							trigger_error( "Invalid method replace sequence", E_ERROR );
 						}
 
-						$default = element( 0, $value );
+						$default        = element( 0, $value );
 						$result[ $key ] = trim( element( $seq, $value, $default ) );
 					}
 					elseif ( key( $method ) == 'combine' )
@@ -316,8 +327,8 @@ if ( ! function_exists( 'array_filter_value' ) )
 			return $array;
 		}
 
-		$result = array();
-		$count = 0;
+		$result = [ ];
+		$count  = 0;
 
 		foreach ( $array as $key => $value )
 		{
@@ -386,8 +397,8 @@ if ( ! function_exists( 'array_assign_recursive' ) )
 
 			return $array;
 		}
-		$new_array = array();
-		$count = 0;
+		$new_array = [ ];
+		$count     = 0;
 		foreach ( $array as $key => $value )
 		{
 			if ( $count > 0 and $count == $limit )
@@ -481,7 +492,7 @@ if ( ! function_exists( 'array_unique_recursive' ) )
 	function array_unique_recursive( $array )
 	{
 		$serialized = array_map( 'serialize', $array );
-		$unique = array_unique( $serialized );
+		$unique     = array_unique( $serialized );
 
 		return array_intersect_key( $array, $unique );
 	}
@@ -520,7 +531,7 @@ if ( ! function_exists( 'array_keys_recursive' ) )
 	 */
 	function array_keys_recursive( $array, $total = 0, $depth = 0 )
 	{
-		$result = array();
+		$result = [ ];
 		for ( $i = 0; $i < count( $array ); $i++ )
 		{
 			$total = ( $total == 0 ? count( $array ) - 1 : $total );
@@ -552,9 +563,9 @@ if ( ! function_exists( 'array_flatten_recursive' ) )
 	 *
 	 * @return array
 	 */
-	function array_flatten_recursive( array $array = array() )
+	function array_flatten_recursive( array $array = [ ] )
 	{
-		$return = array();
+		$return = [ ];
 
 		foreach ( $array as $key => $value )
 		{
@@ -682,9 +693,9 @@ if ( ! function_exists( 'elements' ) )
 	 */
 	function elements( $items, $array, $default = NULL )
 	{
-		$return = array();
+		$return = [ ];
 
-		is_array( $items ) OR $items = array( $items );
+		is_array( $items ) OR $items = [ $items ];
 
 		foreach ( $items as $item )
 		{

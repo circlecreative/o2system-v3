@@ -37,50 +37,49 @@
  */
 // ------------------------------------------------------------------------
 
-defined ( 'ROOTPATH' ) OR exit( 'No direct script access allowed' );
+defined( 'ROOTPATH' ) OR exit( 'No direct script access allowed' );
 
 // ------------------------------------------------------------------------
 
-return array(
-    /**
-     * List of skeleton directories of each modular packages
-     */
-    'skeleton_paths' => array(
-        'assets',
-        'cache',
-        'config',
-        'controllers',
-        'core',
-        'helpers',
-        'libraries',
-        'language',
-        'logs',
-        'models',
-        'views',
-        'templates',
-        'errors',
-        'hooks',
-        'vendor'
-    ),
-    // ------------------------------------------------------------------------
+return [
+	/**
+	 * List of skeleton directories of each modular packages
+	 */
+	'skeleton_paths' => [
+		'assets',
+		'cache',
+		'config',
+		'controllers',
+		'core',
+		'helpers',
+		'libraries',
+		'language',
+		'logs',
+		'models',
+		'views',
+		'templates',
+		'errors',
+		'hooks',
+		'vendor',
+	],
+	// ------------------------------------------------------------------------
 
-    /**
-     * List of paths which has class
-     */
-    'class_paths'    => array(
-        'controllers',
-        'models',
-        'libraries',
-        'interfaces',
-        'metadata'
-    ),
-    // ------------------------------------------------------------------------
+	/**
+	 * List of paths which has class
+	 */
+	'class_paths'    => [
+		'controllers',
+		'models',
+		'libraries',
+		'interfaces',
+		'metadata',
+	],
+	// ------------------------------------------------------------------------
 
-    /**
-     * List of mapping objects
-     */
-    'object_maps'    => array(
-        'unit_test'  => 'unit',
-        'user_agent' => 'agent'
-    )
-);
+	/**
+	 * List of mapping objects
+	 */
+	'object_maps'    => [
+		'loader' => 'load',
+	],
+];

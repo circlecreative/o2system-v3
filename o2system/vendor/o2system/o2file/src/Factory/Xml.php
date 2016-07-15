@@ -57,86 +57,86 @@ use O2System\File;
  */
 class Xml
 {
-    /**
-     * Read File
-     *
-     * @access public
-     *
-     * @param string $filename Filename with realpath
-     * @param string $return   Type of return array or object
-     *
-     * @return mixed
-     */
-    public function read( $filename, $return = 'array' )
-    {
-        if( is_file( $filename ) )
-        {
-            $content = File::read( $filename );
+	/**
+	 * Read File
+	 *
+	 * @access public
+	 *
+	 * @param string $filename Filename with realpath
+	 * @param string $return   Type of return array or object
+	 *
+	 * @return mixed
+	 */
+	public function read( $filename, $return = 'array' )
+	{
+		if ( is_file( $filename ) )
+		{
+			$content = File::read( $filename );
 
-            if( ! empty( $content ) )
-            {
-                $result = simplexml_load_string( $content );
-            }
+			if ( ! empty( $content ) )
+			{
+				$result = simplexml_load_string( $content );
+			}
 
-            if( ! empty( $result ) )
-            {
-                $result = json_encode( $result );
-                $result = json_decode( $result, TRUE );
+			if ( ! empty( $result ) )
+			{
+				$result = json_encode( $result );
+				$result = json_decode( $result, TRUE );
 
-                if( $return === 'array' )
-                {
-                    return $result;
-                }
-                elseif( $return === 'object' )
-                {
-                    return (object)$result;
-                }
-            }
-        }
+				if ( $return === 'array' )
+				{
+					return $result;
+				}
+				elseif ( $return === 'object' )
+				{
+					return (object) $result;
+				}
+			}
+		}
 
-        return NULL;
-    }
+		return NULL;
+	}
 
-    // ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
 
-    /**
-     * Write File
-     *
-     * @access  public
-     *
-     * @param string $filename Filename
-     * @param array  $data     List of data
-     */
-    public function write( $filename, array $data )
-    {
-        if( count( $data ) > 0 )
-        {
-            $root = pathinfo( $filename, PATHINFO_FILENAME );
-            $content = self::_factory( $root, $data );
+	/**
+	 * Write File
+	 *
+	 * @access  public
+	 *
+	 * @param string $filename Filename
+	 * @param array  $data     List of data
+	 */
+	public function write( $filename, array $data )
+	{
+		if ( count( $data ) > 0 )
+		{
+			$root    = pathinfo( $filename, PATHINFO_FILENAME );
+			$content = self::_factory( $root, $data );
 
-            File::write( $filename, $content );
-        }
-    }
+			File::write( $filename, $content );
+		}
+	}
 
-    // ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
 
-    /**
-     * File writer factory
-     *
-     * @access  protected
-     *
-     * @param string $root Root Tag
-     * @param array  $data List of data
-     *
-     * @return mixed
-     */
-    protected static function _factory( $root, $data )
-    {
-        $root = '<' . $root . '/>';
+	/**
+	 * File writer factory
+	 *
+	 * @access  protected
+	 *
+	 * @param string $root Root Tag
+	 * @param array  $data List of data
+	 *
+	 * @return mixed
+	 */
+	protected static function _factory( $root, $data )
+	{
+		$root = '<' . $root . '/>';
 
-        $xml = new \SimpleXMLElement( $root );
-        array_walk_recursive( $data, array( $xml, 'addChild' ) );
+		$xml = new \SimpleXMLElement( $root );
+		array_walk_recursive( $data, [ $xml, 'addChild' ] );
 
-        return $xml->asXML();
-    }
+		return $xml->asXML();
+	}
 }

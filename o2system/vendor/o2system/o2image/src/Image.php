@@ -28,19 +28,19 @@ namespace O2System
 		const DIMENSION_HEIGHT = 'HEIGHT';
 		const DIMENSION_AUTO   = 'AUTO';
 
-		protected $_valid_drivers = array(
+		protected $_valid_drivers = [
 			'gd'          => 'GD',
 			'gd2'         => 'GD2',
 			'imagemagick' => 'ImageMagick',
 			'netpbm'      => 'NetPBM',
-		);
+		];
 
-		protected $_config = array(
+		protected $_config = [
 			'driver'           => 'gd2',
 			'file_permissions' => 0664,
 			'quality'          => 90,
 			'maintain_ratio'   => TRUE,
-		);
+		];
 
 		protected $_source;
 		protected $_cache;
@@ -55,7 +55,7 @@ namespace O2System
 		 */
 		protected $_handle;
 
-		public function __construct( array $config = array() )
+		public function __construct( array $config = [ ] )
 		{
 			$this->_config = array_merge( $this->_config, $config );
 
@@ -72,23 +72,24 @@ namespace O2System
 			$this->_handle = new \CodeIgniter\Image();
 		}
 
-		protected function _setCache($cache )
+		protected function _setCache( $cache )
 		{
 			$cache = $this->_source->dirname . DIRECTORY_SEPARATOR . $cache;
 
 			if ( is_file( $cache ) )
 			{
-				$this->_cache = new \ArrayObject( pathinfo( $cache ), \ArrayObject::ARRAY_AS_PROPS );
+				$this->_cache               = new \ArrayObject( pathinfo( $cache ), \ArrayObject::ARRAY_AS_PROPS );
 				$this->_cache[ 'realpath' ] = $cache;
 
 				if ( $dimension = getimagesize( $cache ) )
 				{
-					$this->_cache[ 'mime' ] = $dimension[ 'mime' ];
-					$this->_cache[ 'dimension' ] = new \ArrayObject( array(
-						                                                 'width'     => $dimension[ 0 ],
-						                                                 'height'    => $dimension[ 1 ],
-						                                                 'attribute' => $dimension[ 3 ],
-					                                                 ), \ArrayObject::ARRAY_AS_PROPS );
+					$this->_cache[ 'mime' ]      = $dimension[ 'mime' ];
+					$this->_cache[ 'dimension' ] = new \ArrayObject(
+						[
+							'width'     => $dimension[ 0 ],
+							'height'    => $dimension[ 1 ],
+							'attribute' => $dimension[ 3 ],
+						], \ArrayObject::ARRAY_AS_PROPS );
 
 					return TRUE;
 				}
@@ -97,22 +98,23 @@ namespace O2System
 			throw new Exception( 'Invalid cache image: ' . $cache );
 		}
 
-		public function setSource($source, $target = NULL )
+		public function setSource( $source, $target = NULL )
 		{
 			if ( is_file( $source ) )
 			{
-				$this->_config[ 'source' ] = $source;
-				$this->_source = new \ArrayObject( pathinfo( $source ), \ArrayObject::ARRAY_AS_PROPS );
+				$this->_config[ 'source' ]   = $source;
+				$this->_source               = new \ArrayObject( pathinfo( $source ), \ArrayObject::ARRAY_AS_PROPS );
 				$this->_source[ 'realpath' ] = $source;
 
 				if ( $dimension = getimagesize( $source ) )
 				{
-					$this->_source[ 'mime' ] = $dimension[ 'mime' ];
-					$this->_source[ 'dimension' ] = new \ArrayObject( array(
-						                                                  'width'     => $dimension[ 0 ],
-						                                                  'height'    => $dimension[ 1 ],
-						                                                  'attribute' => $dimension[ 3 ],
-					                                                  ), \ArrayObject::ARRAY_AS_PROPS );
+					$this->_source[ 'mime' ]      = $dimension[ 'mime' ];
+					$this->_source[ 'dimension' ] = new \ArrayObject(
+						[
+							'width'     => $dimension[ 0 ],
+							'height'    => $dimension[ 1 ],
+							'attribute' => $dimension[ 3 ],
+						], \ArrayObject::ARRAY_AS_PROPS );
 
 				}
 
@@ -127,12 +129,12 @@ namespace O2System
 			throw new Exception( 'Invalid source image: ' . $source );
 		}
 
-		public function setTarget($target )
+		public function setTarget( $target )
 		{
-			$filenames = array(
+			$filenames = [
 				$this->_source->dirname . DIRECTORY_SEPARATOR . pathinfo( $target, PATHINFO_FILENAME ) . '.' . $this->_source->extension,
 				pathinfo( $target, PATHINFO_DIRNAME ) . DIRECTORY_SEPARATOR . pathinfo( $target, PATHINFO_FILENAME ) . '.' . $this->_source->extension,
-			);
+			];
 
 			foreach ( $filenames as $filename )
 			{
@@ -159,36 +161,38 @@ namespace O2System
 			return $this;
 		}
 
-		public function setWatermark(array $watermark )
+		public function setWatermark( array $watermark )
 		{
 			$this->_config[ 'watermark' ] = $watermark;
 		}
 
-		public function setWatermarkText($watermark, $font = NULL, $size = 12, $color = 'ffffff', $shadow_color = '', $shadow_distance = 3 )
+		public function setWatermarkText( $watermark, $font = NULL, $size = 12, $color = 'ffffff', $shadow_color = '', $shadow_distance = 3 )
 		{
-			$this->setWatermark( array(
-				                      'text' => $watermark,
-				                      'font' => array(
-					                      'path'   => $font,
-					                      'size'   => $size,
-					                      'color'  => ltrim( $color, '#' ),
-					                      'shadow' => array(
-						                      'color'    => ltrim( $shadow_color, '#' ),
-						                      'distance' => $shadow_distance,
-					                      ),
-				                      ),
-			                      ) );
+			$this->setWatermark(
+				[
+					'text' => $watermark,
+					'font' => [
+						'path'   => $font,
+						'size'   => $size,
+						'color'  => ltrim( $color, '#' ),
+						'shadow' => [
+							'color'    => ltrim( $shadow_color, '#' ),
+							'distance' => $shadow_distance,
+						],
+					],
+				] );
 		}
 
-		public function setWatermarkImage($watermark, $opacity = 50, $x_transparency = 4, $y_transparency = 4 )
+		public function setWatermarkImage( $watermark, $opacity = 50, $x_transparency = 4, $y_transparency = 4 )
 		{
 			if ( is_file( $watermark ) )
 			{
-				$this->setWatermark( array(
-					                      'image'        => $watermark,
-					                      'opacity'      => $opacity,
-					                      'transparency' => [ 'x' => $x_transparency, 'y' => $y_transparency ],
-				                      ) );
+				$this->setWatermark(
+					[
+						'image'        => $watermark,
+						'opacity'      => $opacity,
+						'transparency' => [ 'x' => $x_transparency, 'y' => $y_transparency ],
+					] );
 			}
 		}
 
@@ -213,7 +217,7 @@ namespace O2System
 			$this->resize( $size );
 
 			$max_height = ( intval( $this->_config[ 'size' ][ 'height' ] ) > $this->_source->dimension->height ) ? $this->_source->dimension->height : $this->_config[ 'size' ][ 'height' ];
-			$max_width = ( intval( $this->_config[ 'size' ][ 'width' ] ) > $this->_source->dimension->width ) ? $this->_source->dimension->width : $this->_config[ 'size' ][ 'width' ];
+			$max_width  = ( intval( $this->_config[ 'size' ][ 'width' ] ) > $this->_source->dimension->width ) ? $this->_source->dimension->width : $this->_config[ 'size' ][ 'width' ];
 
 			if ( $this->_source->dimension->width > $max_width )
 			{
@@ -250,10 +254,10 @@ namespace O2System
 				}
 			}
 
-			$this->_config[ 'size' ] = array(
+			$this->_config[ 'size' ] = [
 				'width'  => $max_width,
 				'height' => $max_height,
-			);
+			];
 
 			if ( isset( $x_axis ) )
 			{
@@ -322,18 +326,19 @@ namespace O2System
 		 * @access  protected
 		 * @return  array
 		 */
-		protected function _calculateSizePercent($percent, $dimension )
+		protected function _calculateSizePercent( $percent, $dimension )
 		{
 			$percent = intval( rtrim( $percent, '%' ) );
 
-			return $this->_calculateSize( array(
-				                               ceil( ( $this->_source->dimension->width * $percent ) / 100 ), // width
-				                               ceil( ( $this->_source->dimension->height * $percent ) / 100 ) // height
+			return $this->_calculateSize(
+				[
+					ceil( ( $this->_source->dimension->width * $percent ) / 100 ), // width
+					ceil( ( $this->_source->dimension->height * $percent ) / 100 ) // height
 
-			                               ), $dimension );
+				], $dimension );
 		}
 
-		protected function _calculateSize($size, $dimension )
+		protected function _calculateSize( $size, $dimension )
 		{
 			if ( is_array( $size ) )
 			{
@@ -341,7 +346,7 @@ namespace O2System
 			}
 			else
 			{
-				$width = $size;
+				$width  = $size;
 				$height = 0;
 			}
 
@@ -407,7 +412,7 @@ namespace O2System
 					throw new Exception( 'Undefined Crop Target Size' );
 				}
 
-				$crop_config[ 'width' ] = $this->_config[ 'size' ][ 'width' ];
+				$crop_config[ 'width' ]  = $this->_config[ 'size' ][ 'width' ];
 				$crop_config[ 'height' ] = $this->_config[ 'size' ][ 'height' ];
 
 				$crop_config[ 'x_axis' ] = $this->_config[ 'crop' ][ 'x_axis' ];
@@ -436,9 +441,9 @@ namespace O2System
 			}
 			elseif ( ! empty( $this->_config[ 'size' ] ) )
 			{
-				$resize_config = $ci_config;
-				$resize_config[ 'width' ] = $this->_config[ 'size' ][ 'width' ];
-				$resize_config[ 'height' ] = $this->_config[ 'size' ][ 'height' ];
+				$resize_config                = $ci_config;
+				$resize_config[ 'width' ]     = $this->_config[ 'size' ][ 'width' ];
+				$resize_config[ 'height' ]    = $this->_config[ 'size' ][ 'height' ];
 				$resize_config[ 'new_image' ] = $this->_source->filename . '-temp.' . $this->_source->extension;
 
 				$this->_handle->initialize( $resize_config );
@@ -469,7 +474,7 @@ namespace O2System
 				}
 
 				$rotate_config[ 'rotation_angle' ] = $this->_config[ 'rotation' ];
-				$rotate_config[ 'new_image' ] = $this->_source->filename . '-temp.' . $this->_source->extension;
+				$rotate_config[ 'new_image' ]      = $this->_source->filename . '-temp.' . $this->_source->extension;
 
 				$this->_handle->initialize( $rotate_config );
 
@@ -511,17 +516,17 @@ namespace O2System
 						}
 					}
 
-					$watermark_config[ 'wm_font_size' ] = $this->_config[ 'watermark' ][ 'font' ][ 'size' ];
-					$watermark_config[ 'wm_font_color' ] = $this->_config[ 'watermark' ][ 'font' ][ 'color' ];
-					$watermark_config[ 'wm_shadow_color' ] = $this->_config[ 'watermark' ][ 'font' ][ 'shadow' ][ 'color' ];
+					$watermark_config[ 'wm_font_size' ]       = $this->_config[ 'watermark' ][ 'font' ][ 'size' ];
+					$watermark_config[ 'wm_font_color' ]      = $this->_config[ 'watermark' ][ 'font' ][ 'color' ];
+					$watermark_config[ 'wm_shadow_color' ]    = $this->_config[ 'watermark' ][ 'font' ][ 'shadow' ][ 'color' ];
 					$watermark_config[ 'wm_shadow_distance' ] = $this->_config[ 'watermark' ][ 'font' ][ 'shadow' ][ 'distance' ];
 				}
 				elseif ( isset( $this->_config[ 'watermark' ][ 'image' ] ) )
 				{
 					$watermark_config[ 'wm_overlay_path' ] = $this->_config[ 'watermark' ][ 'image' ];
-					$watermark_config[ 'wm_opacity' ] = $this->_config[ 'watermark' ][ 'opacity' ];
-					$watermark_config[ 'wm_x_transp' ] = $this->_config[ 'watermark' ][ 'transparency' ][ 'x' ];
-					$watermark_config[ 'wm_y_transp' ] = $this->_config[ 'watermark' ][ 'transparency' ][ 'y' ];
+					$watermark_config[ 'wm_opacity' ]      = $this->_config[ 'watermark' ][ 'opacity' ];
+					$watermark_config[ 'wm_x_transp' ]     = $this->_config[ 'watermark' ][ 'transparency' ][ 'x' ];
+					$watermark_config[ 'wm_y_transp' ]     = $this->_config[ 'watermark' ][ 'transparency' ][ 'y' ];
 				}
 
 				$watermark_config[ 'new_image' ] = $this->_source->filename . '-temp.' . $this->_source->extension;
@@ -1016,7 +1021,7 @@ namespace CodeIgniter
 		 *
 		 * @var array
 		 */
-		public $error_msg = array();
+		public $error_msg = [ ];
 
 		/**
 		 * Whether to have a drop shadow on watermark
@@ -1039,7 +1044,7 @@ namespace CodeIgniter
 		 *
 		 * @return    void
 		 */
-		public function __construct( $props = array() )
+		public function __construct( $props = [ ] )
 		{
 			if ( count( $props ) > 0 )
 			{
@@ -1058,37 +1063,37 @@ namespace CodeIgniter
 		 */
 		public function clear()
 		{
-			$props = array( 'thumb_marker', 'library_path', 'source_image', 'new_image', 'width', 'height', 'rotation_angle', 'x_axis', 'y_axis', 'wm_text', 'wm_overlay_path', 'wm_font_path', 'wm_shadow_color', 'source_folder', 'dest_folder', 'mime_type', 'orig_width', 'orig_height', 'image_type', 'size_str', 'full_src_path', 'full_dst_path' );
+			$props = [ 'thumb_marker', 'library_path', 'source_image', 'new_image', 'width', 'height', 'rotation_angle', 'x_axis', 'y_axis', 'wm_text', 'wm_overlay_path', 'wm_font_path', 'wm_shadow_color', 'source_folder', 'dest_folder', 'mime_type', 'orig_width', 'orig_height', 'image_type', 'size_str', 'full_src_path', 'full_dst_path' ];
 
 			foreach ( $props as $val )
 			{
 				$this->$val = '';
 			}
 
-			$this->image_library = 'gd2';
-			$this->dynamic_output = FALSE;
-			$this->quality = 90;
-			$this->create_thumb = FALSE;
-			$this->thumb_marker = '-thumb';
-			$this->maintain_ratio = TRUE;
-			$this->master_dim = 'auto';
-			$this->wm_type = 'text';
-			$this->wm_x_transp = 4;
-			$this->wm_y_transp = 4;
-			$this->wm_font_size = 17;
-			$this->wm_vrt_alignment = 'B';
-			$this->wm_hor_alignment = 'C';
-			$this->wm_padding = 0;
-			$this->wm_hor_offset = 0;
-			$this->wm_vrt_offset = 0;
-			$this->wm_font_color = '#ffffff';
+			$this->image_library      = 'gd2';
+			$this->dynamic_output     = FALSE;
+			$this->quality            = 90;
+			$this->create_thumb       = FALSE;
+			$this->thumb_marker       = '-thumb';
+			$this->maintain_ratio     = TRUE;
+			$this->master_dim         = 'auto';
+			$this->wm_type            = 'text';
+			$this->wm_x_transp        = 4;
+			$this->wm_y_transp        = 4;
+			$this->wm_font_size       = 17;
+			$this->wm_vrt_alignment   = 'B';
+			$this->wm_hor_alignment   = 'C';
+			$this->wm_padding         = 0;
+			$this->wm_hor_offset      = 0;
+			$this->wm_vrt_offset      = 0;
+			$this->wm_font_color      = '#ffffff';
 			$this->wm_shadow_distance = 2;
-			$this->wm_opacity = 50;
-			$this->create_fnc = 'imagecreatetruecolor';
-			$this->copy_fnc = 'imagecopyresampled';
-			$this->error_msg = array();
+			$this->wm_opacity         = 50;
+			$this->create_fnc         = 'imagecreatetruecolor';
+			$this->copy_fnc           = 'imagecopyresampled';
+			$this->error_msg          = [ ];
 			$this->wm_use_drop_shadow = FALSE;
-			$this->wm_use_truetype = FALSE;
+			$this->wm_use_truetype    = FALSE;
 		}
 
 		// --------------------------------------------------------------------
@@ -1100,7 +1105,7 @@ namespace CodeIgniter
 		 *
 		 * @return    bool
 		 */
-		public function initialize( $props = array() )
+		public function initialize( $props = [ ] )
 		{
 			// Convert array elements into class variables
 			if ( count( $props ) > 0 )
@@ -1109,7 +1114,7 @@ namespace CodeIgniter
 				{
 					if ( property_exists( $this, $key ) )
 					{
-						if ( in_array( $key, array( 'wm_font_color', 'wm_shadow_color' ) ) )
+						if ( in_array( $key, [ 'wm_font_color', 'wm_shadow_color' ] ) )
 						{
 							if ( preg_match( '/^#?([0-9a-f]{3}|[0-9a-f]{6})$/i', $val, $matches ) )
 							{
@@ -1175,8 +1180,8 @@ namespace CodeIgniter
 				$full_source_path = $this->source_image;
 			}
 
-			$x = explode( '/', $full_source_path );
-			$this->source_image = end( $x );
+			$x                   = explode( '/', $full_source_path );
+			$this->source_image  = end( $x );
 			$this->source_folder = str_replace( $this->source_image, '', $full_source_path );
 
 			// Set the Image Properties
@@ -1195,13 +1200,13 @@ namespace CodeIgniter
 			 */
 			if ( $this->new_image === '' )
 			{
-				$this->dest_image = $this->source_image;
+				$this->dest_image  = $this->source_image;
 				$this->dest_folder = $this->source_folder;
 			}
 			elseif ( strpos( $this->new_image, '/' ) === FALSE )
 			{
 				$this->dest_folder = $this->source_folder;
-				$this->dest_image = $this->new_image;
+				$this->dest_image  = $this->new_image;
 			}
 			else
 			{
@@ -1218,12 +1223,12 @@ namespace CodeIgniter
 				if ( ! preg_match( '#\.(jpg|jpeg|gif|png)$#i', $full_dest_path ) )
 				{
 					$this->dest_folder = $full_dest_path . '/';
-					$this->dest_image = $this->source_image;
+					$this->dest_image  = $this->source_image;
 				}
 				else
 				{
-					$x = explode( '/', $full_dest_path );
-					$this->dest_image = end( $x );
+					$x                 = explode( '/', $full_dest_path );
+					$this->dest_image  = end( $x );
 					$this->dest_folder = str_replace( $this->dest_image, '', $full_dest_path );
 				}
 			}
@@ -1357,7 +1362,7 @@ namespace CodeIgniter
 		public function rotate()
 		{
 			// Allowed rotation values
-			$degs = array( 90, 180, 270, 'vrt', 'hor' );
+			$degs = [ 90, 180, 270, 'vrt', 'hor' ];
 
 			if ( $this->rotation_angle === '' OR ! in_array( $this->rotation_angle, $degs ) )
 			{
@@ -1369,12 +1374,12 @@ namespace CodeIgniter
 			// Reassign the width and height
 			if ( $this->rotation_angle === 90 OR $this->rotation_angle === 270 )
 			{
-				$this->width = $this->orig_height;
+				$this->width  = $this->orig_height;
 				$this->height = $this->orig_width;
 			}
 			else
 			{
-				$this->width = $this->orig_width;
+				$this->width  = $this->orig_width;
 				$this->height = $this->orig_height;
 			}
 
@@ -1402,7 +1407,7 @@ namespace CodeIgniter
 		 *
 		 * @return    bool
 		 */
-		public function imageProcessGd($action = 'resize' )
+		public function imageProcessGd( $action = 'resize' )
 		{
 			$v2_override = FALSE;
 
@@ -1422,13 +1427,13 @@ namespace CodeIgniter
 			if ( $action === 'crop' )
 			{
 				// Reassign the source width/height if cropping
-				$this->orig_width = $this->width;
+				$this->orig_width  = $this->width;
 				$this->orig_height = $this->height;
 
 				// GD 2.0 has a cropping bug so we'll test for it
 				if ( $this->gdVersion() !== FALSE )
 				{
-					$gd_version = str_replace( '0', '', $this->gdVersion() );
+					$gd_version  = str_replace( '0', '', $this->gdVersion() );
 					$v2_override = ( $gd_version == 2 );
 				}
 			}
@@ -1456,12 +1461,12 @@ namespace CodeIgniter
 			if ( $this->image_library === 'gd2' && function_exists( 'imagecreatetruecolor' ) )
 			{
 				$create = 'imagecreatetruecolor';
-				$copy = 'imagecopyresampled';
+				$copy   = 'imagecopyresampled';
 			}
 			else
 			{
 				$create = 'imagecreate';
-				$copy = 'imagecopyresized';
+				$copy   = 'imagecopyresized';
 			}
 
 			$dst_img = $create( $this->width, $this->height );
@@ -1504,7 +1509,7 @@ namespace CodeIgniter
 		 *
 		 * @return    bool
 		 */
-		public function imageProcessImagemagick($action = 'resize' )
+		public function imageProcessImagemagick( $action = 'resize' )
 		{
 			//  Do we have a vaild library path?
 			if ( $this->library_path === '' )
@@ -1576,7 +1581,7 @@ namespace CodeIgniter
 		 *
 		 * @return    bool
 		 */
-		public function imageProcessNetpbm($action = 'resize' )
+		public function imageProcessNetpbm( $action = 'resize' )
 		{
 			if ( $this->library_path === '' )
 			{
@@ -1589,15 +1594,15 @@ namespace CodeIgniter
 			switch ( $this->image_type )
 			{
 				case 1 :
-					$cmd_in = 'giftopnm';
+					$cmd_in  = 'giftopnm';
 					$cmd_out = 'ppmtogif';
 					break;
 				case 2 :
-					$cmd_in = 'jpegtopnm';
+					$cmd_in  = 'jpegtopnm';
 					$cmd_out = 'ppmtojpeg';
 					break;
 				case 3 :
-					$cmd_in = 'pngtopnm';
+					$cmd_in  = 'pngtopnm';
 					$cmd_out = 'ppmtopng';
 					break;
 			}
@@ -1721,7 +1726,7 @@ namespace CodeIgniter
 				return FALSE;
 			}
 
-			$width = $this->orig_width;
+			$width  = $this->orig_width;
 			$height = $this->orig_height;
 
 			if ( $this->rotation_angle === 'hor' )
@@ -1812,13 +1817,13 @@ namespace CodeIgniter
 			$this->getImageProperties();
 
 			// Fetch watermark image properties
-			$props = $this->getImageProperties( $this->wm_overlay_path, TRUE );
+			$props       = $this->getImageProperties( $this->wm_overlay_path, TRUE );
 			$wm_img_type = $props[ 'image_type' ];
-			$wm_width = $props[ 'width' ];
-			$wm_height = $props[ 'height' ];
+			$wm_width    = $props[ 'width' ];
+			$wm_height   = $props[ 'height' ];
 
 			// Create two image resources
-			$wm_img = $this->imageCreateGd( $this->wm_overlay_path, $wm_img_type );
+			$wm_img  = $this->imageCreateGd( $this->wm_overlay_path, $wm_img_type );
 			$src_img = $this->imageCreateGd( $this->full_src_path );
 
 			// Reverse the offset if necessary
@@ -1872,7 +1877,7 @@ namespace CodeIgniter
 			}
 
 			// Set RGB values for text and shadow
-			$rgba = imagecolorat( $wm_img, $this->wm_x_transp, $this->wm_y_transp );
+			$rgba  = imagecolorat( $wm_img, $this->wm_x_transp, $this->wm_y_transp );
 			$alpha = ( $rgba & 0x7F000000 ) >> 24;
 
 			// make a best guess as to whether we're dealing with an image with alpha transparency or no/binary transparency
@@ -1979,7 +1984,7 @@ namespace CodeIgniter
 			}
 			else
 			{
-				$fontwidth = imagefontwidth( $this->wm_font_size );
+				$fontwidth  = imagefontwidth( $this->wm_font_size );
 				$fontheight = imagefontheight( $this->wm_font_size );
 			}
 
@@ -2095,7 +2100,7 @@ namespace CodeIgniter
 		 *
 		 * @return    resource
 		 */
-		public function imageCreateGd($path = '', $image_type = '' )
+		public function imageCreateGd( $path = '', $image_type = '' )
 		{
 			if ( $path === '' )
 			{
@@ -2112,7 +2117,7 @@ namespace CodeIgniter
 				case 1 :
 					if ( ! function_exists( 'imagecreatefromgif' ) )
 					{
-						$this->setError( array( 'IMAGE_UNSUPPORTED_IMAGECREATE', 'IMAGE_GIF_NOT_SUPPORTED' ) );
+						$this->setError( [ 'IMAGE_UNSUPPORTED_IMAGECREATE', 'IMAGE_GIF_NOT_SUPPORTED' ] );
 
 						return FALSE;
 					}
@@ -2121,7 +2126,7 @@ namespace CodeIgniter
 				case 2 :
 					if ( ! function_exists( 'imagecreatefromjpeg' ) )
 					{
-						$this->setError( array( 'IMAGE_UNSUPPORTED_IMAGECREATE', 'IMAGE_JPG_NOT_SUPPORTED' ) );
+						$this->setError( [ 'IMAGE_UNSUPPORTED_IMAGECREATE', 'IMAGE_JPG_NOT_SUPPORTED' ] );
 
 						return FALSE;
 					}
@@ -2130,14 +2135,14 @@ namespace CodeIgniter
 				case 3 :
 					if ( ! function_exists( 'imagecreatefrompng' ) )
 					{
-						$this->setError( array( 'IMAGE_UNSUPPORTED_IMAGECREATE', 'IMAGE_PNG_NOT_SUPPORTED' ) );
+						$this->setError( [ 'IMAGE_UNSUPPORTED_IMAGECREATE', 'IMAGE_PNG_NOT_SUPPORTED' ] );
 
 						return FALSE;
 					}
 
 					return imagecreatefrompng( $path );
 				default:
-					$this->setError( array( 'IMAGE_UNSUPPORTED_IMAGECREATE' ) );
+					$this->setError( [ 'IMAGE_UNSUPPORTED_IMAGECREATE' ] );
 
 					return FALSE;
 			}
@@ -2155,14 +2160,14 @@ namespace CodeIgniter
 		 *
 		 * @return    bool
 		 */
-		public function imageSaveGd($resource )
+		public function imageSaveGd( $resource )
 		{
 			switch ( $this->image_type )
 			{
 				case 1:
 					if ( ! function_exists( 'imagegif' ) )
 					{
-						$this->setError( array( 'IMAGE_UNSUPPORTED_IMAGECREATE', 'IMAGE_GIF_NOT_SUPPORTED' ) );
+						$this->setError( [ 'IMAGE_UNSUPPORTED_IMAGECREATE', 'IMAGE_GIF_NOT_SUPPORTED' ] );
 
 						return FALSE;
 					}
@@ -2177,7 +2182,7 @@ namespace CodeIgniter
 				case 2:
 					if ( ! function_exists( 'imagejpeg' ) )
 					{
-						$this->setError( array( 'IMAGE_UNSUPPORTED_IMAGECREATE', 'IMAGE_JPG_NOT_SUPPORTED' ) );
+						$this->setError( [ 'IMAGE_UNSUPPORTED_IMAGECREATE', 'IMAGE_JPG_NOT_SUPPORTED' ] );
 
 						return FALSE;
 					}
@@ -2192,7 +2197,7 @@ namespace CodeIgniter
 				case 3:
 					if ( ! function_exists( 'imagepng' ) )
 					{
-						$this->setError( array( 'IMAGE_UNSUPPORTED_IMAGECREATE', 'IMAGE_PNG_NOT_SUPPORTED' ) );
+						$this->setError( [ 'IMAGE_UNSUPPORTED_IMAGECREATE', 'IMAGE_PNG_NOT_SUPPORTED' ] );
 
 						return FALSE;
 					}
@@ -2205,7 +2210,7 @@ namespace CodeIgniter
 					}
 					break;
 				default:
-					$this->setError( array( 'IMAGE_UNSUPPORTED_IMAGECREATE' ) );
+					$this->setError( [ 'IMAGE_UNSUPPORTED_IMAGECREATE' ] );
 
 					return FALSE;
 					break;
@@ -2223,7 +2228,7 @@ namespace CodeIgniter
 		 *
 		 * @return    void
 		 */
-		public function imageDisplayGd($resource )
+		public function imageDisplayGd( $resource )
 		{
 			header( 'Content-Disposition: filename=' . $this->source_image . ';' );
 			header( 'Content-Type: ' . $this->mime_type );
@@ -2272,7 +2277,7 @@ namespace CodeIgniter
 			}
 
 			// Sanitize
-			$this->width = (int) $this->width;
+			$this->width  = (int) $this->width;
 			$this->height = (int) $this->height;
 
 			if ( $this->master_dim !== 'width' && $this->master_dim !== 'height' )
@@ -2316,7 +2321,7 @@ namespace CodeIgniter
 		 *
 		 * @return    mixed
 		 */
-		public function getImageProperties($path = '', $return = FALSE )
+		public function getImageProperties( $path = '', $return = FALSE )
 		{
 			// For now we require GD but we should
 			// find a way to determine this using IM or NetPBM
@@ -2333,26 +2338,26 @@ namespace CodeIgniter
 				return FALSE;
 			}
 
-			$vals = getimagesize( $path );
-			$types = array( 1 => 'gif', 2 => 'jpeg', 3 => 'png' );
-			$mime = ( isset( $types[ $vals[ 2 ] ] ) ) ? 'image/' . $types[ $vals[ 2 ] ] : 'image/jpg';
+			$vals  = getimagesize( $path );
+			$types = [ 1 => 'gif', 2 => 'jpeg', 3 => 'png' ];
+			$mime  = ( isset( $types[ $vals[ 2 ] ] ) ) ? 'image/' . $types[ $vals[ 2 ] ] : 'image/jpg';
 
 			if ( $return === TRUE )
 			{
-				return array(
+				return [
 					'width'      => $vals[ 0 ],
 					'height'     => $vals[ 1 ],
 					'image_type' => $vals[ 2 ],
 					'size_str'   => $vals[ 3 ],
 					'mime_type'  => $mime,
-				);
+				];
 			}
 
-			$this->orig_width = $vals[ 0 ];
+			$this->orig_width  = $vals[ 0 ];
 			$this->orig_height = $vals[ 1 ];
-			$this->image_type = $vals[ 2 ];
-			$this->size_str = $vals[ 3 ];
-			$this->mime_type = $mime;
+			$this->image_type  = $vals[ 2 ];
+			$this->size_str    = $vals[ 3 ];
+			$this->mime_type   = $mime;
 
 			return TRUE;
 		}
@@ -2377,14 +2382,14 @@ namespace CodeIgniter
 		 *
 		 * @return    array
 		 */
-		public function sizeCalculator($vals )
+		public function sizeCalculator( $vals )
 		{
 			if ( ! is_array( $vals ) )
 			{
 				return;
 			}
 
-			$allowed = array( 'new_width', 'new_height', 'width', 'height' );
+			$allowed = [ 'new_width', 'new_height', 'width', 'height' ];
 
 			foreach ( $allowed as $item )
 			{
@@ -2427,12 +2432,12 @@ namespace CodeIgniter
 		 *
 		 * @return    array
 		 */
-		public function explodeName($source_image )
+		public function explodeName( $source_image )
 		{
-			$ext = strrchr( $source_image, '.' );
+			$ext  = strrchr( $source_image, '.' );
 			$name = ( $ext === FALSE ) ? $source_image : substr( $source_image, 0, -strlen( $ext ) );
 
-			return array( 'ext' => $ext, 'name' => $name );
+			return [ 'ext' => $ext, 'name' => $name ];
 		}
 
 		// --------------------------------------------------------------------
@@ -2483,7 +2488,7 @@ namespace CodeIgniter
 		 *
 		 * @return    void
 		 */
-		public function setError($errors )
+		public function setError( $errors )
 		{
 			if ( class_exists( 'O2System', FALSE ) )
 			{
@@ -2503,7 +2508,7 @@ namespace CodeIgniter
 			}
 			else
 			{
-				$error_messages = array(
+				$error_messages = [
 					'IMAGE_SOURCE_IMAGE_REQUIRED'   => 'You must specify a source image in your preferences.',
 					'IMAGE_GD_REQUIRED'             => 'The GD image library is required for this feature.',
 					'IMAGE_GD_REQUIRED_FOR_PROPS'   => 'Your server must support the GD image library in order to determine the image properties.',
@@ -2522,7 +2527,7 @@ namespace CodeIgniter
 					'IMAGE_COPY_FAILED'             => 'The image copy routine failed.',
 					'IMAGE_MISSING_FONT'            => 'Unable to find a font to use.',
 					'IMAGE_SAVE_FAILED'             => 'Unable to save the image.  Please make sure the image and file directory are writable.',
-				);
+				];
 
 				if ( is_array( $errors ) )
 				{

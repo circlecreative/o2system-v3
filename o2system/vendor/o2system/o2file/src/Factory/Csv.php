@@ -55,58 +55,58 @@ namespace O2System\File\Factory;
  */
 class Csv
 {
-    /**
-     * Read File
-     *
-     * @access public
-     *
-     * @param string $filename Filename with realpath
-     * @param string $return   Type of return array or object
-     *
-     * @return mixed
-     */
-    public static function read( $filename, $return = 'array' )
-    {
-        if( is_file( $filename ) )
-        {
-            $csv = fopen( $filename, 'r' );
-            while( ! feof( $csv ) )
-            {
-                $result[ ] = fgetcsv( $csv );
-            }
+	/**
+	 * Read File
+	 *
+	 * @access public
+	 *
+	 * @param string $filename Filename with realpath
+	 * @param string $return   Type of return array or object
+	 *
+	 * @return mixed
+	 */
+	public static function read( $filename, $return = 'array' )
+	{
+		if ( is_file( $filename ) )
+		{
+			$csv = fopen( $filename, 'r' );
+			while ( ! feof( $csv ) )
+			{
+				$result[] = fgetcsv( $csv );
+			}
 
-            if( ! empty( $result ) )
-            {
-                if( $return === 'array' )
-                {
-                    return $result;
-                }
-                elseif( $return === 'object' )
-                {
-                    return (object)$result;
-                }
-            }
-        }
+			if ( ! empty( $result ) )
+			{
+				if ( $return === 'array' )
+				{
+					return $result;
+				}
+				elseif ( $return === 'object' )
+				{
+					return (object) $result;
+				}
+			}
+		}
 
-    }
+	}
 
-    // ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
 
-    /**
-     * Write File
-     *
-     * @access  public
-     *
-     * @param string $filename Filename
-     * @param array  $data     List of data
-     */
-    public static function write( $filename, array $data )
-    {
-        $fp = fopen( $filename, 'w' );
-        foreach( $data as $list )
-        {
-            fputcsv( $fp, $list );
-        }
-        fclose( $fp );
-    }
+	/**
+	 * Write File
+	 *
+	 * @access  public
+	 *
+	 * @param string $filename Filename
+	 * @param array  $data     List of data
+	 */
+	public static function write( $filename, array $data )
+	{
+		$fp = fopen( $filename, 'w' );
+		foreach ( $data as $list )
+		{
+			fputcsv( $fp, $list );
+		}
+		fclose( $fp );
+	}
 }

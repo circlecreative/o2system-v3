@@ -89,7 +89,7 @@ class Forge extends ForgeInterface
 	 *
 	 * @type    array
 	 */
-	protected $_unsigned = array(
+	protected $_unsigned = [
 		'SHORT'    => 'INTEGER',
 		'SMALLINT' => 'INTEGER',
 		'INT'      => 'BIGINT',
@@ -97,7 +97,7 @@ class Forge extends ForgeInterface
 		'BIGINT'   => 'NUMERIC',
 		'FLOAT'    => 'DOUBLE',
 		'REAL'     => 'DOUBLE',
-	);
+	];
 
 	// --------------------------------------------------------------------
 
@@ -110,15 +110,15 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    string|string[]
 	 */
-	protected function _alterTable($alter_type, $table, $field )
+	protected function _alterTable( $alter_type, $table, $field )
 	{
-		if ( in_array( $alter_type, array( 'DROP', 'ADD' ), TRUE ) )
+		if ( in_array( $alter_type, [ 'DROP', 'ADD' ], TRUE ) )
 		{
 			return parent::_alterTable( $alter_type, $table, $field );
 		}
 
-		$sql = 'ALTER TABLE ' . $this->_driver->escapeIdentifiers( $table );
-		$sqls = array();
+		$sql  = 'ALTER TABLE ' . $this->_driver->escapeIdentifiers( $table );
+		$sqls = [ ];
 		for ( $i = 0, $c = count( $field ); $i < $c; $i++ )
 		{
 			if ( $field[ $i ][ '_literal' ] !== FALSE )
@@ -128,7 +128,7 @@ class Forge extends ForgeInterface
 			else
 			{
 				$alter_type = empty( $field[ $i ][ 'new_name' ] ) ? ' MODIFY ' : ' CHANGE ';
-				$sqls[] = $sql . $alter_type . $this->_processColumn( $field[ $i ] );
+				$sqls[]     = $sql . $alter_type . $this->_processColumn( $field[ $i ] );
 			}
 		}
 
@@ -144,7 +144,7 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    string
 	 */
-	protected function _processColumn($field )
+	protected function _processColumn( $field )
 	{
 		$extra_clause = isset( $field[ 'after' ] )
 			? ' AFTER ' . $this->_driver->escapeIdentifiers( $field[ 'after' ] ) : '';
@@ -176,17 +176,17 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    void
 	 */
-	protected function _attrType(&$attributes )
+	protected function _attrType( &$attributes )
 	{
 		switch ( strtoupper( $attributes[ 'TYPE' ] ) )
 		{
 			case 'TINYINT':
-				$attributes[ 'TYPE' ] = 'SMALLINT';
+				$attributes[ 'TYPE' ]     = 'SMALLINT';
 				$attributes[ 'UNSIGNED' ] = FALSE;
 
 				return;
 			case 'MEDIUMINT':
-				$attributes[ 'TYPE' ] = 'INTEGER';
+				$attributes[ 'TYPE' ]     = 'INTEGER';
 				$attributes[ 'UNSIGNED' ] = FALSE;
 
 				return;
@@ -204,7 +204,7 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    string
 	 */
-	protected function _processIndexes($table )
+	protected function _processIndexes( $table )
 	{
 		$sql = '';
 
@@ -227,13 +227,13 @@ class Forge extends ForgeInterface
 				continue;
 			}
 
-			is_array( $this->keys[ $i ] ) OR $this->keys[ $i ] = array( $this->keys[ $i ] );
+			is_array( $this->keys[ $i ] ) OR $this->keys[ $i ] = [ $this->keys[ $i ] ];
 
 			$sql .= ",\n\tKEY " . $this->_driver->escapeIdentifiers( implode( '_', $this->keys[ $i ] ) )
 				. ' (' . implode( ', ', $this->_driver->escapeIdentifiers( $this->keys[ $i ] ) ) . ')';
 		}
 
-		$this->keys = array();
+		$this->keys = [ ];
 
 		return $sql;
 	}

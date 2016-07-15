@@ -42,7 +42,7 @@ use O2System\Bootstrap\Factory\Lists;
 
 trait ItemsInterface
 {
-	protected $_items        = array();
+	protected $_items        = [ ];
 	protected $_num_rows     = 2;
 	protected $_num_per_rows = 3;
 
@@ -56,7 +56,7 @@ trait ItemsInterface
 		return (bool) empty( $this->_items );
 	}
 
-	public function addLists(Lists $lists )
+	public function addLists( Lists $lists )
 	{
 		if ( $lists instanceof Lists )
 		{
@@ -66,7 +66,7 @@ trait ItemsInterface
 		return $this;
 	}
 
-	public function addItems(array $items )
+	public function addItems( array $items )
 	{
 		foreach ( $items as $key => $item )
 		{
@@ -76,7 +76,7 @@ trait ItemsInterface
 		return $this;
 	}
 
-	public function addItem($item )
+	public function addItem( $item )
 	{
 		if ( $this->_items instanceof Lists )
 		{
@@ -90,7 +90,7 @@ trait ItemsInterface
 		return $this;
 	}
 
-	public function setItemsMap(array $map )
+	public function setItemsMap( array $map )
 	{
 		foreach ( $map as $key => $index )
 		{
@@ -103,7 +103,7 @@ trait ItemsInterface
 	}
 
 
-	public function setNumRows($rows )
+	public function setNumRows( $rows )
 	{
 		if ( is_numeric( $rows ) )
 		{
@@ -113,7 +113,7 @@ trait ItemsInterface
 		return $this;
 	}
 
-	public function setNumPerRows($num )
+	public function setNumPerRows( $num )
 	{
 		if ( is_numeric( $num ) )
 		{

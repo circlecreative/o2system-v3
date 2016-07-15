@@ -65,7 +65,7 @@ class Forge extends ForgeInterface
 	 *
 	 * @type    array
 	 */
-	protected $_unsigned = array(
+	protected $_unsigned = [
 		'INT2'     => 'INTEGER',
 		'SMALLINT' => 'INTEGER',
 		'INT'      => 'BIGINT',
@@ -75,7 +75,7 @@ class Forge extends ForgeInterface
 		'BIGINT'   => 'NUMERIC',
 		'REAL'     => 'DOUBLE PRECISION',
 		'FLOAT'    => 'DOUBLE PRECISION',
-	);
+	];
 
 	/**
 	 * NULL value representation in CREATE/ALTER TABLE statements
@@ -114,15 +114,15 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    string|string[]
 	 */
-	protected function _alterTable($alter_type, $table, $field )
+	protected function _alterTable( $alter_type, $table, $field )
 	{
-		if ( in_array( $alter_type, array( 'DROP', 'ADD' ), TRUE ) )
+		if ( in_array( $alter_type, [ 'DROP', 'ADD' ], TRUE ) )
 		{
 			return parent::_alterTable( $alter_type, $table, $field );
 		}
 
-		$sql = 'ALTER TABLE ' . $this->_driver->escapeIdentifiers( $table );
-		$sqls = array();
+		$sql  = 'ALTER TABLE ' . $this->_driver->escapeIdentifiers( $table );
+		$sqls = [ ];
 		for ( $i = 0, $c = count( $field ); $i < $c; $i++ )
 		{
 			if ( $field[ $i ][ '_literal' ] !== FALSE )
@@ -176,7 +176,7 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    void
 	 */
-	protected function _attrType(&$attributes )
+	protected function _attrType( &$attributes )
 	{
 		// Reset field lenghts for data types that don't support it
 		if ( isset( $attributes[ 'CONSTRAINT' ] ) && stripos( $attributes[ 'TYPE' ], 'int' ) !== FALSE )
@@ -187,12 +187,12 @@ class Forge extends ForgeInterface
 		switch ( strtoupper( $attributes[ 'TYPE' ] ) )
 		{
 			case 'TINYINT':
-				$attributes[ 'TYPE' ] = 'SMALLINT';
+				$attributes[ 'TYPE' ]     = 'SMALLINT';
 				$attributes[ 'UNSIGNED' ] = FALSE;
 
 				return;
 			case 'MEDIUMINT':
-				$attributes[ 'TYPE' ] = 'INTEGER';
+				$attributes[ 'TYPE' ]     = 'INTEGER';
 				$attributes[ 'UNSIGNED' ] = FALSE;
 
 				return;
@@ -211,7 +211,7 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    void
 	 */
-	protected function _attrAutoIncrement(&$attributes, &$field )
+	protected function _attrAutoIncrement( &$attributes, &$field )
 	{
 		if ( ! empty( $attributes[ 'AUTO_INCREMENT' ] ) && $attributes[ 'AUTO_INCREMENT' ] === TRUE )
 		{

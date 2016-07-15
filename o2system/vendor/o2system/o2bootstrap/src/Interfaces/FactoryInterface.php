@@ -51,21 +51,21 @@ abstract class FactoryInterface
 	 * @access  protected
 	 * @type    string
 	 */
-	protected $_attributes = array();
+	protected $_attributes = [ ];
 
 	final public function __construct()
 	{
-		return call_user_func_array( array( $this, 'build' ), func_get_args() );
+		return call_user_func_array( [ $this, 'build' ], func_get_args() );
 	}
 
 	final public function create()
 	{
-		return call_user_func_array( array( $this, 'build' ), func_get_args() );
+		return call_user_func_array( [ $this, 'build' ], func_get_args() );
 	}
 
 	abstract public function build();
 
-	public function setTag($tag )
+	public function setTag( $tag )
 	{
 		$this->_tag = $tag;
 
@@ -85,7 +85,7 @@ abstract class FactoryInterface
 	 * @access  public
 	 * @return  $this
 	 */
-	public function setId($id )
+	public function setId( $id )
 	{
 		$this->addAttribute( 'id', $id );
 
@@ -97,7 +97,7 @@ abstract class FactoryInterface
 		return $this->_attributes[ 'class' ];
 	}
 
-	public function addClasses(array $classes )
+	public function addClasses( array $classes )
 	{
 		if ( ! isset( $this->_attributes[ 'class' ] ) )
 		{
@@ -118,7 +118,7 @@ abstract class FactoryInterface
 		return $this;
 	}
 
-	public function setClass($class )
+	public function setClass( $class )
 	{
 		if ( is_string( $class ) )
 		{
@@ -130,11 +130,11 @@ abstract class FactoryInterface
 		return $this;
 	}
 
-	public function addClass($class )
+	public function addClass( $class )
 	{
 		if ( ! isset( $this->_attributes[ 'class' ] ) )
 		{
-			$this->_attributes[ 'class' ] = array();
+			$this->_attributes[ 'class' ] = [ ];
 		}
 		elseif ( is_string( $this->_attributes[ 'class' ] ) )
 		{
@@ -147,7 +147,7 @@ abstract class FactoryInterface
 		return $this;
 	}
 
-	public function removeClasses(array $classes )
+	public function removeClasses( array $classes )
 	{
 		if ( isset( $this->_attributes[ 'class' ] ) )
 		{
@@ -162,12 +162,12 @@ abstract class FactoryInterface
 		return $this;
 	}
 
-	public function removeClass($class )
+	public function removeClass( $class )
 	{
 		return $this->removeClasses( [ $class ] );
 	}
 
-	public function hasClass($class )
+	public function hasClass( $class )
 	{
 		if ( isset( $this->_attributes[ 'class' ] ) )
 		{
@@ -182,7 +182,7 @@ abstract class FactoryInterface
 		return FALSE;
 	}
 
-	public function setAttributes(array $attributes )
+	public function setAttributes( array $attributes )
 	{
 		$this->_attributes = $attributes;
 
@@ -194,7 +194,7 @@ abstract class FactoryInterface
 		return $this->_attributes;
 	}
 
-	public function addAttributes(array $attributes )
+	public function addAttributes( array $attributes )
 	{
 		if ( empty( $this->_attributes ) )
 		{
@@ -208,14 +208,14 @@ abstract class FactoryInterface
 		return $this;
 	}
 
-	public function addAttribute($name, $value )
+	public function addAttribute( $name, $value )
 	{
 		$this->_attributes[ $name ] = $value;
 
 		return $this;
 	}
 
-	public function removeAttributes(array $attributes )
+	public function removeAttributes( array $attributes )
 	{
 		foreach ( $attributes as $attribute )
 		{
@@ -225,24 +225,24 @@ abstract class FactoryInterface
 		return $this;
 	}
 
-	public function removeAttribute($attribute )
+	public function removeAttribute( $attribute )
 	{
 		unset( $this->_attributes[ $attribute ] );
 
 		return $this;
 	}
 
-	public function hasAttribute($attribute )
+	public function hasAttribute( $attribute )
 	{
 		return (bool) array_key_exists( $attribute, $this->_attributes );
 	}
 
-	public function getAttribute($key )
+	public function getAttribute( $key )
 	{
 		return isset( $this->_attributes[ $key ] ) ? $this->_attributes[ $key ] : NULL;
 	}
 
-	protected function _stringifyAttributes(array $attributes = array() )
+	protected function _stringifyAttributes( array $attributes = [ ] )
 	{
 		$attributes = empty( $attributes ) ? $this->_attributes : $attributes;
 
@@ -373,11 +373,11 @@ abstract class FactoryInterface
 		}
 	}
 
-	public function __call( $method, $args = array() )
+	public function __call( $method, $args = [ ] )
 	{
 		if ( method_exists( $this, $method ) )
 		{
-			return call_user_func_array( array( $this, $method ), $args );
+			return call_user_func_array( [ $this, $method ], $args );
 		}
 		else
 		{
@@ -385,14 +385,14 @@ abstract class FactoryInterface
 			{
 				if ( in_array( ltrim( $method, 'is_' ), $this->_contextual_classes ) )
 				{
-					return call_user_func_array( array( $this, 'is_' . ltrim( $method, 'is_' ) ), $args );
+					return call_user_func_array( [ $this, 'is_' . ltrim( $method, 'is_' ) ], $args );
 				}
 			}
 			elseif ( isset( $this->_sizes ) )
 			{
 				if ( in_array( ltrim( $method, 'is_' ), $this->_sizes ) )
 				{
-					return call_user_func_array( array( $this, 'is_' . ltrim( $method, 'is_' ) ), $args );
+					return call_user_func_array( [ $this, 'is_' . ltrim( $method, 'is_' ) ], $args );
 				}
 			}
 		}

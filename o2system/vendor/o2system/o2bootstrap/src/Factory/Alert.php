@@ -63,10 +63,10 @@ class Alert extends FactoryInterface
 
 	protected $_tag = 'div';
 
-	protected $_attributes = array(
+	protected $_attributes = [
 		'class' => [ 'alert' ],
 		'role'  => 'alert',
-	);
+	];
 
 	protected $_is_dismissible = FALSE;
 
@@ -103,7 +103,7 @@ class Alert extends FactoryInterface
 				in_array( $content, [ 'default', 'primary' ] )
 			)
 			{
-				$this->{'is' . studlycapcase($content)}();
+				$this->{'is' . studlycapcase( $content )}();
 			}
 			else
 			{
@@ -123,7 +123,7 @@ class Alert extends FactoryInterface
 					in_array( $type, [ 'default', 'primary' ] )
 				)
 				{
-					$this->{'is' . studlycapcase($type)}();
+					$this->{'is' . studlycapcase( $type )}();
 				}
 			}
 		}
@@ -140,7 +140,7 @@ class Alert extends FactoryInterface
 					in_array( $attr, [ 'default', 'primary' ] )
 				)
 				{
-					$this->{'is' . studlycapcase($attr)}();
+					$this->{'is' . studlycapcase( $attr )}();
 				}
 			}
 		}
@@ -183,7 +183,7 @@ class Alert extends FactoryInterface
 	 *
 	 * @return object
 	 */
-	public function setTitle($title, $tag = 'strong', $attr = array() )
+	public function setTitle( $title, $tag = 'strong', $attr = [ ] )
 	{
 		if ( is_array( $tag ) )
 		{
@@ -242,14 +242,15 @@ class Alert extends FactoryInterface
 		{
 			if ( $this->_is_dismissible === TRUE )
 			{
-				$output[] = ( new Tag( 'button',
-				                       new Tag( 'span', '&times;', [ 'aria-hidden' => 'true' ] ),
-				                       array(
-					                       'type'         => 'button',
-					                       'class'        => 'close',
-					                       'data-dismiss' => 'alert',
-					                       'aria-label'   => 'Close',
-				                       ) ) );
+				$output[] = ( new Tag(
+					'button',
+					new Tag( 'span', '&times;', [ 'aria-hidden' => 'true' ] ),
+					[
+						'type'         => 'button',
+						'class'        => 'close',
+						'data-dismiss' => 'alert',
+						'aria-label'   => 'Close',
+					] ) );
 			}
 
 			if ( isset( $this->title ) )

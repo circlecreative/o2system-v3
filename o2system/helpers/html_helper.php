@@ -73,7 +73,7 @@ if ( ! function_exists( 'html' ) )
 	 *
 	 * @return string
 	 */
-	function html( $tag = '', $attr = array(), $content = '' )
+	function html( $tag = '', $attr = [ ], $content = '' )
 	{
 		if ( strpos( $tag, '/' ) === FALSE )
 		{
@@ -145,14 +145,14 @@ if ( ! function_exists( 'strip_js' ) )
 	 */
 	function strip_js( $html )
 	{
-		$html = htmlspecialchars_decode( $html );
-		$search_arr = array( '<script', '</script>' );
-		$html = str_ireplace( $search_arr, $search_arr, $html );
-		$split_arr = explode( '<script', $html );
-		$remove_jscode_arr = array();
+		$html              = htmlspecialchars_decode( $html );
+		$search_arr        = [ '<script', '</script>' ];
+		$html              = str_ireplace( $search_arr, $search_arr, $html );
+		$split_arr         = explode( '<script', $html );
+		$remove_jscode_arr = [ ];
 		foreach ( $split_arr as $key => $val )
 		{
-			$newarr = explode( '</script>', $split_arr[ $key ] );
+			$newarr              = explode( '</script>', $split_arr[ $key ] );
 			$remove_jscode_arr[] = ( $key == 0 ) ? $newarr[ 0 ] : $newarr[ 1 ];
 		}
 
@@ -172,7 +172,7 @@ if ( ! function_exists( 'video' ) )
 	 *
 	 * @return string
 	 */
-	function video( $attr = array(), $sources = array(), $no_support_message = 'Your browser does not support the HTML5 video tag' )
+	function video( $attr = [ ], $sources = [ ], $no_support_message = 'Your browser does not support the HTML5 video tag' )
 	{
 		$html = "<video " . _parse_attributes( $attr ) . ">";
 
@@ -200,7 +200,7 @@ if ( ! function_exists( 'canvas' ) )
 	 *
 	 * @return  string
 	 */
-	function canvas( $attr = array(), $no_support_message = 'Your browser does not support the HTML5 canvas tag' )
+	function canvas( $attr = [ ], $no_support_message = 'Your browser does not support the HTML5 canvas tag' )
 	{
 		return "<canvas " . _parse_attributes( $attr ) . ">$no_support_message</canvas>";
 	}
@@ -220,7 +220,7 @@ if ( ! function_exists( 'audio' ) )
 	 *
 	 * @return  string
 	 */
-	function audio( $attr = array(), $sources = array(), $no_support_message = 'Your browser does not support the HTML5 audio tag' )
+	function audio( $attr = [ ], $sources = [ ], $no_support_message = 'Your browser does not support the HTML5 audio tag' )
 	{
 		$html = "<audio " . _parse_attributes( $attr ) . ">";
 
@@ -245,7 +245,7 @@ if ( ! function_exists( '_parse_attributes' ) )
 	 *
 	 * Parse attributes for HTML elements
 	 *
-	 * @param   array $attr HTML Attributes
+	 * @param   string $attr HTML Attributes
 	 *
 	 * @access  private
 	 * @return  string
@@ -254,11 +254,18 @@ if ( ! function_exists( '_parse_attributes' ) )
 	{
 		if ( is_string( $attr ) )
 		{
-			$xml = simplexml_load_string( '<tag ' . $attr . '/>' );
+			if ( is_html( $attr ) )
+			{
+				$xml = simplexml_load_string( str_replace( '>', '/>', $attr ) );
+			}
+			else
+			{
+				$xml = simplexml_load_string( '<tag ' . $attr . '/>' );
+			}
 
-			$attr = array();
+			$attr = [ ];
 
-			foreach($xml->attributes() as $key => $node)
+			foreach ( $xml->attributes() as $key => $node )
 			{
 				$attr[ $key ] = (string) $node;
 			}
@@ -266,7 +273,7 @@ if ( ! function_exists( '_parse_attributes' ) )
 			return $attr;
 		}
 
-		return array();
+		return [ ];
 	}
 }
 
@@ -285,7 +292,7 @@ if ( ! function_exists( '_parse_sources' ) )
 	 * @access  private
 	 * @return  string
 	 */
-	function _parse_sources( $sources = array() )
+	function _parse_sources( $sources = [ ] )
 	{
 		if ( empty( $sources ) )
 		{
@@ -370,12 +377,12 @@ if ( ! function_exists( 'strips_all_tags' ) )
 	 */
 	function strips_all_tags( $html )
 	{
-		$search = array(
+		$search = [
 			'@<script[^>]*?>.*?</script>@si', // Strip out javascript
 			'@<[\/\!]*?[^<>]*?>@si', // Strip out HTML tags
 			'@<style[^>]*?>.*?</style>@siU', // Strip style tags properly
 			'@<![\s\S]*?--[ \t\n\r]*>@'  // Strip multi-line comments including CDATA
-		);
+		];
 		$result = preg_replace( $search, '', $html );
 
 		return $result;
@@ -398,21 +405,21 @@ if ( ! function_exists( 'strip_word_doc' ) )
 		mb_regex_encoding( 'UTF-8' );
 
 		//replace MS special characters first
-		$search = array(
+		$search  = [
 			'/&lsquo;/u',
 			'/&rsquo;/u',
 			'/&ldquo;/u',
 			'/&rdquo;/u',
 			'/&mdash;/u',
-		);
-		$replace = array(
+		];
+		$replace = [
 			'\'',
 			'\'',
 			'"',
 			'"',
 			'-',
-		);
-		$html = preg_replace( $search, $replace, $html );
+		];
+		$html    = preg_replace( $search, $replace, $html );
 
 		//make sure _all_ html entities are converted to the plain ascii equivalents - it appears
 		//in some MS headers, some html entities are encoded and some aren't
@@ -427,36 +434,38 @@ if ( ! function_exists( 'strip_word_doc' ) )
 
 		//introduce a space into any arithmetic expressions that could be caught by strip_tags so that they won't be
 		//'<1' becomes '< 1'(note: somewhat application specific)
-		$html = preg_replace( array(
-			                      '/<([0-9]+)/',
-		                      ), array(
-			                      '< $1',
-		                      ), $html );
+		$html = preg_replace(
+			[
+				'/<([0-9]+)/',
+			], [
+				'< $1',
+			], $html );
 		$html = strip_tags( $html, $allowed_tags );
 
 		//eliminate extraneous whitespace from start and end of line, or anywhere there are two or more spaces, convert it to one
-		$html = preg_replace( array(
-			                      '/^\s\s+/',
-			                      '/\s\s+$/',
-			                      '/\s\s+/u',
-		                      ), array(
-			                      '',
-			                      '',
-			                      ' ',
-		                      ), $html );
+		$html = preg_replace(
+			[
+				'/^\s\s+/',
+				'/\s\s+$/',
+				'/\s\s+/u',
+			], [
+				'',
+				'',
+				' ',
+			], $html );
 
 		//strip out inline css and simplify style tags
-		$search = array(
+		$search  = [
 			'#<(strong|b)[^>]*>(.*?)</(strong|b)>#isu',
 			'#<(em|i)[^>]*>(.*?)</(em|i)>#isu',
 			'#<u[^>]*>(.*?)</u>#isu',
-		);
-		$replace = array(
+		];
+		$replace = [
 			'<b>$2</b>',
 			'<i>$2</i>',
 			'<u>$1</u>',
-		);
-		$html = preg_replace( $search, $replace, $html );
+		];
+		$html    = preg_replace( $search, $replace, $html );
 
 		//on some of the ?newer MS Word exports, where you get conditionals of the form 'if gte mso 9', etc., it appears
 		//that whatever is in one of the html comments prevents strip_tags from eradicating the html comment that contains
@@ -491,7 +500,7 @@ if ( ! function_exists( 'remove_tags' ) )
 		$content = '';
 		if ( ! is_array( $tags ) )
 		{
-			$tags = ( strpos( $html, '>' ) !== FALSE ? explode( '>', str_replace( '<', '', $tags ) ) : array( $tags ) );
+			$tags = ( strpos( $html, '>' ) !== FALSE ? explode( '>', str_replace( '<', '', $tags ) ) : [ $tags ] );
 			if ( end( $tags ) == '' )
 			{
 				array_pop( $tags );
@@ -572,8 +581,8 @@ if ( ! function_exists( 'strips_tags' ) )
 			$pos[ 1 ] = stripos( $html, '<!--' );
 			$pos[ 2 ] = stripos( $html, '-->', $pos[ 1 ] );
 			$len[ 1 ] = $pos[ 2 ] - $pos[ 1 ] + 3;
-			$x = substr( $html, $pos[ 1 ], $len[ 1 ] );
-			$html = str_replace( $x, '', $html );
+			$x        = substr( $html, $pos[ 1 ], $len[ 1 ] );
+			$html     = str_replace( $x, '', $html );
 		}
 		//remove tags with content between them
 		if ( strlen( $disallowed_tag ) > 0 )
@@ -587,8 +596,8 @@ if ( ! function_exists( 'strips_tags' ) )
 					$pos[ 1 ] = stripos( $html, '<' . $e[ $i ] );
 					$pos[ 2 ] = stripos( $html, $e[ $i ] . '>', $pos[ 1 ] + $len[ 1 ] );
 					$len[ 2 ] = $pos[ 2 ] - $pos[ 1 ] + $len[ 1 ];
-					$x = substr( $html, $pos[ 1 ], $len[ 2 ] );
-					$html = str_replace( $x, '', $html );
+					$x        = substr( $html, $pos[ 1 ], $len[ 2 ] );
+					$html     = str_replace( $x, '', $html );
 				}
 			}
 		}
@@ -598,8 +607,8 @@ if ( ! function_exists( 'strips_tags' ) )
 			$pos[ 1 ] = stripos( $html, '<' );
 			$pos[ 2 ] = stripos( $html, '>', $pos[ 1 ] );
 			$len[ 1 ] = $pos[ 2 ] - $pos[ 1 ] + 1;
-			$x = substr( $html, $pos[ 1 ], $len[ 1 ] );
-			$html = str_replace( $x, '', $html );
+			$x        = substr( $html, $pos[ 1 ], $len[ 1 ] );
+			$html     = str_replace( $x, '', $html );
 		}
 		//finalize keep tag
 		if ( strlen( $allowed_tag ) > 0 )
@@ -626,7 +635,7 @@ if ( ! function_exists( 'clean_white_space' ) )
 	 */
 	function clean_white_space( $html = '' )
 	{
-		$html = str_replace( array( "\n", "\r", '&nbsp;', "\t" ), '', $html );
+		$html = str_replace( [ "\n", "\r", '&nbsp;', "\t" ], '', $html );
 
 		return preg_replace( '|  +|', ' ', $html );
 	}
@@ -686,7 +695,7 @@ if ( ! function_exists( 'clean_white_space' ) )
 
 // ------------------------------------------------------------------------
 
-if( ! function_exists( 'heading' ) )
+if ( ! function_exists( 'heading' ) )
 {
 	/**
 	 * Heading
@@ -707,7 +716,7 @@ if( ! function_exists( 'heading' ) )
 
 // ------------------------------------------------------------------------
 
-if( ! function_exists( 'ul' ) )
+if ( ! function_exists( 'ul' ) )
 {
 	/**
 	 * Unordered List
@@ -727,7 +736,7 @@ if( ! function_exists( 'ul' ) )
 
 // ------------------------------------------------------------------------
 
-if( ! function_exists( 'ol' ) )
+if ( ! function_exists( 'ol' ) )
 {
 	/**
 	 * Ordered List
@@ -747,7 +756,7 @@ if( ! function_exists( 'ol' ) )
 
 // ------------------------------------------------------------------------
 
-if( ! function_exists( '_list' ) )
+if ( ! function_exists( '_list' ) )
 {
 	/**
 	 * Generates the list
@@ -761,10 +770,10 @@ if( ! function_exists( '_list' ) )
 	 *
 	 * @return    string
 	 */
-	function _list( $type = 'ul', $list = array(), $attributes = '', $depth = 0 )
+	function _list( $type = 'ul', $list = [ ], $attributes = '', $depth = 0 )
 	{
 		// If an array wasn't submitted there's nothing to do...
-		if( ! is_array( $list ) )
+		if ( ! is_array( $list ) )
 		{
 			return $list;
 		}
@@ -779,13 +788,13 @@ if( ! function_exists( '_list' ) )
 		// encountered we will recursively call _list()
 
 		static $_last_list_item = '';
-		foreach( $list as $key => $val )
+		foreach ( $list as $key => $val )
 		{
 			$_last_list_item = $key;
 
 			$out .= str_repeat( ' ', $depth + 2 ) . '<li>';
 
-			if( ! is_array( $val ) )
+			if ( ! is_array( $val ) )
 			{
 				$out .= $val;
 			}
@@ -804,7 +813,7 @@ if( ! function_exists( '_list' ) )
 
 // ------------------------------------------------------------------------
 
-if( ! function_exists( 'img' ) )
+if ( ! function_exists( 'img' ) )
 {
 	/**
 	 * Image
@@ -819,24 +828,24 @@ if( ! function_exists( 'img' ) )
 	 */
 	function img( $src = '', $index_page = FALSE, $attributes = '' )
 	{
-		if( ! is_array( $src ) )
+		if ( ! is_array( $src ) )
 		{
-			$src = array( 'src' => $src );
+			$src = [ 'src' => $src ];
 		}
 
 		// If there is no alt attribute defined, set it to an empty string
-		if( ! isset( $src[ 'alt' ] ) )
+		if ( ! isset( $src[ 'alt' ] ) )
 		{
 			$src[ 'alt' ] = '';
 		}
 
 		$img = '<img';
 
-		foreach( $src as $k => $v )
+		foreach ( $src as $k => $v )
 		{
-			if( $k === 'src' && ! preg_match( '#^([a-z]+:)?//#i', $v ) )
+			if ( $k === 'src' && ! preg_match( '#^([a-z]+:)?//#i', $v ) )
 			{
-				if( $index_page === TRUE )
+				if ( $index_page === TRUE )
 				{
 					$img .= ' src="' . get_instance()->config->site_url( $v ) . '"';
 				}
@@ -857,7 +866,7 @@ if( ! function_exists( 'img' ) )
 
 // ------------------------------------------------------------------------
 
-if( ! function_exists( 'doctype' ) )
+if ( ! function_exists( 'doctype' ) )
 {
 	/**
 	 * Doctype
@@ -876,21 +885,21 @@ if( ! function_exists( 'doctype' ) )
 	{
 		static $doctypes;
 
-		if( ! is_array( $doctypes ) )
+		if ( ! is_array( $doctypes ) )
 		{
-			if( is_file( APPSPATH . 'config/doctypes.php' ) )
+			if ( is_file( APPSPATH . 'config/doctypes.php' ) )
 			{
 				include( APPSPATH . 'config/doctypes.php' );
 			}
 
-			if( is_file( APPSPATH . 'config/' . ENVIRONMENT . '/doctypes.php' ) )
+			if ( is_file( APPSPATH . 'config/' . ENVIRONMENT . '/doctypes.php' ) )
 			{
 				include( APPSPATH . 'config/' . ENVIRONMENT . '/doctypes.php' );
 			}
 
-			if( empty( $_doctypes ) OR ! is_array( $_doctypes ) )
+			if ( empty( $_doctypes ) OR ! is_array( $_doctypes ) )
 			{
-				$doctypes = array();
+				$doctypes = [ ];
 
 				return FALSE;
 			}
@@ -904,7 +913,7 @@ if( ! function_exists( 'doctype' ) )
 
 // ------------------------------------------------------------------------
 
-if( ! function_exists( 'link_tag' ) )
+if ( ! function_exists( 'link_tag' ) )
 {
 	/**
 	 * Link
@@ -922,16 +931,16 @@ if( ! function_exists( 'link_tag' ) )
 	 */
 	function link_tag( $href = '', $rel = 'stylesheet', $type = 'text/css', $title = '', $media = '', $index_page = FALSE )
 	{
-		$CI =& get_instance();
+		$CI   =& get_instance();
 		$link = '<link ';
 
-		if( is_array( $href ) )
+		if ( is_array( $href ) )
 		{
-			foreach( $href as $k => $v )
+			foreach ( $href as $k => $v )
 			{
-				if( $k === 'href' && ! preg_match( '#^([a-z]+:)?//#i', $v ) )
+				if ( $k === 'href' && ! preg_match( '#^([a-z]+:)?//#i', $v ) )
 				{
-					if( $index_page === TRUE )
+					if ( $index_page === TRUE )
 					{
 						$link .= 'href="' . $CI->config->site_url( $v ) . '" ';
 					}
@@ -948,11 +957,11 @@ if( ! function_exists( 'link_tag' ) )
 		}
 		else
 		{
-			if( preg_match( '#^([a-z]+:)?//#i', $href ) )
+			if ( preg_match( '#^([a-z]+:)?//#i', $href ) )
 			{
 				$link .= 'href="' . $href . '" ';
 			}
-			elseif( $index_page === TRUE )
+			elseif ( $index_page === TRUE )
 			{
 				$link .= 'href="' . $CI->config->site_url( $href ) . '" ';
 			}
@@ -963,12 +972,12 @@ if( ! function_exists( 'link_tag' ) )
 
 			$link .= 'rel="' . $rel . '" type="' . $type . '" ';
 
-			if( $media !== '' )
+			if ( $media !== '' )
 			{
 				$link .= 'media="' . $media . '" ';
 			}
 
-			if( $title !== '' )
+			if ( $title !== '' )
 			{
 				$link .= 'title="' . $title . '" ';
 			}
@@ -980,7 +989,7 @@ if( ! function_exists( 'link_tag' ) )
 
 // ------------------------------------------------------------------------
 
-if( ! function_exists( 'meta' ) )
+if ( ! function_exists( 'meta' ) )
 {
 	/**
 	 * Generates meta tags from an array of key/values
@@ -996,21 +1005,21 @@ if( ! function_exists( 'meta' ) )
 	{
 		// Since we allow the data to be passes as a string, a simple array
 		// or a multidimensional one, we need to do a little prepping.
-		if( ! is_array( $name ) )
+		if ( ! is_array( $name ) )
 		{
-			$name = array( array( 'name' => $name, 'content' => $content, 'type' => $type, 'newline' => $newline ) );
+			$name = [ [ 'name' => $name, 'content' => $content, 'type' => $type, 'newline' => $newline ] ];
 		}
-		elseif( isset( $name[ 'name' ] ) )
+		elseif ( isset( $name[ 'name' ] ) )
 		{
 			// Turn single array into multidimensional
-			$name = array( $name );
+			$name = [ $name ];
 		}
 
 		$str = '';
-		foreach( $name as $meta )
+		foreach ( $name as $meta )
 		{
-			$type = ( isset( $meta[ 'type' ] ) && $meta[ 'type' ] !== 'name' ) ? 'http-equiv' : 'name';
-			$name = isset( $meta[ 'name' ] ) ? $meta[ 'name' ] : '';
+			$type    = ( isset( $meta[ 'type' ] ) && $meta[ 'type' ] !== 'name' ) ? 'http-equiv' : 'name';
+			$name    = isset( $meta[ 'name' ] ) ? $meta[ 'name' ] : '';
 			$content = isset( $meta[ 'content' ] ) ? $meta[ 'content' ] : '';
 			$newline = isset( $meta[ 'newline' ] ) ? $meta[ 'newline' ] : "\n";
 
@@ -1023,7 +1032,7 @@ if( ! function_exists( 'meta' ) )
 
 // ------------------------------------------------------------------------
 
-if( ! function_exists( 'br' ) )
+if ( ! function_exists( 'br' ) )
 {
 	/**
 	 * Generates HTML BR tags based on number supplied
@@ -1042,7 +1051,7 @@ if( ! function_exists( 'br' ) )
 
 // ------------------------------------------------------------------------
 
-if( ! function_exists( 'nbs' ) )
+if ( ! function_exists( 'nbs' ) )
 {
 	/**
 	 * Generates non-breaking space entities based on number supplied

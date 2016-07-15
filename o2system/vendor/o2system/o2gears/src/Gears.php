@@ -36,7 +36,7 @@ namespace O2System
 
 			$trace = new Trace();
 
-			if( isset( $_SERVER[ 'DOCUMENT_ROOT' ] ) )
+			if ( isset( $_SERVER[ 'DOCUMENT_ROOT' ] ) )
 			{
 				$root_dir = $_SERVER[ 'DOCUMENT_ROOT' ];
 			}
@@ -59,7 +59,7 @@ namespace O2System
 
 			echo $output;
 
-			if( $halt === TRUE )
+			if ( $halt === TRUE )
 			{
 				die;
 			}
@@ -84,7 +84,7 @@ namespace O2System
 
 			echo '<pre>' . $vars . '</pre>';
 
-			if( $halt === TRUE )
+			if ( $halt === TRUE )
 			{
 				die;
 			}
@@ -106,13 +106,13 @@ namespace O2System
 		 */
 		public static function printLine( $line = '', $halt = FALSE )
 		{
-			if( strtoupper( $halt ) === 'FLUSH' )
+			if ( strtoupper( $halt ) === 'FLUSH' )
 			{
-				static::$_lines = [ ];
+				static::$_lines   = [ ];
 				static::$_lines[] = $line;
 			}
 
-			if( is_array( $line ) || is_object( $line ) )
+			if ( is_array( $line ) || is_object( $line ) )
 			{
 				static::$_lines[] = print_r( $line, TRUE );
 			}
@@ -121,9 +121,9 @@ namespace O2System
 				static::$_lines[] = static::__prepareOutput( $line );
 			}
 
-			if( $halt === TRUE OR $line === '---' )
+			if ( $halt === TRUE OR $line === '---' )
 			{
-				$vars = implode( PHP_EOL, static::$_lines );
+				$vars           = implode( PHP_EOL, static::$_lines );
 				static::$_lines = [ ];
 				static::printScreen( $vars, $halt );
 			}
@@ -163,9 +163,9 @@ namespace O2System
 
 		private static function __prepareOutput( $vars )
 		{
-			if( is_bool( $vars ) )
+			if ( is_bool( $vars ) )
 			{
-				if( $vars === TRUE )
+				if ( $vars === TRUE )
 				{
 					$vars = '(bool) TRUE';
 				}
@@ -174,19 +174,19 @@ namespace O2System
 					$vars = '(bool) FALSE';
 				}
 			}
-			elseif( is_resource( $vars ) )
+			elseif ( is_resource( $vars ) )
 			{
 				$vars = '(resource) ' . get_resource_type( $vars );
 			}
-			elseif( is_array( $vars ) || is_object( $vars ) )
+			elseif ( is_array( $vars ) || is_object( $vars ) )
 			{
 				$vars = print_r( $vars, TRUE );
 			}
-			elseif( is_int( $vars ) OR is_numeric( $vars ) )
+			elseif ( is_int( $vars ) OR is_numeric( $vars ) )
 			{
 				$vars = '(int) ' . $vars;
 			}
-			elseif( is_null( $vars ) )
+			elseif ( is_null( $vars ) )
 			{
 				$vars = '(null)';
 			}
@@ -267,7 +267,7 @@ namespace O2System\Gears
 		public static function debug( $type, $title, $vars )
 		{
 			echo '<script type="text/javascript">' . PHP_EOL;
-			switch( $type )
+			switch ( $type )
 			{
 				default:
 				case 1:
@@ -284,9 +284,9 @@ namespace O2System\Gears
 					break;
 			}
 
-			if( ! empty( $vars ) )
+			if ( ! empty( $vars ) )
 			{
-				if( is_object( $vars ) || is_array( $vars ) )
+				if ( is_object( $vars ) || is_array( $vars ) )
 				{
 					$object = json_encode( $vars );
 
@@ -298,10 +298,10 @@ namespace O2System\Gears
 							'~[^A-Z|0-9]~i', "_",
 							$title
 						) . ' = eval("(" + object' . preg_replace(
-						     '~[^A-Z|0-9]~i', "_",
-						     $title
-					     ) . ' + ")" );' . PHP_EOL;
-					switch( $type )
+							'~[^A-Z|0-9]~i', "_",
+							$title
+						) . ' + ")" );' . PHP_EOL;
+					switch ( $type )
 					{
 						default:
 						case 1:
@@ -320,7 +320,7 @@ namespace O2System\Gears
 				}
 				else
 				{
-					switch( $type )
+					switch ( $type )
 					{
 						default:
 						case 1:
@@ -492,7 +492,7 @@ namespace O2System\Gears
 		 */
 		public function elapsedTime( $marker = 'total_execution' )
 		{
-			if( empty( $this->_elapsed[ $marker ] ) )
+			if ( empty( $this->_elapsed[ $marker ] ) )
 			{
 				$this->stop( $marker );
 			}
@@ -539,7 +539,7 @@ namespace O2System\Gears
 		 */
 		public function memoryUsage( $marker = 'total_execution' )
 		{
-			if( empty( $this->_elapsed[ $marker ] ) )
+			if ( empty( $this->_elapsed[ $marker ] ) )
 			{
 				$this->stop( $marker );
 			}
@@ -553,7 +553,7 @@ namespace O2System\Gears
 
 		public function processorUsage( $marker = 'total_execution' )
 		{
-			if( empty( $this->_elapsed[ $marker ] ) )
+			if ( empty( $this->_elapsed[ $marker ] ) )
 			{
 				$this->stop( $marker );
 			}
@@ -583,28 +583,28 @@ namespace O2System\Gears
 		 */
 		protected function _getProcessorUsage()
 		{
-			if( stristr( PHP_OS, 'win' ) )
+			if ( stristr( PHP_OS, 'win' ) )
 			{
-				if( class_exists( 'COM', FALSE ) )
+				if ( class_exists( 'COM', FALSE ) )
 				{
-					$wmi = new \COM( "Winmgmts://" );
+					$wmi    = new \COM( "Winmgmts://" );
 					$server = $wmi->execquery( "SELECT LoadPercentage FROM Win32_Processor" );
 
-					$cpu_num = 0;
+					$cpu_num     = 0;
 					$usage_total = 0;
 
-					if( ! empty( $server ) )
+					if ( ! empty( $server ) )
 					{
 						$time_start = microtime( TRUE );
-						foreach( $server as $cpu )
+						foreach ( $server as $cpu )
 						{
 							$cpu_num++;
 							$usage_total += $cpu->loadpercentage;
 
-							$time_end = microtime( TRUE );
+							$time_end       = microtime( TRUE );
 							$time_execution = round( $time_end - $time_start );
 
-							if( $time_execution > 5 )
+							if ( $time_execution > 5 )
 							{
 								break;
 							}
@@ -624,11 +624,11 @@ namespace O2System\Gears
 			}
 			else
 			{
-				$sys_load = sys_getloadavg();
+				$sys_load  = sys_getloadavg();
 				$cpu_usage = $sys_load[ 0 ];
 			}
 
-			return (int)$cpu_usage . ' hertz';
+			return (int) $cpu_usage . ' hertz';
 		}
 
 		// ------------------------------------------------------------------------
@@ -643,11 +643,11 @@ namespace O2System\Gears
 		 */
 		public function elapsed( $marker = 'total_execution' )
 		{
-			$elapsed = new \stdClass;
-			$elapsed->time = $this->elapsedTime( $marker );
-			$elapsed->memory = $this->memoryUsage( $marker );
+			$elapsed              = new \stdClass;
+			$elapsed->time        = $this->elapsedTime( $marker );
+			$elapsed->memory      = $this->memoryUsage( $marker );
 			$elapsed->memory_peak = $this->memoryPeakUsage();
-			$elapsed->processor = $this->processorUsage( $marker );
+			$elapsed->processor   = $this->processorUsage( $marker );
 
 			return $elapsed;
 		}
@@ -690,7 +690,7 @@ namespace O2System\Gears
 		 */
 		public static function start()
 		{
-			static::$_chronology = [ ];
+			static::$_chronology   = [ ];
 			static::$_chronology[] = static::__whereCall( __CLASS__ . '::start()' );
 		}
 
@@ -711,9 +711,9 @@ namespace O2System\Gears
 		{
 			$tracer = new Tracer();
 
-			foreach( $tracer->chronology() as $trace )
+			foreach ( $tracer->chronology() as $trace )
 			{
-				if( $trace->call === $call )
+				if ( $trace->call === $call )
 				{
 					return $trace;
 					break;
@@ -739,7 +739,7 @@ namespace O2System\Gears
 		{
 			$trace = static::__whereCall( __CLASS__ . '::line()' );
 
-			if( $export === TRUE )
+			if ( $export === TRUE )
 			{
 				$trace->data = var_export( $vars, TRUE );
 			}
@@ -767,7 +767,7 @@ namespace O2System\Gears
 		 */
 		public static function marker()
 		{
-			$trace = static::__whereCall( __CLASS__ . '::marker()' );
+			$trace                 = static::__whereCall( __CLASS__ . '::marker()' );
 			static::$_chronology[] = $trace;
 		}
 
@@ -787,8 +787,8 @@ namespace O2System\Gears
 		public static function stop( $halt = TRUE )
 		{
 			static::$_chronology[] = static::__whereCall( __CLASS__ . '::stop()' );
-			$chronology = static::$_chronology;
-			static::$_chronology = [ ];
+			$chronology            = static::$_chronology;
+			static::$_chronology   = [ ];
 
 			Output::screen( $chronology, $halt );
 		}
@@ -869,14 +869,14 @@ namespace O2System\Gears
 		{
 			$this->_config = array_merge( $this->_config, $config );
 
-			if( ! is_dir( $this->_config[ 'path' ] ) )
+			if ( ! is_dir( $this->_config[ 'path' ] ) )
 			{
-				if( ! mkdir( $this->_config[ 'path' ], 0775, TRUE ) )
+				if ( ! mkdir( $this->_config[ 'path' ], 0775, TRUE ) )
 				{
 					throw new \Exception( "Logger: Logs path '" . $this->_config[ 'path' ] . "' is not a directory, doesn't exist or cannot be created." );
 				}
 			}
-			elseif( ! is_writable( $this->_config[ 'path' ] ) )
+			elseif ( ! is_writable( $this->_config[ 'path' ] ) )
 			{
 				throw new \Exception( "Logger: Logs path '" . $this->_config[ 'path' ] . "' is not writable by the PHP process." );
 			}
@@ -1015,27 +1015,27 @@ namespace O2System\Gears
 		 */
 		public function write( $level, $message )
 		{
-			if( $this->_config[ 'threshold' ] == 0 )
+			if ( $this->_config[ 'threshold' ] == 0 )
 			{
 				return FALSE;
 			}
 
-			if( is_array( $this->_config[ 'threshold' ] ) )
+			if ( is_array( $this->_config[ 'threshold' ] ) )
 			{
-				if( ! in_array( $level, $this->_config[ 'threshold' ] ) )
+				if ( ! in_array( $level, $this->_config[ 'threshold' ] ) )
 				{
 					return FALSE;
 				}
 			}
-			elseif( $this->_config[ 'threshold' ] !== Logger::ALL )
+			elseif ( $this->_config[ 'threshold' ] !== Logger::ALL )
 			{
-				if( ! is_string( $level ) && $level > $this->_config[ 'threshold' ] )
+				if ( ! is_string( $level ) && $level > $this->_config[ 'threshold' ] )
 				{
 					return FALSE;
 				}
 			}
 
-			if( is_numeric( $level ) )
+			if ( is_numeric( $level ) )
 			{
 				$level = $this->_levels[ $level ];
 			}
@@ -1045,14 +1045,14 @@ namespace O2System\Gears
 			}
 
 			$filepath = $this->_config[ 'path' ] . 'log-' . date( 'd-m-Y' ) . '.log';
-			$log = '';
+			$log      = '';
 
-			if( ! is_file( $filepath ) )
+			if ( ! is_file( $filepath ) )
 			{
 				$newfile = TRUE;
 			}
 
-			if( ! $fp = @fopen( $filepath, 'ab' ) )
+			if ( ! $fp = @fopen( $filepath, 'ab' ) )
 			{
 				return FALSE;
 			}
@@ -1061,9 +1061,9 @@ namespace O2System\Gears
 
 			flock( $fp, LOCK_EX );
 
-			for( $written = 0, $length = strlen( $log ); $written < $length; $written += $result )
+			for ( $written = 0, $length = strlen( $log ); $written < $length; $written += $result )
 			{
-				if( ( $result = fwrite( $fp, substr( $log, $written ) ) ) === FALSE )
+				if ( ( $result = fwrite( $fp, substr( $log, $written ) ) ) === FALSE )
 				{
 					break;
 				}
@@ -1072,7 +1072,7 @@ namespace O2System\Gears
 			flock( $fp, LOCK_UN );
 			fclose( $fp );
 
-			if( isset( $newfile ) AND $newfile === TRUE )
+			if ( isset( $newfile ) AND $newfile === TRUE )
 			{
 				chmod( $filepath, 0664 );
 			}
@@ -1148,7 +1148,7 @@ namespace O2System\Gears
 				'memory' => memory_get_usage(),
 			];
 
-			if( ! empty( $trace ) )
+			if ( ! empty( $trace ) )
 			{
 				$this->_trace = $trace;
 			}
@@ -1176,10 +1176,10 @@ namespace O2System\Gears
 		 */
 		private function __generateChronology()
 		{
-			foreach( $this->_trace as $trace )
+			foreach ( $this->_trace as $trace )
 			{
-				if( in_array( $trace[ 'function' ], [ 'showException', 'showError', 'showPhpError', 'shutdown' ] ) OR
-				    ( isset( $trace[ 'class' ] ) AND $trace[ 'class' ] === 'O2System\Gears\Tracer' )
+				if ( in_array( $trace[ 'function' ], [ 'showException', 'showError', 'showPhpError', 'shutdown' ] ) OR
+					( isset( $trace[ 'class' ] ) AND $trace[ 'class' ] === 'O2System\Gears\Tracer' )
 				)
 				{
 					continue;
@@ -1187,7 +1187,7 @@ namespace O2System\Gears
 
 				$line = new TraceChronology();
 
-				if( isset( $trace[ 'class' ] ) && isset( $trace[ 'type' ] ) )
+				if ( isset( $trace[ 'class' ] ) && isset( $trace[ 'type' ] ) )
 				{
 					$line->call = $trace[ 'class' ] . $trace[ 'type' ] . $trace[ 'function' ] . '()';
 					$line->type = $trace[ 'type' ] === '->' ? 'non-static' : 'static';
@@ -1198,16 +1198,16 @@ namespace O2System\Gears
 					$line->type = 'non-static';
 				}
 
-				if( ! empty( $trace[ 'args' ] ) AND $line->call !== 'print_out()' )
+				if ( ! empty( $trace[ 'args' ] ) AND $line->call !== 'print_out()' )
 				{
 					$line->args = $trace[ 'args' ];
 				}
 
-				if( ! isset( $trace[ 'file' ] ) )
+				if ( ! isset( $trace[ 'file' ] ) )
 				{
 					$current_trace = current( $this->_trace );
-					$line->file = @$current_trace[ 'file' ];
-					$line->line = @$current_trace[ 'line' ];
+					$line->file    = @$current_trace[ 'file' ];
+					$line->line    = @$current_trace[ 'line' ];
 				}
 				else
 				{
@@ -1215,12 +1215,12 @@ namespace O2System\Gears
 					$line->line = @$trace[ 'line' ];
 				}
 
-				$line->time = ( time() + microtime() ) - $this->_benchmark[ 'time' ];
+				$line->time   = ( time() + microtime() ) - $this->_benchmark[ 'time' ];
 				$line->memory = memory_get_usage() - $this->_benchmark[ 'memory' ];
 
 				$this->_chronology[] = $line;
 
-				if( in_array( $trace[ 'function' ], [ 'print_out', 'print_line' ] ) )
+				if ( in_array( $trace[ 'function' ], [ 'print_out', 'print_line' ] ) )
 				{
 					break;
 				}
@@ -1244,7 +1244,7 @@ namespace O2System\Gears
 		{
 			$chronology = $this->_chronology;
 
-			if( $reset === TRUE )
+			if ( $reset === TRUE )
 			{
 				$this->_chronology = [ ];
 			}
@@ -1297,12 +1297,12 @@ namespace O2System\Gears
 
 		public function start( $application_name = NULL )
 		{
-			if( isset( $application_name ) )
+			if ( isset( $application_name ) )
 			{
 				$this->setApplicationName( $application_name );
 			}
 
-			if( mt_rand( 1, $this->_sample_size == 1 ) AND isset( $_GET[ 'XHPROF_ENABLED' ] ) )
+			if ( mt_rand( 1, $this->_sample_size == 1 ) AND isset( $_GET[ 'XHPROF_ENABLED' ] ) )
 			{
 				xhprof_enable();
 
@@ -1312,7 +1312,7 @@ namespace O2System\Gears
 
 		public function end()
 		{
-			if( self::$_enabled )
+			if ( self::$_enabled )
 			{
 				$XHProfData = xhprof_disable();
 

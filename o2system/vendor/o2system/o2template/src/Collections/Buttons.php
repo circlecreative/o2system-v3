@@ -14,7 +14,7 @@ use O2System\Glob\ArrayObject;
 
 class Buttons extends ArrayObject
 {
-	public function __construct( array $buttons = array() )
+	public function __construct( array $buttons = [ ] )
 	{
 		if ( ! empty( $buttons ) )
 		{

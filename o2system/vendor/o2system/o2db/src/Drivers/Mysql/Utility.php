@@ -83,7 +83,7 @@ class Utility extends UtilityInterface
 	 *
 	 * @return    mixed
 	 */
-	protected function _backup( $params = array() )
+	protected function _backup( $params = [ ] )
 	{
 		if ( count( $params ) === 0 )
 		{
@@ -127,7 +127,7 @@ class Utility extends UtilityInterface
 				$output .= 'DROP TABLE IF EXISTS ' . $this->_driver->protectIdentifiers( $table ) . ';' . $newline . $newline;
 			}
 
-			$i = 0;
+			$i      = 0;
 			$result = $query->resultArray();
 			foreach ( $result[ 0 ] as $value )
 			{
@@ -155,15 +155,16 @@ class Utility extends UtilityInterface
 			// integer type. We use this info to decide whether to
 			// surround the data with quotes or not
 
-			$i = 0;
+			$i         = 0;
 			$field_str = '';
-			$is_int = array();
+			$is_int    = [ ];
 			while ( $field = $query->result_id->fetchField() )
 			{
 				// Most versions of MySQL store timestamp as a string
-				$is_int[ $i ] = in_array( strtolower( $field->type ),
-				                          array( 'tinyint', 'smallint', 'mediumint', 'int', 'bigint' ), //, 'timestamp'),
-				                          TRUE );
+				$is_int[ $i ] = in_array(
+					strtolower( $field->type ),
+					[ 'tinyint', 'smallint', 'mediumint', 'int', 'bigint' ], //, 'timestamp'),
+					TRUE );
 
 				// Create a string of field names
 				$field_str .= $this->_driver->escapeIdentifiers( $field->name ) . ', ';

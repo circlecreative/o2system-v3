@@ -71,7 +71,7 @@ final class Hooks
 	 *
 	 * @type array
 	 */
-	protected $_objects = array();
+	protected $_objects = [ ];
 
 	/**
 	 * In progress flag
@@ -187,9 +187,9 @@ final class Hooks
 		}
 
 		// Determine and class and/or function names
-		$class = empty( $data[ 'class' ] ) ? FALSE : $data[ 'class' ];
+		$class    = empty( $data[ 'class' ] ) ? FALSE : $data[ 'class' ];
 		$function = empty( $data[ 'function' ] ) ? FALSE : $data[ 'function' ];
-		$params = isset( $data[ 'params' ] ) ? $data[ 'params' ] : array();
+		$params   = isset( $data[ 'params' ] ) ? $data[ 'params' ] : [ ];
 
 		if ( empty( $function ) )
 		{
@@ -207,7 +207,7 @@ final class Hooks
 			{
 				if ( method_exists( $this->_objects[ $class ], $function ) )
 				{
-					call_user_func_array( array( $this->_objects[ $class ], $function ), $params );
+					call_user_func_array( [ $this->_objects[ $class ], $function ], $params );
 				}
 				else
 				{
@@ -225,7 +225,7 @@ final class Hooks
 
 				// Store the object and execute the method
 				$this->_objects[ $class ] = new $class();
-				call_user_func_array( array( $this->_objects[ $class ], $function ), $params );
+				call_user_func_array( [ $this->_objects[ $class ], $function ], $params );
 			}
 		}
 		else
@@ -285,14 +285,14 @@ final class Hooks
 
 			if ( class_exists( $controller_class ) )
 			{
-				$module_object = new $controller_class();
+				$module_object           = new $controller_class();
 				$module_object->metadata = $module;
 
 				if ( is_file( ROOTPATH . $module->realpath . 'core' . DIRECTORY_SEPARATOR . 'Model.php' ) )
 				{
 					$model_class = $module->namespace . 'Core\Model';
 
-					$model_object_name = strtolower( $module->type ) . '_model';
+					$model_object_name                   = strtolower( $module->type ) . '_model';
 					$module_object->{$model_object_name} = new $model_class();
 				}
 
@@ -361,12 +361,12 @@ final class Hooks
 
 			if ( class_exists( $controller_class ) )
 			{
-				$plugin_object = new $controller_class();
+				$plugin_object           = new $controller_class();
 				$plugin_object->metadata = $plugin;
 
 				if ( is_file( ROOTPATH . $plugin->realpath . 'core' . DIRECTORY_SEPARATOR . 'Model.php' ) )
 				{
-					$model_class = $plugin->namespace . 'Core\Model';
+					$model_class                 = $plugin->namespace . 'Core\Model';
 					$plugin_object->plugin_model = new $model_class();
 				}
 
@@ -437,7 +437,7 @@ final class Hooks
 
 			if ( class_exists( $controller_class ) )
 			{
-				$widget_object = new $controller_class();
+				$widget_object           = new $controller_class();
 				$widget_object->metadata = $widget;
 
 				// Run Plugin Settings

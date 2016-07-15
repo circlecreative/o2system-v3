@@ -65,13 +65,13 @@ class Forge extends ForgeInterface
 	 *
 	 * @type    array
 	 */
-	protected $_unsigned = array(
+	protected $_unsigned = [
 		'SMALLINT'   => 'INTEGER',
 		'INT'        => 'BIGINT',
 		'INTEGER'    => 'BIGINT',
 		'REAL'       => 'DOUBLE PRECISION',
 		'SMALLFLOAT' => 'DOUBLE PRECISION',
-	);
+	];
 
 	/**
 	 * DEFAULT value representation in CREATE/ALTER TABLE statements
@@ -91,7 +91,7 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    string|string[]
 	 */
-	protected function _alterTable($alter_type, $table, $field )
+	protected function _alterTable( $alter_type, $table, $field )
 	{
 		if ( $alter_type === 'CHANGE' )
 		{
@@ -112,17 +112,17 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    void
 	 */
-	protected function _attrType(&$attributes )
+	protected function _attrType( &$attributes )
 	{
 		switch ( strtoupper( $attributes[ 'TYPE' ] ) )
 		{
 			case 'TINYINT':
-				$attributes[ 'TYPE' ] = 'SMALLINT';
+				$attributes[ 'TYPE' ]     = 'SMALLINT';
 				$attributes[ 'UNSIGNED' ] = FALSE;
 
 				return;
 			case 'MEDIUMINT':
-				$attributes[ 'TYPE' ] = 'INTEGER';
+				$attributes[ 'TYPE' ]     = 'INTEGER';
 				$attributes[ 'UNSIGNED' ] = FALSE;
 
 				return;
@@ -152,7 +152,7 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    void
 	 */
-	protected function _attrUnique(&$attributes, &$field )
+	protected function _attrUnique( &$attributes, &$field )
 	{
 		if ( ! empty( $attributes[ 'UNIQUE' ] ) && $attributes[ 'UNIQUE' ] === TRUE )
 		{
@@ -170,7 +170,7 @@ class Forge extends ForgeInterface
 	 *
 	 * @return    void
 	 */
-	protected function _attrAutoIncrement(&$attributes, &$field )
+	protected function _attrAutoIncrement( &$attributes, &$field )
 	{
 		// Not supported
 	}

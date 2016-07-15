@@ -114,8 +114,6 @@ abstract class Controller extends ControllerInterface
 				$assets_files[] = $module->parameter;
 			}
 
-			$assets_files[] = $module->parameter;
-
 			// Load Controller Assets
 			if ( $module->parameter === \O2System::$active[ 'controller' ]->parameter )
 			{
@@ -131,16 +129,68 @@ abstract class Controller extends ControllerInterface
 			}
 			else
 			{
-				$assets_files[] = $module->parameter . '-' . \O2System::$active[ 'controller' ]->parameter;
+				$controller_namespaces = explode( 'Controllers\\', $this->active[ 'controller' ]->namespace );
+				array_shift( $controller_namespaces );
 
-				if ( \O2System::$active[ 'controller' ]->method === '_route' )
+				$controller_namespaces = array_map(
+					function ( $namespace )
+					{
+						return strtolower( str_replace( '\\', '', $namespace ) );
+					}, $controller_namespaces );
+
+				if ( empty( $controller_namespaces ) )
 				{
-					$method         = empty( $params ) ? NULL : '-' . reset( $params );
-					$assets_files[] = $module->parameter . '-' . \O2System::$active[ 'controller' ]->parameter . $method;
+					$assets_files[] = $module->parameter . '-' . \O2System::$active[ 'controller' ]->parameter;
+					$assets_files[] = $module->parameter . DIRECTORY_SEPARATOR . \O2System::$active[ 'controller' ]->parameter;
+
+					if ( \O2System::$active[ 'controller' ]->method === '_route' )
+					{
+						$method         = empty( $params ) ? NULL : '-' . reset( $params );
+						$assets_files[] = $module->parameter . '-' . \O2System::$active[ 'controller' ]->parameter . $method;
+					}
+					else
+					{
+						$assets_files[] = $module->parameter . '-' . \O2System::$active[ 'controller' ]->parameter . '-' . \O2System::$active[ 'controller' ]->method;
+					}
 				}
 				else
 				{
-					$assets_files[] = $module->parameter . '-' . \O2System::$active[ 'controller' ]->parameter . '-' . \O2System::$active[ 'controller' ]->method;
+					$assets_files[] = \O2System::$active[ 'controller' ]->parameter;
+
+					if ( \O2System::$active[ 'controller' ]->method === '_route' )
+					{
+						$method = empty( \O2System::$active->controller->params ) ? NULL : reset( \O2System::$active->controller->params );
+
+						// Dashed Files
+						$assets_files[] = $module->parameter . '-' . \O2System::$active[ 'controller' ]->parameter;
+						$assets_files[] = $module->parameter . '-' . \O2System::$active[ 'controller' ]->parameter . '-' . $method;
+
+						$assets_files[] = \O2System::$active[ 'controller' ]->parameter;
+						$assets_files[] = \O2System::$active[ 'controller' ]->parameter . '-' . $method;
+
+						// Directory Files
+						$assets_files[] = $module->parameter . DIRECTORY_SEPARATOR . \O2System::$active[ 'controller' ]->parameter;
+						$assets_files[] = $module->parameter . DIRECTORY_SEPARATOR . implode( DIRECTORY_SEPARATOR, $controller_namespaces ) . DIRECTORY_SEPARATOR . \O2System::$active[ 'controller' ]->parameter;
+
+						$assets_files[] = $module->parameter . DIRECTORY_SEPARATOR . \O2System::$active[ 'controller' ]->parameter . DIRECTORY_SEPARATOR . $method;
+						$assets_files[] = $module->parameter . DIRECTORY_SEPARATOR . implode( DIRECTORY_SEPARATOR, $controller_namespaces ) . DIRECTORY_SEPARATOR . \O2System::$active[ 'controller' ]->parameter . DIRECTORY_SEPARATOR . $method;
+
+						$assets_files[] = implode( DIRECTORY_SEPARATOR, $controller_namespaces ) . DIRECTORY_SEPARATOR . \O2System::$active[ 'controller' ]->parameter;
+						$assets_files[] = \O2System::$active[ 'controller' ]->parameter;
+
+						$assets_files[] = implode( DIRECTORY_SEPARATOR, $controller_namespaces ) . DIRECTORY_SEPARATOR . \O2System::$active[ 'controller' ]->parameter . DIRECTORY_SEPARATOR . $method;
+						$assets_files[] = \O2System::$active[ 'controller' ]->parameter . DIRECTORY_SEPARATOR . $method;
+					}
+					else
+					{
+						// Dashed Files
+						$assets_files[] = $module->parameter . '-' . \O2System::$active[ 'controller' ]->parameter . '-' . \O2System::$active[ 'controller' ]->method;
+						$assets_files[] = \O2System::$active[ 'controller' ]->parameter . '-' . \O2System::$active[ 'controller' ]->method;
+
+						// Directory Files
+						$assets_files[] = $module->parameter . DIRECTORY_SEPARATOR . \O2System::$active[ 'controller' ]->parameter . DIRECTORY_SEPARATOR . \O2System::$active[ 'controller' ]->method;
+						$assets_files[] = \O2System::$active[ 'controller' ]->parameter . DIRECTORY_SEPARATOR . \O2System::$active[ 'controller' ]->method;
+					}
 				}
 			}
 
@@ -172,14 +222,41 @@ abstract class Controller extends ControllerInterface
 		}
 		else
 		{
-			$files = array_map(
-				function ( $filename )
+			$controller_namespaces = explode( 'Controllers\\', $this->active[ 'controller' ]->namespace );
+			array_shift( $controller_namespaces );
+
+			$controller_namespaces = array_map(
+				function ( $namespace )
 				{
-					return str_replace( '_', '-', $filename );
-				}, [
-					   \O2System::$active[ 'controller' ]->parameter,
-					   \O2System::$active[ 'controller' ]->parameter . '-' . trim( \O2System::$active[ 'controller' ]->method, '_' ),
-				   ] );
+					return strtolower( str_replace( '\\', '', $namespace ) );
+				}, $controller_namespaces );
+
+			if ( empty( $controller_namespaces ) )
+			{
+				$files = array_map(
+					function ( $filename )
+					{
+						return str_replace( '_', '-', $filename );
+					}, [
+						   \O2System::$active[ 'controller' ]->parameter,
+						   \O2System::$active[ 'controller' ]->parameter . '-' . trim( \O2System::$active[ 'controller' ]->method, '_' ),
+					   ] );
+			}
+			else
+			{
+				$files = array_map(
+					function ( $filename )
+					{
+						return str_replace( '_', '-', $filename );
+					}, [
+						   \O2System::$active[ 'controller' ]->parameter,
+						   implode( '-', $controller_namespaces ) . '-' . \O2System::$active[ 'controller' ]->parameter,
+						   implode( DIRECTORY_SEPARATOR, $controller_namespaces ) . DIRECTORY_SEPARATOR . \O2System::$active[ 'controller' ]->parameter,
+						   \O2System::$active[ 'controller' ]->parameter . '-' . trim( \O2System::$active[ 'controller' ]->method, '_' ),
+						   implode( '-', $controller_namespaces ) . '-' . \O2System::$active[ 'controller' ]->parameter . '-' . trim( \O2System::$active[ 'controller' ]->method, '_' ),
+						   implode( DIRECTORY_SEPARATOR, $controller_namespaces ) . DIRECTORY_SEPARATOR . \O2System::$active[ 'controller' ]->parameter . DIRECTORY_SEPARATOR . trim( \O2System::$active[ 'controller' ]->method, '_' ),
+					   ] );
+			}
 
 			$this->view->assets->addAssets( $files, 'custom' );
 		}

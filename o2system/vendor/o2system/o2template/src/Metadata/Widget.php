@@ -13,5 +13,5 @@ use O2System\Glob\ArrayObject;
 
 class Widget extends ArrayObject
 {
-	
+
 }

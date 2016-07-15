@@ -55,7 +55,7 @@ defined( 'ROOTPATH' ) OR exit( 'No direct script access allowed' );
  */
 class Email
 {
-	protected $_config = array();
+	protected $_config = [ ];
 
 	/**
 	 * PHPMailer Handler
@@ -64,9 +64,9 @@ class Email
 	 */
 	protected $_php_mailer;
 
-	protected $_errors = array();
+	protected $_errors = [ ];
 
-	public function __construct( $config = array() )
+	public function __construct( $config = [ ] )
 	{
 		if ( ! class_exists( 'PHPMailer' ) )
 		{
@@ -108,7 +108,7 @@ class Email
 		}
 		else
 		{
-			$this->_config[ 'from' ] = 'no-reply@' . str_replace( 'www.', '', \O2System::$active[ 'domain' ] );
+			$this->_config[ 'from' ]      = 'no-reply@' . str_replace( 'www.', '', \O2System::$active[ 'domain' ] );
 			$this->_config[ 'from_name' ] = 'no-reply';
 		}
 
@@ -117,7 +117,7 @@ class Email
 			if ( is_string( $config[ 'protocol' ] ) )
 			{
 				$protocol = $config[ 'protocol' ];
-				$settings = array();
+				$settings = [ ];
 			}
 			else
 			{
@@ -146,30 +146,30 @@ class Email
 
 			if ( method_exists( $this, strtolower( $key ) ) )
 			{
-				call_user_func_array( array( $this, strtolower( $key ) ), $value );
+				call_user_func_array( [ $this, strtolower( $key ) ], $value );
 			}
 			elseif ( method_exists( $this, 'set_' . strtolower( $key ) ) )
 			{
-				call_user_func_array( array( $this, 'set_' . strtolower( $key ) ), $value );
+				call_user_func_array( [ $this, 'set_' . strtolower( $key ) ], $value );
 			}
 		}
 	}
 
-	public function setHost($host )
+	public function setHost( $host )
 	{
 		$this->_php_mailer->Host = $host;
 
 		return $this;
 	}
 
-	public function setCharset($charset )
+	public function setCharset( $charset )
 	{
 		$this->_php_mailer->CharSet = $charset;
 
 		return $this;
 	}
 
-	public function setContentType($type )
+	public function setContentType( $type )
 	{
 		if ( ! in_array( $type, [ 'html', 'plain', 'text' ] ) )
 		{
@@ -240,11 +240,11 @@ class Email
 		return $this;
 	}
 
-	public function message( $body, $vars = array() )
+	public function message( $body, $vars = [ ] )
 	{
 		if ( \O2System::instance()->__isset( 'view' ) )
 		{
-			$body = \O2System::View()->load( $body, (array)$vars, TRUE );
+			$body = \O2System::View()->load( $body, (array) $vars, TRUE );
 		}
 		elseif ( is_file( $body ) )
 		{
@@ -287,13 +287,13 @@ class Email
 
 		$this->setContentType( 'html' );
 
-		$this->_php_mailer->Body = $body;
+		$this->_php_mailer->Body    = $body;
 		$this->_php_mailer->AltBody = strip_tags( $body );
 
 		return $this;
 	}
 
-	public function altMessage($message, $vars = array() )
+	public function altMessage( $message, $vars = [ ] )
 	{
 		if ( \O2System::instance()->__isset( 'view' ) )
 		{
@@ -357,21 +357,21 @@ class Email
 		return $this;
 	}
 
-	public function fromName($name )
+	public function fromName( $name )
 	{
 		$this->_php_mailer->FromName = $name;
 
 		return $this;
 	}
 
-	public function returnPath($return_path )
+	public function returnPath( $return_path )
 	{
 		$this->_php_mailer->ReturnPath = $return_path;
 
 		return $this;
 	}
 
-	public function replyTo($address, $name )
+	public function replyTo( $address, $name )
 	{
 		$this->_php_mailer->addReplyTo( $address, $name );
 

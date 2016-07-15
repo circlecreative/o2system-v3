@@ -120,7 +120,7 @@ class User extends DriverInterface
 
 			return $this->isLogin();
 		}
-		elseif ( \O2System::UserAgent()->isBrowser() )
+		elseif ( \O2System::Useragent()->isBrowser() )
 		{
 			if ( $credentials = $this->_library->cookie->getRemember() )
 			{
@@ -132,13 +132,13 @@ class User extends DriverInterface
 			}
 		}
 
-		if ( $http_authorization = \O2System::Input()->server( 'HTTP_AUTHORIZATION' ) )
+		if ( $http_authorization = \O2System::Input()->server( 'HTTP_AUTHORIZATION_TOKEN' ) )
 		{
-			list( $JWT ) = sscanf( $http_authorization, 'Bearer JWT-%s' );
+			list( $token ) = sscanf( $http_authorization, 'WT-%s' );
 
-			if ( isset( $JWT ) )
+			if ( isset( $token ) )
 			{
-				if ( $credentials = $this->_library->token->getCredentials( $JWT ) )
+				if ( $credentials = $this->_library->token->getCredentials( $token ) )
 				{
 					return $this->_library->login->fromCredentials( $credentials );
 				}
@@ -158,25 +158,25 @@ class User extends DriverInterface
 	 *
 	 * @access  public
 	 */
-	public function logout()
+	public function destroy()
 	{
-		$this->destroyCookies();
-
-		if ( \O2System::Session()->isStarted() )
+		foreach ( [ 'remember', 'sso' ] as $cookie_name )
 		{
-			\O2System::Session()->destroy();
-		}
-
-		if ( $api_url = $this->_library->getConfig( 'sso', 'api' ) )
-		{
-			$origin = isset( $_SERVER[ 'HTTP_HOST' ] ) ? $_SERVER[ 'HTTP_HOST' ] : $_SERVER[ 'SERVER_NAME' ];
-
-			if ( strpos( $api_url, $origin ) === FALSE )
+			if ( $credentials = $this->_library->cookie->{'get' . ucfirst( $cookie_name )}() )
 			{
-				$api_url = is_https() ? 'https://' . $api_url : 'http://' . $api_url . '/logout';
-
-				redirect( $api_url . '?' . http_build_query( [ 'origin' => $origin ] ) );
+				if ( $cache = \O2System::Cache()->get( $cookie_name . '-' . $credentials[ 'signature' ] ) )
+				{
+					\O2System::Cache()->delete( $cookie_name . '-' . $credentials[ 'signature' ] );
+				}
 			}
 		}
+
+		if ( $cache = \O2System::Cache()->get( 'token-' . $credentials[ 'signature' ] ) )
+		{
+			\O2System::Cache()->delete( 'token-' . $credentials[ 'signature' ] );
+		}
+
+		$this->_library->cookie->destroy();
+		\O2System::Session()->destroy();
 	}
 }

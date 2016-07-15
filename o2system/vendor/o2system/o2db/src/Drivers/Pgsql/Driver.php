@@ -74,7 +74,7 @@ class Driver extends DriverInterface
 	 *
 	 * @type    array
 	 */
-	protected $_random_keywords = array( 'RANDOM()', 'RANDOM()' );
+	protected $_random_keywords = [ 'RANDOM()', 'RANDOM()' ];
 
 	// --------------------------------------------------------------------
 
@@ -136,7 +136,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    int
 	 */
-	public function insertId($name = NULL )
+	public function insertId( $name = NULL )
 	{
 		if ( $name === NULL && version_compare( $this->version(), '8.1', '>=' ) )
 		{
@@ -158,9 +158,9 @@ class Driver extends DriverInterface
 	 *
 	 * @return    bool
 	 */
-	public function isWriteType($sql )
+	public function isWriteType( $sql )
 	{
-		return (bool) preg_match( '/^\s*"?(SET|INSERT(?![^\)]+\)\s+RETURNING)|UPDATE(?!.*\sRETURNING)|DELETE|CREATE|DROP|TRUNCATE|LOAD|COPY|ALTER|RENAME|GRANT|REVOKE|LOCK|UNLOCK|REINDEX)\s/i', str_replace( array( "\r\n", "\r", "\n" ), ' ', $sql ) );
+		return (bool) preg_match( '/^\s*"?(SET|INSERT(?![^\)]+\)\s+RETURNING)|UPDATE(?!.*\sRETURNING)|DELETE|CREATE|DROP|TRUNCATE|LOAD|COPY|ALTER|RENAME|GRANT|REVOKE|LOCK|UNLOCK|REINDEX)\s/i', str_replace( [ "\r\n", "\r", "\n" ], ' ', $sql ) );
 	}
 
 	// --------------------------------------------------------------------
@@ -195,7 +195,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    object
 	 */
-	public function orderBy($orderby, $direction = '', $escape = NULL )
+	public function orderBy( $orderby, $direction = '', $escape = NULL )
 	{
 		$direction = strtoupper( trim( $direction ) );
 		if ( $direction === 'RANDOM' )
@@ -212,9 +212,9 @@ class Driver extends DriverInterface
 				$this->simpleQuery( 'SET SEED ' . $orderby );
 			}
 
-			$orderby = $this->_random_keywords[ 0 ];
+			$orderby   = $this->_random_keywords[ 0 ];
 			$direction = '';
-			$escape = FALSE;
+			$escape    = FALSE;
 		}
 
 		return parent::orderBy( $orderby, $direction, $escape );
@@ -231,7 +231,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _listTablesStatement($prefix_limit = FALSE )
+	protected function _listTablesStatement( $prefix_limit = FALSE )
 	{
 		$sql = 'SELECT "table_name" FROM "information_schema"."tables" WHERE "table_schema" = \'' . $this->schema . "'";
 
@@ -256,7 +256,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _listColumnsStatement($table = '' )
+	protected function _listColumnsStatement( $table = '' )
 	{
 		return 'SELECT "column_name"
 			FROM "information_schema"."columns"
@@ -272,7 +272,7 @@ class Driver extends DriverInterface
 	 *
 	 * @return    array
 	 */
-	public function fieldData($table )
+	public function fieldData( $table )
 	{
 		$sql = 'SELECT "column_name", "data_type", "character_maximum_length", "numeric_precision", "column_default"
 			FROM "information_schema"."columns"
@@ -284,14 +284,14 @@ class Driver extends DriverInterface
 		}
 		$query = $query->resultObject();
 
-		$result = array();
+		$result = [ ];
 		for ( $i = 0, $c = count( $query ); $i < $c; $i++ )
 		{
-			$result[ $i ] = new \stdClass();
-			$result[ $i ]->name = $query[ $i ]->column_name;
-			$result[ $i ]->type = $query[ $i ]->data_type;
+			$result[ $i ]             = new \stdClass();
+			$result[ $i ]->name       = $query[ $i ]->column_name;
+			$result[ $i ]->type       = $query[ $i ]->data_type;
 			$result[ $i ]->max_length = ( $query[ $i ]->character_maximum_length > 0 ) ? $query[ $i ]->character_maximum_length : $query[ $i ]->numeric_precision;
-			$result[ $i ]->default = $query[ $i ]->column_default;
+			$result[ $i ]->default    = $query[ $i ]->column_default;
 		}
 
 		return $result;
@@ -309,10 +309,10 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _updateStatement($table, $values )
+	protected function _updateStatement( $table, $values )
 	{
-		$this->qb_limit = FALSE;
-		$this->qb_orderby = array();
+		$this->qb_limit   = FALSE;
+		$this->qb_orderby = [ ];
 
 		return parent::_updateStatement( $table, $values );
 	}
@@ -330,9 +330,9 @@ class Driver extends DriverInterface
 	 *
 	 * @return    string
 	 */
-	protected function _updateBatchStatement($table, $values, $index )
+	protected function _updateBatchStatement( $table, $values, $index )
 	{
-		$ids = array();
+		$ids = [ ];
 		foreach ( $values as $key => $value )
 		{
 			$ids[] = $value[ $index ];

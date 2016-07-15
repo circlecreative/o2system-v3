@@ -73,7 +73,7 @@ class Access extends LibraryInterface
 	 *
 	 * @access  public
 	 */
-	public function __reconstruct( array $config = array() )
+	public function __reconstruct( array $config = [ ] )
 	{
 		\O2System::Load()->helpers( [ 'string', 'cookie' ] );
 		\O2System::Load()->library( 'o2system/useragent' );

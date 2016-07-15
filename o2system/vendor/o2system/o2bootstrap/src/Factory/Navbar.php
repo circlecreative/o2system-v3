@@ -57,10 +57,10 @@ class Navbar extends FactoryInterface
 	protected $_tag    = 'nav';
 	protected $_target = NULL;
 
-	protected $_attributes = array(
+	protected $_attributes = [
 		'class' => [ 'navbar' ],
 		'role'  => 'navigation',
-	);
+	];
 
 	public $brand      = NULL;
 	public $brand_logo = NULL;
@@ -146,19 +146,19 @@ class Navbar extends FactoryInterface
 		return $this;
 	}
 
-	public function setTarget($target )
+	public function setTarget( $target )
 	{
 		$this->_target = str_replace( [ '_', '.', '#' ], [ '-', '', '' ], $target );
 
 		return $this;
 	}
 
-	public function setType($type )
+	public function setType( $type )
 	{
-		$types = array(
+		$types = [
 			self::NAVBAR_DEFAULT => 'navbar-default',
 			self::NAVBAR_INVERSE => 'navbar-inverse',
-		);
+		];
 
 		if ( array_key_exists( $type, $types ) )
 		{
@@ -168,7 +168,7 @@ class Navbar extends FactoryInterface
 		return $this;
 	}
 
-	public function setBrand($brand, $href = '#' )
+	public function setBrand( $brand, $href = '#' )
 	{
 		// Brand Logo
 		if ( function_exists( 'base_url' ) AND $href === '#' )
@@ -201,22 +201,23 @@ class Navbar extends FactoryInterface
 		return $this;
 	}
 
-	public function setFinder(array $param)
+	public function setFinder( array $param )
 	{
 		$this->form = '
-				            <form action="'.$param['action'].'" method="'.$param['method'].'" class="navbar-form '.$param['position'].'" role="form">
+				            <form action="' . $param[ 'action' ] . '" method="' . $param[ 'method' ] . '" class="navbar-form ' . $param[ 'position' ] . '" role="form">
 				                <div class="input-group">
-				                    <input type="text" class="form-control" name="'.$param['name'].'" placeholder="'.$param['placeholder'].'">
+				                    <input type="text" class="form-control" name="' . $param[ 'name' ] . '" placeholder="' . $param[ 'placeholder' ] . '">
 				                    <span class="input-group-btn">
 				                        <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
 				                    </span>
 				                </div>
 				            </form>
 				        ';
+
 		return $this;
 	}
 
-	public function addItems(array $items, $position = self::NAV_LEFT )
+	public function addItems( array $items, $position = self::NAV_LEFT )
 	{
 		foreach ( $items as $item )
 		{
@@ -224,7 +225,7 @@ class Navbar extends FactoryInterface
 		}
 	}
 
-	public function addItem($item, $position = self::NAV_LEFT, $describe = NULL )
+	public function addItem( $item, $position = self::NAV_LEFT, $describe = NULL )
 	{
 		if ( $item instanceof Nav )
 		{
@@ -335,11 +336,12 @@ class Navbar extends FactoryInterface
 			$icons[] = new Tag( 'span', [ 'class' => 'icon-bar' ] );
 			$toggle->appendLabel( implode( PHP_EOL, $icons ) );
 
-			$toggle->addAttributes( array(
-				                         'class'       => 'navbar-toggle',
-				                         'data-toggle' => 'collapse',
-				                         'data-target' => '#' . $this->_target,
-			                         ) );
+			$toggle->addAttributes(
+				[
+					'class'       => 'navbar-toggle',
+					'data-toggle' => 'collapse',
+					'data-target' => '#' . $this->_target,
+				] );
 			$output[ 'header' ] = new Tag( 'div', implode( PHP_EOL, [ $toggle, $this->brand ] ), [ 'class' => 'navbar-header' ] );
 		}
 
