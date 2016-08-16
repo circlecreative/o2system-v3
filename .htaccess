@@ -44,6 +44,10 @@
 
 RewriteEngine On
 
+<IfModule mod_headers.c>
+  Header set Access-Control-Allow-Origin "*"
+</Ifmodule>
+
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-l
@@ -167,7 +171,6 @@ AddCharset utf-8 .atom .css .js .json .rss .vtt .xml
   </FilesMatch>
 </IfModule>
 
-
 <IfModule mod_headers.c>
   <FilesMatch "\.(ico|pdf|flv|jpg|jpeg|png|gif|swf|mp3|mp4)$">
     Header set Cache-Control "public"
@@ -284,3 +287,7 @@ AddType application/x-shockwave-flash       swf
 AddType text/vtt                            vtt
 AddType image/png .png
 ########## End of .htaccess settings
+
+<IfModule mod_headers.c>
+  Header set Access-Control-Allow-Origin "*"
+</Ifmodule>
