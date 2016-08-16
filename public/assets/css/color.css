@@ -1,0 +1,13 @@
+/* TEXT */
+.white-text { color:#fff !important;}
+
+/* BACKGROUND */
+.black-bg { background-color: #000 !important; }
+.white-bg { background-color: #fff !important; }
+.light-grey-bg { background-color: #f6f6f6 !important; }
+
+/* BORDER */
+.white-border, .white-border th, .white-border td { border-color: #fff !important; }
+
+/* STATE */
+td.active { background-color: #ebebeb !important; border-color: #ebebeb !important; }
